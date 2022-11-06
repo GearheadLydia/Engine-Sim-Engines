@@ -1,0 +1,475 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+// firing order: 1-10-9-4-3-6-5-8-7-2
+
+public node dodge_v10_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 7000 * units.rpm;
+	input limiter_duration: 0.09;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire01, (0.0/10.0) * cycle)
+            .connect_wire(wires.wire10, (1.0/10.0) * cycle - 18 * units.deg)
+			.connect_wire(wires.wire09, (2.0/10.0) * cycle)
+            .connect_wire(wires.wire04, (3.0/10.0) * cycle - 18 * units.deg)
+            .connect_wire(wires.wire03, (4.0/10.0) * cycle)
+			.connect_wire(wires.wire06, (5.0/10.0) * cycle - 18 * units.deg)
+            .connect_wire(wires.wire05, (6.0/10.0) * cycle)
+            .connect_wire(wires.wire08, (7.0/10.0) * cycle - 18 * units.deg)
+			.connect_wire(wires.wire07, (8.0/10.0) * cycle)
+            .connect_wire(wires.wire02, (9.0/10.0) * cycle - 18 * units.deg);
+}
+
+private node wires {
+    output wire01: ignition_wire();
+    output wire02: ignition_wire();
+    output wire03: ignition_wire();
+    output wire04: ignition_wire();
+    output wire05: ignition_wire();
+    output wire06: ignition_wire();
+    output wire07: ignition_wire();
+    output wire08: ignition_wire();
+    output wire09: ignition_wire();
+    output wire10: ignition_wire();
+}
+
+public node dodge_v10_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 238 * units.deg,
+            gamma: 1.5,
+            lift: 0.603 * units.inch,
+            steps: 100
+        );
+}
+
+public node dodge_v10_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 246 * units.deg,
+            gamma: 1.5,
+            lift: 0.606 * units.inch,
+            steps: 100
+        );
+}
+
+public node dodge_v10_camshaft_builder {
+    input in_lobe_profile: dodge_v10_lobe_profile_int();
+    input ex_lobe_profile: dodge_v10_lobe_profile_exh();
+    input intake_lobe_profile: in_lobe_profile;
+    input exhaust_lobe_profile: ex_lobe_profile;
+    input lobe_separation: 114.0 * units.deg;
+    input intake_lobe_center: 110.0 * units.deg;
+    input exhaust_lobe_center: 110.0 * units.deg;
+    input advance: 0.0 * units.deg;
+    input base_radius: 0.75 * units.inch;
+
+    output intake_cam_0: _intake_cam_0;
+    output intake_cam_1: _intake_cam_1;
+    output exhaust_cam_0: _exhaust_cam_0;
+    output exhaust_cam_1: _exhaust_cam_1;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
+    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+
+	label rot18(18 * units.deg)
+	label rot30(30 * units.deg)
+	label rot54(54 * units.deg)
+	label rot60(60 * units.deg)
+	label rot72(72 * units.deg)
+    label rot90(90 * units.deg)
+	label rot120(120 * units.deg)
+    label rot360(360 * units.deg)
+	
+    _intake_cam_0
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot72) //  #1
+        .add_lobe(rot360 + intake_lobe_center + 4 * rot72) //  #3
+        .add_lobe(rot360 + intake_lobe_center + 6 * rot72) //  #5
+        .add_lobe(rot360 + intake_lobe_center + 8 * rot72) //  #7
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot72) //  #9
+
+    _intake_cam_1
+        .add_lobe(rot360 + intake_lobe_center + 9 * rot72 - rot18) //  #2
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot72 - rot18) //  #4
+        .add_lobe(rot360 + intake_lobe_center + 5 * rot72 - rot18) //  #6
+        .add_lobe(rot360 + intake_lobe_center + 7 * rot72 - rot18) //  #8
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot72 - rot18) // #10
+
+    _exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot72)
+        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot72)
+        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot72)
+        .add_lobe(rot360 - exhaust_lobe_center + 8 * rot72)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot72)
+
+    _exhaust_cam_1
+        .add_lobe(rot360 - exhaust_lobe_center + 9 * rot72 - rot18)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot72 - rot18)
+        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot72 - rot18)
+        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot72 - rot18)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot72 - rot18)
+}
+
+public node dodge_v10_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 105.0 * units.cc;
+    input flip_display: false;
+	
+	input flow_attenuation: 1.0;
+    input lift_scale: 1.0;
+    alias output __out: head;
+
+    function intake_flow(50 * units.thou)
+    intake_flow
+        .add_flow_sample(0, 0 * flow_attenuation)
+        .add_flow_sample(50, 50 * flow_attenuation)
+        .add_flow_sample(100, 75 * flow_attenuation)
+        .add_flow_sample(150, 100 * flow_attenuation)
+        .add_flow_sample(200, 130 * flow_attenuation)
+        .add_flow_sample(250, 180 * flow_attenuation)
+        .add_flow_sample(300, 190 * flow_attenuation)
+        .add_flow_sample(350, 220 * flow_attenuation)
+        .add_flow_sample(400, 240 * flow_attenuation)
+        .add_flow_sample(450, 250 * flow_attenuation)
+        .add_flow_sample(500, 260 * flow_attenuation)
+        .add_flow_sample(550, 260 * flow_attenuation)
+        .add_flow_sample(600, 260 * flow_attenuation)
+        .add_flow_sample(650, 255 * flow_attenuation)
+        .add_flow_sample(700, 250 * flow_attenuation)
+
+    function exhaust_flow(50 * units.thou)
+    exhaust_flow
+        .add_flow_sample(0, 0 * flow_attenuation)
+        .add_flow_sample(50, 50 * flow_attenuation)
+        .add_flow_sample(100, 75 * flow_attenuation)
+        .add_flow_sample(150, 80 * flow_attenuation)
+        .add_flow_sample(200, 100 * flow_attenuation)
+        .add_flow_sample(250, 125 * flow_attenuation)
+        .add_flow_sample(300, 160 * flow_attenuation)
+        .add_flow_sample(350, 175 * flow_attenuation)
+        .add_flow_sample(400, 180 * flow_attenuation)
+        .add_flow_sample(450, 190 * flow_attenuation)
+        .add_flow_sample(500, 200 * flow_attenuation)
+        .add_flow_sample(550, 205 * flow_attenuation)
+        .add_flow_sample(600, 210 * flow_attenuation)
+        .add_flow_sample(650, 210 * flow_attenuation)
+        .add_flow_sample(700, 210 * flow_attenuation)
+		
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: 20.0 * units.cc,
+        intake_runner_cross_section_area: 20 * units.cm2,
+        exhaust_runner_volume: 20.0 * units.cc,
+        exhaust_runner_cross_section_area: 20 * units.cm2,
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+public node viper_v10 {
+    alias output __out: engine;
+
+    wires wires()
+
+    engine engine(
+        name: "Dodge Viper V10",
+        starter_torque: 200 * units.lb_ft,
+		starter_speed: 600 * units.rpm,
+        redline: 6400 * units.rpm,
+        fuel: fuel(
+            max_turbulence_effect: 4.0,
+            burning_efficiency_randomness: 0.2,
+            max_burning_efficiency: 0.68),
+        throttle_gamma: 1.0,
+		simulation_frequency: 7500
+    )
+
+    crankshaft c0(
+        throw: 3.960 / 2 * units.inch,
+        flywheel_mass: 29 * 2 * units.lb,
+        mass: 75 * units.lb,
+        friction_torque: 10.0 * units.lb_ft,
+        moment_of_inertia: 0.22986844776863666 * 2,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 45 * units.deg
+    )
+
+    rod_journal rj0(angle:  0  * units.deg)
+    rod_journal rj1(angle: 288 * units.deg)
+    rod_journal rj2(angle: 72 * units.deg)
+	rod_journal rj3(angle: 216 * units.deg)
+    rod_journal rj4(angle: 144 * units.deg)
+
+    c0
+        .add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
+
+    piston_parameters piston_params(
+        mass: 435 * units.g,
+        blowby: 0,
+        compression_height: 1.220 * units.inch,
+        wrist_pin_position: 0.0,
+        displacement: 0.0
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: 785.0 * units.g,
+        moment_of_inertia: 0.0015884918028487504,
+        center_of_mass: 0.0,
+        length: 6.135 * units.inch
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: 4.055 * units.inch,
+        deck_height: 9.480 * units.inch
+    )
+
+    intake intake(
+        plenum_volume: 4.0 * units.L,
+        plenum_cross_section_area: 200.0 * units.cm2,
+        intake_flow_rate: k_carb(950.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.994,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(800.0),
+        runner_length: 6.0 * units.inch,
+        velocity_decay: 0.1
+    )
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(1050.0),
+        primary_tube_length: 50.0 * units.inch,
+        primary_flow_rate: k_carb(800.0),
+        velocity_decay: 1.0, //0.5
+        volume: 20.0 * units.L
+    )
+
+    exhaust_system exhaustL(
+        es_params,
+        length: 500 * units.mm,
+        audio_volume: 1.0 * 0.01,
+        impulse_response: ir_lib.default_0
+    )
+
+    exhaust_system exhaustR(
+        es_params,
+        length: 480 * units.mm,
+        audio_volume: 1.0 * 0.01,
+        impulse_response: ir_lib.default_0
+    )
+	
+	label exhaust_long(3.0 * units.inch)
+	label exhaust_shrt(1.0 * units.inch)
+	
+	label exhaust_volume_L0(1.0)
+	label exhaust_volume_L1(1.0)
+	label exhaust_volume_R0(1.0)
+	label exhaust_volume_R1(1.0)
+
+    cylinder_bank b0(bank_params, angle: -45 * units.deg) // R (first)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.15)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire01,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: exhaust_long,
+            sound_attenuation: exhaust_volume_L0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.15)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire03,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: exhaust_shrt,
+			sound_attenuation: exhaust_volume_L1
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.15)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire05,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: exhaust_long,
+			sound_attenuation: exhaust_volume_L0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.15)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire07,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: exhaust_shrt,
+			sound_attenuation: exhaust_volume_L1
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.15)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire09,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: exhaust_long,
+			sound_attenuation: exhaust_volume_L0
+        )
+
+    cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.15)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire02,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: exhaust_shrt,
+			sound_attenuation: exhaust_volume_R0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.15)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire04,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: exhaust_long,
+			sound_attenuation: exhaust_volume_R1
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.15)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire06,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: exhaust_shrt,
+			sound_attenuation: exhaust_volume_R0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.15)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire08,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: exhaust_long,
+			sound_attenuation: exhaust_volume_R1
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.15)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire10,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: exhaust_shrt,
+			sound_attenuation: exhaust_volume_R0
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+        .add_cylinder_bank(b1)
+
+    engine.add_crankshaft(c0)
+
+    dodge_v10_camshaft_builder camshaft(
+		in_lobe_profile: dodge_v10_lobe_profile_int(),
+		ex_lobe_profile: dodge_v10_lobe_profile_exh()
+	)
+
+    b0.set_cylinder_head (
+        dodge_v10_head(
+            intake_camshaft: camshaft.intake_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0,
+            flip_display: false
+        )
+    )
+    b1.set_cylinder_head (
+        dodge_v10_head(
+            intake_camshaft: camshaft.intake_cam_1,
+            exhaust_camshaft: camshaft.exhaust_cam_1,
+            flip_display: true
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 15 * units.deg)
+        .add_sample(1000 * units.rpm, 20 * units.deg)
+        .add_sample(2000 * units.rpm, 25 * units.deg)
+        .add_sample(3000 * units.rpm, 30 * units.deg)
+        .add_sample(4000 * units.rpm, 30 * units.deg)
+        .add_sample(5000 * units.rpm, 35 * units.deg)
+        .add_sample(6000 * units.rpm, 35 * units.deg)
+        .add_sample(7000 * units.rpm, 40 * units.deg)
+        .add_sample(8000 * units.rpm, 40 * units.deg)
+
+    engine.add_ignition_module(
+        dodge_v10_distributor(
+            wires: wires,
+            timing_curve: timing_curve,
+            rev_limit: 7000 * units.rpm
+        )
+    )
+}
+
+// 2014 Dodge Viper GTS (VX)
+public node dodge_viper_gts_vx_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3348 * units.lb,
+            drag_coefficient: 0.369,
+            cross_sectional_area: 2.42 * (units.m * units.m),
+            diff_ratio: 3.55,
+            tire_radius: 347.98 * units.mm, // P335/30ZR19
+            rolling_resistance: 550 * units.N
+        );
+}
+
+public node dodge_viper_gts_vx_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 1000 * units.lb_ft
+        )
+        .add_gear(2.26)
+        .add_gear(1.58)
+        .add_gear(1.19)
+        .add_gear(1.00)
+        .add_gear(0.77)
+        .add_gear(0.63);
+}
+
+public node main {
+    set_engine(viper_v10())
+    set_vehicle(dodge_viper_gts_vx_vehicle())
+    set_transmission(dodge_viper_gts_vx_transmission())
+}

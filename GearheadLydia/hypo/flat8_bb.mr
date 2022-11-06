@@ -1,0 +1,429 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+// firing order: 1&6, 3&8, 2&5, 4&7
+// alternate: 1&2, 5&6, 7&8, 3&4
+
+public node hypo_flat8_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 8250 * units.rpm;
+	input limiter_duration: 0.08;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire1, (0.0 / 4.0) * cycle)
+            .connect_wire(wires.wire2, (0.0 / 4.0) * cycle)
+            .connect_wire(wires.wire5, (1.0 / 4.0) * cycle)
+            .connect_wire(wires.wire6, (1.0 / 4.0) * cycle)
+            .connect_wire(wires.wire7, (2.0 / 4.0) * cycle)
+            .connect_wire(wires.wire8, (2.0 / 4.0) * cycle)
+            .connect_wire(wires.wire3, (3.0 / 4.0) * cycle)
+            .connect_wire(wires.wire4, (3.0 / 4.0) * cycle);
+}
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+    output wire3: ignition_wire();
+    output wire4: ignition_wire();
+    output wire5: ignition_wire();
+    output wire6: ignition_wire();
+    output wire7: ignition_wire();
+    output wire8: ignition_wire();
+}
+
+public node hypo_flat8_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 245 * units.deg,
+            gamma: 1.5,
+            lift: 11.0 * units.mm,
+            steps: 100
+        );
+}
+
+public node hypo_flat8_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 240 * units.deg,
+            gamma: 1.5,
+            lift: 10.0 * units.mm,
+            steps: 100
+        );
+}
+
+public node hypo_flat8_camshaft_builder {
+    input in_lobe_profile: hypo_flat8_lobe_profile_int();
+	input ex_lobe_profile: hypo_flat8_lobe_profile_exh();
+    input intake_lobe_profile: in_lobe_profile;
+    input exhaust_lobe_profile: ex_lobe_profile;
+    input lobe_separation: 110.0 * units.deg;
+    input intake_lobe_center: lobe_separation;
+    input exhaust_lobe_center: 105.0 * units.deg;
+    input advance: 0.0 * units.deg;
+    input base_radius: 15 * units.mm;
+
+    output intake_cam_0: _intake_cam_0;
+    output exhaust_cam_0: _exhaust_cam_0;
+    output intake_cam_1: _intake_cam_1;
+    output exhaust_cam_1: _exhaust_cam_1;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+
+    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+
+
+    label rot30(30 * units.deg)
+	label rot60(60 * units.deg)
+    label rot90(90 * units.deg)
+    label rot120(120 * units.deg)
+    label rot180(180 * units.deg)
+    label rot360(360 * units.deg)
+
+    _intake_cam_0
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot180)
+
+    _intake_cam_1
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot180)
+
+    _exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
+
+    _exhaust_cam_1
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
+}
+
+private node add_flow_sample {
+    input lift;
+    input flow;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
+}
+
+public node hypo_flat8_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 51.0 * units.cc;
+    input flip_display: false;
+	
+	input flow_attenuation: 1.1;
+    input lift_scale: 50.0;
+    alias output __out: head;
+
+    function intake_flow(1 * units.mm)
+    intake_flow
+        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
+
+    function exhaust_flow(1 * units.mm)
+    exhaust_flow
+        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
+
+		
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: 100.0 * units.cc,
+        intake_runner_cross_section_area: 2 * 12.4087 * units.cm2,
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+
+public node flat8 {
+    alias output __out: engine;
+
+    wires wires()
+
+    engine engine(
+        name: "Boxer-8 Big Bang",
+        starter_torque: 300 * units.lb_ft,
+		starter_speed: 600 * units.rpm,
+        redline: 8000 * units.rpm,
+        fuel: fuel(
+            max_turbulence_effect: 4.0,
+            burning_efficiency_randomness: 0.2,
+            max_burning_efficiency: 0.85),
+        throttle_gamma: 2.0
+    )
+
+    crankshaft c0(
+        throw: 78.0 * units.mm / 2,
+        flywheel_mass: 29 * 2 * units.lb,
+        mass: 75 * units.lb,
+        friction_torque: 10.0 * units.lb_ft,
+        moment_of_inertia: 0.22986844776863666 * 2,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 0.0 * units.deg
+    )
+
+    rod_journal rj0(angle: 0.0 * units.deg)
+    rod_journal rj1(angle: 180.0 * units.deg)
+    rod_journal rj2(angle: 180.0 * units.deg)
+    rod_journal rj3(angle: 0.0 * units.deg)
+    rod_journal rj4(angle: 180.0 * units.deg)
+    rod_journal rj5(angle: 0.0 * units.deg)
+    rod_journal rj6(angle: 0.0 * units.deg)
+    rod_journal rj7(angle: 180.0 * units.deg)
+
+    c0
+        .add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
+        .add_rod_journal(rj7)
+
+
+
+    piston_parameters piston_params(
+        mass: 400 * units.g,
+        //blowby: 0,
+        compression_height: 1.184 * units.inch,
+        wrist_pin_position: 0.0,
+        displacement: 0.0 * units.cc
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: 434.0 * units.g,
+        moment_of_inertia: 0.0015884918028487504,
+        center_of_mass: 0.0,
+        length: 152.0 * units.mm
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: 93.0 * units.mm,
+        deck_height: 8.715 * units.inch
+    )
+
+    performer_rpm_intake intake(
+        carburetor_cfm: 650.0,
+        idle_flow_rate_cfm: 0.001,
+        idle_throttle_plate_position: 0.996
+    )
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(800.0),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(450.0),
+        velocity_decay: 0.4, //0.5
+        volume: 50.0 * units.L
+    )
+
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 500 * units.mm)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 750 * units.mm)
+
+    cylinder_bank b0(bank_params, angle: -90.0 * units.deg) // R (first)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire1,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: 0 * units.cm
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: 2 * units.cm
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: 2 * units.cm
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj6,
+            ignition_wire: wires.wire7,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: 0 * units.cm
+        )
+
+    cylinder_bank b1(bank_params, angle: 90.0 * units.deg) // L (second)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire2,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: 0 * units.cm
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: 2 * units.cm
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire6,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: 2 * units.cm
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj7,
+            ignition_wire: wires.wire8,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: 0 * units.cm
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+        .add_cylinder_bank(b1)
+
+    engine.add_crankshaft(c0)
+
+    hypo_flat8_camshaft_builder camshaft(
+	    in_lobe_profile: hypo_flat8_lobe_profile_int(),
+		ex_lobe_profile: hypo_flat8_lobe_profile_exh()
+	)
+
+    b0.set_cylinder_head (
+        hypo_flat8_head(
+            intake_camshaft: camshaft.intake_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0
+        )
+    )
+    b1.set_cylinder_head (
+        hypo_flat8_head(
+            intake_camshaft: camshaft.intake_cam_1,
+            exhaust_camshaft: camshaft.exhaust_cam_1,
+            flip_display: true
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(1000 * units.rpm, 40 * units.deg)
+        .add_sample(2000 * units.rpm, 45 * units.deg)
+        .add_sample(3000 * units.rpm, 50 * units.deg)
+        .add_sample(4000 * units.rpm, 55 * units.deg)
+        .add_sample(5000 * units.rpm, 60 * units.deg)
+        .add_sample(6000 * units.rpm, 65 * units.deg)
+		.add_sample(7000 * units.rpm, 70 * units.deg)
+		.add_sample(8000 * units.rpm, 75 * units.deg)
+		.add_sample(9000 * units.rpm, 75 * units.deg)
+
+    engine.add_ignition_module(
+        hypo_flat8_distributor(
+            wires: wires,
+            timing_curve: timing_curve,
+            rev_limit: 8250 * units.rpm
+        )
+    )
+}
+
+// 2010 Ferrari 458 Italia
+public node ferrari_458_italia_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3285 * units.lb,
+            drag_coefficient: 0.33,
+            cross_sectional_area: 1.95 * (units.m * units.m),
+            diff_ratio: 5.14,
+            tire_radius: 356.87 * units.mm, // 295/35ZR20
+            rolling_resistance: 550 * units.N
+        );
+}
+
+public node ferrari_458_italia_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 700 * units.lb_ft
+        )
+        .add_gear(3.08)
+        .add_gear(2.19)
+        .add_gear(1.63)
+        .add_gear(1.29)
+        .add_gear(1.03)
+        .add_gear(0.84)
+        .add_gear(0.69);
+}
+
+public node main {
+    set_engine(flat8())
+    set_vehicle(ferrari_458_italia_vehicle())
+    set_transmission(ferrari_458_italia_transmission())
+}
+

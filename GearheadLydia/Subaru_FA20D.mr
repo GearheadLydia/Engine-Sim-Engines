@@ -1,0 +1,428 @@
+import "engine_sim.mr"
+
+// Honda fa20d replica by GearheadLydia
+// 2022-09-18 | revision 1
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+public node subaru_fa20d_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 7750 * units.rpm;
+	input limiter_duration: 0.08;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire1, (0.0/4.0) * cycle)
+            .connect_wire(wires.wire3, (1.0/4.0) * cycle)
+			.connect_wire(wires.wire2, (2.0/4.0) * cycle)
+			.connect_wire(wires.wire4, (3.0/4.0) * cycle);
+}
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+    output wire3: ignition_wire();
+    output wire4: ignition_wire();
+}
+
+public node subaru_fa20d_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 255 * units.deg,
+            gamma: 1.5,
+            lift: 10.75 * units.mm,
+            steps: 100
+        );
+}
+
+public node subaru_fa20d_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 255 * units.deg,
+            gamma: 1.5,
+            lift: 10.47 * units.mm,
+            steps: 100
+        );
+}
+
+public node subaru_fa20d_camshaft_builder {
+    input in_lobe_profile: subaru_fa20d_lobe_profile_int();
+	input ex_lobe_profile: subaru_fa20d_lobe_profile_exh();
+    input lobe_separation: 100.0 * units.deg;
+    input intake_lobe_center: lobe_separation;
+    input exhaust_lobe_center: lobe_separation;
+    input advance_in: -8.25 * units.deg;
+    input advance_ex: -8.25 * units.deg;
+    input base_radius: 17 * units.mm;
+
+    output intake_cam_0: _intake_cam_0;
+    output exhaust_cam_0: _exhaust_cam_0;
+    output intake_cam_1: _intake_cam_1;
+    output exhaust_cam_1: _exhaust_cam_1;
+
+    camshaft_parameters params(
+        advance: advance_in,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0(params, lobe_profile: in_lobe_profile, advance: advance_in)
+    camshaft _exhaust_cam_0(params, lobe_profile: ex_lobe_profile, advance: advance_ex)
+
+    camshaft _intake_cam_1(params, lobe_profile: in_lobe_profile, advance: advance_in)
+    camshaft _exhaust_cam_1(params, lobe_profile: ex_lobe_profile, advance: advance_ex)
+
+
+    label rot30(30 * units.deg)
+	label rot60(60 * units.deg)
+    label rot90(90 * units.deg)
+    label rot120(120 * units.deg)
+    label rot180(180 * units.deg)
+    label rot360(360 * units.deg)
+
+    _intake_cam_0
+        .add_lobe(rot360 + intake_lobe_center + (0 * rot180))
+		.add_lobe(rot360 + intake_lobe_center + (1 * rot180))
+
+    _intake_cam_1
+        .add_lobe(rot360 + intake_lobe_center + (2 * rot180))
+		.add_lobe(rot360 + intake_lobe_center + (3 * rot180))
+
+	_exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center + (0 * rot180))
+		.add_lobe(rot360 - exhaust_lobe_center + (1 * rot180))
+
+	_exhaust_cam_1
+        .add_lobe(rot360 - exhaust_lobe_center + (2 * rot180))
+		.add_lobe(rot360 - exhaust_lobe_center + (3 * rot180))
+}
+
+private node add_flow_sample {
+    input lift;
+    input flow;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
+}
+
+public node subaru_fa20d_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 40.3 * units.cc;
+    input flip_display: false;
+	
+	input flow_attenuation_in: 1.0;
+	input flow_attenuation_ex: 1.0;
+    input lift_scale: 50.0;
+    alias output __out: head;
+
+    function intake_flow(1.15 * units.mm)
+    intake_flow
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
+        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
+        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
+        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
+        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
+        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
+        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
+        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
+        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+
+    function exhaust_flow(1.15 * units.mm)
+    exhaust_flow
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
+        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
+        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
+        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
+        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
+        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
+        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
+        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
+        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+
+		
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: 30.0 * units.cc,
+        intake_runner_cross_section_area: 12 * units.cm2,
+        exhaust_runner_volume: 30.0 * units.cc,
+        exhaust_runner_cross_section_area: 12 * units.cm2,
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+// https://dsportmag.com/the-tech/tomei-powered-dissects-the-fa20-flat-four/5/
+// https://www.comeanddriveit.com/specs/fa20dit
+// https://www.subarucar.net/sites/subarucar.net/files/FA20D_DOHC.pdf
+
+public node fa20d {
+    alias output __out: engine;
+
+    wires wires()
+
+    label bore(86.0 * units.mm)
+    label stroke(86.0 * units.mm)
+    label rod_length(129.3 * units.mm)
+    label rod_mass(346.8 * units.g)
+	label piston_mass((311.2 + 91.3) * units.g)
+    label compression_height(32.8 * units.mm)
+	label piston_dome(2.7 * units.cc)
+	label deck_height(205.0 * units.mm) // R is 205, L is 205.05 (see later)
+    label crank_mass(45 * units.lb)
+    label flywheel_mass(40 * units.lb)
+    label flywheel_radius(5 * units.inch)
+
+    engine engine(
+        name: "Subaru FA20D",
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 900 * units.rpm,
+        redline: 7500 * units.rpm,
+        throttle_gamma: 1.5
+    )
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 15 * units.kg, radius: 8.0 * units.cm)
+    )
+
+    crankshaft c0(
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 10.0 * units.lb_ft,
+        moment_of_inertia: crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 180.0 * units.deg
+    )
+
+    rod_journal rj0(angle:  0  * units.deg)
+    rod_journal rj1(angle: 180 * units.deg)
+    rod_journal rj2(angle: 180 * units.deg)
+    rod_journal rj3(angle:  0  * units.deg)
+
+    c0
+        .add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+
+
+    piston_parameters piston_params(
+        mass: piston_mass,
+        //blowby: 0,
+        compression_height: compression_height,
+        wrist_pin_position: 0.0,
+        displacement: piston_dome
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
+        center_of_mass: 0.0,
+        length: rod_length
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: bore,
+        deck_height: deck_height
+    )
+
+    intake intakeL(
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(200.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.996,
+        throttle_gamma: 1.5,
+        runner_flow_rate: k_carb(200.0),
+        runner_length: 6.0 * units.inch,
+        velocity_decay: 0.1
+    )
+
+    intake intakeR(
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(200.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.996,
+        throttle_gamma: 1.5,
+        runner_flow_rate: k_carb(200.0),
+        runner_length: 7.5 * units.inch,
+        velocity_decay: 0.1
+    )
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(250.0),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(200.0),
+        velocity_decay: 1.0, //0.5
+        volume: 6.0 * units.L
+    )
+
+    exhaust_system exhaustF(
+		es_params,
+		audio_volume: 1.0 * 0.01,
+		impulse_response: ir_lib.default_0,
+		length: 300 * units.mm
+	)
+
+    exhaust_system exhaustR(
+		es_params,
+		audio_volume: 1.0 * 0.01,
+		impulse_response: ir_lib.default_0,
+		length: 330 * units.mm
+	)
+	
+	label exhaust_FL( 2.0 * units.inch)
+	label exhaust_FR( 3.0 * units.inch)
+	label exhaust_RL( 0.0 * units.inch)
+	label exhaust_RR( 1.0 * units.inch)
+
+    cylinder_bank b0(bank_params, angle: 90.0 * units.deg, deck_height: deck_height + (0.05 * units.mm)) // L (first)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire1,
+            intake: intakeL,
+            exhaust_system: exhaustF,
+			primary_length: exhaust_FL
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire3,
+            intake: intakeL,
+            exhaust_system: exhaustR,
+			primary_length: exhaust_RL
+        )
+
+    cylinder_bank b1(bank_params, angle: -90.0 * units.deg) // R (second)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire2,
+            intake: intakeR,
+            exhaust_system: exhaustF,
+			primary_length: exhaust_FR
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire4,
+            intake: intakeR,
+            exhaust_system: exhaustR,
+			primary_length: exhaust_RR
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+        .add_cylinder_bank(b1)
+
+    engine.add_crankshaft(c0)
+
+    subaru_fa20d_camshaft_builder camshaft()
+
+    b0.set_cylinder_head (
+        subaru_fa20d_head(
+            intake_camshaft: camshaft.intake_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0,
+            flip_display: true
+        )
+    )
+    b1.set_cylinder_head (
+        subaru_fa20d_head(
+            intake_camshaft: camshaft.intake_cam_1,
+            exhaust_camshaft: camshaft.exhaust_cam_1,
+            flip_display: false
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, -5 * units.deg)
+        .add_sample(1000 * units.rpm, 10 * units.deg)
+        .add_sample(2000 * units.rpm, 25 * units.deg)
+        .add_sample(3000 * units.rpm, 35 * units.deg)
+        .add_sample(4000 * units.rpm, 45 * units.deg)
+        .add_sample(5000 * units.rpm, 50 * units.deg)
+        .add_sample(6000 * units.rpm, 55 * units.deg)
+		.add_sample(7000 * units.rpm, 55 * units.deg)
+		.add_sample(8000 * units.rpm, 60 * units.deg)
+		.add_sample(9000 * units.rpm, 60 * units.deg)
+
+    engine.add_ignition_module(
+        subaru_fa20d_distributor(
+            wires: wires,
+            timing_curve: timing_curve,
+            rev_limit: 7750 * units.rpm
+        )
+    )
+}
+
+// 2013 Subaru BRZ (ZC6) - actually FR-S specs because BRZ was harder to find
+public node subaru_brz_zc6_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 2758 * units.lb,
+            drag_coefficient: 0.27,
+            cross_sectional_area: 1.89 * (units.m * units.m),
+            diff_ratio: 4.1,
+            tire_radius: 312.5 * units.mm, // 215/45R17
+            rolling_resistance: 380 * units.N
+        );
+}
+
+public node subaru_brz_zc6_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 600 * units.lb_ft
+        )
+        .add_gear(3.626)
+        .add_gear(2.188)
+        .add_gear(1.541)
+        .add_gear(1.213)
+        .add_gear(1.000)
+        .add_gear(0.767);
+}
+
+public node main {
+    set_engine(fa20d())
+    set_vehicle(subaru_brz_zc6_vehicle())
+    set_transmission(subaru_brz_zc6_transmission())
+}

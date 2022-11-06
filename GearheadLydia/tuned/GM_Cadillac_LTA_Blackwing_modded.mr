@@ -1,0 +1,456 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+// firing order: 15436872
+
+public node cadillac_lta_blackwing_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 7750 * units.rpm;
+	input limiter_duration: 0.08;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
+            .connect_wire(wires.wire5, (1.0 / 8.0) * cycle)
+            .connect_wire(wires.wire4, (2.0 / 8.0) * cycle)
+            .connect_wire(wires.wire3, (3.0 / 8.0) * cycle)
+            .connect_wire(wires.wire6, (4.0 / 8.0) * cycle)
+            .connect_wire(wires.wire8, (5.0 / 8.0) * cycle)
+            .connect_wire(wires.wire7, (6.0 / 8.0) * cycle)
+            .connect_wire(wires.wire2, (7.0 / 8.0) * cycle);
+}
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+    output wire3: ignition_wire();
+    output wire4: ignition_wire();
+    output wire5: ignition_wire();
+    output wire6: ignition_wire();
+    output wire7: ignition_wire();
+    output wire8: ignition_wire();
+}
+
+
+// lift specs are real, duration is not
+
+public node cadillac_lta_blackwing_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 230 * units.deg,
+            gamma: 1.5,
+            lift: 10.87 * units.mm,
+            steps: 100
+        );
+}
+
+public node cadillac_lta_blackwing_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 230 * units.deg,
+            gamma: 1.5,
+            lift: 10.47 * units.mm,
+            steps: 100
+        );
+}
+
+public node cadillac_lta_blackwing_camshaft_builder {
+    input in_lobe_profile: cadillac_lta_blackwing_lobe_profile_int();
+	input ex_lobe_profile: cadillac_lta_blackwing_lobe_profile_exh();
+    input intake_lobe_profile: in_lobe_profile;
+    input exhaust_lobe_profile: ex_lobe_profile;
+    input lobe_separation: 110.0 * units.deg;
+    input intake_lobe_center: lobe_separation;
+    input exhaust_lobe_center: 105.0 * units.deg;
+    input advance: 0.0 * units.deg;
+    input base_radius: 15 * units.mm;
+
+    output intake_cam_0: _intake_cam_0;
+    output exhaust_cam_0: _exhaust_cam_0;
+    output intake_cam_1: _intake_cam_1;
+    output exhaust_cam_1: _exhaust_cam_1;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+
+    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+
+
+    label rot30(30 * units.deg)
+	label rot60(60 * units.deg)
+    label rot90(90 * units.deg)
+    label rot120(120 * units.deg)
+    label rot180(180 * units.deg)
+    label rot360(360 * units.deg)
+
+    _intake_cam_0
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
+
+    _intake_cam_1
+        .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
+
+    _exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
+
+    _exhaust_cam_1
+        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
+}
+
+private node add_flow_sample {
+    input lift;
+    input flow;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
+}
+
+public node cadillac_lta_blackwing_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 52.0 * units.cc;
+    input flip_display: false;
+	
+	input flow_attenuation_in: 1.0;
+	input flow_attenuation_ex: 1.1;
+    input lift_scale: 50.0;
+    alias output __out: head;
+
+    function intake_flow(1.1 * units.mm)
+    intake_flow
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
+        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
+        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
+        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
+        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
+        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
+        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
+        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
+        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+
+    function exhaust_flow(1.1 * units.mm)
+    exhaust_flow
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
+        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
+        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
+        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
+        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
+        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
+        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
+        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
+        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+		
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: 220.0 * units.cc,
+        intake_runner_cross_section_area: 20.0 * units.cm2,
+        exhaust_runner_volume: 220.0 * units.cc,
+        exhaust_runner_cross_section_area: 20.0 * units.cm2,
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+
+public node lta_blackwing {
+    alias output __out: engine;
+
+    wires wires()
+
+    engine engine(
+        name: "Cadillac LTA Blackwing",
+        starter_torque: 300 * units.lb_ft,
+		starter_speed: 600 * units.rpm,
+        redline: 7500 * units.rpm,
+        fuel: fuel(
+            max_turbulence_effect: 4.0,
+            burning_efficiency_randomness: 0.2,
+            max_burning_efficiency: 0.85),
+        throttle_gamma: 2.0
+    )
+
+
+	// source: https://magazine.fev.com/en/blackwing-4-2-liter-twin-turbo-dohc-engine/
+    label bore(86.0 * units.mm)
+    label stroke(90.2 * units.mm)
+    label rod_length(139.3 * units.mm)
+    label rod_mass(434 * units.g)
+    label compression_height(30.00 * units.mm)
+	label piston_mass(300 * units.g)
+	label piston_dome(0.00 * units.cc) // this one is a guess
+	label deck_height((215 + 0.5) * units.mm)
+    label crank_mass(45 * units.lb)
+    label flywheel_mass(15 * 2 * units.lb)
+    label flywheel_radius(6 * units.inch)
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 20 * units.kg, radius: 8.0 * units.cm)
+    )
+
+    crankshaft c0(
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 5.0 * units.lb_ft,
+        moment_of_inertia:
+            crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 45.0 * units.deg // 45 degrees back from right side
+    )
+
+    rod_journal rj0(angle: 0.0)
+    rod_journal rj1(angle: -90.0 * units.deg)
+    rod_journal rj2(angle: 90.0 * units.deg)
+    rod_journal rj3(angle: 180.0 * units.deg)
+
+    c0
+        .add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+
+
+    piston_parameters piston_params(
+        mass: piston_mass,
+        //blowby: 0,
+        compression_height: compression_height,
+        wrist_pin_position: 0 * units.mm,
+        displacement: piston_dome
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
+        center_of_mass: 0.0,
+        length: rod_length
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: bore,
+        deck_height: deck_height
+    )
+
+    performer_rpm_intake intake(
+        carburetor_cfm: 550.0,
+        idle_flow_rate_cfm: 0.001,
+        idle_throttle_plate_position: 0.996
+    )
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(400.0),
+        primary_tube_length: 20.0 * units.inch,
+        primary_flow_rate: k_carb(150.0),
+        velocity_decay: 1.0, //0.5
+        volume: 20.0 * units.L
+    )
+
+    exhaust_system exhaust0(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 250 * units.mm)
+    exhaust_system exhaust1(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 150 * units.mm)
+
+    cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire1,
+            intake: intake,
+            exhaust_system: exhaust0,
+			primary_length: 3 * units.inch
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust0,
+			primary_length: 1 * units.inch
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust0,
+			primary_length: 0 * units.inch
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire7,
+            intake: intake,
+            exhaust_system: exhaust1,
+			primary_length: 1 * units.inch
+        )
+
+    cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire2,
+            intake: intake,
+            exhaust_system: exhaust1,
+			primary_length: 3 * units.inch
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust1,
+			primary_length: 1 * units.inch
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire6,
+            intake: intake,
+            exhaust_system: exhaust1,
+			primary_length: 0 * units.inch
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire8,
+            intake: intake,
+            exhaust_system: exhaust1,
+			primary_length: 1 * units.inch
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+        .add_cylinder_bank(b1)
+
+    engine.add_crankshaft(c0)
+
+    cadillac_lta_blackwing_camshaft_builder camshaft(
+	    in_lobe_profile: cadillac_lta_blackwing_lobe_profile_int(),
+		ex_lobe_profile: cadillac_lta_blackwing_lobe_profile_exh()
+	)
+
+    b0.set_cylinder_head (
+        cadillac_lta_blackwing_head(
+            intake_camshaft: camshaft.intake_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0,
+			flip_display: true
+        )
+    )
+    b1.set_cylinder_head (
+        cadillac_lta_blackwing_head(
+            intake_camshaft: camshaft.intake_cam_1,
+            exhaust_camshaft: camshaft.exhaust_cam_1,
+            flip_display: false
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 15 * units.deg)
+        .add_sample(1000 * units.rpm, 20 * units.deg)
+        .add_sample(2000 * units.rpm, 25 * units.deg)
+        .add_sample(3000 * units.rpm, 30 * units.deg)
+        .add_sample(4000 * units.rpm, 35 * units.deg)
+        .add_sample(5000 * units.rpm, 40 * units.deg)
+        .add_sample(6000 * units.rpm, 45 * units.deg)
+		.add_sample(7000 * units.rpm, 50 * units.deg)
+		.add_sample(8000 * units.rpm, 55 * units.deg)
+		.add_sample(9000 * units.rpm, 60 * units.deg)
+
+    engine.add_ignition_module(
+        cadillac_lta_blackwing_distributor(
+            wires: wires,
+            timing_curve: timing_curve,
+            rev_limit: 7750 * units.rpm
+        )
+    )
+}
+
+// SLK55 AMG 2008
+public node mercedes_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3420 * units.lb,
+            drag_coefficient: 0.35,
+            cross_sectional_area: (70.6 * units.inch) * (50 * units.inch),
+            diff_ratio: 3.06,
+            tire_radius: 245 * units.mm,
+            rolling_resistance: 700 * units.N
+        );
+}
+
+public node mercedes_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 1200 * units.lb_ft
+        )
+        .add_gear(4.377)
+        .add_gear(2.859)
+        .add_gear(1.921)
+        .add_gear(1.368)
+        .add_gear(1.000)
+        .add_gear(0.820)
+        .add_gear(0.728);
+}
+
+public node main {
+    set_engine(lta_blackwing())
+    set_vehicle(mercedes_vehicle())
+    set_transmission(mercedes_transmission())
+}

@@ -1,0 +1,590 @@
+import "engine_sim.mr"
+
+// Audi W12 (Bentley Continental GT) by GearheadLydia
+// 2022-09-19 - revision 1
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+// firing order: 1 12 5 8 3 10 6 7 2 11 4 9
+
+public node audi_w12_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 7200 * units.rpm;
+	input limiter_duration: 0.08;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire01,  (0.0/12.0) * cycle)
+            .connect_wire(wires.wire12,  (1.0/12.0) * cycle)
+			.connect_wire(wires.wire05,  (2.0/12.0) * cycle)
+			.connect_wire(wires.wire08,  (3.0/12.0) * cycle)
+			.connect_wire(wires.wire03,  (4.0/12.0) * cycle)
+			.connect_wire(wires.wire10,  (5.0/12.0) * cycle)
+			.connect_wire(wires.wire06,  (6.0/12.0) * cycle)
+			.connect_wire(wires.wire07,  (7.0/12.0) * cycle)
+			.connect_wire(wires.wire02,  (8.0/12.0) * cycle)
+			.connect_wire(wires.wire11,  (9.0/12.0) * cycle)
+			.connect_wire(wires.wire04, (10.0/12.0) * cycle)
+			.connect_wire(wires.wire09, (11.0/12.0) * cycle);
+}
+
+private node wires {
+    output wire01: ignition_wire();
+    output wire02: ignition_wire();
+    output wire03: ignition_wire();
+    output wire04: ignition_wire();
+    output wire05: ignition_wire();
+    output wire06: ignition_wire();
+    output wire07: ignition_wire();
+    output wire08: ignition_wire();
+    output wire09: ignition_wire();
+    output wire10: ignition_wire();
+    output wire11: ignition_wire();
+    output wire12: ignition_wire();
+}
+
+// cams copied from VR6 R32
+
+public node audi_w12_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 272 * units.deg,
+            gamma: 1.5,
+            lift: 9.85 * units.mm,
+            steps: 100
+        );
+}
+
+public node audi_w12_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 258 * units.deg,
+            gamma: 1.5,
+            lift: 9.90 * units.mm,
+            steps: 100
+        );
+}
+
+public node audi_w12_camshaft_builder {
+    input in_lobe_profile: audi_w12_lobe_profile_int();
+	input ex_lobe_profile: audi_w12_lobe_profile_exh();
+    input intake_lobe_profile: in_lobe_profile;
+    input exhaust_lobe_profile: ex_lobe_profile;
+    input lobe_separation: 86.5 * units.deg;
+    input intake_lobe_center: 110.0  * units.deg;
+    input exhaust_lobe_center: 110.0 * units.deg;
+    input advance: -19.0 * units.deg;
+    input base_radius: 17 * units.mm;
+
+    output intake_cam_LO: _intake_cam_LO;
+    output exhaust_cam_LO: _exhaust_cam_LO;
+    output intake_cam_LI: _intake_cam_LI;
+    output exhaust_cam_LI: _exhaust_cam_LI;
+    output intake_cam_RI: _intake_cam_RI;
+    output exhaust_cam_RI: _exhaust_cam_RI;
+    output intake_cam_RO: _intake_cam_RO;
+    output exhaust_cam_RO: _exhaust_cam_RO;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_LO(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_LO(params, lobe_profile: exhaust_lobe_profile)
+
+    camshaft _intake_cam_LI(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_LI(params, lobe_profile: exhaust_lobe_profile)
+
+    camshaft _intake_cam_RI(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_RI(params, lobe_profile: exhaust_lobe_profile)
+
+    camshaft _intake_cam_RO(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_RO(params, lobe_profile: exhaust_lobe_profile)
+
+
+	// firing order: 1 12 5 8 3 10 6 7 2 11 4 9
+
+    label rot30(30 * units.deg)
+	label rot60(60 * units.deg)
+    label rot90(90 * units.deg)
+    label rot120(120 * units.deg)
+    label rot180(180 * units.deg)
+    label rot360(360 * units.deg)
+
+    _intake_cam_LO
+        .add_lobe(rot360 + intake_lobe_center + ( 0 * rot60)) //  #1
+		.add_lobe(rot360 + intake_lobe_center + ( 4 * rot60)) //  #3
+		.add_lobe(rot360 + intake_lobe_center + ( 2 * rot60)) //  #5
+
+    _intake_cam_LI
+        .add_lobe(rot360 + intake_lobe_center + ( 8 * rot60)) //  #2
+		.add_lobe(rot360 + intake_lobe_center + (10 * rot60)) //  #4
+		.add_lobe(rot360 + intake_lobe_center + ( 6 * rot60)) //  #6
+
+    _intake_cam_RI
+        .add_lobe(rot360 + intake_lobe_center + ( 7 * rot60)) //  #7
+		.add_lobe(rot360 + intake_lobe_center + (11 * rot60)) //  #9
+		.add_lobe(rot360 + intake_lobe_center + ( 9 * rot60)) // #11
+
+    _intake_cam_RO
+        .add_lobe(rot360 + intake_lobe_center + ( 3 * rot60)) //  #8
+		.add_lobe(rot360 + intake_lobe_center + ( 5 * rot60)) // #10
+		.add_lobe(rot360 + intake_lobe_center + ( 1 * rot60)) // #12
+
+    _exhaust_cam_LO
+        .add_lobe(rot360 - exhaust_lobe_center + ( 0 * rot60)) //  #1
+		.add_lobe(rot360 - exhaust_lobe_center + ( 4 * rot60)) //  #3
+		.add_lobe(rot360 - exhaust_lobe_center + ( 2 * rot60)) //  #5
+
+    _exhaust_cam_LI
+        .add_lobe(rot360 - exhaust_lobe_center + ( 8 * rot60)) //  #2
+		.add_lobe(rot360 - exhaust_lobe_center + (10 * rot60)) //  #4
+		.add_lobe(rot360 - exhaust_lobe_center + ( 6 * rot60)) //  #6
+
+    _exhaust_cam_RI
+        .add_lobe(rot360 - exhaust_lobe_center + ( 7 * rot60)) //  #7
+		.add_lobe(rot360 - exhaust_lobe_center + (11 * rot60)) //  #9
+		.add_lobe(rot360 - exhaust_lobe_center + ( 9 * rot60)) // #11
+
+    _exhaust_cam_RO
+        .add_lobe(rot360 - exhaust_lobe_center + ( 3 * rot60)) //  #8
+		.add_lobe(rot360 - exhaust_lobe_center + ( 5 * rot60)) // #10
+		.add_lobe(rot360 - exhaust_lobe_center + ( 1 * rot60)) // #12
+}
+
+private node add_flow_sample {
+    input lift;
+    input flow;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
+}
+
+public node audi_w12_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 45.0 * units.cc;
+    input flip_display: false;
+	
+	input flow_attenuation: 1.0;
+    input lift_scale: 50.0;
+    alias output __out: head;
+
+    function intake_flow(50 * units.thou)
+    intake_flow
+        .add_flow_sample(0,    0  * flow_attenuation)
+        .add_flow_sample(50,   25 * flow_attenuation)
+        .add_flow_sample(100,  76 * flow_attenuation)
+        .add_flow_sample(150, 100 * flow_attenuation)
+        .add_flow_sample(200, 146 * flow_attenuation)
+        .add_flow_sample(250, 175 * flow_attenuation)
+        .add_flow_sample(300, 212 * flow_attenuation)
+        .add_flow_sample(350, 230 * flow_attenuation)
+        .add_flow_sample(400, 255 * flow_attenuation)
+        .add_flow_sample(450, 275 * flow_attenuation)
+        .add_flow_sample(500, 294 * flow_attenuation)
+        .add_flow_sample(550, 300 * flow_attenuation)
+        .add_flow_sample(600, 314 * flow_attenuation)
+        .add_flow_sample(650, 314 * flow_attenuation)
+        .add_flow_sample(700, 314 * flow_attenuation)
+
+    function exhaust_flow(50 * units.thou)
+    exhaust_flow
+        .add_flow_sample(0,    0  * flow_attenuation)
+        .add_flow_sample(50,   25 * flow_attenuation)
+        .add_flow_sample(100,  70 * flow_attenuation)
+        .add_flow_sample(150, 100 * flow_attenuation)
+        .add_flow_sample(200, 132 * flow_attenuation)
+        .add_flow_sample(250, 140 * flow_attenuation)
+        .add_flow_sample(300, 156 * flow_attenuation)
+        .add_flow_sample(350, 170 * flow_attenuation)
+        .add_flow_sample(400, 181 * flow_attenuation)
+        .add_flow_sample(450, 191 * flow_attenuation)
+        .add_flow_sample(500, 207 * flow_attenuation)
+        .add_flow_sample(550, 214 * flow_attenuation)
+        .add_flow_sample(600, 228 * flow_attenuation)
+        .add_flow_sample(650, 228 * flow_attenuation)
+        .add_flow_sample(700, 228 * flow_attenuation)
+
+		
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: 180.0 * units.cc,
+        intake_runner_cross_section_area: 2 * 12.4087 * units.cm2,
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+
+public node w12 {
+    alias output __out: engine;
+
+    wires wires()
+
+    label bore(84.0 * units.mm)
+    label stroke(90.2 * units.mm)
+    label rod_length(166.85 * units.mm)
+    label rod_mass(434 * units.g)
+	label piston_mass(400 * units.g)
+    label compression_height(34.5 * units.mm)
+	label piston_dome(10.0 * units.cc)
+	label deck_height(248.00 * units.mm)
+    label crank_mass(55 * units.lb)
+    label flywheel_mass(25 * units.lb)
+    label flywheel_radius(6 * units.inch)
+
+    engine engine(
+        name: "Bentley (Audi) W12",
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 850 * units.rpm,
+        redline: 6800 * units.rpm,
+        fuel: fuel(
+            max_turbulence_effect: 8.0,
+            burning_efficiency_randomness: 0.2,
+            max_burning_efficiency: 0.85),
+        throttle_gamma: 1.5,
+		simulation_frequency: 6000
+    )
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 15 * units.kg, radius: 8.0 * units.cm)
+    )
+
+    crankshaft c0(
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 10.0 * units.lb_ft,
+        moment_of_inertia: crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 132.5 * units.deg
+    )
+
+    rod_journal rj01(angle:  (0 + 0)   * units.deg)
+    rod_journal rj02(angle:  (0 + 12)  * units.deg)
+    rod_journal rj03(angle: (120 - 15) * units.deg)
+    rod_journal rj04(angle: (120 - 3)  * units.deg)
+    rod_journal rj05(angle: (240 + 0)  * units.deg)
+    rod_journal rj06(angle: (240 + 12) * units.deg)
+    rod_journal rj07(angle: (240 - 15) * units.deg)
+    rod_journal rj08(angle: (240 - 3)  * units.deg)
+    rod_journal rj09(angle: (120 + 0)  * units.deg)
+    rod_journal rj10(angle: (120 + 12) * units.deg)
+    rod_journal rj11(angle:  (0 - 15)  * units.deg)
+    rod_journal rj12(angle:  (0 - 3)   * units.deg)
+
+    c0
+        .add_rod_journal(rj01)
+        .add_rod_journal(rj02)
+        .add_rod_journal(rj03)
+        .add_rod_journal(rj04)
+        .add_rod_journal(rj05)
+        .add_rod_journal(rj06)
+        .add_rod_journal(rj07)
+        .add_rod_journal(rj08)
+        .add_rod_journal(rj09)
+        .add_rod_journal(rj10)
+        .add_rod_journal(rj11)
+        .add_rod_journal(rj12)
+
+
+    piston_parameters piston_params(
+        mass: piston_mass,
+        //blowby: 0,
+        compression_height: compression_height,
+        wrist_pin_position: 0.0,
+        displacement: piston_dome
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
+        center_of_mass: 0.0,
+        length: rod_length
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: bore,
+        deck_height: deck_height
+    )
+
+    intake intake_shrt(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(800.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.995,
+        throttle_gamma: 1.5,
+        runner_flow_rate: k_carb(800.0),
+        runner_length: 8.0 * units.inch,
+        velocity_decay: 0.2
+    )
+
+    intake intake_long(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(800.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.995,
+        throttle_gamma: 1.5,
+        runner_flow_rate: k_carb(800.0),
+        runner_length: 10.0 * units.inch,
+        velocity_decay: 0.4
+    )
+
+    exhaust_system_parameters es_params_long(
+        outlet_flow_rate: k_carb(700.0),
+        primary_tube_length: 26.0 * units.inch,
+        primary_flow_rate: k_carb(550.0),
+        velocity_decay: 0.8, //0.5
+        volume: 40.0 * units.L
+    )
+
+    exhaust_system_parameters es_params_shrt(
+        outlet_flow_rate: k_carb(700.0),
+        primary_tube_length: 24.0 * units.inch,
+        primary_flow_rate: k_carb(550.0),
+        velocity_decay: 0.4, //0.5
+        volume: 40.0 * units.L
+    )
+    exhaust_system exhaustLO(es_params_shrt, audio_volume:  1.0*0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.001), length: 500 * units.mm)
+    exhaust_system exhaustLI(es_params_long, audio_volume:  0.8*0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.001), length: 500 * units.mm)
+
+    exhaust_system exhaustRI(es_params_long, audio_volume: 0.48*0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.001), length: 500 * units.mm)
+    exhaust_system exhaustRO(es_params_shrt, audio_volume:  0.6*0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.001), length: 500 * units.mm)
+	
+	
+	label position_xO_offset(deck_height * 0.10056932340128085522055018878054)  // sin(43.5)-sin(36)
+	label position_yO_offset(deck_height * -0.08364262336265978610900930599309) // (1-cos(43.5))-(1-cos(36))
+	label position_xI_offset(deck_height * -0.11062649203286471411984294644969)  // sin(28.5)-sin(36)
+	label position_yI_offset(deck_height * 0.06980011828701795002770172650171) // (1-cos(28.5))-(1-cos(36))
+	
+
+    cylinder_bank bLO(bank_params, angle: 43.5 * units.deg) // LO (first)
+	//cylinder_bank bLO(bank_params, angle: 36 * units.deg, position_x: -position_xO_offset, position_y: position_yO_offset) // LO (first)
+    bLO
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj01,
+            intake: intake_long,
+            exhaust_system: exhaustLO,
+            ignition_wire: wires.wire01
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj05,
+            intake: intake_long,
+            exhaust_system: exhaustLO,
+            ignition_wire: wires.wire03
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj09,
+            intake: intake_long,
+            exhaust_system: exhaustLO,
+            ignition_wire: wires.wire05
+        )
+
+    cylinder_bank bRI(bank_params, angle: -28.5 * units.deg) // RI (second)
+	//cylinder_bank bRI(bank_params, angle: -36 * units.deg, position_x: position_xI_offset, position_y: position_yI_offset) // RI (second)
+    bRI
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj02,
+            intake: intake_shrt,
+            exhaust_system: exhaustRI,
+            ignition_wire: wires.wire07
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj06,
+            intake: intake_shrt,
+            exhaust_system: exhaustRI,
+            ignition_wire: wires.wire09
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj10,
+            intake: intake_shrt,
+            exhaust_system: exhaustRI,
+            ignition_wire: wires.wire11
+        )
+	
+    cylinder_bank bLI(bank_params, angle: 28.5 * units.deg) // LI (third)
+	//cylinder_bank bLI(bank_params, angle: 36 * units.deg, position_x: -position_xI_offset, position_y: position_yI_offset) // LI (third)
+    bLI
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj03,
+            intake: intake_shrt,
+            exhaust_system: exhaustLI,
+            ignition_wire: wires.wire02
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj07,
+            intake: intake_shrt,
+            exhaust_system: exhaustLI,
+            ignition_wire: wires.wire04
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj11,
+            intake: intake_shrt,
+            exhaust_system: exhaustLI,
+            ignition_wire: wires.wire06
+        )
+
+    cylinder_bank bRO(bank_params, angle: -43.5 * units.deg) // RO (fourth)
+	//cylinder_bank bRO(bank_params, angle: -36 * units.deg, position_x: position_xO_offset, position_y: position_yO_offset) // LO (first)
+    bRO
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj04,
+            intake: intake_long,
+            exhaust_system: exhaustRO,
+            ignition_wire: wires.wire08
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj08,
+            intake: intake_long,
+            exhaust_system: exhaustRO,
+            ignition_wire: wires.wire10
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj12,
+            intake: intake_long,
+            exhaust_system: exhaustRO,
+            ignition_wire: wires.wire12
+        )
+
+    engine
+        .add_cylinder_bank(bLO)
+        .add_cylinder_bank(bRI)
+        .add_cylinder_bank(bLI)
+        .add_cylinder_bank(bRO)
+
+    engine.add_crankshaft(c0)
+
+    audi_w12_camshaft_builder camshaft(
+	    in_lobe_profile: audi_w12_lobe_profile_int(),
+		ex_lobe_profile: audi_w12_lobe_profile_exh()
+	)
+
+    bLO.set_cylinder_head (
+        audi_w12_head(
+            intake_camshaft: camshaft.intake_cam_LO,
+            exhaust_camshaft: camshaft.exhaust_cam_LO,
+            flip_display: true
+        )
+    )
+    bRI.set_cylinder_head (
+        audi_w12_head(
+            intake_camshaft: camshaft.intake_cam_RI,
+            exhaust_camshaft: camshaft.exhaust_cam_RI,
+            flip_display: false
+        )
+    )
+    bLI.set_cylinder_head (
+        audi_w12_head(
+            intake_camshaft: camshaft.intake_cam_LI,
+            exhaust_camshaft: camshaft.exhaust_cam_LI,
+            flip_display: true
+        )
+    )
+    bRO.set_cylinder_head (
+        audi_w12_head(
+            intake_camshaft: camshaft.intake_cam_RO,
+            exhaust_camshaft: camshaft.exhaust_cam_RO,
+            flip_display: false
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 20 * units.deg)
+        .add_sample(1000 * units.rpm, 30 * units.deg)
+        .add_sample(2000 * units.rpm, 35 * units.deg)
+        .add_sample(3000 * units.rpm, 40 * units.deg)
+        .add_sample(4000 * units.rpm, 45 * units.deg)
+        .add_sample(5000 * units.rpm, 50 * units.deg)
+        .add_sample(6000 * units.rpm, 55 * units.deg)
+		.add_sample(7000 * units.rpm, 55 * units.deg)
+		.add_sample(8000 * units.rpm, 60 * units.deg)
+		.add_sample(9000 * units.rpm, 60 * units.deg)
+
+    engine.add_ignition_module(
+        audi_w12_distributor(
+            wires: wires,
+            timing_curve: timing_curve,
+            rev_limit: 7200 * units.rpm
+        )
+    )
+}
+
+// 2004 Bentley Continental GT
+public node bentley_continental_gt_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 5320 * units.lb,
+            drag_coefficient: 0.32,
+            cross_sectional_area: 2.65 * (units.m * units.m),
+            diff_ratio: 3.52,
+            tire_radius: 351.79 * units.mm, // 275/40ZR19
+            rolling_resistance: 500 * units.N
+        );
+}
+
+public node bentley_continental_gt_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 900 * units.lb_ft
+        )
+        .add_gear(4.171)
+        .add_gear(2.34)
+        .add_gear(1.521)
+        .add_gear(1.143)
+        .add_gear(0.867)
+        .add_gear(0.691);
+}
+
+public node main {
+    set_engine(w12())
+    set_vehicle(bentley_continental_gt_vehicle())
+    set_transmission(bentley_continental_gt_transmission())
+}

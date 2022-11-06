@@ -1,0 +1,396 @@
+import "engine_sim.mr"
+
+// Honda RC211V replica by GearheadLydia
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+// 12534
+// 0 | 284.5 | 360 | 464.5 | 644.5
+
+public node honda_rc211v_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 15250 * units.rpm;
+	input limiter_duration: 0.07;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire1,  0.0  * units.deg)
+            .connect_wire(wires.wire2, 254.5 * units.deg)
+			.connect_wire(wires.wire5, 360.0 * units.deg)
+			.connect_wire(wires.wire3, 464.5 * units.deg)
+			.connect_wire(wires.wire4, 644.5 * units.deg);
+}
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+    output wire3: ignition_wire();
+    output wire4: ignition_wire();
+    output wire5: ignition_wire();
+}
+
+// camshafts borrowed from Ange Yaghi's Hayabusa
+
+public node honda_rc211v_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+			duration_at_50_thou: 240 * units.deg,
+			gamma: 1.2,
+			lift: 345 * units.thou,
+			steps: 100
+        );
+}
+
+public node honda_rc211v_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+			duration_at_50_thou: 220 * units.deg,
+			gamma: 1.2,
+			lift: 294 * units.thou,
+			steps: 100
+        );
+}
+
+public node honda_rc211v_camshaft_builder {
+    input in_lobe_profile: honda_rc211v_lobe_profile_int();
+    input ex_lobe_profile: honda_rc211v_lobe_profile_exh();
+    input lobe_separation: 110.0 * units.deg;
+    input intake_lobe_center: 105 * units.deg;
+    input exhaust_lobe_center: 100 * units.deg;
+    input advance_in: -10.0 * units.deg;
+    input advance_ex: -10.0 * units.deg;
+    input base_radius: 500 * units.thou;
+
+    output intake_cam_F: _intake_cam_F;
+    output exhaust_cam_F: _exhaust_cam_F;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
+
+    camshaft_parameters params(
+        advance: advance_in,
+        base_radius: base_radius
+    )
+
+	label rot360(360 * units.deg)
+
+    camshaft _intake_cam_F(params, lobe_profile: in_lobe_profile, advance: advance_in)
+    camshaft _exhaust_cam_F(params, lobe_profile: ex_lobe_profile, advance: advance_ex)
+
+    camshaft _intake_cam_R(params, lobe_profile: in_lobe_profile, advance: advance_in)
+    camshaft _exhaust_cam_R(params, lobe_profile: ex_lobe_profile, advance: advance_ex)
+
+    _intake_cam_F
+        .add_lobe(rot360 + intake_lobe_center +  0.0  * units.deg) // #1
+		.add_lobe(rot360 + intake_lobe_center + 464.5 * units.deg) // #3
+		.add_lobe(rot360 + intake_lobe_center + 360.0 * units.deg) // #5
+
+    _intake_cam_R
+        .add_lobe(rot360 + intake_lobe_center + 254.5 * units.deg) // #2
+		.add_lobe(rot360 + intake_lobe_center + 644.5 * units.deg) // #4
+
+	_exhaust_cam_F
+        .add_lobe(rot360 - exhaust_lobe_center +  0.0  * units.deg) // #1
+		.add_lobe(rot360 - exhaust_lobe_center + 464.5 * units.deg) // #3
+		.add_lobe(rot360 - exhaust_lobe_center + 360.0 * units.deg) // #5
+
+	_exhaust_cam_R
+        .add_lobe(rot360 - exhaust_lobe_center + 254.5 * units.deg) // #2
+		.add_lobe(rot360 - exhaust_lobe_center + 644.5 * units.deg) // #4
+}
+
+private node add_flow_sample {
+    input lift;
+    input flow;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
+}
+
+public node honda_rc211v_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 40.0 * units.cc;
+    input flip_display: false;
+	
+	input flow_attenuation: 1.5;
+    input lift_scale: 1.0;
+    alias output __out: head;
+
+    function intake_flow(50 * units.thou)
+    intake_flow
+        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
+        .add_flow_sample(50 * lift_scale, 40 * flow_attenuation)
+        .add_flow_sample(100 * lift_scale, 80 * flow_attenuation)
+        .add_flow_sample(150 * lift_scale, 125 * flow_attenuation)
+        .add_flow_sample(200 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(250 * lift_scale, 190 * flow_attenuation)
+        .add_flow_sample(300 * lift_scale, 210 * flow_attenuation)
+        .add_flow_sample(350 * lift_scale, 225 * flow_attenuation)
+        .add_flow_sample(400 * lift_scale, 230 * flow_attenuation)
+        .add_flow_sample(450 * lift_scale, 240 * flow_attenuation)
+
+    function exhaust_flow(50 * units.thou)
+    exhaust_flow
+        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
+        .add_flow_sample(50 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(100 * lift_scale, 70 * flow_attenuation)
+        .add_flow_sample(150 * lift_scale, 100 * flow_attenuation)
+        .add_flow_sample(200 * lift_scale, 125 * flow_attenuation)
+        .add_flow_sample(250 * lift_scale, 140 * flow_attenuation)
+        .add_flow_sample(300 * lift_scale, 150 * flow_attenuation)
+        .add_flow_sample(350 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(400 * lift_scale, 165 * flow_attenuation)
+        .add_flow_sample(450 * lift_scale, 170 * flow_attenuation)
+
+		
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: circle_area(0.9 * units.inch) * 10 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+
+public node honda_rc211v_engine {
+    alias output __out: engine;
+
+    wires wires()
+
+    label bore(72.3 * units.mm)
+    label stroke(48.2 * units.mm)
+    label rod_length(110 * units.mm)
+    label rod_mass(250 * units.g) // guesstimate based on aftermarket chromoly rods - stock rods are titanium
+	label piston_mass(250 * units.g)
+    label compression_height(20 * units.mm)
+	label piston_dome(0.0 * units.cc)
+	label deck_clearance(0.0 * units.mm)
+    label crank_mass(10 * units.lb)
+    label flywheel_mass(5 * units.lb)
+    label flywheel_radius(3 * units.inch)
+
+    engine engine(
+        name: "Honda RC211V",
+        starter_torque: 300 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
+        redline: 15000 * units.rpm,
+        throttle_gamma: 1.0
+    )
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 15 * units.kg, radius: 8.0 * units.cm)
+    )
+
+    crankshaft c0(
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 10.0 * units.lb_ft,
+        moment_of_inertia: crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 52.25 * units.deg
+    )
+
+    rod_journal rj1(angle:  0.0  * units.deg)
+    rod_journal rj2(angle: 105.5 * units.deg) // 360 - 105.5
+    rod_journal rj3(angle:  0.0  * units.deg)
+
+    c0
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+
+
+    piston_parameters piston_params(
+        mass: piston_mass,
+        //blowby: 0,
+        compression_height: compression_height,
+        wrist_pin_position: 0.0,
+        displacement: piston_dome
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
+        center_of_mass: 0.0,
+        length: rod_length
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: bore,
+        deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
+    )
+
+    intake intake(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 50.0 * units.cm2,
+        intake_flow_rate: k_carb(500.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.992,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(450.0),
+        runner_length: 3.5 * units.inch,
+        velocity_decay: 0.1
+    )
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(350.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(200.0),
+        velocity_decay: 0.2, //0.5
+        volume: 10.0 * units.L
+    )
+
+    exhaust_system exhaustF(
+		es_params,
+		audio_volume: 1.0 * 0.01,
+		impulse_response: ir_lib.default_0,
+		length: 250 * units.mm
+	)
+    exhaust_system exhaustR(
+		es_params,
+		audio_volume: 1.0 * 0.01,
+		impulse_response: ir_lib.default_0,
+		length: 240 * units.mm
+	)
+
+    cylinder_bank bF(bank_params, angle: -37.75 * units.deg) // Front (first)
+    bF
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire1,
+            intake: intake,
+            exhaust_system: exhaustF
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaustF
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaustF
+        )
+
+    cylinder_bank bR(bank_params, angle: 37.75 * units.deg) // R (second)
+    bR
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire2,
+            intake: intake,
+            exhaust_system: exhaustR
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaustR
+        )
+    engine
+        .add_cylinder_bank(bF)
+        .add_cylinder_bank(bR)
+
+    engine.add_crankshaft(c0)
+
+    honda_rc211v_camshaft_builder camshaft()
+
+    bF.set_cylinder_head (
+        honda_rc211v_head(
+            intake_camshaft: camshaft.intake_cam_F,
+            exhaust_camshaft: camshaft.exhaust_cam_F,
+            flip_display: false
+        )
+    )
+    bR.set_cylinder_head (
+        honda_rc211v_head(
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
+            flip_display: true
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample( 0000 * units.rpm, 30 * units.deg)
+        .add_sample( 1000 * units.rpm, 40 * units.deg)
+        .add_sample( 2000 * units.rpm, 45 * units.deg)
+        .add_sample( 3000 * units.rpm, 50 * units.deg)
+        .add_sample( 4000 * units.rpm, 55 * units.deg)
+        .add_sample( 5000 * units.rpm, 60 * units.deg)
+        .add_sample( 6000 * units.rpm, 65 * units.deg)
+		.add_sample( 7000 * units.rpm, 70 * units.deg)
+		.add_sample( 8000 * units.rpm, 75 * units.deg)
+
+    engine.add_ignition_module(
+        honda_rc211v_distributor(
+            wires: wires,
+            timing_curve: timing_curve,
+            rev_limit: 15250 * units.rpm
+        )
+    )
+}
+
+// Honda RC211V MotoGP
+public node honda_rc211v_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 148 * units.kg,
+            drag_coefficient: 0.32,
+            cross_sectional_area: 1.78 * (units.m * units.m),
+            diff_ratio: 4.062,
+            tire_radius: 314 * units.mm, // 245/40ZR17
+            rolling_resistance: 250 * units.N
+        );
+}
+
+public node honda_rc211v_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 500 * units.lb_ft
+        )
+        .add_gear(3.066)
+        .add_gear(1.956)
+        .add_gear(1.428)
+        .add_gear(1.125)
+        .add_gear(0.914)
+        .add_gear(0.717);
+}
+
+public node main {
+    set_engine(honda_rc211v_engine())
+    set_vehicle(honda_rc211v_vehicle())
+    set_transmission(honda_rc211v_transmission())
+}
