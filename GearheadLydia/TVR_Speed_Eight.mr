@@ -457,7 +457,7 @@ public node tvr_cerbera_speed_eight_vehicle {
         );
 }
 
-public node tvr_cerbera_speed_eight_transmission {
+public node borgwarner_t5_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 700 * units.lb_ft
@@ -472,6 +472,6 @@ public node tvr_cerbera_speed_eight_transmission {
 public node main {
     set_engine(ajp8())
     set_vehicle(tvr_cerbera_speed_eight_vehicle())
-    set_transmission(tvr_cerbera_speed_eight_transmission())
+    set_transmission(borgwarner_t5_transmission())
 }
 
