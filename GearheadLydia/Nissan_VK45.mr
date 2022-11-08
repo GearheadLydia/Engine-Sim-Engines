@@ -283,18 +283,27 @@ public node vk45 {
 		runner_length: 15.0 * units.inch,
 		velocity_decay: 0.1
 	)
-
+	
+	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 15.0 * units.inch,
-        primary_flow_rate: k_carb(250.0),
+        outlet_flow_rate: k_carb(900.0),
+        primary_tube_length: 20.0 * units.inch,
+        primary_flow_rate: k_carb(180.0),
         velocity_decay: 1.0, //0.5
-        volume: 50.0 * units.L
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 700 * units.mm,
+		volume: (500 * units.mm * circle_area(exhaust_radius)) + (200 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 200 * units.mm)
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 300 * units.mm)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+	
+	label pipe_length_1(7.0 * units.inch)
+	label pipe_length_2(4.5 * units.inch)
+	label pipe_length_3(2.0 * units.inch)
+	label pipe_length_4(0.0 * units.inch)
+	
+	label exhaust_stagger(30 * units.mm)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
     b0
@@ -304,8 +313,8 @@ public node vk45 {
             rod_journal: rj0,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 7 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -313,8 +322,8 @@ public node vk45 {
             rod_journal: rj1,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 4.5 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -322,8 +331,8 @@ public node vk45 {
             rod_journal: rj2,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 2 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -331,8 +340,8 @@ public node vk45 {
             rod_journal: rj3,
             ignition_wire: wires.wire7,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 0 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4 + exhaust_stagger
         )
 		
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -343,8 +352,8 @@ public node vk45 {
             rod_journal: rj0,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 7 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -352,8 +361,8 @@ public node vk45 {
             rod_journal: rj1,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 4.5 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -361,8 +370,8 @@ public node vk45 {
             rod_journal: rj2,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 2 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -370,8 +379,8 @@ public node vk45 {
             rod_journal: rj3,
             ignition_wire: wires.wire8,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 0 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4
         )
 
     engine
