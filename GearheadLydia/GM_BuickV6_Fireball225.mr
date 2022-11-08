@@ -13,8 +13,8 @@ label cycle(2 * 360 * units.deg)
 public node buick_fireball_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6000 * units.rpm;
-	input limiter_duration: 0.2;
+    input rev_limit: 5200 * units.rpm;
+	input limiter_duration: 0.15;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 6.0) * cycle)
@@ -86,15 +86,95 @@ public node buick_fireball_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot120 + rot30)
 }
 
-public node fireball {
+public node buick_fireball_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input flip_display: false;
+    alias output __out: head;
+
+    function intake_flow(50 * units.thou)
+    intake_flow
+        .add_flow_sample(0, 0)
+        .add_flow_sample(50, 25)
+        .add_flow_sample(100, 75)
+        .add_flow_sample(150, 100)
+        .add_flow_sample(200, 130)
+        .add_flow_sample(250, 180)
+        .add_flow_sample(300, 190)
+        .add_flow_sample(350, 220)
+        .add_flow_sample(400, 240)
+        .add_flow_sample(450, 250)
+        .add_flow_sample(500, 260)
+        .add_flow_sample(550, 260)
+        .add_flow_sample(600, 260)
+        .add_flow_sample(650, 255)
+        .add_flow_sample(700, 250)
+
+    function exhaust_flow(50 * units.thou)
+    exhaust_flow
+        .add_flow_sample(0, 0)
+        .add_flow_sample(50, 25)
+        .add_flow_sample(100, 50)
+        .add_flow_sample(150, 75)
+        .add_flow_sample(200, 100)
+        .add_flow_sample(250, 125)
+        .add_flow_sample(300, 160)
+        .add_flow_sample(350, 175)
+        .add_flow_sample(400, 180)
+        .add_flow_sample(450, 190)
+        .add_flow_sample(500, 200)
+        .add_flow_sample(550, 205)
+        .add_flow_sample(600, 210)
+        .add_flow_sample(650, 210)
+        .add_flow_sample(700, 210)
+
+    cylinder_head head(
+        chamber_volume: 48.0 * units.cc,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(1.0 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(1.0 * units.inch),
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+public node buick_fireball_225 {
     alias output __out: engine;
 
     wires wires()
+	
+    label bore(3.750 * units.inch)
+	label bore_spacing(4.240 * units.inch)
+    label stroke(3.400 * units.inch)
+    label rod_length(5.960 * units.inch)
+    label rod_mass(600 * units.g)
+    label compression_height(1.870 * units.inch)
+	label piston_mass(550 * units.g)
+	label piston_dome(-4.00 * units.cc)
+	label deck_height(10.187 * units.inch) // 9.535 for 231
+    label crank_mass(50 * units.lb)
+    label flywheel_mass(57 * units.lb)
+    label flywheel_radius(6 * units.inch)
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 20 * units.kg, radius: 8.0 * units.cm)
+    )
 
     engine engine(
-        name: "Buick Fireball V6 (firing order only)",
+        name: "Buick Fireball V6",
         starter_torque: 200 * units.lb_ft,
-        redline: 5500 * units.rpm,
+        redline: 5000 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 3.0,
             burning_efficiency_randomness: 0.5,
@@ -103,14 +183,15 @@ public node fireball {
     )
 
     crankshaft c0(
-        throw: 2.0 * units.inch,
-        flywheel_mass: 29 * 2 * units.lb,
-        mass: 35 * units.lb,
-        friction_torque: 10.0 * units.lb_ft,
-        moment_of_inertia: 0.22986844776863666 * 2,
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 5.0 * units.lb_ft,
+        moment_of_inertia:
+            crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: constants.pi / 3
+        tdc: 45 * units.deg // -45 degrees off vertical
     )
 
     rod_journal rj0(angle: 0.0)
@@ -123,94 +204,118 @@ public node fireball {
         .add_rod_journal(rj2)
 
     piston_parameters piston_params(
-        mass: 880 * units.g,
-        blowby: 0,
-        compression_height: 1.640 * units.inch,
-        wrist_pin_position: 0.0,
-        displacement: 0.0
+        mass: piston_mass,
+        //blowby: 0,
+        compression_height: compression_height,
+        wrist_pin_position: 0 * units.mm,
+        displacement: piston_dome
     )
 
     connecting_rod_parameters cr_params(
-        mass: 785.0 * units.g,
-        moment_of_inertia: 0.0015884918028487504,
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
         center_of_mass: 0.0,
-        length: 6.135 * units.inch
+        length: rod_length
     )
 
     cylinder_bank_parameters bank_params(
-        bore: 4.25 * units.inch,
-        deck_height: 9.8 * units.inch
+        bore: bore,
+        deck_height: deck_height
     )
 
-    chevy_bbc_stock_intake intake(
-        carburetor_cfm: 650.0,
-        idle_flow_rate_cfm: 0.007,
-        idle_throttle_plate_position: 0.991
+    intake intake(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100 * units.cm2,
+        intake_flow_rate: k_carb(600),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.994,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(400.0),
+        runner_length: 7.0 * units.inch,
+        velocity_decay: 0.1
     )
+	
+	label exhaust_radius((1.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(550.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(90.0),
+        outlet_flow_rate: k_carb(600.0),
+        primary_tube_length: 12.0 * units.inch,
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-        volume: 50.0 * units.L
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 900 * units.mm,
+		volume: (800 * units.mm * circle_area(exhaust_radius)) + (100 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust0(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 500 * units.mm)
-    exhaust_system exhaust1(es_params, audio_volume: 0.6 * 0.01, impulse_response: ir_lib.default_0, length: 500 * units.mm)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+	
+	label pipe_length_1(10 * units.inch)
+	label pipe_length_2(5 * units.inch)
+	label pipe_length_3(0 * units.inch)
+	
+	label exhaust_stagger(6 * units.inch)
 
     cylinder_bank b0(bank_params, angle: -45 * units.deg) // R (first)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.6)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
+            ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaust0,
-            ignition_wire: wires.wire1
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
+            ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaust0,
-            ignition_wire: wires.wire3
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.6)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
+            ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaust0,
-            ignition_wire: wires.wire5
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
     b1
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.6)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
+            ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaust1,
-            ignition_wire: wires.wire2
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.6)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            intake: intake,
-            exhaust_system: exhaust1,
-            ignition_wire: wires.wire4
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
-            connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
+            ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaust1,
-            ignition_wire: wires.wire6
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger
         )
 
     engine
@@ -224,14 +329,14 @@ public node fireball {
 	)
 
     b0.set_cylinder_head (
-        chevy_bbc_peanut_port_head(
+        buick_fireball_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
             flip_display: false
         )
     )
     b1.set_cylinder_head (
-        chevy_bbc_peanut_port_head(
+        buick_fireball_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: true
@@ -241,19 +346,49 @@ public node fireball {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 12 * units.deg)
-        .add_sample(1000 * units.rpm, 12 * units.deg)
+        .add_sample(1000 * units.rpm, 18 * units.deg)
         .add_sample(2000 * units.rpm, 20 * units.deg)
-        .add_sample(3000 * units.rpm, 30 * units.deg)
+        .add_sample(3000 * units.rpm, 25 * units.deg)
         .add_sample(4000 * units.rpm, 30 * units.deg)
         .add_sample(5000 * units.rpm, 30 * units.deg)
-        .add_sample(6000 * units.rpm, 28 * units.deg)
-        .add_sample(7000 * units.rpm, 25 * units.deg)
+        .add_sample(6000 * units.rpm, 30 * units.deg)
+        .add_sample(7000 * units.rpm, 30 * units.deg)
 
     engine.add_ignition_module(
         buick_fireball_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 6000 * units.rpm
+            rev_limit: 5200 * units.rpm
         )
     )
+}
+
+// 1964 Buick Special Coupe 225 4-spd
+public node buick_special_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3075 * units.lb,
+            drag_coefficient: 0.54,
+            cross_sectional_area: 2.13 * (units.m) * (units.m),
+            diff_ratio: 3.23,
+            tire_radius: 326.5 * units.mm, // 6.50 - 14
+            rolling_resistance: 400 * units.N
+        );
+}
+
+public node buick_special_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 400 * units.lb_ft
+        )
+        .add_gear(2.56)
+        .add_gear(1.91)
+        .add_gear(1.48)
+        .add_gear(1.00);
+}
+
+public node main {
+    set_engine(buick_fireball_225())
+    set_vehicle(buick_special_vehicle())
+    set_transmission(buick_special_transmission())
 }
