@@ -275,15 +275,17 @@ public node rb26 {
         runner_length: 2.5 * units.inch,
         velocity_decay: 0.1
     )
-
+	
+	label exhaust_radius((4.5 * units.inch)/2)
+	
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500.0),
-        primary_tube_length: 3.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        outlet_flow_rate: k_carb(600.0),
+        primary_tube_length: 4.0 * units.inch,
+        primary_flow_rate: k_carb(400.0),
         velocity_decay: 0.4, //0.5
-		collector_cross_section_area: circle_area(5.0 * units.inch),
-		length: 800 * units.mm,
-		volume: 800 * units.mm * circle_area(5.0 * units.inch)
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 700 * units.mm,
+		volume: 700 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system exhaust(
@@ -294,12 +296,12 @@ public node rb26 {
 
 
 	// GReddy
-	label pipe_length_1(0.2 * units.inch)
-	label pipe_length_2(1.4 * units.inch)
-	label pipe_length_3(1.0 * units.inch)
-	label pipe_length_4(0.9 * units.inch)
-	label pipe_length_5(1.3 * units.inch)
-	label pipe_length_6(0.8 * units.inch)
+	label pipe_length_1(0.0 * units.inch)
+	label pipe_length_2(1.2 * units.inch)
+	label pipe_length_3(0.8 * units.inch)
+	label pipe_length_4(0.7 * units.inch)
+	label pipe_length_5(1.1 * units.inch)
+	label pipe_length_6(0.6 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
