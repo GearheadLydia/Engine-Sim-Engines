@@ -347,8 +347,8 @@ public node gallardo_v10 {
 	
 	label exh_vol_L1(0.8)
 	label exh_vol_L3(1.0)
-	label exh_vol_R1(0.8)
-	label exh_vol_R3(1.0)
+	label exh_vol_R1(0.64)
+	label exh_vol_R3(0.8)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0

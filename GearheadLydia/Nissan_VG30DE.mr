@@ -162,8 +162,8 @@ public node nissan_vg30_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.1 * units.inch) * 9 * units.inch,
         intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(1.2 * units.inch) * 5 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.2 * units.inch),
+        exhaust_runner_volume: circle_area(0.9 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -297,11 +297,11 @@ public node vg30 {
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 700 * units.mm,
-		volume: (500 * units.mm * circle_area(exhaust_radius)) + (200 * units.mm * circle_area(exhaust_radius) * 2)
+		length: 2800 * units.mm,
+		volume: (1800 * units.mm * circle_area(exhaust_radius)) + (1000 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(4.0 * units.inch)
 	label pipe_length_2(1.1 * units.inch)

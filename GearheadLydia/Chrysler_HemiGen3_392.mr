@@ -209,6 +209,7 @@ public node chrysler_hemi_392 {
 
 	// source: https://www.onallcylinders.com/2021/06/24/2011-mopar-gen-iii-6-4l-392-hemi-apache-engine-guide-bore-stroke-cylinder-heads-cam-specs-more/
     label bore(4.09 * units.inch)
+	label bore_spacing(4.460 * units.inch)
     label stroke(3.72 * units.inch)
     label rod_length(6.200 * units.inch)
     label rod_mass(464 * units.g)
@@ -299,8 +300,6 @@ public node chrysler_hemi_392 {
 
     exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 500 * units.mm)
     exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 530 * units.mm)
-
-	label bore_spacing(4.46 * units.inch)
 	
 	label pipe_length_1(12.0 * units.inch)
 	label pipe_length_2(10.0 * units.inch)

@@ -179,8 +179,8 @@ public node chevrolet_ls3_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.43 * units.inch) * 8 * units.inch,
         intake_runner_cross_section_area: circle_area(1.43 * units.inch),
-        exhaust_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -307,7 +307,7 @@ public node chevrolet_ls3 {
 
     exhaust_system exhaustL(
 		es_params,
-		audio_volume: 0.7 * 0.01,
+		audio_volume: 1.0 * 0.01,
 		impulse_response: ir_lib.default_0
 	)
     exhaust_system exhaustR(

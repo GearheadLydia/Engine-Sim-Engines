@@ -109,6 +109,8 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
+label throttlebody_radius(20 * units.mm)
+
 public node nissan_rb26_head {
     input intake_camshaft;
     input exhaust_camshaft;

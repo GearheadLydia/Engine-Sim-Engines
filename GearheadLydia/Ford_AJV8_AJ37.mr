@@ -183,7 +183,7 @@ public node AJ37 {
 
     engine engine(
         name: "Aston Martin AJ37",
-        starter_torque: 400 * units.lb_ft,
+        starter_torque: 150 * units.lb_ft,
 		starter_speed: 800 * units.rpm,
         redline: 7000 * units.rpm,
         fuel: fuel(
@@ -277,7 +277,7 @@ public node AJ37 {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 20.0 * units.inch,
+        primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(450.0),
         velocity_decay: 0.4, //0.5
         volume: 20.0 * units.L
@@ -296,10 +296,10 @@ public node AJ37 {
 		length: 240 * units.mm
 	)
 
-	label pipe_length_1(10 * units.inch)
-	label pipe_length_2(6 * units.inch)
-	label pipe_length_3(6 * units.inch)
-	label pipe_length_4(6 * units.inch)
+	label pipe_length_1(160 * units.mm)
+	label pipe_length_2(100 * units.mm)
+	label pipe_length_3(30 * units.mm)
+	label pipe_length_4(0 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -367,7 +367,7 @@ public node AJ37 {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3 + (70 * units.mm) //intentional
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -425,32 +425,6 @@ public node AJ37 {
             rev_limit: 7300 * units.rpm
         )
     )
-}
-
-// 2010 Maserati GranTurismo S
-public node maserati_granturismo_vehicle {
-    alias output __out:
-        vehicle(
-            mass: 4310 * units.lb,
-            drag_coefficient: 0.33,
-            cross_sectional_area: 2.2 * (units.m * units.m), // estimated
-            diff_ratio: 3.29,
-            tire_radius: 354.4 * units.mm, // 285/35ZR20
-            rolling_resistance: 550 * units.N
-        );
-}
-
-public node maserati_granturismo_transmission {
-    alias output __out:
-        transmission(
-            max_clutch_torque: 700 * units.lb_ft
-        )
-        .add_gear(3.21)
-        .add_gear(2.05)
-        .add_gear(1.44)
-        .add_gear(1.11)
-        .add_gear(0.90)
-        .add_gear(0.76);
 }
 
 // 2008 Aston Martin Vantage S

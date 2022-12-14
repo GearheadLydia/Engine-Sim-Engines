@@ -204,7 +204,7 @@ public node carrera_gt_v10 {
     wires wires()
 
     engine engine(
-        name: "Porsche 980/01 V10",
+        name: "Porsche M80.01 V10",
         starter_torque: 400 * units.lb_ft,
 		starter_speed: 800 * units.rpm,
         redline: 8400 * units.rpm,
@@ -307,47 +307,33 @@ public node carrera_gt_v10 {
 
 	label exhaust_radius((4.0 * units.inch)/2)
 
-    exhaust_system_parameters es_params_L(
-        outlet_flow_rate: k_carb(800.0),
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(1600.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(650.0),
         velocity_decay: 0.9, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 480 * units.mm,
-		volume: 480 * units.mm * circle_area(exhaust_radius)
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 450 * units.mm,
+		volume: 450 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system_parameters es_params_R(
-        outlet_flow_rate: k_carb(800.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(650.0),
-        velocity_decay: 0.9, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 500 * units.mm,
-		volume: 500 * units.mm * circle_area(exhaust_radius)
-    )
-
-    exhaust_system exhaustL(
-		es_params_L,
+    exhaust_system exhaust(
+		es_params,
 		audio_volume: 1.0 * 0.01,
 		impulse_response: ir_lib.default_0
 	)
-
-    exhaust_system exhaustR(
-		es_params_R,
-		audio_volume: 0.8 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
 	
-	label pipe_length_1(3.0 * units.cm)
-	label pipe_length_2(0.0 * units.cm)
-	label pipe_length_3(2.0 * units.cm)
-	label pipe_length_4(3.0 * units.cm)
-	label pipe_length_5(2.0 * units.cm)
+	label pipe_length_1(40 * units.mm)
+	label pipe_length_2(10 * units.mm)
+	label pipe_length_3(30 * units.mm)
+	label pipe_length_4(40 * units.mm)
+	label pipe_length_5(30 * units.mm)
 	
-	label exh_vol_L1(0.6)
-	label exh_vol_L2(0.8)
-	label exh_vol_R1(0.8)
+	label exhaust_stagger(-10 * units.mm)
+	
+	label exh_vol_L1(0.9)
+	label exh_vol_L2(1.0)
+	label exh_vol_R1(0.9)
 	label exh_vol_R2(1.0)
 
     cylinder_bank b0(bank_params, angle: -34.0 * units.deg) // R (first)
@@ -358,8 +344,8 @@ public node carrera_gt_v10 {
             rod_journal: rj0,
             ignition_wire: wires.wire06,
             intake: intakeL,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_1,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger,
 			sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
@@ -368,8 +354,8 @@ public node carrera_gt_v10 {
             rod_journal: rj1,
             ignition_wire: wires.wire07,
             intake: intakeL,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_2,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger,
 			sound_attenuation: exh_vol_L2
         )
         .add_cylinder(
@@ -378,9 +364,9 @@ public node carrera_gt_v10 {
             rod_journal: rj2,
             ignition_wire: wires.wire08,
             intake: intakeL,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_3,
-			sound_attenuation: exh_vol_L2
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger,
+			sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -388,8 +374,8 @@ public node carrera_gt_v10 {
             rod_journal: rj3,
             ignition_wire: wires.wire09,
             intake: intakeL,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_4,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4 + exhaust_stagger,
 			sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
@@ -398,8 +384,8 @@ public node carrera_gt_v10 {
             rod_journal: rj4,
             ignition_wire: wires.wire10,
             intake: intakeL,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_5,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_5 + exhaust_stagger,
 			sound_attenuation: exh_vol_L1
         )
 
@@ -411,7 +397,7 @@ public node carrera_gt_v10 {
             rod_journal: rj0,
             ignition_wire: wires.wire01,
             intake: intakeR,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_1,
 			sound_attenuation: exh_vol_R1
         )
@@ -421,7 +407,7 @@ public node carrera_gt_v10 {
             rod_journal: rj1,
             ignition_wire: wires.wire02,
             intake: intakeR,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_2,
 			sound_attenuation: exh_vol_R2
         )
@@ -431,9 +417,9 @@ public node carrera_gt_v10 {
             rod_journal: rj2,
             ignition_wire: wires.wire03,
             intake: intakeR,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_3,
-			sound_attenuation: exh_vol_R2
+			sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -441,7 +427,7 @@ public node carrera_gt_v10 {
             rod_journal: rj3,
             ignition_wire: wires.wire04,
             intake: intakeR,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_4,
 			sound_attenuation: exh_vol_R1
         )
@@ -451,7 +437,7 @@ public node carrera_gt_v10 {
             rod_journal: rj4,
             ignition_wire: wires.wire05,
             intake: intakeR,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_5,
 			sound_attenuation: exh_vol_R1
         )

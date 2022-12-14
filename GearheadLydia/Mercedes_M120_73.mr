@@ -309,24 +309,23 @@ public node m120_73 {
         outlet_flow_rate: k_carb(1200.0),
         primary_tube_length: 50.0 * units.inch,
         primary_flow_rate: k_carb(850.0),
-        velocity_decay: 0.4, //0.5
-        volume: 30.0 * units.L
+        velocity_decay: 1.0, //0.5
+        volume: 30.0 * units.L,
+		length: 500 * units.mm
     )
 
-    exhaust_system exhaustR(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 500 * units.mm
-	)
-    exhaust_system exhaustL(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 498 * units.mm
-	)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
-	label exh_vol_stagger(-0.1)
+	label exh_vol_warble(-0.1)
+	
+	label pipe_length_1(10 * units.mm)
+	label pipe_length_2(5 * units.mm)
+	label pipe_length_3(0 * units.mm)
+	label pipe_length_4(0 * units.mm)
+	label pipe_length_5(5 * units.mm)
+	label pipe_length_6(10 * units.mm)
+	
+	label exhaust_stagger(15 * units.mm)
 		
     cylinder_bank b0(bank_params, angle: 30 * units.deg) // L (first)
     b0
@@ -336,8 +335,8 @@ public node m120_73 {
             rod_journal: rj0,
             ignition_wire: wires.wire01,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 0 * units.mm,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -346,9 +345,9 @@ public node m120_73 {
             rod_journal: rj1,
             ignition_wire: wires.wire02,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 5 * units.mm,
-			sound_attenuation: 1.0 - exh_vol_stagger
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger,
+			sound_attenuation: 1.0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -356,8 +355,8 @@ public node m120_73 {
             rod_journal: rj2,
             ignition_wire: wires.wire03,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 10 * units.mm,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -366,9 +365,9 @@ public node m120_73 {
             rod_journal: rj3,
             ignition_wire: wires.wire04,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 0 * units.mm,
-			sound_attenuation: 1.0 - exh_vol_stagger
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4 + exhaust_stagger,
+			sound_attenuation: 1.0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -376,8 +375,8 @@ public node m120_73 {
             rod_journal: rj4,
             ignition_wire: wires.wire05,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 5 * units.mm,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_5 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -386,9 +385,9 @@ public node m120_73 {
             rod_journal: rj5,
             ignition_wire: wires.wire06,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 10 * units.mm,
-			sound_attenuation: 1.0 - exh_vol_stagger
+            exhaust_system: exhaust,
+			primary_length: pipe_length_6 + exhaust_stagger,
+			sound_attenuation: 1.0 + exh_vol_warble
         )
 
     cylinder_bank b1(bank_params, angle: -30 * units.deg) // R (second)
@@ -399,9 +398,9 @@ public node m120_73 {
             rod_journal: rj0,
             ignition_wire: wires.wire07,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 0 * units.mm,
-			sound_attenuation: 1.0 - exh_vol_stagger
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1,
+			sound_attenuation: 1.0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -409,8 +408,8 @@ public node m120_73 {
             rod_journal: rj1,
             ignition_wire: wires.wire08,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 5 * units.mm,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -419,9 +418,9 @@ public node m120_73 {
             rod_journal: rj2,
             ignition_wire: wires.wire09,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 10 * units.mm,
-			sound_attenuation: 1.0 - exh_vol_stagger
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3,
+			sound_attenuation: 1.0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -429,8 +428,8 @@ public node m120_73 {
             rod_journal: rj3,
             ignition_wire: wires.wire10,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 0 * units.mm,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -439,9 +438,9 @@ public node m120_73 {
             rod_journal: rj4,
             ignition_wire: wires.wire11,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 5 * units.mm,
-			sound_attenuation: 1.0 - exh_vol_stagger
+            exhaust_system: exhaust,
+			primary_length: pipe_length_5,
+			sound_attenuation: 1.0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -449,8 +448,8 @@ public node m120_73 {
             rod_journal: rj5,
             ignition_wire: wires.wire12,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 10 * units.mm,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_6,
 			sound_attenuation: 1.0
         )
 

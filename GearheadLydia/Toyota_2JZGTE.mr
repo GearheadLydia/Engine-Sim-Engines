@@ -160,10 +160,10 @@ public node toyota_2jz_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(0.8 * units.inch) * 2 * 5 * units.inch,
-        intake_runner_cross_section_area: circle_area(0.8 * units.inch) * 2,
-        exhaust_runner_volume: circle_area(0.9 * units.inch) * 6 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
+        intake_runner_volume: circle_area(0.7 * units.inch) * 2 * 5 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.7 * units.inch) * 2,
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 6 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -271,19 +271,19 @@ public node toyota_2jz {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(550.0),
+        runner_flow_rate: k_carb(250.0),
         runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: 4.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        primary_tube_length: 9.0 * units.inch,
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(2.5 * units.inch / 2),
-		length: 900 * units.mm,
-		volume: 900 * units.mm * circle_area(2.5 * units.inch / 2)
+		collector_cross_section_area: circle_area(3.5 * units.inch / 2),
+		length: 2800 * units.mm,
+		volume: 2800 * units.mm * circle_area(3.5 * units.inch / 2)
     )
 
     exhaust_system_parameters es_params_tuned(
@@ -291,14 +291,14 @@ public node toyota_2jz {
         primary_tube_length: 4.0 * units.inch,
         primary_flow_rate: k_carb(450.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(3.5 * units.inch / 2),
-		length: 900 * units.mm,
-		volume: 900 * units.mm * circle_area(3.5 * units.inch / 2)
+		collector_cross_section_area: circle_area(4.5 * units.inch / 2),
+		length: 2800 * units.mm,
+		volume: 2800 * units.mm * circle_area(4.5 * units.inch / 2)
     )
 
     exhaust_system exhaust(
 		es_params,
-		audio_volume: 1.0 * 0.01,
+		audio_volume: 1.0 * 0.06,
 		impulse_response: ir_lib.default_0
 	)
  
@@ -311,8 +311,8 @@ public node toyota_2jz {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 2.9 * units.inch,
-			sound_attenuation: 0.8
+			primary_length: 1.9 * units.inch,
+			sound_attenuation: 0.72
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -321,8 +321,8 @@ public node toyota_2jz {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.4 * units.inch,
-			sound_attenuation: 1.0
+			primary_length: 0.4 * units.inch,
+			sound_attenuation: 0.9
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -331,8 +331,8 @@ public node toyota_2jz {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.2 * units.inch,
-			sound_attenuation: 0.9
+			primary_length: 0.2 * units.inch,
+			sound_attenuation: 0.72
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -341,8 +341,8 @@ public node toyota_2jz {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.1 * units.inch,
-			sound_attenuation: 0.9
+			primary_length: 0.1 * units.inch,
+			sound_attenuation: 1.0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -351,8 +351,8 @@ public node toyota_2jz {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.0 * units.inch,
-			sound_attenuation: 1.0
+			primary_length: 0.0 * units.inch,
+			sound_attenuation: 0.8
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -361,8 +361,8 @@ public node toyota_2jz {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 2.5 * units.inch,
-			sound_attenuation: 0.8
+			primary_length: 1.5 * units.inch,
+			sound_attenuation: 1.0
         )
 
     engine
@@ -386,11 +386,11 @@ public node toyota_2jz {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 20 * units.deg)
-        .add_sample(2000 * units.rpm, 30 * units.deg)
-        .add_sample(3000 * units.rpm, 35 * units.deg)
-        .add_sample(4000 * units.rpm, 40 * units.deg)
-        .add_sample(5000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 40 * units.deg)
+        .add_sample(3000 * units.rpm, 42 * units.deg)
+        .add_sample(4000 * units.rpm, 45 * units.deg)
+        .add_sample(5000 * units.rpm, 48 * units.deg)
         .add_sample(6000 * units.rpm, 50 * units.deg)
         .add_sample(7000 * units.rpm, 50 * units.deg)
         .add_sample(8000 * units.rpm, 50 * units.deg)

@@ -173,9 +173,9 @@ public node alfa_romeo_busso_30_head {
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
-        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+        intake_runner_cross_section_area: circle_area(0.9 * units.inch), // actual runner about 0.8" x 7.5"
         exhaust_runner_volume: circle_area(0.9 * units.inch) * 3 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch), // actual runner about 0.8" x 15"
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -196,10 +196,6 @@ public node alfa_romeo_busso_30 {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 900 * units.rpm,
         redline: 6500 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
         throttle_gamma: 2.0,
 		hf_gain: 0.05,
 		jitter: 0.5

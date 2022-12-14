@@ -329,7 +329,7 @@ public node ajp8 {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: 3.5 * units.inch,
+			primary_length: 3.0 * units.inch,
 			sound_attenuation: 0.6
         )
         .add_cylinder(
@@ -339,7 +339,7 @@ public node ajp8 {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: 2.2 * units.inch,
+			primary_length: 0.0 * units.inch,
 			sound_attenuation: 0.6
         )
         .add_cylinder(
@@ -349,7 +349,7 @@ public node ajp8 {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: 2.0 * units.inch,
+			primary_length: 4.0 * units.inch,
 			sound_attenuation: 0.4
         )
 
@@ -362,7 +362,7 @@ public node ajp8 {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: 3.0 * units.inch,
+			primary_length: 5.0 * units.inch,
 			sound_attenuation: 0.3
         )
         .add_cylinder(
@@ -372,7 +372,7 @@ public node ajp8 {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: 1.5 * units.inch,
+			primary_length: 3.0 * units.inch,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -382,7 +382,7 @@ public node ajp8 {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: 0.2 * units.inch,
+			primary_length: 0.0 * units.inch,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -392,7 +392,7 @@ public node ajp8 {
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: 0.0 * units.inch,
+			primary_length: 4.0 * units.inch,
 			sound_attenuation: 0.3
         )
 

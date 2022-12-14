@@ -9,7 +9,7 @@ label cycle(2 * 360 * units.deg)
 public node nissan_rb25_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7250 * units.rpm;
+    input rev_limit: 7750 * units.rpm;
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -369,12 +369,12 @@ public node nissan_rb25det {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 25 * units.deg)
-        .add_sample(1000 * units.rpm, 30 * units.deg)
-        .add_sample(2000 * units.rpm, 40 * units.deg)
-        .add_sample(3000 * units.rpm, 45 * units.deg)
-        .add_sample(4000 * units.rpm, 50 * units.deg)
-        .add_sample(5000 * units.rpm, 65 * units.deg)
+        .add_sample(0000 * units.rpm, 40 * units.deg)
+        .add_sample(1000 * units.rpm, 70 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 70 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
         .add_sample(6000 * units.rpm, 70 * units.deg)
         .add_sample(7000 * units.rpm, 70 * units.deg)
         .add_sample(8000 * units.rpm, 70 * units.deg)

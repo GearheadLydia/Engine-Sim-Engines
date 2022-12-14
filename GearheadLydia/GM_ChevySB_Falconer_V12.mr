@@ -1,0 +1,547 @@
+// A brief statement:
+// BAN LEADED GASOLINE WORLDWIDE
+// YES, THAT INCLUDES AVGAS
+
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+label rot30(30 * units.deg)
+
+// firing order: 1-10-9-6-5-12-11-4-3-8-7-2
+
+public node falconer_v12_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 6750 * units.rpm;
+	input limiter_duration: 0.08;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire01, ( 0.0 / 12.0) * cycle)
+            .connect_wire(wires.wire10, ( 1.0 / 12.0) * cycle - rot30)
+            .connect_wire(wires.wire09, ( 2.0 / 12.0) * cycle)
+            .connect_wire(wires.wire06, ( 3.0 / 12.0) * cycle - rot30)
+            .connect_wire(wires.wire05, ( 4.0 / 12.0) * cycle)
+            .connect_wire(wires.wire12, ( 5.0 / 12.0) * cycle - rot30)
+            .connect_wire(wires.wire11, ( 6.0 / 12.0) * cycle)
+            .connect_wire(wires.wire04, ( 7.0 / 12.0) * cycle - rot30)
+            .connect_wire(wires.wire03, ( 8.0 / 12.0) * cycle)
+            .connect_wire(wires.wire08, ( 9.0 / 12.0) * cycle - rot30)
+            .connect_wire(wires.wire07, (10.0 / 12.0) * cycle)
+            .connect_wire(wires.wire02, (11.0 / 12.0) * cycle - rot30);
+}
+
+private node wires {
+    output wire01: ignition_wire();
+    output wire02: ignition_wire();
+    output wire03: ignition_wire();
+    output wire04: ignition_wire();
+    output wire05: ignition_wire();
+    output wire06: ignition_wire();
+    output wire07: ignition_wire();
+    output wire08: ignition_wire();
+    output wire09: ignition_wire();
+    output wire10: ignition_wire();
+    output wire11: ignition_wire();
+    output wire12: ignition_wire();
+}
+
+
+public node falconer_v12_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 210 * units.deg,
+            gamma: 1.0,
+            lift: 593 * units.thou,
+            steps: 100
+        );
+}
+
+public node falconer_v12_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 230 * units.deg,
+            gamma: 1.0,
+            lift: 589 * units.thou,
+            steps: 100
+        );
+}
+
+public node falconer_v12_camshaft_builder {
+    input in_lobe_profile: falconer_v12_lobe_profile_int();
+	input ex_lobe_profile: falconer_v12_lobe_profile_exh();
+    input intake_lobe_profile: in_lobe_profile;
+    input exhaust_lobe_profile: ex_lobe_profile;
+    input lobe_separation: 120.0 * units.deg;
+    input intake_lobe_center: lobe_separation;
+    input exhaust_lobe_center: lobe_separation;
+    input advance: -3.0 * units.deg;
+    input base_radius: 1.462 / 2 * units.inch;
+
+    output intake_cam_0: _intake_cam_0;
+    output exhaust_cam_0: _exhaust_cam_0;
+    output intake_cam_1: _intake_cam_1;
+    output exhaust_cam_1: _exhaust_cam_1;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+
+    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+
+
+	label rot60(60 * units.deg)
+    label rot90(90 * units.deg)
+    label rot120(120 * units.deg)
+    label rot180(180 * units.deg)
+    label rot360(360 * units.deg)
+	
+	// firing order: 1-12-5-8-3-10-6-7-2-11-4-9
+
+    _intake_cam_0
+        .add_lobe(rot360 + intake_lobe_center +  0 * rot60) // # 1
+        .add_lobe(rot360 + intake_lobe_center +  8 * rot60) // # 3
+        .add_lobe(rot360 + intake_lobe_center +  4 * rot60) // # 5
+        .add_lobe(rot360 + intake_lobe_center + 10 * rot60) // # 7
+        .add_lobe(rot360 + intake_lobe_center +  2 * rot60) // # 9
+        .add_lobe(rot360 + intake_lobe_center +  6 * rot60) // # 11
+
+    _intake_cam_1
+        .add_lobe(rot360 + intake_lobe_center + 11 * rot60 - rot30) // # 2
+        .add_lobe(rot360 + intake_lobe_center +  7 * rot60 - rot30) // # 4
+        .add_lobe(rot360 + intake_lobe_center +  3 * rot60 - rot30) // # 6
+        .add_lobe(rot360 + intake_lobe_center +  9 * rot60 - rot30) // # 8
+        .add_lobe(rot360 + intake_lobe_center +  1 * rot60 - rot30) // # 10
+        .add_lobe(rot360 + intake_lobe_center +  5 * rot60 - rot30) // # 12
+
+    _exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center +  0 * rot60) // # 1
+        .add_lobe(rot360 - exhaust_lobe_center +  8 * rot60) // # 3
+        .add_lobe(rot360 - exhaust_lobe_center +  4 * rot60) // # 5
+        .add_lobe(rot360 - exhaust_lobe_center + 10 * rot60) // # 7
+        .add_lobe(rot360 - exhaust_lobe_center +  2 * rot60) // # 9
+        .add_lobe(rot360 - exhaust_lobe_center +  6 * rot60) // # 11
+
+    _exhaust_cam_1
+        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot60 - rot30) // # 2
+        .add_lobe(rot360 - exhaust_lobe_center +  7 * rot60 - rot30) // # 4
+        .add_lobe(rot360 - exhaust_lobe_center +  3 * rot60 - rot30) // # 6
+        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot60 - rot30) // # 8
+        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot60 - rot30) // # 10
+        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot60 - rot30) // # 12
+}
+
+private node add_flow_sample {
+    input lift;
+    input flow;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
+}
+
+public node falconer_v12_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 76.0 * units.cc;
+    input flip_display: false;
+	
+	input flow_attenuation_in: 0.9;
+	input flow_attenuation_ex: 0.9;
+    input lift_scale: 50.0;
+    alias output __out: head;
+
+    function intake_flow(50 * units.thou)
+    intake_flow
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
+        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_in)
+        .add_flow_sample( 2 * lift_scale,  76 * flow_attenuation_in)
+        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_in)
+        .add_flow_sample( 4 * lift_scale, 146 * flow_attenuation_in)
+        .add_flow_sample( 5 * lift_scale, 175 * flow_attenuation_in)
+        .add_flow_sample( 6 * lift_scale, 212 * flow_attenuation_in)
+        .add_flow_sample( 7 * lift_scale, 230 * flow_attenuation_in)
+        .add_flow_sample( 8 * lift_scale, 255 * flow_attenuation_in)
+        .add_flow_sample( 9 * lift_scale, 275 * flow_attenuation_in)
+        .add_flow_sample(10 * lift_scale, 294 * flow_attenuation_in)
+        .add_flow_sample(11 * lift_scale, 300 * flow_attenuation_in)
+        .add_flow_sample(12 * lift_scale, 314 * flow_attenuation_in)
+        .add_flow_sample(13 * lift_scale, 314 * flow_attenuation_in)
+        .add_flow_sample(14 * lift_scale, 314 * flow_attenuation_in)
+
+    function exhaust_flow(50 * units.thou)
+    exhaust_flow
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
+        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_ex)
+        .add_flow_sample( 2 * lift_scale,  70 * flow_attenuation_ex)
+        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_ex)
+        .add_flow_sample( 4 * lift_scale, 132 * flow_attenuation_ex)
+        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
+        .add_flow_sample( 6 * lift_scale, 156 * flow_attenuation_ex)
+        .add_flow_sample( 7 * lift_scale, 170 * flow_attenuation_ex)
+        .add_flow_sample( 8 * lift_scale, 181 * flow_attenuation_ex)
+        .add_flow_sample( 9 * lift_scale, 191 * flow_attenuation_ex)
+        .add_flow_sample(10 * lift_scale, 207 * flow_attenuation_ex)
+        .add_flow_sample(11 * lift_scale, 214 * flow_attenuation_ex)
+        .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
+        .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
+        .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
+		
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: circle_area(1.25 * units.inch) * 8 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.25 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+
+public node falconer_v12 {
+    alias output __out: engine;
+
+    wires wires()
+
+    engine engine(
+        name: "Falconer V12",
+        starter_torque: 300 * units.lb_ft,
+		starter_speed: 1000 * units.rpm,
+        redline: 6500 * units.rpm,
+        throttle_gamma: 2.0,
+		simulation_frequency: 7000,
+		// jitter: 0.7,
+		// hf_gain: 0.15
+		jitter: 0.6,
+		hf_gain: 0.1
+		// jitter: 0.1,
+		// hf_gain: 0.1
+    )
+
+
+	// source: https://help.summitracing.com/app/answers/detail/a_id/4882/~/chevy-ls7-engine-specs
+    label bore(4.125 * units.inch)
+    label stroke(3.750 * units.inch)
+    label rod_length(5.565 * units.inch)
+    label rod_mass(464 * units.g)
+    label compression_height(1.560 * units.inch)
+	label piston_mass(482 * units.g)
+	label piston_dome(6.00 * units.cc)
+	label deck_height(9.025 * units.inch)
+    label crank_mass(57 * units.lb)
+    label flywheel_mass(57 * units.lb)
+    label flywheel_radius(6 * units.inch)
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 20 * units.kg, radius: 8.0 * units.cm)
+    )
+
+    crankshaft c0(
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 5.0 * units.lb_ft,
+        moment_of_inertia:
+            crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 45.0 * units.deg // 45 degrees back from right side
+    )
+
+    rod_journal rj0(angle:  0  * units.deg)
+	rod_journal rj1(angle: 120 * units.deg)
+	rod_journal rj2(angle: 240 * units.deg)
+	rod_journal rj3(angle: 240 * units.deg)
+    rod_journal rj4(angle: 120 * units.deg)
+    rod_journal rj5(angle:  0  * units.deg)
+
+    c0
+        .add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
+
+
+    piston_parameters piston_params(
+        mass: piston_mass,
+        //blowby: 0,
+        compression_height: compression_height,
+        wrist_pin_position: 0 * units.mm,
+        displacement: piston_dome
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
+        center_of_mass: 0.0,
+        length: rod_length
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: bore,
+        deck_height: deck_height
+    )
+
+    intake intake(
+        plenum_volume: 0.3 * units.L,
+        plenum_cross_section_area: circle_area(45 * units.mm),
+        intake_flow_rate: k_carb(850),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.994,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(550.0),
+        runner_length: 12.0 * units.inch,
+        velocity_decay: 0.1
+    )
+	
+	label exhaust_radius((4.0 * units.inch)/2)
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(700.0),
+        primary_tube_length: 20.0 * units.inch,
+        primary_flow_rate: k_carb(550.0),
+        velocity_decay: 1.0, //0.5
+		collector_cross_section_area: circle_area(exhaust_radius),
+		length: 700 * units.mm,
+		volume: 700 * units.mm * circle_area(exhaust_radius)
+    )
+
+    exhaust_system exhaustL(
+		es_params,
+		audio_volume: 1.0 * 0.01,
+		impulse_response: ir_lib.default_0
+	)
+    exhaust_system exhaustR(
+		es_params,
+		audio_volume: 1.0 * 0.01,
+		impulse_response: ir_lib.default_0
+	)
+
+	label bore_spacing(4.4 * units.inch)
+	
+	label pipe_length_1(5 * 0.95 * bore_spacing)
+	label pipe_length_2(4 * 0.95 * bore_spacing)
+	label pipe_length_3(3 * 0.95 * bore_spacing)
+	label pipe_length_4(2 * 0.95 * bore_spacing)
+	label pipe_length_5(1 * 0.95 * bore_spacing)
+	label pipe_length_6(0 * 0.95 * bore_spacing)
+	
+	label exhaust_stagger(80 * units.mm)
+
+    cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire01,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: pipe_length_1 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire03,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: pipe_length_2 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire05,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: pipe_length_3 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire07,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: pipe_length_4 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire09,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: pipe_length_5 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire11,
+            intake: intake,
+            exhaust_system: exhaustR,
+			primary_length: pipe_length_6 + exhaust_stagger
+        )
+
+    cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire02,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: pipe_length_1
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire04,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: pipe_length_2
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire06,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: pipe_length_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire08,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: pipe_length_4
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire10,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: pipe_length_5
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire12,
+            intake: intake,
+            exhaust_system: exhaustL,
+			primary_length: pipe_length_6
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+        .add_cylinder_bank(b1)
+
+    engine.add_crankshaft(c0)
+
+    falconer_v12_camshaft_builder camshaft(
+	    in_lobe_profile: falconer_v12_lobe_profile_int(),
+		ex_lobe_profile: falconer_v12_lobe_profile_exh()
+	)
+
+    b0.set_cylinder_head (
+        falconer_v12_head(
+            intake_camshaft: camshaft.intake_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0,
+			flip_display: false
+        )
+    )
+    b1.set_cylinder_head (
+        falconer_v12_head(
+            intake_camshaft: camshaft.intake_cam_1,
+            exhaust_camshaft: camshaft.exhaust_cam_1,
+            flip_display: true
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 15 * units.deg)
+        .add_sample(1000 * units.rpm, 25 * units.deg)
+        .add_sample(2000 * units.rpm, 29 * units.deg)
+        .add_sample(3000 * units.rpm, 33 * units.deg)
+        .add_sample(4000 * units.rpm, 38 * units.deg)
+        .add_sample(5000 * units.rpm, 45 * units.deg)
+        .add_sample(6000 * units.rpm, 55 * units.deg)
+		.add_sample(7000 * units.rpm, 68 * units.deg)
+		.add_sample(8000 * units.rpm, 75 * units.deg)
+
+    engine.add_ignition_module(
+        falconer_v12_distributor(
+            wires: wires,
+            timing_curve: timing_curve,
+            rev_limit: 6750 * units.rpm
+        )
+    )
+}
+
+// 1994 Chevrolet Corvette Falconer ZR12 Concept (C4)
+public node chevrolet_corvette_falconer_zr12_c4_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3400 * units.lb,
+            drag_coefficient: 0.33,
+            cross_sectional_area: 1.75 * (units.m) * (units.m),
+            diff_ratio: 3.45,
+            tire_radius: 330 * units.mm, // 315/35ZR17 (plus a little)
+            rolling_resistance: 550 * units.N
+        );
+}
+
+public node tremec_t56_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 1500 * units.lb_ft
+        )
+        .add_gear(2.54)
+        .add_gear(1.78)
+        .add_gear(1.30)
+        .add_gear(1.00)
+        .add_gear(0.74)
+        .add_gear(0.49);
+}
+
+public node main {
+    set_engine(falconer_v12())
+    set_vehicle(chevrolet_corvette_falconer_zr12_c4_vehicle())
+    set_transmission(tremec_t56_transmission())
+}

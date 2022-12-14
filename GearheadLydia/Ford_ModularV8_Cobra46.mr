@@ -173,8 +173,8 @@ public node ford_modular_cobra46_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 12 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 12 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -456,7 +456,7 @@ public node ford_mustang_cobra_sn95_vehicle {
         );
 }
 
-public node borgwarner_t5_transmission {
+public node tremec_tr3650_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 600 * units.lb_ft
@@ -471,5 +471,5 @@ public node borgwarner_t5_transmission {
 public node main {
     set_engine(ModCobra46())
     set_vehicle(ford_mustang_cobra_sn95_vehicle())
-    set_transmission(borgwarner_t5_transmission())
+    set_transmission(tremec_tr3650_transmission())
 }

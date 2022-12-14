@@ -257,14 +257,14 @@ public node w8 {
         tdc: 132.5 * units.deg
     )
 
-    rod_journal rj1(angle:  (0 - 0)   * units.deg)
-    rod_journal rj2(angle:  (0 - 18)  * units.deg)
+    rod_journal rj1(angle:  (0 + 0)   * units.deg)
+    rod_journal rj2(angle:  (0 + 18)  * units.deg)
     rod_journal rj3(angle: (180 - 15) * units.deg)
-    rod_journal rj4(angle: (180 - 33) * units.deg)
-    rod_journal rj5(angle: (180 - 0)  * units.deg)
-    rod_journal rj6(angle: (180 - 18) * units.deg)
+    rod_journal rj4(angle: (180 + 3) * units.deg)
+    rod_journal rj5(angle: (180 + 0)  * units.deg)
+    rod_journal rj6(angle: (180 + 18) * units.deg)
     rod_journal rj7(angle:  (0 - 15)  * units.deg)
-    rod_journal rj8(angle:  (0 - 33)  * units.deg)
+    rod_journal rj8(angle:  (0 + 3)  * units.deg)
 
     c0
         .add_rod_journal(rj1)

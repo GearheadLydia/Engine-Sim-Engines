@@ -165,10 +165,10 @@ public node cummins_isb_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(0.7 * units.inch) * 20 * units.inch,
-        intake_runner_cross_section_area: circle_area(0.7 * units.inch),
-        exhaust_runner_volume: circle_area(0.9 * units.inch) * 16 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
+        intake_runner_volume: circle_area(0.3 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.3 * units.inch),
+        exhaust_runner_volume: circle_area(0.5 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.5 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -189,9 +189,9 @@ public node cummins_isb {
         starter_torque: 300 * units.lb_ft,
 		starter_speed: 700 * units.rpm,
         redline: 3250 * units.rpm,
-        throttle_gamma: 2.0,
-		jitter: 0.2,
-		hf_gain: 0.5
+        throttle_gamma: 2.0
+		// jitter: 0.2,
+		// hf_gain: 0.5
     )
 
 	label lean_angle(0 * units.deg)
@@ -273,7 +273,7 @@ public node cummins_isb {
         plenum_cross_section_area: circle_area(45 * units.mm),
         intake_flow_rate: k_carb(650),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(550.0),
         runner_length: 20.0 * units.inch,
@@ -400,7 +400,7 @@ public node dodge_challenger_srt_392_vehicle {
             mass: 4171 * units.lb,
             drag_coefficient: 0.356,
             cross_sectional_area: 2.37 * (units.m) * (units.m),
-            diff_ratio: 3.91,
+            diff_ratio: 2.00,
             tire_radius: 364.49 * units.mm, // 245/45ZR20
             rolling_resistance: 550 * units.N
         );

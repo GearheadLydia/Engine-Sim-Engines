@@ -352,23 +352,23 @@ public node c32b {
     )
 
     exhaust_system_parameters es_params0(
-        outlet_flow_rate: k_carb(350.0),
+        outlet_flow_rate: k_carb(300.0),
         primary_tube_length: 9.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.2, //0.5
-        volume: 50.0 * units.L
+        volume: 25.0 * units.L
     )
 
     exhaust_system_parameters es_params1(
-        outlet_flow_rate: k_carb(350.0),
+        outlet_flow_rate: k_carb(300.0),
         primary_tube_length: 24.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.2, //0.5
-        volume: 50.0 * units.L
+        volume: 25.0 * units.L
     )
 
     exhaust_system_parameters es_params2(
-        outlet_flow_rate: k_carb(350.0),
+        outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 6.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
@@ -376,7 +376,7 @@ public node c32b {
     )
 
     exhaust_system_parameters es_params3(
-        outlet_flow_rate: k_carb(350.0),
+        outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5

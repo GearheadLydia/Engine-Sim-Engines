@@ -279,15 +279,25 @@ public node F136_F {
     )
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(800.0),
+        outlet_flow_rate: k_carb(1600.0),
         primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(650.0),
         velocity_decay: 0.4, //0.5
-        volume: 50.0 * units.L
+        volume: 50.0 * units.L,
+		length: 500 * units.mm
     )
 
-    exhaust_system exhaust0(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 500 * units.mm)
-    exhaust_system exhaust1(es_params, audio_volume: 0.8 * 0.01, impulse_response: ir_lib.default_0, length: 520 * units.mm)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+	
+	label pipe_length_1(5 * units.mm)
+	label pipe_length_2(15 * units.mm)
+	label pipe_length_3(10 * units.mm)
+	label pipe_length_4(0 * units.mm)
+	
+	label exhaust_stagger(20 * units.mm)
+	
+	label exh_vol_L(1.0)
+	label exh_vol_R(0.8)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -295,33 +305,41 @@ public node F136_F {
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
+            ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaust1,
-            ignition_wire: wires.wire1
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1,
+			sound_attenuation: exh_vol_L
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
+            ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaust1,
-            ignition_wire: wires.wire2
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2,
+			sound_attenuation: exh_vol_L
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
+            ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaust1,
-            ignition_wire: wires.wire3
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3,
+			sound_attenuation: exh_vol_L
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaust1,
-            ignition_wire: wires.wire4
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4,
+			sound_attenuation: exh_vol_L
         )
 
     cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (second)
@@ -330,33 +348,41 @@ public node F136_F {
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
+            ignition_wire: wires.wire8,
             intake: intake,
-            exhaust_system: exhaust0,
-            ignition_wire: wires.wire8
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger,
+			sound_attenuation: exh_vol_R
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
+            ignition_wire: wires.wire7,
             intake: intake,
-            exhaust_system: exhaust0,
-            ignition_wire: wires.wire7
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger,
+			sound_attenuation: exh_vol_R
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
+            ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaust0,
-            ignition_wire: wires.wire6
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger,
+			sound_attenuation: exh_vol_R
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaust0,
-            ignition_wire: wires.wire5
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4 + exhaust_stagger,
+			sound_attenuation: exh_vol_R
         )
 
     engine

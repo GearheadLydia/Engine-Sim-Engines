@@ -200,7 +200,7 @@ public node ModCobra46 {
     wires wires()
 
     engine engine(
-        name: "Ford Modular 'Boss' 4V",
+        name: "Ford Modular V10 'Boss' 4V",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 900 * units.rpm,
         redline: 6500 * units.rpm,
@@ -334,10 +334,10 @@ public node ModCobra46 {
     exhaust_system exhaustL(es_params_L, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
     exhaust_system exhaustR(es_params_R, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 
-	label pipe_length_1(2.4 * bore_spacing)
-	label pipe_length_2(1.8 * bore_spacing)
-	label pipe_length_3(1.2 * bore_spacing)
-	label pipe_length_4(0.6 * bore_spacing)
+	label pipe_length_1(2.0 * bore_spacing)
+	label pipe_length_2(1.5 * bore_spacing)
+	label pipe_length_3(1.0 * bore_spacing)
+	label pipe_length_4(0.5 * bore_spacing)
 	label pipe_length_5(0.0 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)

@@ -374,39 +374,36 @@ public node w16 {
     )
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500.0),
+        outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 30.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        primary_flow_rate: k_carb(550.0),
         velocity_decay: 0.8, //0.5
-        volume: 80.0 * units.L
+        volume: 5.0 * units.L,
+		length: 500 * units.mm
     )
 	
     exhaust_system exhaustLF(
 		es_params,
 		audio_volume: 1.00*0.01,
-		impulse_response: ir_lib.default_0,
-		length: 510 * units.mm
+		impulse_response: ir_lib.default_0
 	)
 	
     exhaust_system exhaustLR(
 		es_params,
 		audio_volume: 1.00*0.01,
-		impulse_response: ir_lib.default_0,
-		length: 510 * units.mm
+		impulse_response: ir_lib.default_0
 	)
 	
     exhaust_system exhaustRF(
 		es_params,
 		audio_volume: 1.00*0.01,
-		impulse_response: ir_lib.default_0,
-		length: 500 * units.mm
+		impulse_response: ir_lib.default_0
 	)
 	
     exhaust_system exhaustRR(
 		es_params,
 		audio_volume: 1.00*0.01,
-		impulse_response: ir_lib.default_0,
-		length: 500 * units.mm
+		impulse_response: ir_lib.default_0
 	)
 	
 	label position_xO_offset(deck_height * 0.08624655910468764017893259939645)  // sin(52.5)-sin(45)
@@ -415,7 +412,8 @@ public node w16 {
 	label position_yI_offset(deck_height * -0.08624655910468764017893259939645) // (1-cos(37.5))-(1-cos(45))
 	
 
-	label exhaust_length_stagger(4 * units.inch)
+	label exhaust_length_stagger_FR(1 * units.inch)
+	label exhaust_length_stagger_LR(1 * units.inch)
 	label pipe_length_1(20 * units.mm)
 	label pipe_length_2(10 * units.mm)
 	label pipe_length_3(5 * units.mm)
@@ -431,7 +429,7 @@ public node w16 {
             intake: intake_long,
             exhaust_system: exhaustLF,
             ignition_wire: wires.wire01,
-			primary_length: pipe_length_1
+			primary_length: pipe_length_1 + exhaust_length_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -440,7 +438,7 @@ public node w16 {
             intake: intake_long,
             exhaust_system: exhaustLF,
             ignition_wire: wires.wire03,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3 + exhaust_length_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -471,7 +469,7 @@ public node w16 {
             intake: intake_shrt,
             exhaust_system: exhaustRF,
             ignition_wire: wires.wire09,
-			primary_length: pipe_length_1 + exhaust_length_stagger
+			primary_length: pipe_length_1 + exhaust_length_stagger_FR + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
@@ -480,7 +478,7 @@ public node w16 {
             intake: intake_shrt,
             exhaust_system: exhaustRF,
             ignition_wire: wires.wire11,
-			primary_length: pipe_length_3 + exhaust_length_stagger
+			primary_length: pipe_length_3 + exhaust_length_stagger_FR + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
@@ -489,7 +487,7 @@ public node w16 {
             intake: intake_shrt,
             exhaust_system: exhaustRR,
             ignition_wire: wires.wire13,
-			primary_length: pipe_length_4 + exhaust_length_stagger
+			primary_length: pipe_length_4 + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -498,7 +496,7 @@ public node w16 {
             intake: intake_shrt,
             exhaust_system: exhaustRR,
             ignition_wire: wires.wire15,
-			primary_length: pipe_length_2 + exhaust_length_stagger
+			primary_length: pipe_length_2 + exhaust_length_stagger_LR
         )
 	
     cylinder_bank bLI(bank_params, angle: 37.5 * units.deg, display_depth: bore * 0.5) // LI (third)
@@ -511,7 +509,7 @@ public node w16 {
             intake: intake_shrt,
             exhaust_system: exhaustLF,
             ignition_wire: wires.wire02,
-			primary_length: pipe_length_2 + exhaust_length_stagger
+			primary_length: pipe_length_2 + exhaust_length_stagger_FR + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
@@ -520,7 +518,7 @@ public node w16 {
             intake: intake_shrt,
             exhaust_system: exhaustLF,
             ignition_wire: wires.wire04,
-			primary_length: pipe_length_4 + exhaust_length_stagger
+			primary_length: pipe_length_4 + exhaust_length_stagger_FR + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
@@ -529,7 +527,7 @@ public node w16 {
             intake: intake_shrt,
             exhaust_system: exhaustLR,
             ignition_wire: wires.wire06,
-			primary_length: pipe_length_3 + exhaust_length_stagger
+			primary_length: pipe_length_3 + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -538,7 +536,7 @@ public node w16 {
             intake: intake_shrt,
             exhaust_system: exhaustLR,
             ignition_wire: wires.wire08,
-			primary_length: pipe_length_1 + exhaust_length_stagger
+			primary_length: pipe_length_1 + exhaust_length_stagger_LR
         )
 
     cylinder_bank bRO(bank_params, angle: -52.5 * units.deg, display_depth: bore * 0.5) // RO (fourth)
@@ -551,7 +549,7 @@ public node w16 {
             intake: intake_long,
             exhaust_system: exhaustRF,
             ignition_wire: wires.wire10,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2 + exhaust_length_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -560,7 +558,7 @@ public node w16 {
             intake: intake_long,
             exhaust_system: exhaustRF,
             ignition_wire: wires.wire12,
-			primary_length: pipe_length_4
+			primary_length: pipe_length_4 + exhaust_length_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -625,16 +623,16 @@ public node w16 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 30 * units.deg)
-        .add_sample(2000 * units.rpm, 40 * units.deg)
-        .add_sample(3000 * units.rpm, 45 * units.deg)
-        .add_sample(4000 * units.rpm, 50 * units.deg)
-        .add_sample(5000 * units.rpm, 50 * units.deg)
+        .add_sample(0000 * units.rpm, 40 * units.deg)
+        .add_sample(1000 * units.rpm, 45 * units.deg)
+        .add_sample(2000 * units.rpm, 50 * units.deg)
+        .add_sample(3000 * units.rpm, 51 * units.deg)
+        .add_sample(4000 * units.rpm, 53 * units.deg)
+        .add_sample(5000 * units.rpm, 55 * units.deg)
         .add_sample(6000 * units.rpm, 55 * units.deg)
 		.add_sample(7000 * units.rpm, 55 * units.deg)
-		.add_sample(8000 * units.rpm, 60 * units.deg)
-		.add_sample(9000 * units.rpm, 60 * units.deg)
+		.add_sample(8000 * units.rpm, 55 * units.deg)
+		.add_sample(9000 * units.rpm, 55 * units.deg)
 
     engine.add_ignition_module(
         bugatti_w16_distributor(

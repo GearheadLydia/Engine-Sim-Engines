@@ -160,10 +160,10 @@ public node porsche_m44_41_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.23 * units.inch) * 10 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.23 * units.inch),
-        exhaust_runner_volume: circle_area(1.3 * units.inch) * 8 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.3 * units.inch),
+        intake_runner_volume: circle_area(0.9 * units.inch) * 10 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 8 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -262,24 +262,27 @@ public node porsche_m44_41 {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9945,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(650.0),
+        runner_flow_rate: k_carb(160.0),
         runner_length: 14.0 * units.inch,
         velocity_decay: 0.1
     )
+	
+	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(500.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
+        primary_tube_length: 2.0 * units.inch,
+        primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
-        volume: 1.0 * units.L
+		collector_cross_section_area: circle_area(exhaust_radius),
+		length: 2000 * units.mm,
+		volume: 2000 * units.mm * circle_area(exhaust_radius)
     )
 	
     exhaust_system exhaust0(
 		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 500 * units.mm
+		audio_volume: 1.0 * 0.04,
+		impulse_response: ir_lib.default_0
 	)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
@@ -292,7 +295,7 @@ public node porsche_m44_41 {
             intake: intake,
             exhaust_system: exhaust0,
 			primary_length: 15.0 * units.inch,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.5
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -322,7 +325,7 @@ public node porsche_m44_41 {
             intake: intake,
             exhaust_system: exhaust0,
 			primary_length: 12.0 * units.inch,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.5
         )
 
     engine
@@ -346,15 +349,13 @@ public node porsche_m44_41 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 30 * units.deg)
-        .add_sample(2000 * units.rpm, 40 * units.deg)
-        .add_sample(3000 * units.rpm, 40 * units.deg)
-        .add_sample(4000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 45 * units.deg)
+        .add_sample(3000 * units.rpm, 48 * units.deg)
+        .add_sample(4000 * units.rpm, 50 * units.deg)
         .add_sample(5000 * units.rpm, 50 * units.deg)
         .add_sample(6000 * units.rpm, 50 * units.deg)
         .add_sample(7000 * units.rpm, 50 * units.deg)
-        .add_sample(8000 * units.rpm, 45 * units.deg)
-        .add_sample(9000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
         porsche_m44_41_distributor(

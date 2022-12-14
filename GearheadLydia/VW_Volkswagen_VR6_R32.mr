@@ -1,7 +1,7 @@
 import "engine_sim.mr"
 
 // Volkswagen VR6 3.2L by GearheadLydia
-// 2022-09-18 - revision 1
+// 2022-12-04 - revision 3
 // may technically mix Golf MkIV and Golf MkV specs
 
 units units()
@@ -49,7 +49,7 @@ public node volkswagen_vr6_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 272 * units.deg,
-            gamma: 1.5,
+            gamma: 1.0,
             lift: 9.85 * units.mm,
             steps: 100
         );
@@ -59,7 +59,7 @@ public node volkswagen_vr6_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 258 * units.deg,
-            gamma: 1.5,
+            gamma: 1.0,
             lift: 9.90 * units.mm,
             steps: 100
         );
@@ -134,6 +134,10 @@ public node volkswagen_vr6_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 45.0 * units.cc;
+	input intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch;
+	input intake_runner_cross_section_area: circle_area(1.1 * units.inch);
+	input exhaust_runner_volume: circle_area(0.85 * units.inch) * 2 * units.inch;
+	input exhaust_runner_cross_section_area: circle_area(0.85 * units.inch);
     input flip_display: false;
 	
 	input flow_attenuation: 0.9;
@@ -180,8 +184,10 @@ public node volkswagen_vr6_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 180.0 * units.cc,
-        intake_runner_cross_section_area: 2 * 12.4087 * units.cm2,
+        intake_runner_volume: intake_runner_volume,
+        intake_runner_cross_section_area: intake_runner_cross_section_area,
+        exhaust_runner_volume: exhaust_runner_volume,
+        exhaust_runner_cross_section_area: exhaust_runner_cross_section_area,
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -298,15 +304,15 @@ public node vr6_r32 {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: 22.0 * units.inch,
+        primary_tube_length: 15.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 500 * units.mm,
-		volume: 500 * units.mm * circle_area(exhaust_radius)
+		length: 2300 * units.mm,
+		volume: 2300 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0*0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0*0.1, impulse_response: ir_lib.default_0)
 	
 	label position_x_offset(deck_height * 0.13052619222005159154840622789549)  // sin(7.5)
 	label position_y_offset(deck_height * -0.00855513862618958885544247307144) // 1-cos(7.5)
@@ -317,7 +323,7 @@ public node vr6_r32 {
 	label pipe_length_4(00 * units.mm)
 	label pipe_length_5(20 * units.mm)
 	label pipe_length_6(40 * units.mm)
-	label exhaust_stagger(60 * units.mm)
+	label exhaust_stagger(80 * units.mm)
 
 	cylinder_bank b0(bank_params, angle: 7.5 * units.deg + lean_angle) // L (first) | angle: 7.5
     //cylinder_bank b0(bank_params, angle: 0, position_x: -position_x_offset, position_y: position_y_offset) // L (first) | angle: -7.5
@@ -401,7 +407,11 @@ public node vr6_r32 {
     b0.set_cylinder_head (
         volkswagen_vr6_head(
             intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0,			
+			intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch,
+			intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+			exhaust_runner_volume: circle_area(0.68 * units.inch) * 5 * units.inch,
+			exhaust_runner_cross_section_area: circle_area(0.68 * units.inch),
             flip_display: false
         )
     )
@@ -409,6 +419,10 @@ public node vr6_r32 {
         volkswagen_vr6_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
+			intake_runner_volume: circle_area(1.1 * units.inch) * 5 * units.inch,
+			intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+			exhaust_runner_volume: circle_area(0.68 * units.inch) * 2 * units.inch,
+			exhaust_runner_cross_section_area: circle_area(0.68 * units.inch),
             flip_display: false
         )
     )
@@ -416,13 +430,13 @@ public node vr6_r32 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 30 * units.deg)
-        .add_sample(2000 * units.rpm, 35 * units.deg)
-        .add_sample(3000 * units.rpm, 40 * units.deg)
-        .add_sample(4000 * units.rpm, 45 * units.deg)
-        .add_sample(5000 * units.rpm, 50 * units.deg)
-        .add_sample(6000 * units.rpm, 55 * units.deg)
-		.add_sample(7000 * units.rpm, 55 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 45 * units.deg)
+        .add_sample(3000 * units.rpm, 55 * units.deg)
+        .add_sample(4000 * units.rpm, 60 * units.deg)
+        .add_sample(5000 * units.rpm, 60 * units.deg)
+        .add_sample(6000 * units.rpm, 60 * units.deg)
+		.add_sample(7000 * units.rpm, 60 * units.deg)
 		.add_sample(8000 * units.rpm, 60 * units.deg)
 		.add_sample(9000 * units.rpm, 60 * units.deg)
 

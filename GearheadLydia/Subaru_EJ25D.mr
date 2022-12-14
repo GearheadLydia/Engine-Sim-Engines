@@ -159,10 +159,10 @@ public node subaru_ej25d_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 30.0 * units.cc,
-        intake_runner_cross_section_area: 12 * units.cm2,
-        exhaust_runner_volume: 30.0 * units.cc,
-        exhaust_runner_cross_section_area: 12 * units.cm2,
+        intake_runner_volume: circle_area(1.00 * units.inch) * 7 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.00 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 7 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,

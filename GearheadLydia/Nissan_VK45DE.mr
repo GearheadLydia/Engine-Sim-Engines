@@ -431,35 +431,34 @@ public node vk45 {
     )
 }
 
-// 2003 Nissan 350Z
-public node nissan_350z_z33_vehicle {
+// 2006 Infiniti M45 (Y50)
+public node infiniti_m45_y50_vehicle {
     alias output __out:
         vehicle(
-            mass: 3188 * units.lb,
-            drag_coefficient: 0.29,
-            cross_sectional_area: 21.1 * (units.foot * units.foot),
-            diff_ratio: 3.533,
-            tire_radius: 330.2 * units.mm, // 225/45R18
+            mass: 3995 * units.lb,
+            drag_coefficient: 0.28,
+            cross_sectional_area: 2.25 * (units.m * units.m),
+            diff_ratio: 3.357,
+            tire_radius: 339 * units.mm, // 245/40R19
             rolling_resistance: 500 * units.N
         );
 }
 
-public node nissan_350z_z33_transmission {
+public node infiniti_m45_y50_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 500 * units.lb_ft
+            max_clutch_torque: 550 * units.lb_ft
         )
-        .add_gear(3.794)
-        .add_gear(2.324)
-        .add_gear(1.624)
-        .add_gear(1.271)
+        .add_gear(3.827)
+        .add_gear(2.368)
+        .add_gear(1.520)
         .add_gear(1.000)
-        .add_gear(0.794);
+        .add_gear(0.834);
 }
 
 public node main {
     set_engine(vk45())
-    set_vehicle(nissan_350z_z33_vehicle())
-    set_transmission(nissan_350z_z33_transmission())
+    set_vehicle(infiniti_m45_y50_vehicle())
+    set_transmission(infiniti_m45_y50_transmission())
 }
 

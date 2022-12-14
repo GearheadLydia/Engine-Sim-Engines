@@ -278,18 +278,18 @@ public node w12 {
         tdc: 132.5 * units.deg
     )
 
-    rod_journal rj01(angle:  (0 + 0)   * units.deg)
-    rod_journal rj02(angle:  (0 + 12)  * units.deg)
+    rod_journal rj01(angle:  (0 - 0)   * units.deg)
+    rod_journal rj02(angle:  (0 - 12)  * units.deg)
     rod_journal rj03(angle: (120 - 15) * units.deg)
-    rod_journal rj04(angle: (120 - 3)  * units.deg)
-    rod_journal rj05(angle: (240 + 0)  * units.deg)
-    rod_journal rj06(angle: (240 + 12) * units.deg)
+    rod_journal rj04(angle: (120 - 27)  * units.deg)
+    rod_journal rj05(angle: (240 - 0)  * units.deg)
+    rod_journal rj06(angle: (240 - 12) * units.deg)
     rod_journal rj07(angle: (240 - 15) * units.deg)
-    rod_journal rj08(angle: (240 - 3)  * units.deg)
-    rod_journal rj09(angle: (120 + 0)  * units.deg)
-    rod_journal rj10(angle: (120 + 12) * units.deg)
+    rod_journal rj08(angle: (240 - 27)  * units.deg)
+    rod_journal rj09(angle: (120 - 0)  * units.deg)
+    rod_journal rj10(angle: (120 - 12) * units.deg)
     rod_journal rj11(angle:  (0 - 15)  * units.deg)
-    rod_journal rj12(angle:  (0 - 3)   * units.deg)
+    rod_journal rj12(angle:  (0 - 27)   * units.deg)
 
     c0
         .add_rod_journal(rj01)
@@ -353,23 +353,15 @@ public node w12 {
         velocity_decay: 0.4
     )
 
-    exhaust_system_parameters es_params_long(
+    exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 26.0 * units.inch,
+        primary_tube_length: 15.0 * units.inch,
         primary_flow_rate: k_carb(550.0),
-        velocity_decay: 0.8, //0.5
+        velocity_decay: 1.0, //0.5
         volume: 40.0 * units.L
     )
-
-    exhaust_system_parameters es_params_shrt(
-        outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 24.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
-        velocity_decay: 0.4, //0.5
-        volume: 40.0 * units.L
-    )
-    exhaust_system exhaustL(es_params_shrt, audio_volume:  1.0*0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.001), length: 500 * units.mm)
-    exhaust_system exhaustR(es_params_shrt, audio_volume:  0.9*0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.001), length: 500 * units.mm)
+    exhaust_system exhaustL(es_params, audio_volume:  1.0*0.01, impulse_response: ir_lib.default_0, length: 500 * units.mm)
+    exhaust_system exhaustR(es_params, audio_volume:  0.9*0.01, impulse_response: ir_lib.default_0, length: 500 * units.mm)
 	
 	
 	label position_xO_offset(deck_height * 0.10056932340128085522055018878054)  // sin(43.5)-sin(36)
@@ -377,7 +369,8 @@ public node w12 {
 	label position_xI_offset(deck_height * -0.11062649203286471411984294644969)  // sin(28.5)-sin(36)
 	label position_yI_offset(deck_height * 0.06980011828701795002770172650171) // (1-cos(28.5))-(1-cos(36))
 	
-	label exhaust_length_stagger(1.4 * units.inch)
+	label exhaust_length_stagger_IO(1.4 * units.inch)
+	label exhaust_length_stagger_LR(3.0 * units.inch)
 	label exhaust_bore_spacing(8.0 * units.mm)
 
     cylinder_bank bLO(bank_params, angle: 43.5 * units.deg) // LO (first)
@@ -421,7 +414,7 @@ public node w12 {
             ignition_wire: wires.wire07,
             intake: intake_shrt,
             exhaust_system: exhaustR,
-			primary_length: (exhaust_bore_spacing * 4) + exhaust_length_stagger
+			primary_length: (exhaust_bore_spacing * 4) + exhaust_length_stagger_IO + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -430,7 +423,7 @@ public node w12 {
             ignition_wire: wires.wire09,
             intake: intake_shrt,
             exhaust_system: exhaustR,
-			primary_length: (exhaust_bore_spacing * 2) + exhaust_length_stagger
+			primary_length: (exhaust_bore_spacing * 2) + exhaust_length_stagger_IO + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -439,7 +432,7 @@ public node w12 {
             ignition_wire: wires.wire11,
             intake: intake_shrt,
             exhaust_system: exhaustR,
-			primary_length: (exhaust_bore_spacing * 0) + exhaust_length_stagger
+			primary_length: (exhaust_bore_spacing * 0) + exhaust_length_stagger_IO + exhaust_length_stagger_LR
         )
 	
     cylinder_bank bLI(bank_params, angle: 28.5 * units.deg) // LI (third)
@@ -452,7 +445,7 @@ public node w12 {
             ignition_wire: wires.wire02,
             intake: intake_shrt,
             exhaust_system: exhaustL,
-			primary_length: (exhaust_bore_spacing * 5) + exhaust_length_stagger
+			primary_length: (exhaust_bore_spacing * 5) + exhaust_length_stagger_IO
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -461,7 +454,7 @@ public node w12 {
             ignition_wire: wires.wire04,
             intake: intake_shrt,
             exhaust_system: exhaustL,
-			primary_length: (exhaust_bore_spacing * 3) + exhaust_length_stagger
+			primary_length: (exhaust_bore_spacing * 3) + exhaust_length_stagger_IO
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -470,7 +463,7 @@ public node w12 {
             ignition_wire: wires.wire06,
             intake: intake_shrt,
             exhaust_system: exhaustL,
-			primary_length: (exhaust_bore_spacing * 1) + exhaust_length_stagger
+			primary_length: (exhaust_bore_spacing * 1) + exhaust_length_stagger_IO
         )
 
     cylinder_bank bRO(bank_params, angle: -43.5 * units.deg) // RO (fourth)
@@ -483,7 +476,7 @@ public node w12 {
             ignition_wire: wires.wire08,
             intake: intake_long,
             exhaust_system: exhaustR,
-			primary_length: exhaust_bore_spacing * 5
+			primary_length: exhaust_bore_spacing * 5 + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -492,7 +485,7 @@ public node w12 {
             ignition_wire: wires.wire10,
             intake: intake_long,
             exhaust_system: exhaustR,
-			primary_length: exhaust_bore_spacing * 3
+			primary_length: exhaust_bore_spacing * 3 + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -501,7 +494,7 @@ public node w12 {
             ignition_wire: wires.wire12,
             intake: intake_long,
             exhaust_system: exhaustR,
-			primary_length: exhaust_bore_spacing * 1
+			primary_length: exhaust_bore_spacing * 1 + exhaust_length_stagger_LR
         )
 
     engine

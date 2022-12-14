@@ -442,16 +442,16 @@ public node chevrolet_lt1 {
     )
 }
 
-// 2004 Chevrolet Corvette Z06 (C5)
-public node chevrolet_corvette_z06_c5_vehicle {
+// 1994 Chevrolet Corvette Z51 (C4)
+public node chevrolet_corvette_z51_c4_vehicle {
     alias output __out:
         vehicle(
-            mass: 3117 * units.lb,
-            drag_coefficient: 0.31,
-            cross_sectional_area: 1.88 * (units.m) * (units.m),
-            diff_ratio: 3.42,
-            tire_radius: 331.5 * units.mm, // 295/35ZR18
-            rolling_resistance: 600 * units.N
+            mass: 3318 * units.lb,
+            drag_coefficient: 0.33,
+            cross_sectional_area: 1.75 * (units.m) * (units.m),
+            diff_ratio: 3.45,
+            tire_radius: 330 * units.mm, // 285/40ZR17
+            rolling_resistance: 550 * units.N
         );
 }
 
@@ -460,16 +460,16 @@ public node tremec_t56_transmission {
         transmission(
             max_clutch_torque: 1000 * units.lb_ft
         )
-        .add_gear(2.97)
-        .add_gear(2.07)
-        .add_gear(1.43)
+        .add_gear(2.54)
+        .add_gear(1.78)
+        .add_gear(1.30)
         .add_gear(1.00)
-        .add_gear(0.84)
-        .add_gear(0.56);
+        .add_gear(0.74)
+        .add_gear(0.49);
 }
 
 public node main {
     set_engine(chevrolet_lt1())
-    set_vehicle(chevrolet_corvette_z06_c5_vehicle())
+    set_vehicle(chevrolet_corvette_z51_c4_vehicle())
     set_transmission(tremec_t56_transmission())
 }
