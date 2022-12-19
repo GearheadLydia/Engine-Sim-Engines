@@ -47,9 +47,9 @@ private node wires {
 public node dodge_v10_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 218 * units.deg,
+            duration_at_50_thou: 220 * units.deg,
             gamma: 1.0,
-            lift: 462 * units.thou, // 308 * 1.5
+            lift: 513.6 * units.thou, // 321 * 1.6
             steps: 100
         );
 }
@@ -57,9 +57,9 @@ public node dodge_v10_lobe_profile_int {
 public node dodge_v10_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 212 * units.deg,
+            duration_at_50_thou: 230 * units.deg,
             gamma: 1.0,
-            lift: 436.5 * units.thou, // 291 * 1.5
+            lift: 513.6 * units.thou, // 321 * 1.6
             steps: 100
         );
 }
@@ -195,7 +195,7 @@ public node viper_v10 {
     wires wires()
 
     engine engine(
-        name: "Dodge Viper V10 (SR I)",
+        name: "Dodge Viper V10 (SR II)",
         starter_torque: 200 * units.lb_ft,
 		starter_speed: 900 * units.rpm,
         redline: 6000 * units.rpm,
@@ -307,7 +307,7 @@ public node viper_v10 {
 	label exhaust_radius((4.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(625.0),
+        outlet_flow_rate: k_carb(1250.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
@@ -316,25 +316,19 @@ public node viper_v10 {
 		volume: (1200 * units.mm * circle_area(exhaust_radius))
     )
 
-    exhaust_system exhaustL(
-        es_params,
-        audio_volume: 1.0 * 0.01,
-        impulse_response: ir_lib.default_0
-    )
-
-    exhaust_system exhaustR(
+    exhaust_system exhaust(
         es_params,
         audio_volume: 1.0 * 0.01,
         impulse_response: ir_lib.default_0
     )
 	
-	label pipe_length_1(5.0 * units.inch)
+	label pipe_length_1(4.0 * units.inch)
 	label pipe_length_2(0.5 * units.inch)
 	label pipe_length_3(1.0 * units.inch)
 	label pipe_length_4(0.0 * units.inch)
-	label pipe_length_5(4.5 * units.inch)
+	label pipe_length_5(3.5 * units.inch)
 	
-	label exhaust_stagger(3 * units.inch)
+	label exhaust_stagger(2 * units.inch)
 	
 	label exhaust_volume_R0(0.2)
 	label exhaust_volume_R1(0.25)
@@ -349,7 +343,7 @@ public node viper_v10 {
             rod_journal: rj0,
             ignition_wire: wires.wire01,
             intake: intakeR,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
             sound_attenuation: exhaust_volume_R0
         )
@@ -359,7 +353,7 @@ public node viper_v10 {
             rod_journal: rj1,
             ignition_wire: wires.wire03,
             intake: intakeR,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
 			sound_attenuation: exhaust_volume_R1
         )
@@ -369,7 +363,7 @@ public node viper_v10 {
             rod_journal: rj2,
             ignition_wire: wires.wire05,
             intake: intakeR,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
 			sound_attenuation: exhaust_volume_R0
         )
@@ -379,7 +373,7 @@ public node viper_v10 {
             rod_journal: rj3,
             ignition_wire: wires.wire07,
             intake: intakeR,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_4 + exhaust_stagger,
 			sound_attenuation: exhaust_volume_R1
         )
@@ -389,7 +383,7 @@ public node viper_v10 {
             rod_journal: rj4,
             ignition_wire: wires.wire09,
             intake: intakeR,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_5 + exhaust_stagger,
 			sound_attenuation: exhaust_volume_R0
         )
@@ -402,7 +396,7 @@ public node viper_v10 {
             rod_journal: rj0,
             ignition_wire: wires.wire02,
             intake: intakeL,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_5,
 			sound_attenuation: exhaust_volume_L0
         )
@@ -412,7 +406,7 @@ public node viper_v10 {
             rod_journal: rj1,
             ignition_wire: wires.wire04,
             intake: intakeL,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_4,
 			sound_attenuation: exhaust_volume_L1
         )
@@ -422,7 +416,7 @@ public node viper_v10 {
             rod_journal: rj2,
             ignition_wire: wires.wire06,
             intake: intakeL,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_3,
 			sound_attenuation: exhaust_volume_L0
         )
@@ -432,7 +426,7 @@ public node viper_v10 {
             rod_journal: rj3,
             ignition_wire: wires.wire08,
             intake: intakeL,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_2,
 			sound_attenuation: exhaust_volume_L1
         )
@@ -442,7 +436,7 @@ public node viper_v10 {
             rod_journal: rj4,
             ignition_wire: wires.wire10,
             intake: intakeL,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_1,
 			sound_attenuation: exhaust_volume_L0
         )
@@ -476,13 +470,13 @@ public node viper_v10 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 30 * units.deg)
-        .add_sample(2000 * units.rpm, 32 * units.deg)
-        .add_sample(3000 * units.rpm, 35 * units.deg)
-        .add_sample(4000 * units.rpm, 38 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 40 * units.deg)
-		.add_sample(7000 * units.rpm, 40 * units.deg)
+        .add_sample(1000 * units.rpm, 33 * units.deg)
+        .add_sample(2000 * units.rpm, 36 * units.deg)
+        .add_sample(3000 * units.rpm, 39 * units.deg)
+        .add_sample(4000 * units.rpm, 40 * units.deg)
+        .add_sample(5000 * units.rpm, 42 * units.deg)
+        .add_sample(6000 * units.rpm, 42 * units.deg)
+		.add_sample(7000 * units.rpm, 42 * units.deg)
 
     engine.add_ignition_module(
         dodge_v10_distributor(
@@ -493,15 +487,15 @@ public node viper_v10 {
     )
 }
 
-// 1994 Dodge Viper GTS (SR I)
-public node dodge_viper_rt10_sr_vehicle {
+// 1999 Dodge Viper GTS (SR II)
+public node dodge_viper_gts_sr_vehicle {
     alias output __out:
         vehicle(
-            mass: 3399 * units.lb,
-            drag_coefficient: 0.55,
-            cross_sectional_area: 1.78 * (units.m * units.m),
+            mass: 3444 * units.lb,
+            drag_coefficient: 0.39,
+            cross_sectional_area: 1.91 * (units.m * units.m),
             diff_ratio: 3.07,
-            tire_radius: 332.5 * units.mm, // P335/35ZR17
+            tire_radius: 345.5 * units.mm, // P335/30ZR18
             rolling_resistance: 550 * units.N
         );
 }
@@ -521,6 +515,6 @@ public node borgwarner_t56_transmission {
 
 public node main {
     set_engine(viper_v10())
-    set_vehicle(dodge_viper_rt10_sr_vehicle())
+    set_vehicle(dodge_viper_gts_sr_vehicle())
     set_transmission(borgwarner_t56_transmission())
 }

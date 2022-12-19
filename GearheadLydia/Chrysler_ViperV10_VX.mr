@@ -205,8 +205,6 @@ public node viper_v10 {
 		simulation_frequency: 7500
     )
 
-
-	// source: https://www.onallcylinders.com/2021/06/24/2011-mopar-gen-iii-6-4l-392-hemi-apache-engine-guide-bore-stroke-cylinder-heads-cam-specs-more/
     label bore(4.055 * units.inch)
 	label bore_spacing(4.460 * units.inch)
     label stroke(3.960 * units.inch)
@@ -314,20 +312,20 @@ public node viper_v10 {
         impulse_response: ir_lib.default_0
     )
 	
-	label pipe_length_1(bore_spacing * 1.0)
-	label pipe_length_2(bore_spacing * 0.5)
+	label pipe_length_1(bore_spacing * 0.8)
+	label pipe_length_2(bore_spacing * 0.4)
 	label pipe_length_3(bore_spacing * 0.0)
-	label pipe_length_4(bore_spacing * 0.5)
-	label pipe_length_5(bore_spacing * 1.0)
+	label pipe_length_4(bore_spacing * 0.4)
+	label pipe_length_5(bore_spacing * 0.8)
 	
-	label exhaust_stagger(bore_spacing * 0.2)
+	label exhaust_stagger(bore_spacing * 0.4)
 	
+	label exhaust_volume_R0(0.4)
+	label exhaust_volume_R1(0.45)
+	label exhaust_volume_R2(0.5)
 	label exhaust_volume_L0(0.8)
 	label exhaust_volume_L1(0.9)
 	label exhaust_volume_L2(1.0)
-	label exhaust_volume_R0(0.8)
-	label exhaust_volume_R1(0.9)
-	label exhaust_volume_R2(1.0)
 
     cylinder_bank b0(bank_params, angle: -45 * units.deg) // R (first)
     b0
@@ -339,7 +337,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaustR,
 			primary_length: pipe_length_1 + exhaust_stagger,
-            sound_attenuation: exhaust_volume_L0
+            sound_attenuation: exhaust_volume_R0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -349,7 +347,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaustR,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L1
+			sound_attenuation: exhaust_volume_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -359,7 +357,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaustR,
 			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L2
+			sound_attenuation: exhaust_volume_R2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -369,7 +367,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaustR,
 			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L1
+			sound_attenuation: exhaust_volume_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -379,7 +377,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaustR,
 			primary_length: pipe_length_5 + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L0
+			sound_attenuation: exhaust_volume_R0
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -392,7 +390,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaustL,
 			primary_length: pipe_length_1,
-			sound_attenuation: exhaust_volume_R0
+			sound_attenuation: exhaust_volume_L0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -402,7 +400,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaustL,
 			primary_length: pipe_length_2,
-			sound_attenuation: exhaust_volume_R1
+			sound_attenuation: exhaust_volume_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -412,7 +410,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaustL,
 			primary_length: pipe_length_3,
-			sound_attenuation: exhaust_volume_R2
+			sound_attenuation: exhaust_volume_L2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -422,7 +420,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaustL,
 			primary_length: pipe_length_4,
-			sound_attenuation: exhaust_volume_R1
+			sound_attenuation: exhaust_volume_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -432,7 +430,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaustL,
 			primary_length: pipe_length_5,
-			sound_attenuation: exhaust_volume_R0
+			sound_attenuation: exhaust_volume_L0
         )
 
     engine

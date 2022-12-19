@@ -318,10 +318,10 @@ public node viper_v10 {
 	
 	label exhaust_stagger(bore_spacing * 0.2)
 	
-	label exhaust_volume_L1(0.8)
-	label exhaust_volume_L0(1.0)
 	label exhaust_volume_R1(0.8)
 	label exhaust_volume_R0(1.0)
+	label exhaust_volume_L0(1.0)
+	label exhaust_volume_L1(0.8)
 
     cylinder_bank b0(bank_params, angle: -45 * units.deg) // R (first)
     b0
@@ -333,7 +333,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-            sound_attenuation: exhaust_volume_L0
+            sound_attenuation: exhaust_volume_R0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -343,7 +343,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L1
+			sound_attenuation: exhaust_volume_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -353,7 +353,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L0
+			sound_attenuation: exhaust_volume_R0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -363,7 +363,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L1
+			sound_attenuation: exhaust_volume_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -373,7 +373,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_5 + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L0
+			sound_attenuation: exhaust_volume_R0
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -386,7 +386,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
-			sound_attenuation: exhaust_volume_R0
+			sound_attenuation: exhaust_volume_L0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -396,7 +396,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
-			sound_attenuation: exhaust_volume_R1
+			sound_attenuation: exhaust_volume_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -406,7 +406,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
-			sound_attenuation: exhaust_volume_R0
+			sound_attenuation: exhaust_volume_L0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -416,7 +416,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4,
-			sound_attenuation: exhaust_volume_R1
+			sound_attenuation: exhaust_volume_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.15)),
@@ -426,7 +426,7 @@ public node viper_v10 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_5,
-			sound_attenuation: exhaust_volume_R0
+			sound_attenuation: exhaust_volume_L0
         )
 
     engine
