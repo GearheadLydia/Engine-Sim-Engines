@@ -205,10 +205,10 @@ public node i6_umbrars_head {
 		
     generic_cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 30.0 * units.cc,
-        intake_runner_cross_section_area: 10 * units.cm2,
-        exhaust_runner_volume: 30.0 * units.cc,
-        exhaust_runner_cross_section_area: 10 * units.cm2,
+        intake_runner_volume: circle_area(1.1 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.9 * units.inch) * 6 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -319,35 +319,26 @@ public node i6_umbrars {
         idle_flow_rate_cfm: 0.1,
         idle_throttle_plate_position: 0.994
     )
+	
+	label exhaust_radius((4.0 * units.inch)/2)
 
-    exhaust_system_parameters es_paramsF(
-        outlet_flow_rate: k_carb(500.0),
-        primary_tube_length: 25.0 * units.inch,
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(1000.0),
+        primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 0.4, //0.5
-        volume: 40.0 * units.L
+		collector_cross_section_area: circle_area(exhaust_radius),
+		length: 2000 * units.mm,
+		volume: 2000 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system_parameters es_paramsR(
-        outlet_flow_rate: k_carb(500.0),
-        primary_tube_length: 25.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
-        velocity_decay: 0.4, //0.5
-        volume: 40.0 * units.L
-    )
-
-    exhaust_system exhaustF(
-		es_paramsF,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 500 * units.mm
+    exhaust_system exhaust(
+		es_params,
+		audio_volume: 1.0 * 0.05,
+		impulse_response: ir_lib.default_0
 	)
-    exhaust_system exhaustR(
-		es_paramsR,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 480 * units.mm
-	)
+	
+	label exhaust_stagger(1.5 * units.inch)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -357,8 +348,8 @@ public node i6_umbrars {
             rod_journal: rj0,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaustF,
-			primary_length: 2.5 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: 0.9 * units.inch + exhaust_stagger,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -367,9 +358,9 @@ public node i6_umbrars {
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 2.8 * units.inch,
-			sound_attenuation: 0.8
+            exhaust_system: exhaust,
+			primary_length: 1.8 * units.inch + exhaust_stagger,
+			sound_attenuation: 1.0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -377,8 +368,8 @@ public node i6_umbrars {
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaustF,
-			primary_length: 2.2 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: 1.8 * units.inch + exhaust_stagger,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -387,9 +378,9 @@ public node i6_umbrars {
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 2.5 * units.inch,
-			sound_attenuation: 0.8
+            exhaust_system: exhaust,
+			primary_length: 0.9 * units.inch,
+			sound_attenuation: 1.2
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -397,9 +388,9 @@ public node i6_umbrars {
             rod_journal: rj4,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaustF,
-			primary_length: 2.8 * units.inch,
-			sound_attenuation: 1.0
+            exhaust_system: exhaust,
+			primary_length: 1.8 * units.inch,
+			sound_attenuation: 1.2
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -407,9 +398,9 @@ public node i6_umbrars {
             rod_journal: rj5,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 2.2 * units.inch,
-			sound_attenuation: 0.8
+            exhaust_system: exhaust,
+			primary_length: 0.0 * units.inch,
+			sound_attenuation: 1.2
         )
 
 
