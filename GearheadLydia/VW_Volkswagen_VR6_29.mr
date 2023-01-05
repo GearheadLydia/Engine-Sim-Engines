@@ -411,7 +411,7 @@ public node vr6_28 {
 			flow_attenuation: 0.65,
 			intake_runner_volume: circle_area(0.9 * units.inch) * 2 * units.inch,
 			intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-			exhaust_runner_volume: circle_area(0.68 * units.inch) * 5 * units.inch,
+			exhaust_runner_volume: circle_area(0.48 * units.inch) * 5 * units.inch,
 			exhaust_runner_cross_section_area: circle_area(0.48 * units.inch),
             flip_display: false
         )
@@ -423,7 +423,7 @@ public node vr6_28 {
 			flow_attenuation: 0.65,
 			intake_runner_volume: circle_area(0.9 * units.inch) * 5 * units.inch,
 			intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-			exhaust_runner_volume: circle_area(0.68 * units.inch) * 2 * units.inch,
+			exhaust_runner_volume: circle_area(0.48 * units.inch) * 2 * units.inch,
 			exhaust_runner_cross_section_area: circle_area(0.48 * units.inch),
             flip_display: false
         )

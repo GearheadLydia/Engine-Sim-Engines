@@ -13,8 +13,8 @@ label cycle(2 * 360 * units.deg)
 public node prv_zmj_159_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7000 * units.rpm;
-	input limiter_duration: 0.12;
+    input rev_limit: 6250 * units.rpm;
+	input limiter_duration: 0.15;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 6.0) * cycle)
@@ -38,8 +38,8 @@ public node prv_zmj_159_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
-            gamma: 1.5,
-            lift: 10.5 * units.mm,
+            gamma: 1.0,
+            lift: 8.0 * units.mm,
             steps: 100
         );
 }
@@ -48,8 +48,8 @@ public node prv_zmj_159_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
-            gamma: 1.5,
-            lift: 10.5 * units.mm,
+            gamma: 1.0,
+            lift: 8.0 * units.mm,
             steps: 100
         );
 }
@@ -57,11 +57,10 @@ public node prv_zmj_159_lobe_profile_exh {
 public node prv_zmj_159_camshaft_builder {
     input in_lobe_profile: prv_zmj_159_lobe_profile_int();
 	input ex_lobe_profile: prv_zmj_159_lobe_profile_exh();
-    input lobe_separation: 110.0 * units.deg;
-    input intake_lobe_center: 110.0 * units.deg;
-    input exhaust_lobe_center: 110.0 * units.deg;
-    input advance_in: 0.0 * units.deg;
-    input advance_ex: 0.0 * units.deg;
+    input lobe_separation: 120.0 * units.deg;
+    input intake_lobe_center: lobe_separation;
+    input exhaust_lobe_center: lobe_separation;
+    input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -70,15 +69,15 @@ public node prv_zmj_159_camshaft_builder {
     output exhaust_cam_1: _exhaust_cam_1;
 
     camshaft_parameters params(
-        advance: advance_in,
+        advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: in_lobe_profile, advance: advance_in)
-    camshaft _exhaust_cam_0(params, lobe_profile: ex_lobe_profile, advance: advance_ex)
+    camshaft _intake_cam_0(params, lobe_profile: in_lobe_profile, advance: advance)
+    camshaft _exhaust_cam_0(params, lobe_profile: ex_lobe_profile, advance: advance)
 
-    camshaft _intake_cam_1(params, lobe_profile: in_lobe_profile, advance: advance_in)
-    camshaft _exhaust_cam_1(params, lobe_profile: ex_lobe_profile, advance: advance_ex)
+    camshaft _intake_cam_1(params, lobe_profile: in_lobe_profile, advance: advance)
+    camshaft _exhaust_cam_1(params, lobe_profile: ex_lobe_profile, advance: advance)
 
 
     label rot30(30 * units.deg)
@@ -124,12 +123,12 @@ public node prv_zmj_159_head {
     input chamber_volume: 51.0 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation_in: 1.1;
-	input flow_attenuation_ex: 1.1;
+	input flow_attenuation_in: 0.65;
+	input flow_attenuation_ex: 0.7;
     input lift_scale: 50.0;
     alias output __out: head;
 
-    function intake_flow(1.15 * units.mm)
+    function intake_flow(1.23 * units.mm)
     intake_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
@@ -147,7 +146,7 @@ public node prv_zmj_159_head {
         .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
         .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
-    function exhaust_flow(1.15 * units.mm)
+    function exhaust_flow(1.23 * units.mm)
     exhaust_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
@@ -168,10 +167,10 @@ public node prv_zmj_159_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 40.0 * units.cc,
-        intake_runner_cross_section_area: 20 * units.cm2,
-        exhaust_runner_volume: 40.0 * units.cc,
-        exhaust_runner_cross_section_area: 20 * units.cm2,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -190,25 +189,23 @@ public node prv_zmj_159 {
     label bore(91.0 * units.mm)
     label stroke(73.0 * units.mm)
     label rod_length(152.5 * units.mm)
-    label rod_mass(350 * units.g) // guesstimate based on aftermarket chromoly rods - stock rods are titanium
+    label rod_mass(350 * units.g)
 	label piston_mass(400 * units.g)
-    label compression_height(1.184 * units.inch)
-	label piston_dome(0.0 * units.cc)
-	label deck_clearance(1.5 * units.mm)
+    label compression_height(30 * units.mm)
+	label piston_dome(0 * units.cc)
+	label deck_clearance(1 * units.mm)
     label crank_mass(45 * units.lb)
-    label flywheel_mass(25 * units.lb)
-    label flywheel_radius(5 * units.inch)
+    label flywheel_mass(45 * units.lb)
+    label flywheel_radius(6 * units.inch)
 
     engine engine(
         name: "DeLorean PRV",
         starter_torque: 300 * units.lb_ft,
 		starter_speed: 600 * units.rpm,
-        redline: 6500 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 6.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+        redline: 6000 * units.rpm,
+        throttle_gamma: 1.0,
+		hf_gain: 0.02,
+		jitter: 0.6
     )
 
     label crank_moment(
@@ -268,36 +265,34 @@ public node prv_zmj_159 {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(800.0),
+        intake_flow_rate: k_carb(250.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.996,
+        idle_throttle_plate_position: 0.99,
         throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(500.0),
+        runner_flow_rate: k_carb(200.0),
         runner_length: 4.5 * units.inch,
         velocity_decay: 0.1
     )
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(650.0),
-        primary_tube_length: 20.0 * units.inch,
-        primary_flow_rate: k_carb(200.0),
-        velocity_decay: 1.0, //0.5
+        outlet_flow_rate: k_carb(250.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(150.0),
+        velocity_decay: 1.0, //0.5,
+		length: 850 * units.mm,
         volume: 20.0 * units.L
     )
 
-    exhaust_system exhaustL(
-		es_params,
-		audio_volume: 0.6 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 450 * units.mm
-	)
-
-    exhaust_system exhaustR(
+    exhaust_system exhaust(
 		es_params,
 		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 500 * units.mm
+		impulse_response: ir_lib.default_0
 	)
+
+	label exhaust_stagger_LR(7 * units.inch)
+	label pipe_length_1(0 * units.inch)
+	label pipe_length_2(3 * units.inch)
+	label pipe_length_3(6 * units.inch)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (second)
     b0
@@ -307,8 +302,8 @@ public node prv_zmj_159 {
             rod_journal: rj0,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 0.0 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -317,8 +312,8 @@ public node prv_zmj_159 {
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 1.0 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -327,8 +322,8 @@ public node prv_zmj_159 {
             rod_journal: rj2,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 2.0 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3,
 			sound_attenuation: 1.0
         )
 
@@ -340,8 +335,8 @@ public node prv_zmj_159 {
             rod_journal: rj0,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 0.0 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger_LR,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -350,8 +345,8 @@ public node prv_zmj_159 {
             rod_journal: rj1,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 1.0 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger_LR,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -360,14 +355,14 @@ public node prv_zmj_159 {
             rod_journal: rj2,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 2.0 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger_LR,
 			sound_attenuation: 1.0
         )
 
     engine
-        .add_cylinder_bank(b1)
         .add_cylinder_bank(b0)
+        .add_cylinder_bank(b1)
 
     engine.add_crankshaft(c0)
 
@@ -390,56 +385,51 @@ public node prv_zmj_159 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 65 * units.deg)
+        .add_sample(0000 * units.rpm, 35 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 70 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
+        .add_sample(6000 * units.rpm, 70 * units.deg)
 		.add_sample(7000 * units.rpm, 70 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
-		.add_sample(9000 * units.rpm, 75 * units.deg)
 
     engine.add_ignition_module(
         prv_zmj_159_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 7000 * units.rpm
+            rev_limit: 6250 * units.rpm
         )
     )
 }
 
-// 2017 Alfa Romeo Giulia Quadrifoglio (952)
-public node alfa_giulia_qv_vehicle {
+// 1981 DMC DeLorean
+public node dmc_delorean_vehicle {
     alias output __out:
         vehicle(
-            mass: 1715 * units.kg,
-            drag_coefficient: 0.32,
-            cross_sectional_area: 24.693 * (units.foot * units.foot),
-            diff_ratio: 3.09,
-            tire_radius: 326.39 * units.mm, // P285/30R19
-            rolling_resistance: 500 * units.N
+            mass: 1233 * units.kg,
+            drag_coefficient: 0.34,
+            cross_sectional_area: 1.88 * (units.m * units.m),
+            diff_ratio: 3.44,
+            tire_radius: 331.5 * units.mm, // 235/60HR15
+            rolling_resistance: 430 * units.N
         );
 }
 
-public node alfa_giulia_qv_transmission {
+public node renault_un1_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1200 * units.lb_ft
+            max_clutch_torque: 500 * units.lb_ft
         )
-        .add_gear(5.00)
-        .add_gear(3.20)
-        .add_gear(2.14)
-        .add_gear(1.72)
-        .add_gear(1.31)
-        .add_gear(1.00)
-        .add_gear(0.82)
-        .add_gear(0.64);
+        .add_gear(3.364)
+        .add_gear(2.059)
+        .add_gear(1.381)
+        .add_gear(1.057)
+        .add_gear(0.8205);
 }
 
 public node main {
     set_engine(prv_zmj_159())
-    set_vehicle(alfa_giulia_qv_vehicle())
-    set_transmission(alfa_giulia_qv_transmission())
+    set_vehicle(dmc_delorean_vehicle())
+    set_transmission(renault_un1_transmission())
 }

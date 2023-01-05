@@ -5,7 +5,8 @@ constants constants()
 impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
-label cyc_odd(30 * units.deg)
+
+// firing order: 14527638
 
 public node volvo_b8444s_distributor {
     input wires;
@@ -83,7 +84,7 @@ public node volvo_b8444s_camshaft_builder {
     camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
 
 
-    label rot30(30 * units.deg)
+	label rot30(30 * units.deg)
 	label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
@@ -188,9 +189,9 @@ public node b8444s {
 
     wires wires()
 
-    label bore(94.0 * units.mm)
-    label stroke(79.5 * units.mm)
-    label rod_length(138.1 * units.mm)
+    label bore(95.5 * units.mm)
+    label stroke(87.1 * units.mm)
+    label rod_length(141.9 * units.mm)
     label rod_mass(350 * units.g) // guesstimate based on aftermarket chromoly rods - stock rods are titanium
 	label piston_mass(400 * units.g)
     label compression_height(29.75 * units.mm)
@@ -201,7 +202,7 @@ public node b8444s {
     label flywheel_radius(5.5 * units.inch)
 
     engine engine(
-        name: "Volvo B8444S",
+        name: "Volvo B8444S (V8 Supercars)",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 600 * units.rpm,
         redline: 7500 * units.rpm,
@@ -252,7 +253,6 @@ public node b8444s {
         .add_rod_journal(rj6)
         .add_rod_journal(rj7)
 
-
     piston_parameters piston_params(
         mass: piston_mass,
         //blowby: 0,
@@ -279,11 +279,11 @@ public node b8444s {
 	intake intake (
 		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: 100.0 * units.cm2,
-		intake_flow_rate: k_carb(350.0),
+		intake_flow_rate: k_carb(850.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.992,
+		idle_throttle_plate_position: 0.997,
 		throttle_gamma: 1.5,
-		runner_flow_rate: k_carb(400.0),
+		runner_flow_rate: k_carb(600.0),
 		runner_length: 15.0 * units.inch,
 		velocity_decay: 0.1
 	)
@@ -291,20 +291,21 @@ public node b8444s {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(800.0),
         primary_tube_length: 50.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        primary_flow_rate: k_carb(550.0),
         velocity_decay: 1.0, //0.5
         volume: 50.0 * units.L,
 		length: 500 * units.mm
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 
 	label pipe_scaling(4 * units.inch)
-	label pipe_length_1(1.0 * pipe_scaling)
-	label pipe_length_2(0.3 * pipe_scaling)
-	label pipe_length_3(0.7 * pipe_scaling)
-	label pipe_length_4(1.7 * pipe_scaling)
-	label exhaust_stagger(pipe_scaling * 1.5)
+	label pipe_length_1(0.9 * pipe_scaling)
+	label pipe_length_2(0.6 * pipe_scaling)
+	label pipe_length_3(0.3 * pipe_scaling)
+	label pipe_length_4(0.0 * pipe_scaling)
+	label exhaust_stagger(pipe_scaling * 0.15)
 
     cylinder_bank b0(bank_params, angle: -30.0 * units.deg) // R (first)
     b0
@@ -314,8 +315,8 @@ public node b8444s {
             rod_journal: rj0,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger
+            exhaust_system: exhaustR,
+			primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -323,8 +324,8 @@ public node b8444s {
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+            exhaust_system: exhaustR,
+			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -332,8 +333,8 @@ public node b8444s {
             rod_journal: rj4,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+            exhaust_system: exhaustR,
+			primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -341,8 +342,8 @@ public node b8444s {
             rod_journal: rj6,
             ignition_wire: wires.wire7,
             intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
+            exhaust_system: exhaustR,
+			primary_length: pipe_length_4 + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: 30.0 * units.deg) // L (second)
@@ -353,7 +354,7 @@ public node b8444s {
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaust,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_1
         )
         .add_cylinder(
@@ -362,7 +363,7 @@ public node b8444s {
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaust,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_2
         )
         .add_cylinder(
@@ -371,7 +372,7 @@ public node b8444s {
             rod_journal: rj5,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaust,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_3
         )
         .add_cylinder(
@@ -380,7 +381,7 @@ public node b8444s {
             rod_journal: rj7,
             ignition_wire: wires.wire8,
             intake: intake,
-            exhaust_system: exhaust,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_4
         )
 
@@ -431,35 +432,36 @@ public node b8444s {
     )
 }
 
-// 2008 Volvo S80 V8
-public node volvo_s80_v8_vehicle {
+// 2016 Volvo S60 V8 Supercars
+public node volvo_s60_v8_supercars_vehicle {
     alias output __out:
         vehicle(
-            mass: 4100 * units.lb,
-            drag_coefficient: 0.28,
-            cross_sectional_area: 2.25 * (units.m * units.m),
-            diff_ratio: 3.33,
-            tire_radius: 326.39 * units.mm, // P245/40R18
-            rolling_resistance: 500 * units.N
+            mass: 3100 * units.lb,
+            drag_coefficient: 0.36, // guesstimate for race trim
+            cross_sectional_area: 2.27 * (units.m * units.m), // street model
+            diff_ratio: 3.3, // guess
+            tire_radius: 340.00 * units.mm, // V8 Supercars control tire
+            rolling_resistance: 600 * units.N
         );
 }
 
-public node volvo_s80_v8_transmission {
+// not sure if this is the right transmission
+public node albins_st6_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 550 * units.lb_ft
+            max_clutch_torque: 850 * units.lb_ft
         )
-        .add_gear(4.15)
-        .add_gear(2.37)
-        .add_gear(1.57)
-        .add_gear(1.16)
-        .add_gear(0.86)
-        .add_gear(0.69);
+        .add_gear(2.57)
+        .add_gear(1.98)
+		.add_gear(1.60)
+        .add_gear(1.35)
+        .add_gear(1.13)
+        .add_gear(0.98);
 }
 
 public node main {
     set_engine(b8444s())
-    set_vehicle(volvo_s80_v8_vehicle())
-    set_transmission(volvo_s80_v8_transmission())
+    set_vehicle(volvo_s60_v8_supercars_vehicle())
+    set_transmission(albins_st6_transmission())
 }
 

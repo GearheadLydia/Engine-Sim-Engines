@@ -9,7 +9,7 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 1 12 5 8 3 10 6 7 2 11 4 9
+// firing order: 1-6-2-7-4-9-5-10-3-8
 
 public node audi_w12_distributor {
     input wires;
@@ -18,18 +18,16 @@ public node audi_w12_distributor {
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
-            .connect_wire(wires.wire01,  (0.0/12.0) * cycle)
-            .connect_wire(wires.wire12,  (1.0/12.0) * cycle)
-			.connect_wire(wires.wire05,  (2.0/12.0) * cycle)
-			.connect_wire(wires.wire08,  (3.0/12.0) * cycle)
-			.connect_wire(wires.wire03,  (4.0/12.0) * cycle)
-			.connect_wire(wires.wire10,  (5.0/12.0) * cycle)
-			.connect_wire(wires.wire06,  (6.0/12.0) * cycle)
-			.connect_wire(wires.wire07,  (7.0/12.0) * cycle)
-			.connect_wire(wires.wire02,  (8.0/12.0) * cycle)
-			.connect_wire(wires.wire11,  (9.0/12.0) * cycle)
-			.connect_wire(wires.wire04, (10.0/12.0) * cycle)
-			.connect_wire(wires.wire09, (11.0/12.0) * cycle);
+            .connect_wire(wires.wire01,  (0.0/10.0) * cycle)
+            .connect_wire(wires.wire06,  (1.0/10.0) * cycle)
+			.connect_wire(wires.wire02,  (2.0/10.0) * cycle)
+			.connect_wire(wires.wire07,  (3.0/10.0) * cycle)
+			.connect_wire(wires.wire04,  (4.0/10.0) * cycle)
+			.connect_wire(wires.wire09,  (5.0/10.0) * cycle)
+			.connect_wire(wires.wire05,  (6.0/10.0) * cycle)
+			.connect_wire(wires.wire10,  (7.0/10.0) * cycle)
+			.connect_wire(wires.wire03,  (8.0/10.0) * cycle)
+			.connect_wire(wires.wire08,  (9.0/10.0) * cycle);
 }
 
 private node wires {
@@ -43,8 +41,6 @@ private node wires {
     output wire08: ignition_wire();
     output wire09: ignition_wire();
     output wire10: ignition_wire();
-    output wire11: ignition_wire();
-    output wire12: ignition_wire();
 }
 
 // cams copied from VR6 R32
@@ -107,54 +103,51 @@ public node audi_w12_camshaft_builder {
     camshaft _exhaust_cam_RO(params, lobe_profile: exhaust_lobe_profile)
 
 
-	// firing order: 1 12 5 8 3 10 6 7 2 11 4 9
+	// firing order: 1-6-2-7-4-9-5-10-3-8
 
     label rot30(30 * units.deg)
 	label rot60(60 * units.deg)
+	label rot72(72 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
     _intake_cam_LO
-        .add_lobe(rot360 + intake_lobe_center + ( 0 * rot60)) //  #1
-		.add_lobe(rot360 + intake_lobe_center + ( 4 * rot60)) //  #3
-		.add_lobe(rot360 + intake_lobe_center + ( 2 * rot60)) //  #5
+        .add_lobe(rot360 + intake_lobe_center + (0 * rot72)) //  #1
+		.add_lobe(rot360 + intake_lobe_center + (8 * rot72)) //  #3
+		.add_lobe(rot360 + intake_lobe_center + (6 * rot72)) //  #5
 
     _intake_cam_LI
-        .add_lobe(rot360 + intake_lobe_center + ( 8 * rot60)) //  #2
-		.add_lobe(rot360 + intake_lobe_center + (10 * rot60)) //  #4
-		.add_lobe(rot360 + intake_lobe_center + ( 6 * rot60)) //  #6
+        .add_lobe(rot360 + intake_lobe_center + (2 * rot72)) //  #2
+		.add_lobe(rot360 + intake_lobe_center + (4 * rot72)) //  #4
 
     _intake_cam_RI
-        .add_lobe(rot360 + intake_lobe_center + ( 7 * rot60)) //  #7
-		.add_lobe(rot360 + intake_lobe_center + (11 * rot60)) //  #9
-		.add_lobe(rot360 + intake_lobe_center + ( 9 * rot60)) // #11
+        .add_lobe(rot360 + intake_lobe_center + (1 * rot72)) //  #6
+		.add_lobe(rot360 + intake_lobe_center + (9 * rot72)) //  #8
+		.add_lobe(rot360 + intake_lobe_center + (7 * rot72)) // #10
 
     _intake_cam_RO
-        .add_lobe(rot360 + intake_lobe_center + ( 3 * rot60)) //  #8
-		.add_lobe(rot360 + intake_lobe_center + ( 5 * rot60)) // #10
-		.add_lobe(rot360 + intake_lobe_center + ( 1 * rot60)) // #12
+        .add_lobe(rot360 + intake_lobe_center + (3 * rot72)) //  #7
+		.add_lobe(rot360 + intake_lobe_center + (5 * rot72)) //  #9
 
     _exhaust_cam_LO
-        .add_lobe(rot360 - exhaust_lobe_center + ( 0 * rot60)) //  #1
-		.add_lobe(rot360 - exhaust_lobe_center + ( 4 * rot60)) //  #3
-		.add_lobe(rot360 - exhaust_lobe_center + ( 2 * rot60)) //  #5
+        .add_lobe(rot360 - exhaust_lobe_center + (0 * rot72)) //  #1
+		.add_lobe(rot360 - exhaust_lobe_center + (8 * rot72)) //  #3
+		.add_lobe(rot360 - exhaust_lobe_center + (6 * rot72)) //  #5
 
     _exhaust_cam_LI
-        .add_lobe(rot360 - exhaust_lobe_center + ( 8 * rot60)) //  #2
-		.add_lobe(rot360 - exhaust_lobe_center + (10 * rot60)) //  #4
-		.add_lobe(rot360 - exhaust_lobe_center + ( 6 * rot60)) //  #6
+        .add_lobe(rot360 - exhaust_lobe_center + (2 * rot72)) //  #2
+		.add_lobe(rot360 - exhaust_lobe_center + (4 * rot72)) //  #4
 
     _exhaust_cam_RI
-        .add_lobe(rot360 - exhaust_lobe_center + ( 7 * rot60)) //  #7
-		.add_lobe(rot360 - exhaust_lobe_center + (11 * rot60)) //  #9
-		.add_lobe(rot360 - exhaust_lobe_center + ( 9 * rot60)) // #11
+        .add_lobe(rot360 - exhaust_lobe_center + (1 * rot72)) //  #6
+		.add_lobe(rot360 - exhaust_lobe_center + (9 * rot72)) //  #8
+		.add_lobe(rot360 - exhaust_lobe_center + (7 * rot72)) // #10
 
     _exhaust_cam_RO
-        .add_lobe(rot360 - exhaust_lobe_center + ( 3 * rot60)) //  #8
-		.add_lobe(rot360 - exhaust_lobe_center + ( 5 * rot60)) // #10
-		.add_lobe(rot360 - exhaust_lobe_center + ( 1 * rot60)) // #12
+        .add_lobe(rot360 - exhaust_lobe_center + (3 * rot72)) //  #7
+		.add_lobe(rot360 - exhaust_lobe_center + (5 * rot72)) //  #9
 }
 
 private node add_flow_sample {
@@ -251,7 +244,7 @@ public node w12 {
     label flywheel_radius(6 * units.inch)
 
     engine engine(
-        name: "Bentley (Audi) W12",
+        name: "VW WR10",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 850 * units.rpm,
         redline: 6800 * units.rpm,
@@ -259,8 +252,8 @@ public node w12 {
             max_turbulence_effect: 8.0,
             burning_efficiency_randomness: 0.2,
             max_burning_efficiency: 0.85),
-        throttle_gamma: 1.5,
-		simulation_frequency: 6000
+        throttle_gamma: 1.0,
+		simulation_frequency: 6400
     )
 
     label crank_moment(
@@ -284,32 +277,18 @@ public node w12 {
         tdc: 132.5 * units.deg
     )
 
-    rod_journal rj01(angle:  (0 - 0)   * units.deg)
-    rod_journal rj02(angle:  (0 - 12)  * units.deg)
-    rod_journal rj03(angle: (120 - 15) * units.deg)
-    rod_journal rj04(angle: (120 - 27)  * units.deg)
-    rod_journal rj05(angle: (240 - 0)  * units.deg)
-    rod_journal rj06(angle: (240 - 12) * units.deg)
-    rod_journal rj07(angle: (240 - 15) * units.deg)
-    rod_journal rj08(angle: (240 - 27)  * units.deg)
-    rod_journal rj09(angle: (120 - 0)  * units.deg)
-    rod_journal rj10(angle: (120 - 12) * units.deg)
-    rod_journal rj11(angle:  (0 - 15)  * units.deg)
-    rod_journal rj12(angle:  (0 - 27)   * units.deg)
+    rod_journal rj0(angle: (((0.0 / 5.0) * 360)) * units.deg)
+	rod_journal rj1(angle: (((2.0 / 5.0) * 360) - 15) * units.deg)
+	rod_journal rj2(angle: (((3.0 / 5.0) * 360)) * units.deg)
+	rod_journal rj3(angle: (((4.0 / 5.0) * 360) - 15) * units.deg)
+    rod_journal rj4(angle: (((1.0 / 5.0) * 360)) * units.deg)
 
     c0
-        .add_rod_journal(rj01)
-        .add_rod_journal(rj02)
-        .add_rod_journal(rj03)
-        .add_rod_journal(rj04)
-        .add_rod_journal(rj05)
-        .add_rod_journal(rj06)
-        .add_rod_journal(rj07)
-        .add_rod_journal(rj08)
-        .add_rod_journal(rj09)
-        .add_rod_journal(rj10)
-        .add_rod_journal(rj11)
-        .add_rod_journal(rj12)
+		.add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -380,7 +359,7 @@ public node w12 {
 	label position_xI_offset(deck_height * -0.11062649203286471411984294644969)  // sin(28.5)-sin(36)
 	label position_yI_offset(deck_height * 0.06980011828701795002770172650171) // (1-cos(28.5))-(1-cos(36))
 	
-	label exhaust_length_stagger_IO(1.8 * units.inch)
+	label exhaust_length_stagger_IO(1.5 * units.inch)
 	label exhaust_length_stagger_LR(1.5 * units.inch)
 	label exhaust_bore_spacing(35 * units.mm)
 	
@@ -392,7 +371,7 @@ public node w12 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj01,
+            rod_journal: rj0,
             ignition_wire: wires.wire01,
             intake: intake_L,
             exhaust_system: exhaustL,
@@ -402,7 +381,7 @@ public node w12 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj05,
+            rod_journal: rj2,
             ignition_wire: wires.wire03,
             intake: intake_L,
             exhaust_system: exhaustL,
@@ -412,7 +391,7 @@ public node w12 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj09,
+            rod_journal: rj4,
             ignition_wire: wires.wire05,
             intake: intake_L,
             exhaust_system: exhaustL,
@@ -426,8 +405,8 @@ public node w12 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj02,
-            ignition_wire: wires.wire07,
+            rod_journal: rj0,
+            ignition_wire: wires.wire06,
             intake: intake_R,
             exhaust_system: exhaustR,
 			primary_length: (exhaust_bore_spacing * 4) + exhaust_length_stagger_IO + exhaust_length_stagger_LR,
@@ -436,8 +415,8 @@ public node w12 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj06,
-            ignition_wire: wires.wire09,
+            rod_journal: rj2,
+            ignition_wire: wires.wire08,
             intake: intake_R,
             exhaust_system: exhaustR,
 			primary_length: (exhaust_bore_spacing * 2) + exhaust_length_stagger_IO + exhaust_length_stagger_LR,
@@ -446,8 +425,8 @@ public node w12 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj10,
-            ignition_wire: wires.wire11,
+            rod_journal: rj4,
+            ignition_wire: wires.wire10,
             intake: intake_R,
             exhaust_system: exhaustR,
 			primary_length: (exhaust_bore_spacing * 0) + exhaust_length_stagger_IO + exhaust_length_stagger_LR,
@@ -460,7 +439,7 @@ public node w12 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj03,
+            rod_journal: rj1,
             ignition_wire: wires.wire02,
             intake: intake_L,
             exhaust_system: exhaustL,
@@ -470,22 +449,12 @@ public node w12 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj07,
+            rod_journal: rj3,
             ignition_wire: wires.wire04,
             intake: intake_L,
             exhaust_system: exhaustL,
 			primary_length: (exhaust_bore_spacing * 3) + exhaust_length_stagger_IO,
 			sound_attenuation: (1.0 - (sound_attenuation_penalty * 3))
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj11,
-            ignition_wire: wires.wire06,
-            intake: intake_L,
-            exhaust_system: exhaustL,
-			primary_length: (exhaust_bore_spacing * 1) + exhaust_length_stagger_IO,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 1))
         )
 
     cylinder_bank bRO(bank_params, angle: -43.5 * units.deg) // RO (fourth)
@@ -494,8 +463,8 @@ public node w12 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj04,
-            ignition_wire: wires.wire08,
+            rod_journal: rj1,
+            ignition_wire: wires.wire07,
             intake: intake_R,
             exhaust_system: exhaustR,
 			primary_length: exhaust_bore_spacing * 5 + exhaust_length_stagger_LR,
@@ -504,22 +473,12 @@ public node w12 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj08,
-            ignition_wire: wires.wire10,
+            rod_journal: rj3,
+            ignition_wire: wires.wire09,
             intake: intake_R,
             exhaust_system: exhaustR,
 			primary_length: exhaust_bore_spacing * 3 + exhaust_length_stagger_LR,
 			sound_attenuation: (1.0 - (sound_attenuation_penalty * 3))
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj12,
-            ignition_wire: wires.wire12,
-            intake: intake_R,
-            exhaust_system: exhaustR,
-			primary_length: exhaust_bore_spacing * 1 + exhaust_length_stagger_LR,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 1))
         )
 
     engine
@@ -539,7 +498,7 @@ public node w12 {
 	label exhaust_runner_radius(0.85 * units.inch)
 	
 	label runner_length_shrt(2.0 * units.inch)
-	label runner_length_long(4.5 * units.inch)
+	label runner_length_long(3.5 * units.inch)
 
     bLO.set_cylinder_head (
         audi_w12_head(
@@ -608,20 +567,21 @@ public node w12 {
     )
 }
 
-// 2004 Bentley Continental GT
-public node bentley_continental_gt_vehicle {
+// 1999 Volkswagen W12 Roadster
+// some numbers from TDU, some guesses
+public node volkswagen_w12_roadster_concept_vehicle {
     alias output __out:
         vehicle(
-            mass: 5320 * units.lb,
-            drag_coefficient: 0.32,
-            cross_sectional_area: 2.65 * (units.m * units.m),
+            mass: 2535 * units.lb,
+            drag_coefficient: 0.3,
+            cross_sectional_area: 1.8 * (units.m * units.m),
             diff_ratio: 3.52,
-            tire_radius: 351.79 * units.mm, // 275/40ZR19
+            tire_radius: 352 * units.mm, // 275/40ZR19
             rolling_resistance: 500 * units.N
         );
 }
 
-public node bentley_continental_gt_transmission {
+public node volkswagen_w12_roadster_concept_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 900 * units.lb_ft
@@ -636,6 +596,6 @@ public node bentley_continental_gt_transmission {
 
 public node main {
     set_engine(w12())
-    set_vehicle(bentley_continental_gt_vehicle())
-    set_transmission(bentley_continental_gt_transmission())
+    set_vehicle(volkswagen_w12_roadster_concept_vehicle())
+    set_transmission(volkswagen_w12_roadster_concept_transmission())
 }

@@ -187,6 +187,10 @@ public node bugatti_w16_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 45.0 * units.cc;
+	input intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch;
+	input intake_runner_cross_section_area: circle_area(1.1 * units.inch);
+	input exhaust_runner_volume: circle_area(0.85 * units.inch) * 2 * units.inch;
+	input exhaust_runner_cross_section_area: circle_area(0.85 * units.inch);
     input flip_display: false;
 	
 	input flow_attenuation_in: 0.9;
@@ -233,10 +237,10 @@ public node bugatti_w16_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 80.0 * units.cc,
-        intake_runner_cross_section_area: 10 * units.cm2,
-        exhaust_runner_volume: 80.0 * units.cc,
-        exhaust_runner_cross_section_area: 10 * units.cm2,
+        intake_runner_volume: intake_runner_volume,
+        intake_runner_cross_section_area: intake_runner_cross_section_area,
+        exhaust_runner_volume: exhaust_runner_volume,
+        exhaust_runner_cross_section_area: exhaust_runner_cross_section_area,
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -273,8 +277,8 @@ public node w16 {
             max_turbulence_effect: 8.0,
             burning_efficiency_randomness: 0.2,
             max_burning_efficiency: 0.85),
-        throttle_gamma: 1.5,
-		simulation_frequency: 4500
+        throttle_gamma: 1.0,
+		simulation_frequency: 4250
     )
 
     label crank_moment(
@@ -298,20 +302,20 @@ public node w16 {
         tdc: (90+45+7.5) * units.deg
     )
 
-    rod_journal rj01(angle:  (0 - 0)   * units.deg)
-    rod_journal rj02(angle:  (0 - 0)  * units.deg)
+    rod_journal rj01(angle:   (0 - 0)  * units.deg)
+    rod_journal rj02(angle:   (0 - 0)  * units.deg)
     rod_journal rj03(angle: (225 - 15) * units.deg)
     rod_journal rj04(angle: (225 - 15) * units.deg)
     rod_journal rj05(angle:  (90 - 0)  * units.deg)
-    rod_journal rj06(angle:  (90 - 0) * units.deg)
+    rod_journal rj06(angle:  (90 - 0)  * units.deg)
     rod_journal rj07(angle: (135 - 15) * units.deg)
     rod_journal rj08(angle: (135 - 15) * units.deg)
     rod_journal rj09(angle: (270 - 0)  * units.deg)
-    rod_journal rj10(angle: (270 - 0) * units.deg)
+    rod_journal rj10(angle: (270 - 0)  * units.deg)
     rod_journal rj11(angle: (315 - 15) * units.deg)
     rod_journal rj12(angle: (315 - 15) * units.deg)
     rod_journal rj13(angle: (180 - 0)  * units.deg)
-    rod_journal rj14(angle: (180 - 0) * units.deg)
+    rod_journal rj14(angle: (180 - 0)  * units.deg)
     rod_journal rj15(angle:  (45 - 15) * units.deg)
     rod_journal rj16(angle:  (45 - 15) * units.deg)
 
@@ -349,58 +353,46 @@ public node w16 {
         deck_height: deck_height
     )
 
-    intake intake_shrt(
+    intake intake_L(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(700.0),
+        intake_flow_rate: k_carb(1500.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.993,
-        throttle_gamma: 1.5,
-        runner_flow_rate: k_carb(600.0),
+        idle_throttle_plate_position: 0.998,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(500.0),
         runner_length: 8.0 * units.inch,
         velocity_decay: 0.2
     )
 
-    intake intake_long(
+    intake intake_R(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(700.0),
+        intake_flow_rate: k_carb(1500.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.993,
-        throttle_gamma: 1.5,
-        runner_flow_rate: k_carb(600.0),
-        runner_length: 16.0 * units.inch,
-        velocity_decay: 0.4
+        idle_throttle_plate_position: 0.998,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(500.0),
+        runner_length: 8.0 * units.inch,
+        velocity_decay: 0.2
     )
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(600.0),
+        outlet_flow_rate: k_carb(1500.0),
         primary_tube_length: 30.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
+        primary_flow_rate: k_carb(450.0),
         velocity_decay: 0.8, //0.5
         volume: 5.0 * units.L,
 		length: 500 * units.mm
     )
 	
-    exhaust_system exhaustLF(
+    exhaust_system exhaustL(
 		es_params,
 		audio_volume: 1.00*0.01,
 		impulse_response: ir_lib.default_0
 	)
 	
-    exhaust_system exhaustLR(
-		es_params,
-		audio_volume: 1.00*0.01,
-		impulse_response: ir_lib.default_0
-	)
-	
-    exhaust_system exhaustRF(
-		es_params,
-		audio_volume: 1.00*0.01,
-		impulse_response: ir_lib.default_0
-	)
-	
-    exhaust_system exhaustRR(
+    exhaust_system exhaustR(
 		es_params,
 		audio_volume: 1.00*0.01,
 		impulse_response: ir_lib.default_0
@@ -412,12 +404,13 @@ public node w16 {
 	label position_yI_offset(deck_height * -0.08624655910468764017893259939645) // (1-cos(37.5))-(1-cos(45))
 	
 
-	label exhaust_length_stagger_FR(1 * units.inch)
-	label exhaust_length_stagger_LR(1 * units.inch)
-	label pipe_length_1(20 * units.mm)
-	label pipe_length_2(10 * units.mm)
-	label pipe_length_3(5 * units.mm)
-	label pipe_length_4(15 * units.mm)
+	label exhaust_stagger_FR(0.1 * units.inch)
+	label exhaust_stagger_LR(1.0 * units.inch)
+	label exhaust_stagger_IO(0.3 * units.inch)
+	label pipe_length_1(12.0 * units.mm)
+	label pipe_length_2(4.0 * units.mm)
+	label pipe_length_3(0.0 * units.mm)
+	label pipe_length_4(8.0 * units.mm)
 
     cylinder_bank bLO(bank_params, angle: 52.5 * units.deg) // LO (first)
 	//cylinder_bank bLO(bank_params, angle: 45 * units.deg, position_x: -position_xO_offset, position_y: position_yO_offset) // LO (first)
@@ -426,26 +419,26 @@ public node w16 {
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj02,
-            intake: intake_long,
-            exhaust_system: exhaustLF,
+            intake: intake_L,
+            exhaust_system: exhaustL,
             ignition_wire: wires.wire01,
-			primary_length: pipe_length_1 + exhaust_length_stagger_FR
+			primary_length: pipe_length_1 + exhaust_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj06,
-            intake: intake_long,
-            exhaust_system: exhaustLF,
+            intake: intake_L,
+            exhaust_system: exhaustL,
             ignition_wire: wires.wire03,
-			primary_length: pipe_length_3 + exhaust_length_stagger_FR
+			primary_length: pipe_length_3 + exhaust_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj10,
-            intake: intake_long,
-            exhaust_system: exhaustLR,
+            intake: intake_L,
+            exhaust_system: exhaustL,
             ignition_wire: wires.wire05,
 			primary_length: pipe_length_4
         )
@@ -453,8 +446,8 @@ public node w16 {
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj14,
-            intake: intake_long,
-            exhaust_system: exhaustLR,
+            intake: intake_L,
+            exhaust_system: exhaustL,
             ignition_wire: wires.wire07,
 			primary_length: pipe_length_2
         )
@@ -466,37 +459,37 @@ public node w16 {
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj02,
-            intake: intake_shrt,
-            exhaust_system: exhaustRF,
+            intake: intake_R,
+            exhaust_system: exhaustR,
             ignition_wire: wires.wire09,
-			primary_length: pipe_length_1 + exhaust_length_stagger_FR + exhaust_length_stagger_LR
+			primary_length: pipe_length_1 + exhaust_stagger_IO + exhaust_stagger_FR + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj06,
-            intake: intake_shrt,
-            exhaust_system: exhaustRF,
+            intake: intake_R,
+            exhaust_system: exhaustR,
             ignition_wire: wires.wire11,
-			primary_length: pipe_length_3 + exhaust_length_stagger_FR + exhaust_length_stagger_LR
+			primary_length: pipe_length_3 + exhaust_stagger_IO + exhaust_stagger_FR + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj10,
-            intake: intake_shrt,
-            exhaust_system: exhaustRR,
+            intake: intake_R,
+            exhaust_system: exhaustR,
             ignition_wire: wires.wire13,
-			primary_length: pipe_length_4 + exhaust_length_stagger_LR
+			primary_length: pipe_length_4 + exhaust_stagger_IO + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj14,
-            intake: intake_shrt,
-            exhaust_system: exhaustRR,
+            intake: intake_R,
+            exhaust_system: exhaustR,
             ignition_wire: wires.wire15,
-			primary_length: pipe_length_2 + exhaust_length_stagger_LR
+			primary_length: pipe_length_2 + exhaust_stagger_IO + exhaust_stagger_LR
         )
 	
     cylinder_bank bLI(bank_params, angle: 37.5 * units.deg, display_depth: bore * 0.5) // LI (third)
@@ -506,37 +499,37 @@ public node w16 {
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj04,
-            intake: intake_shrt,
-            exhaust_system: exhaustLF,
+            intake: intake_L,
+            exhaust_system: exhaustL,
             ignition_wire: wires.wire02,
-			primary_length: pipe_length_2 + exhaust_length_stagger_FR + exhaust_length_stagger_LR
+			primary_length: pipe_length_2 + exhaust_stagger_IO + exhaust_stagger_FR + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj08,
-            intake: intake_shrt,
-            exhaust_system: exhaustLF,
+            intake: intake_L,
+            exhaust_system: exhaustL,
             ignition_wire: wires.wire04,
-			primary_length: pipe_length_4 + exhaust_length_stagger_FR + exhaust_length_stagger_LR
+			primary_length: pipe_length_4 + exhaust_stagger_IO + exhaust_stagger_FR + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj12,
-            intake: intake_shrt,
-            exhaust_system: exhaustLR,
+            intake: intake_L,
+            exhaust_system: exhaustL,
             ignition_wire: wires.wire06,
-			primary_length: pipe_length_3 + exhaust_length_stagger_LR
+			primary_length: pipe_length_3 + exhaust_stagger_IO + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj16,
-            intake: intake_shrt,
-            exhaust_system: exhaustLR,
+            intake: intake_L,
+            exhaust_system: exhaustL,
             ignition_wire: wires.wire08,
-			primary_length: pipe_length_1 + exhaust_length_stagger_LR
+			primary_length: pipe_length_1 + exhaust_stagger_IO + exhaust_stagger_LR
         )
 
     cylinder_bank bRO(bank_params, angle: -52.5 * units.deg, display_depth: bore * 0.5) // RO (fourth)
@@ -546,26 +539,26 @@ public node w16 {
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj04,
-            intake: intake_long,
-            exhaust_system: exhaustRF,
+            intake: intake_R,
+            exhaust_system: exhaustR,
             ignition_wire: wires.wire10,
-			primary_length: pipe_length_2 + exhaust_length_stagger_FR
+			primary_length: pipe_length_2 + exhaust_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj08,
-            intake: intake_long,
-            exhaust_system: exhaustRF,
+            intake: intake_R,
+            exhaust_system: exhaustR,
             ignition_wire: wires.wire12,
-			primary_length: pipe_length_4 + exhaust_length_stagger_FR
+			primary_length: pipe_length_4 + exhaust_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj12,
-            intake: intake_long,
-            exhaust_system: exhaustRR,
+            intake: intake_R,
+            exhaust_system: exhaustR,
             ignition_wire: wires.wire14,
 			primary_length: pipe_length_3
         )
@@ -573,8 +566,8 @@ public node w16 {
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj16,
-            intake: intake_long,
-            exhaust_system: exhaustRR,
+            intake: intake_R,
+            exhaust_system: exhaustR,
             ignition_wire: wires.wire16,
 			primary_length: pipe_length_1
         )
@@ -592,10 +585,20 @@ public node w16 {
 		ex_lobe_profile: bugatti_w16_lobe_profile_exh()
 	)
 
+	label intake_runner_radius(0.75 * units.inch)
+	label exhaust_runner_radius(0.75 * units.inch)
+	
+	label runner_length_shrt(2.0 * units.inch)
+	label runner_length_long(4.5 * units.inch)
+
     bLO.set_cylinder_head (
         bugatti_w16_head(
             intake_camshaft: camshaft.intake_cam_LO,
             exhaust_camshaft: camshaft.exhaust_cam_LO,
+			intake_runner_volume: circle_area(intake_runner_radius) * runner_length_long,
+			intake_runner_cross_section_area: circle_area(intake_runner_radius),
+			exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_shrt,
+			exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
             flip_display: true
         )
     )
@@ -603,6 +606,10 @@ public node w16 {
         bugatti_w16_head(
             intake_camshaft: camshaft.intake_cam_RI,
             exhaust_camshaft: camshaft.exhaust_cam_RI,
+			intake_runner_volume: circle_area(intake_runner_radius) * runner_length_shrt,
+			intake_runner_cross_section_area: circle_area(intake_runner_radius),
+			exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_long,
+			exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
             flip_display: false
         )
     )
@@ -610,6 +617,10 @@ public node w16 {
         bugatti_w16_head(
             intake_camshaft: camshaft.intake_cam_LI,
             exhaust_camshaft: camshaft.exhaust_cam_LI,
+			intake_runner_volume: circle_area(intake_runner_radius) * runner_length_shrt,
+			intake_runner_cross_section_area: circle_area(intake_runner_radius),
+			exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_long,
+			exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
             flip_display: true
         )
     )
@@ -617,6 +628,10 @@ public node w16 {
         bugatti_w16_head(
             intake_camshaft: camshaft.intake_cam_RO,
             exhaust_camshaft: camshaft.exhaust_cam_RO,
+			intake_runner_volume: circle_area(intake_runner_radius) * runner_length_long,
+			intake_runner_cross_section_area: circle_area(intake_runner_radius),
+			exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_shrt,
+			exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
             flip_display: false
         )
     )

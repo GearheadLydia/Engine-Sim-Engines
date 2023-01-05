@@ -150,6 +150,10 @@ public node volkswagen_w8_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 45.0 * units.cc;
+	input intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch;
+	input intake_runner_cross_section_area: circle_area(1.1 * units.inch);
+	input exhaust_runner_volume: circle_area(0.85 * units.inch) * 2 * units.inch;
+	input exhaust_runner_cross_section_area: circle_area(0.85 * units.inch);
     input flip_display: false;
 	
 	input flow_attenuation: 1.0;
@@ -195,8 +199,10 @@ public node volkswagen_w8_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 180.0 * units.cc,
-        intake_runner_cross_section_area: 2 * 12.4087 * units.cm2,
+        intake_runner_volume: intake_runner_volume,
+        intake_runner_cross_section_area: intake_runner_cross_section_area,
+        exhaust_runner_volume: exhaust_runner_volume,
+        exhaust_runner_cross_section_area: exhaust_runner_cross_section_area,
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -300,51 +306,45 @@ public node w8 {
         deck_height: deck_height
     )
 
-    intake intake_shrt(
+    intake intake_L(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(800.0),
+        intake_flow_rate: k_carb(250.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
-        throttle_gamma: 1.5,
-        runner_flow_rate: k_carb(600.0),
-        runner_length: 8.0 * units.inch,
-        velocity_decay: 0.2
-    )
-
-    intake intake_long(
-        plenum_volume: 2.0 * units.L,
-        plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(800.0),
-        idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
-        throttle_gamma: 1.5,
-        runner_flow_rate: k_carb(600.0),
+        idle_throttle_plate_position: 0.993,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(300.0),
         runner_length: 10.0 * units.inch,
-        velocity_decay: 0.4
+        velocity_decay: 0.1
     )
 
-    exhaust_system_parameters es_params_long(
-        outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 26.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
-        velocity_decay: 0.8, //0.5
-        volume: 80.0 * units.L
+    intake intake_R(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(250.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.993,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(300.0),
+        runner_length: 10.0 * units.inch,
+        velocity_decay: 0.1
     )
 
-    exhaust_system_parameters es_params_shrt(
-        outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 24.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
-        velocity_decay: 0.4, //0.5
-        volume: 80.0 * units.L
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(250.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(300.0),
+        velocity_decay: 1.0, //0.5
+        volume: 20.0 * units.L,
+		length: 2000 * units.mm
     )
-    exhaust_system exhaustLO(es_params_shrt, audio_volume:  1.0*0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.001), length: 500 * units.mm)
-    exhaust_system exhaustLI(es_params_long, audio_volume: 0.75*0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.001), length: 500 * units.mm)
-
-    exhaust_system exhaustRI(es_params_long, audio_volume:  0.6*0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.001), length: 500 * units.mm)
-    exhaust_system exhaustRO(es_params_shrt, audio_volume:  0.8*0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.001), length: 500 * units.mm)
 	
+    exhaust_system exhaustL(es_params, audio_volume:  1.0*0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume:  1.0*0.05, impulse_response: ir_lib.default_0)
+	
+	label exhaust_length_stagger_IO(1.5 * units.inch)
+	label exhaust_length_stagger_LR(1.5 * units.inch)
+	label exhaust_bore_spacing(40.0 * units.mm)
 	
 	label position_xO_offset(deck_height * 0.10056932340128085522055018878054)  // sin(43.5)-sin(36)
 	label position_yO_offset(deck_height * -0.08364262336265978610900930599309) // (1-cos(43.5))-(1-cos(36))
@@ -359,17 +359,19 @@ public node w8 {
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
-            intake: intake_long,
-            exhaust_system: exhaustLO,
-            ignition_wire: wires.wire1
+            ignition_wire: wires.wire1,
+            intake: intake_L,
+            exhaust_system: exhaustL,
+			primary_length: (exhaust_bore_spacing * 1)
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
-            intake: intake_long,
-            exhaust_system: exhaustLO,
-            ignition_wire: wires.wire3
+            ignition_wire: wires.wire3,
+            intake: intake_L,
+            exhaust_system: exhaustL,
+			primary_length: (exhaust_bore_spacing * 0)
         )
 
     cylinder_bank bRI(bank_params, angle: -28.5 * units.deg) // RI (second)
@@ -379,17 +381,19 @@ public node w8 {
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            intake: intake_shrt,
-            exhaust_system: exhaustRI,
-            ignition_wire: wires.wire5
+            ignition_wire: wires.wire5,
+            intake: intake_R,
+            exhaust_system: exhaustR,
+			primary_length: (exhaust_bore_spacing * 1) + exhaust_length_stagger_IO + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
-            intake: intake_shrt,
-            exhaust_system: exhaustRI,
-            ignition_wire: wires.wire7
+            ignition_wire: wires.wire7,
+            intake: intake_R,
+            exhaust_system: exhaustR,
+			primary_length: (exhaust_bore_spacing * 0) + exhaust_length_stagger_IO + exhaust_length_stagger_LR
         )
 	
     cylinder_bank bLI(bank_params, angle: 28.5 * units.deg) // LI (third)
@@ -399,17 +403,19 @@ public node w8 {
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            intake: intake_shrt,
-            exhaust_system: exhaustLI,
-            ignition_wire: wires.wire2
+            ignition_wire: wires.wire2,
+            intake: intake_L,
+            exhaust_system: exhaustL,
+			primary_length: (exhaust_bore_spacing * 0.2) + exhaust_length_stagger_IO
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj7,
-            intake: intake_shrt,
-            exhaust_system: exhaustLI,
-            ignition_wire: wires.wire4
+            ignition_wire: wires.wire4,
+            intake: intake_L,
+            exhaust_system: exhaustL,
+			primary_length: (exhaust_bore_spacing * 1.2) + exhaust_length_stagger_IO
         )
 
     cylinder_bank bRO(bank_params, angle: -43.5 * units.deg) // RO (fourth)
@@ -419,17 +425,19 @@ public node w8 {
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
-            intake: intake_long,
-            exhaust_system: exhaustRO,
-            ignition_wire: wires.wire6
+            ignition_wire: wires.wire6,
+            intake: intake_R,
+            exhaust_system: exhaustR,
+			primary_length: (exhaust_bore_spacing * 0.2) + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj8,
-            intake: intake_long,
-            exhaust_system: exhaustRO,
-            ignition_wire: wires.wire8
+            ignition_wire: wires.wire8,
+            intake: intake_R,
+            exhaust_system: exhaustR,
+			primary_length: (exhaust_bore_spacing * 1.2) + exhaust_length_stagger_LR
         )
 
     engine
@@ -449,6 +457,10 @@ public node w8 {
         volkswagen_w8_head(
             intake_camshaft: camshaft.intake_cam_LO,
             exhaust_camshaft: camshaft.exhaust_cam_LO,
+			intake_runner_volume: circle_area(1.2 * units.inch) * 3.5 * units.inch,
+			intake_runner_cross_section_area: circle_area(1.2 * units.inch),
+			exhaust_runner_volume: circle_area(0.85 * units.inch) * 2 * units.inch,
+			exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
             flip_display: true
         )
     )
@@ -456,6 +468,10 @@ public node w8 {
         volkswagen_w8_head(
             intake_camshaft: camshaft.intake_cam_RI,
             exhaust_camshaft: camshaft.exhaust_cam_RI,
+			intake_runner_volume: circle_area(1.2 * units.inch) * 2 * units.inch,
+			intake_runner_cross_section_area: circle_area(1.2 * units.inch),
+			exhaust_runner_volume: circle_area(0.85 * units.inch) * 3.5 * units.inch,
+			exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
             flip_display: false
         )
     )
@@ -463,6 +479,10 @@ public node w8 {
         volkswagen_w8_head(
             intake_camshaft: camshaft.intake_cam_LI,
             exhaust_camshaft: camshaft.exhaust_cam_LI,
+			intake_runner_volume: circle_area(1.2 * units.inch) * 2 * units.inch,
+			intake_runner_cross_section_area: circle_area(1.2 * units.inch),
+			exhaust_runner_volume: circle_area(0.85 * units.inch) * 3.5 * units.inch,
+			exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
             flip_display: true
         )
     )
@@ -470,6 +490,10 @@ public node w8 {
         volkswagen_w8_head(
             intake_camshaft: camshaft.intake_cam_RO,
             exhaust_camshaft: camshaft.exhaust_cam_RO,
+			intake_runner_volume: circle_area(1.2 * units.inch) * 3.5 * units.inch,
+			intake_runner_cross_section_area: circle_area(1.2 * units.inch),
+			exhaust_runner_volume: circle_area(0.85 * units.inch) * 2 * units.inch,
+			exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
             flip_display: false
         )
     )
@@ -477,11 +501,11 @@ public node w8 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 50 * units.deg)
-        .add_sample(3000 * units.rpm, 60 * units.deg)
-        .add_sample(4000 * units.rpm, 60 * units.deg)
-        .add_sample(5000 * units.rpm, 65 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 70 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
         .add_sample(6000 * units.rpm, 70 * units.deg)
 		.add_sample(7000 * units.rpm, 70 * units.deg)
 		.add_sample(8000 * units.rpm, 70 * units.deg)

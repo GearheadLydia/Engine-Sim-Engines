@@ -173,8 +173,8 @@ public node bmw_s62b50_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.1 * units.inch) * 6 * units.inch,
         intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 3 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.65 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.65 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -192,8 +192,8 @@ public node S62B50 {
 
     engine engine(
         name: "BMW S62B50",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 900 * units.rpm,
         redline: 7000 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 4.0,
@@ -278,14 +278,14 @@ public node S62B50 {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(600.0),
+        runner_flow_rate: k_carb(300.0),
         runner_length: 12.0 * units.inch,
         velocity_decay: 0.1
     )
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: 20.0 * units.inch,
+        primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(150.0),
         velocity_decay: 1.0, //0.5
         volume: 10.0 * units.L
