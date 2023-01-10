@@ -317,7 +317,7 @@ public node prv_zmj_159 {
 			sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire1,
@@ -350,7 +350,7 @@ public node prv_zmj_159 {
 			sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire4,
