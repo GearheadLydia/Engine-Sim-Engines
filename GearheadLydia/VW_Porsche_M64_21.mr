@@ -189,7 +189,7 @@ public node m64_21 {
     label bore(100.0 * units.mm)
     label stroke(76.4 * units.mm)
     label rod_length(127 * units.mm)
-    label rod_mass(350 * units.g) // guesstimate based on aftermarket chromoly rods - stock rods are titanium
+    label rod_mass(350 * units.g)
 	label piston_mass(476 * units.g)
     label compression_height(31.50 * units.mm)
 	label piston_dome(-10.0 * units.cc) // guesstimate

@@ -191,7 +191,7 @@ public node b8444s {
     label bore(94.0 * units.mm)
     label stroke(79.5 * units.mm)
     label rod_length(138.1 * units.mm)
-    label rod_mass(350 * units.g) // guesstimate based on aftermarket chromoly rods - stock rods are titanium
+    label rod_mass(350 * units.g)
 	label piston_mass(400 * units.g)
     label compression_height(29.75 * units.mm)
 	label piston_dome(-19 * units.cc)
