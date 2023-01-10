@@ -187,8 +187,8 @@ public node ford_modular_2v46_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.1 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 12 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 12 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -306,7 +306,7 @@ public node Mod2V46 {
     exhaust_system_parameters es_params_L(
         outlet_flow_rate: k_carb(250.0),
         primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(400.0),
+        primary_flow_rate: k_carb(380.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
 		length: 600 * units.mm,
@@ -316,7 +316,7 @@ public node Mod2V46 {
     exhaust_system_parameters es_params_R(
         outlet_flow_rate: k_carb(250.0),
         primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(400.0),
+        primary_flow_rate: k_carb(380.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
 		length: 650 * units.mm,
