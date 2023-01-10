@@ -6,7 +6,7 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 1-14-8-13-7-12-3-10-6-9-5-16-4-15-2-11
+// firing order: 1-14-5-16-7-12-3-10-6-9-8-13-4-15-2-11
 
 public node cadillac_ls_v16_distributor {
     input wires;
@@ -17,16 +17,16 @@ public node cadillac_ls_v16_distributor {
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, ( 0.0 / 16.0) * cycle)
             .connect_wire(wires.wire14, ( 1.0 / 16.0) * cycle)
-            .connect_wire(wires.wire08, ( 2.0 / 16.0) * cycle)
-            .connect_wire(wires.wire13, ( 3.0 / 16.0) * cycle)
+            .connect_wire(wires.wire05, ( 2.0 / 16.0) * cycle)
+            .connect_wire(wires.wire16, ( 3.0 / 16.0) * cycle)
             .connect_wire(wires.wire07, ( 4.0 / 16.0) * cycle)
             .connect_wire(wires.wire12, ( 5.0 / 16.0) * cycle)
             .connect_wire(wires.wire03, ( 6.0 / 16.0) * cycle)
             .connect_wire(wires.wire10, ( 7.0 / 16.0) * cycle)
             .connect_wire(wires.wire06, ( 8.0 / 16.0) * cycle)
             .connect_wire(wires.wire09, ( 9.0 / 16.0) * cycle)
-            .connect_wire(wires.wire05, (10.0 / 16.0) * cycle)
-            .connect_wire(wires.wire16, (11.0 / 16.0) * cycle)
+            .connect_wire(wires.wire08, (10.0 / 16.0) * cycle)
+            .connect_wire(wires.wire13, (11.0 / 16.0) * cycle)
             .connect_wire(wires.wire04, (12.0 / 16.0) * cycle)
             .connect_wire(wires.wire15, (13.0 / 16.0) * cycle)
             .connect_wire(wires.wire02, (14.0 / 16.0) * cycle)
@@ -58,9 +58,9 @@ private node wires {
 public node cadillac_ls_v16_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 210 * units.deg,
-            gamma: 1.5,
-            lift: 593 * units.thou,
+            duration_at_50_thou: 204 * units.deg,
+            gamma: 1.0,
+            lift: 521 * units.thou,
             steps: 100
         );
 }
@@ -68,9 +68,9 @@ public node cadillac_ls_v16_lobe_profile_int {
 public node cadillac_ls_v16_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 230 * units.deg,
-            gamma: 1.5,
-            lift: 589 * units.thou,
+            duration_at_50_thou: 213 * units.deg,
+            gamma: 1.0,
+            lift: 520 * units.thou,
             steps: 100
         );
 }
@@ -80,10 +80,10 @@ public node cadillac_ls_v16_camshaft_builder {
 	input ex_lobe_profile: cadillac_ls_v16_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 120.0 * units.deg;
+    input lobe_separation: 116.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-    input advance: -3.0 * units.deg;
+    input advance: -4.0 * units.deg;
     input base_radius: 1.462 / 2 * units.inch;
 
     output intake_cam_0: _intake_cam_0;
@@ -116,42 +116,42 @@ public node cadillac_ls_v16_camshaft_builder {
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center +  0 * rot45) //  #1
         .add_lobe(rot360 + intake_lobe_center +  6 * rot45) //  #3
-        .add_lobe(rot360 + intake_lobe_center + 10 * rot45) //  #5
+        .add_lobe(rot360 + intake_lobe_center +  2 * rot45) //  #5
         .add_lobe(rot360 + intake_lobe_center +  4 * rot45) //  #7
         .add_lobe(rot360 + intake_lobe_center +  9 * rot45) //  #9
         .add_lobe(rot360 + intake_lobe_center + 15 * rot45) // #11
-        .add_lobe(rot360 + intake_lobe_center +  3 * rot45) // #13
+        .add_lobe(rot360 + intake_lobe_center + 11 * rot45) // #13
         .add_lobe(rot360 + intake_lobe_center + 13 * rot45) // #15
 
     _intake_cam_1
         .add_lobe(rot360 + intake_lobe_center + 14 * rot45) //  #2
         .add_lobe(rot360 + intake_lobe_center + 12 * rot45) //  #4
         .add_lobe(rot360 + intake_lobe_center +  8 * rot45) //  #6
-        .add_lobe(rot360 + intake_lobe_center +  2 * rot45) //  #8
+        .add_lobe(rot360 + intake_lobe_center + 10 * rot45) //  #8
         .add_lobe(rot360 + intake_lobe_center +  7 * rot45) // #10
         .add_lobe(rot360 + intake_lobe_center +  5 * rot45) // #12
         .add_lobe(rot360 + intake_lobe_center +  1 * rot45) // #14
-        .add_lobe(rot360 + intake_lobe_center + 11 * rot45) // #16
+        .add_lobe(rot360 + intake_lobe_center +  3 * rot45) // #16
 
     _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center +  0 * rot45) //  #1
         .add_lobe(rot360 - exhaust_lobe_center +  6 * rot45) //  #3
-        .add_lobe(rot360 - exhaust_lobe_center + 10 * rot45) //  #5
+        .add_lobe(rot360 - exhaust_lobe_center +  2 * rot45) //  #5
         .add_lobe(rot360 - exhaust_lobe_center +  4 * rot45) //  #7
         .add_lobe(rot360 - exhaust_lobe_center +  9 * rot45) //  #9
         .add_lobe(rot360 - exhaust_lobe_center + 15 * rot45) // #11
-        .add_lobe(rot360 - exhaust_lobe_center +  3 * rot45) // #13
+        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot45) // #13
         .add_lobe(rot360 - exhaust_lobe_center + 13 * rot45) // #15
 
     _exhaust_cam_1
         .add_lobe(rot360 - exhaust_lobe_center + 14 * rot45) //  #2
         .add_lobe(rot360 - exhaust_lobe_center + 12 * rot45) //  #4
         .add_lobe(rot360 - exhaust_lobe_center +  8 * rot45) //  #6
-        .add_lobe(rot360 - exhaust_lobe_center +  2 * rot45) //  #8
+        .add_lobe(rot360 - exhaust_lobe_center + 10 * rot45) //  #8
         .add_lobe(rot360 - exhaust_lobe_center +  7 * rot45) // #10
         .add_lobe(rot360 - exhaust_lobe_center +  5 * rot45) // #12
         .add_lobe(rot360 - exhaust_lobe_center +  1 * rot45) // #14
-        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot45) // #16
+        .add_lobe(rot360 - exhaust_lobe_center +  3 * rot45) // #16
 }
 
 private node add_flow_sample {
@@ -245,6 +245,7 @@ public node cadillac_ls_v16 {
 
 	// source: https://help.summitracing.com/app/answers/detail/a_id/4882/~/chevy-ls7-engine-specs
     label bore(4.134 * units.inch)
+	label bore_spacing(4.4 * units.inch)
     label stroke(3.860 * units.inch)
     label rod_length(6.207 * units.inch)
     label rod_mass(464 * units.g)
@@ -325,9 +326,9 @@ public node cadillac_ls_v16 {
     intake intake(
         plenum_volume: 0.3 * units.L,
         plenum_cross_section_area: circle_area(45 * units.mm),
-        intake_flow_rate: k_carb(1050),
+        intake_flow_rate: k_carb(1250),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.990,
+        idle_throttle_plate_position: 0.995,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(850.0),
         runner_length: 12.0 * units.inch,
@@ -336,7 +337,7 @@ public node cadillac_ls_v16 {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(900.0),
-        primary_tube_length: 30.0 * units.inch,
+        primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(750.0),
         velocity_decay: 1.0, //0.5
         volume: 30.0 * units.L
@@ -345,7 +346,7 @@ public node cadillac_ls_v16 {
     exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 500 * units.mm)
     exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 550 * units.mm)
 
-	label bore_spacing(4.4 * units.inch)
+	label exhaust_stagger(0.2 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
     b0
@@ -356,7 +357,7 @@ public node cadillac_ls_v16 {
             ignition_wire: wires.wire01,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: bore_spacing * 7.5
+			primary_length: (bore_spacing * 7.5) + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -365,7 +366,7 @@ public node cadillac_ls_v16 {
             ignition_wire: wires.wire03,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: bore_spacing * 6.5
+			primary_length: (bore_spacing * 6.5) + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -374,7 +375,7 @@ public node cadillac_ls_v16 {
             ignition_wire: wires.wire05,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: bore_spacing * 5.5
+			primary_length: (bore_spacing * 5.5) + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -383,7 +384,7 @@ public node cadillac_ls_v16 {
             ignition_wire: wires.wire07,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: bore_spacing * 4.5
+			primary_length: (bore_spacing * 4.5) + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -392,7 +393,7 @@ public node cadillac_ls_v16 {
             ignition_wire: wires.wire09,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: bore_spacing * 3.5
+			primary_length: (bore_spacing * 3.5) + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -401,7 +402,7 @@ public node cadillac_ls_v16 {
             ignition_wire: wires.wire11,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: bore_spacing * 2.5
+			primary_length: (bore_spacing * 2.5) + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -410,7 +411,7 @@ public node cadillac_ls_v16 {
             ignition_wire: wires.wire13,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: bore_spacing * 2.0
+			primary_length: (bore_spacing * 2.0) + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -419,7 +420,7 @@ public node cadillac_ls_v16 {
             ignition_wire: wires.wire15,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: bore_spacing * 2.0
+			primary_length: (bore_spacing * 1.5) + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -494,7 +495,7 @@ public node cadillac_ls_v16 {
             ignition_wire: wires.wire16,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: bore_spacing * 2.0
+			primary_length: bore_spacing * 1.5
         )
 
     engine
@@ -529,11 +530,10 @@ public node cadillac_ls_v16 {
         .add_sample(1000 * units.rpm, 25 * units.deg)
         .add_sample(2000 * units.rpm, 29 * units.deg)
         .add_sample(3000 * units.rpm, 33 * units.deg)
-        .add_sample(4000 * units.rpm, 38 * units.deg)
-        .add_sample(5000 * units.rpm, 45 * units.deg)
-        .add_sample(6000 * units.rpm, 55 * units.deg)
-		.add_sample(7000 * units.rpm, 68 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
+        .add_sample(4000 * units.rpm, 39 * units.deg)
+        .add_sample(5000 * units.rpm, 42 * units.deg)
+        .add_sample(6000 * units.rpm, 45 * units.deg)
+		.add_sample(7000 * units.rpm, 45 * units.deg)
 
     engine.add_ignition_module(
         cadillac_ls_v16_distributor(
