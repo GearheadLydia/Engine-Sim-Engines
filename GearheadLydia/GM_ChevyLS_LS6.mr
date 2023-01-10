@@ -200,7 +200,7 @@ public node chevrolet_ls6 {
         name: "Chevrolet LS6",
         starter_torque: 300 * units.lb_ft,
 		starter_speed: 600 * units.rpm,
-        redline: 6250 * units.rpm,
+        redline: 6000 * units.rpm,
         throttle_gamma: 2.0,
 		// jitter: 0.7,
 		// hf_gain: 0.15
