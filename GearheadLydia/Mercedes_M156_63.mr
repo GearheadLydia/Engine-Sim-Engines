@@ -41,8 +41,8 @@ public node mercedes_m156_63_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
-            gamma: 1.5,
-            lift: 12.5 * units.mm,
+            gamma: 1.0,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -51,8 +51,8 @@ public node mercedes_m156_63_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
-            gamma: 1.5,
-            lift: 12.5 * units.mm,
+            gamma: 1.0,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -62,8 +62,7 @@ public node mercedes_m156_63_camshaft_builder {
 	input ex_lobe_profile: mercedes_m156_63_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 110.0 * units.deg;
-    input intake_lobe_center: lobe_separation;
+    input intake_lobe_center: 110.0 * units.deg;
     input exhaust_lobe_center: 105.0 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
@@ -171,8 +170,10 @@ public node mercedes_m156_63_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 100.0 * units.cc,
-        intake_runner_cross_section_area: 2 * 12.4087 * units.cm2,
+        intake_runner_volume: circle_area(1.05 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.05 * units.inch),
+        exhaust_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -275,17 +276,26 @@ public node m113_55 {
         idle_flow_rate_cfm: 0.001,
         idle_throttle_plate_position: 0.996
     )
+	
+	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 60.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
+        outlet_flow_rate: k_carb(1200.0),
+        primary_tube_length: 15.0 * units.inch,
+        primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
-        volume: 20.0 * units.L
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 2700 * units.mm,
+		volume: 2700 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 300 * units.mm)
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 335 * units.mm)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
+
+	label pipe_length_1(3 * bore_spacing)
+	label pipe_length_2(2 * bore_spacing)
+	label pipe_length_3(1.2 * bore_spacing)
+	label pipe_length_4(0.0 * bore_spacing)
+	label exhaust_stagger(35 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -295,8 +305,8 @@ public node m113_55 {
             rod_journal: rj0,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 4 * bore_spacing
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -304,8 +314,8 @@ public node m113_55 {
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 3 * bore_spacing
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -313,8 +323,8 @@ public node m113_55 {
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 1.8 * bore_spacing
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -322,8 +332,8 @@ public node m113_55 {
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 1.2 * bore_spacing
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4 + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -334,8 +344,8 @@ public node m113_55 {
             rod_journal: rj0,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 4 * bore_spacing
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -343,8 +353,8 @@ public node m113_55 {
             rod_journal: rj1,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 3 * bore_spacing
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -352,8 +362,8 @@ public node m113_55 {
             rod_journal: rj2,
             ignition_wire: wires.wire7,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 1.8 * bore_spacing
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -361,8 +371,8 @@ public node m113_55 {
             rod_journal: rj3,
             ignition_wire: wires.wire8,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 1.2 * bore_spacing
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4
         )
 
     engine
