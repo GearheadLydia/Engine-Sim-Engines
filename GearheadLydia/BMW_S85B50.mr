@@ -41,11 +41,12 @@ private node wires {
     output wire10: ignition_wire();
 }
 
+// S65B40 cams
 public node bmw_s85b50_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 281.0 * units.deg,
-            gamma: 3.0,
+            duration_at_50_thou: 251.0 * units.deg, // advertised: 281.0
+            gamma: 1.0,
             lift: 12.0 * units.mm,
             steps: 100
         );
@@ -54,8 +55,8 @@ public node bmw_s85b50_lobe_profile_int {
 public node bmw_s85b50_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 275.5 * units.deg,
-            gamma: 3.0,
+            duration_at_50_thou: 245.5 * units.deg, // advertised: 275.5
+            gamma: 1.0,
             lift: 12.0 * units.mm,
             steps: 100
         );
@@ -187,8 +188,8 @@ public node bmw_s85b50_head {
 
     cylinder_head head(
         chamber_volume: 51.0 * units.cc,
-        intake_runner_volume: circle_area(1.2 * units.inch) * 2 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.2 * units.inch),
+        intake_runner_volume: circle_area(1.25 * units.inch) * 2 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.25 * units.inch),
         exhaust_runner_volume: circle_area(0.8 * units.inch) * 6 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
@@ -290,34 +291,31 @@ public node S85B50 {
     intake intake(
         plenum_volume: 0.7 * units.L,
         plenum_cross_section_area: 37.0 * units.cm2,
-        intake_flow_rate: k_carb(1000),
+        intake_flow_rate: k_carb(1600),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
+        idle_throttle_plate_position: 0.998,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(900.0),
+        runner_flow_rate: k_carb(700.0),
         runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
+	
+	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1000.0),
-        primary_tube_length: 40.0 * units.inch,
-        primary_flow_rate: k_carb(800.0),
-        velocity_decay: 0.3, //0.5
-        volume: 20.0 * units.L
+        outlet_flow_rate: k_carb(1600.0),
+        primary_tube_length: 15.0 * units.inch,
+        primary_flow_rate: k_carb(600.0),
+        velocity_decay: 1.0, //0.5
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 2800 * units.mm,
+		volume: 2800 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaustL(
+    exhaust_system exhaust(
 		es_params,
-        length: 500 * units.mm,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_42.wav", volume: 0.01)
-	)
-    exhaust_system exhaustR(
-		es_params,
-        length: 450 * units.mm,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_42.wav", volume: 0.01)
+		audio_volume: 1.0 * 0.2,
+		impulse_response: ir_lib.default_0
 	)
 	
 	label pipe_length_1(2.0 * units.inch)
@@ -325,6 +323,8 @@ public node S85B50 {
 	label pipe_length_3(1.0 * units.inch)
 	label pipe_length_4(2.0 * units.inch)
 	label pipe_length_5(2.0 * units.inch)
+	
+	label exhaust_stagger(-70 * units.mm)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
     b0
@@ -334,8 +334,8 @@ public node S85B50 {
             rod_journal: rj0,
             ignition_wire: wires.wire06,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_1,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -344,8 +344,8 @@ public node S85B50 {
             rod_journal: rj1,
             ignition_wire: wires.wire07,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_2,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -354,8 +354,8 @@ public node S85B50 {
             rod_journal: rj2,
             ignition_wire: wires.wire08,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_3,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -364,8 +364,8 @@ public node S85B50 {
             rod_journal: rj3,
             ignition_wire: wires.wire09,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_4,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -374,8 +374,8 @@ public node S85B50 {
             rod_journal: rj4,
             ignition_wire: wires.wire10,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_5,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_5 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
 
@@ -387,7 +387,7 @@ public node S85B50 {
             rod_journal: rj0,
             ignition_wire: wires.wire01,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_1,
 			sound_attenuation: 1.0
         )
@@ -397,7 +397,7 @@ public node S85B50 {
             rod_journal: rj1,
             ignition_wire: wires.wire02,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_2,
 			sound_attenuation: 1.0
         )
@@ -407,7 +407,7 @@ public node S85B50 {
             rod_journal: rj2,
             ignition_wire: wires.wire03,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_3,
 			sound_attenuation: 1.0
         )
@@ -417,7 +417,7 @@ public node S85B50 {
             rod_journal: rj3,
             ignition_wire: wires.wire04,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_4,
 			sound_attenuation: 1.0
         )
@@ -427,7 +427,7 @@ public node S85B50 {
             rod_journal: rj4,
             ignition_wire: wires.wire05,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_5,
 			sound_attenuation: 1.0
         )
@@ -457,15 +457,15 @@ public node S85B50 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 40 * units.deg)
-        .add_sample(1000 * units.rpm, 50 * units.deg)
-        .add_sample(2000 * units.rpm, 55 * units.deg)
-        .add_sample(3000 * units.rpm, 60 * units.deg)
-        .add_sample(4000 * units.rpm, 60 * units.deg)
-        .add_sample(5000 * units.rpm, 55 * units.deg)
-        .add_sample(6000 * units.rpm, 50 * units.deg)
-		.add_sample(7000 * units.rpm, 40 * units.deg)
-		.add_sample(8000 * units.rpm, 35 * units.deg)
-		.add_sample(9000 * units.rpm, 30 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 80 * units.deg)
+        .add_sample(3000 * units.rpm, 77 * units.deg)
+        .add_sample(4000 * units.rpm, 72 * units.deg)
+        .add_sample(5000 * units.rpm, 67 * units.deg)
+        .add_sample(6000 * units.rpm, 61 * units.deg)
+		.add_sample(7000 * units.rpm, 54 * units.deg)
+		.add_sample(8000 * units.rpm, 48 * units.deg)
+		.add_sample(9000 * units.rpm, 44 * units.deg)
 
     engine.add_ignition_module(
         bmw_s85b50_distributor(
@@ -476,23 +476,36 @@ public node S85B50 {
     )
 }
 
-// 2010 BMW M3 Coupe (E92)
-public node bmw_m3_e92_vehicle {
+// 2008 BMW M6 Coupe (E63)
+public node bmw_m6_e63_vehicle {
     alias output __out:
         vehicle(
-            mass: 3649 * units.lb,
-            drag_coefficient: 0.31,
-            cross_sectional_area: 2.17 * (units.m * units.m),
-            diff_ratio: 3.850,
-            tire_radius: 334 * units.mm, // 265/35ZR19
-            rolling_resistance: 500 * units.N
+            mass: 3909 * units.lb,
+            drag_coefficient: 0.32,
+            cross_sectional_area: 2.15 * (units.m * units.m),
+            diff_ratio: 3.620,
+            tire_radius: 341.5 * units.mm, // 285/35ZR19
+            rolling_resistance: 550 * units.N
         );
 }
 
-public node bmw_m3_e92_transmission {
+// 2008 BMW M5 Sedan (E60)
+public node bmw_m5_e60_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 4012 * units.lb,
+            drag_coefficient: 0.31,
+            cross_sectional_area: 2.26 * (units.m * units.m),
+            diff_ratio: 3.620,
+            tire_radius: 341.5 * units.mm, // 285/35ZR19
+            rolling_resistance: 550 * units.N
+        );
+}
+
+public node zf_gs6_53bz_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 700 * units.lb_ft
+            max_clutch_torque: 900 * units.lb_ft
         )
         .add_gear(4.055)
         .add_gear(2.369)
@@ -504,7 +517,7 @@ public node bmw_m3_e92_transmission {
 
 public node main {
     set_engine(S85B50())
-    set_vehicle(bmw_m3_e92_vehicle())
-    set_transmission(bmw_m3_e92_transmission())
+    set_vehicle(bmw_m6_e63_vehicle())
+    set_transmission(zf_gs6_53bz_transmission())
 }
 
