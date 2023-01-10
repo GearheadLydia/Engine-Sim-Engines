@@ -417,34 +417,47 @@ public node S63B44 {
     )
 }
 
-// 2000 BMW M5 (E39)
-public node bmw_m5_e39_vehicle {
+// 2013 BMW M6 Coupe (F13)
+public node bmw_m6_f13_vehicle {
     alias output __out:
         vehicle(
-            mass: 3792 * units.lb,
-            drag_coefficient: 0.29,
-            cross_sectional_area: 2.14 * (units.m * units.m),
-            diff_ratio: 3.15,
-            tire_radius: 325.12 * units.mm, // 275/35ZR18
-            rolling_resistance: 500 * units.N
+            mass: 4065 * units.lb, // guesstimate for manual; auto is 4078
+            drag_coefficient: 0.32,
+            cross_sectional_area: 2.29 * (units.m * units.m),
+            diff_ratio: 3.154,
+            tire_radius: 344 * units.mm, // 295/35ZR19
+            rolling_resistance: 550 * units.N
         );
 }
 
-public node getrag_420g_transmission {
+// 2013 BMW M5 Sedan (F10)
+public node bmw_m5_f10_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 4343 * units.lb,
+            drag_coefficient: 0.33,
+            cross_sectional_area: 2.4 * (units.m * units.m),
+            diff_ratio: 3.154,
+            tire_radius: 344 * units.mm, // 295/35ZR19
+            rolling_resistance: 550 * units.N
+        );
+}
+
+public node zf_gs6_53bz_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1200 * units.lb_ft
+            max_clutch_torque: 900 * units.lb_ft
         )
-        .add_gear(4.23)
-        .add_gear(2.63)
-        .add_gear(1.67)
-        .add_gear(1.23)
-        .add_gear(1.00)
-        .add_gear(0.83);
+        .add_gear(4.055)
+        .add_gear(2.369)
+        .add_gear(1.592)
+        .add_gear(1.192)
+        .add_gear(1.000)
+        .add_gear(0.872);
 }
 
 public node main {
     set_engine(S63B44())
-    set_vehicle(bmw_m5_e39_vehicle())
-    set_transmission(getrag_420g_transmission())
+    set_vehicle(bmw_m6_f13_vehicle())
+    set_transmission(zf_gs6_53bz_transmission())
 }

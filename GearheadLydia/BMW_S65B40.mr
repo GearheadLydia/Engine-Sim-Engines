@@ -471,10 +471,10 @@ public node bmw_m3_e92_vehicle {
         );
 }
 
-public node bmw_m3_e92_transmission {
+public node zf_gs6_53bz_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 700 * units.lb_ft
+            max_clutch_torque: 900 * units.lb_ft
         )
         .add_gear(4.055)
         .add_gear(2.369)
@@ -487,5 +487,5 @@ public node bmw_m3_e92_transmission {
 public node main {
     set_engine(S65B40())
     set_vehicle(bmw_m3_e92_vehicle())
-    set_transmission(bmw_m3_e92_transmission())
+    set_transmission(zf_gs6_53bz_transmission())
 }
