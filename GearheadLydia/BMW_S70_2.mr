@@ -12,7 +12,7 @@ label cycle(2 * 360 * units.deg)
 public node bmw_s70_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 8250 * units.rpm;
+    input rev_limit: 7750 * units.rpm;
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -231,7 +231,7 @@ public node S70_2 {
         name: "BMW S70/2",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 800 * units.rpm,
-        redline: 8000 * units.rpm,
+        redline: 7500 * units.rpm,
         throttle_gamma: 2.0,
 		simulation_frequency: 6500,
 		hf_gain: 0.025,
@@ -326,9 +326,9 @@ public node S70_2 {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1000.0),
         primary_tube_length: 9.0 * units.inch,
-        primary_flow_rate: k_carb(650.0),
+        primary_flow_rate: k_carb(480.0),
         velocity_decay: 1.0, //0.5
-        volume: 20.0 * units.L,
+        volume: 5.0 * units.L,
 		collector_cross_section_area: circle_area(2.0 * units.inch) * 2
     )
 
@@ -530,7 +530,7 @@ public node S70_2 {
         bmw_s70_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 8250 * units.rpm
+            rev_limit: 7750 * units.rpm
         ))
 }
 
