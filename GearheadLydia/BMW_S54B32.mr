@@ -168,10 +168,10 @@ public node bmw_s54b32_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 30.0 * units.cc,
-        intake_runner_cross_section_area: 30 * units.cm2,
-        exhaust_runner_volume: 30.0 * units.cc,
-        exhaust_runner_cross_section_area: 30 * units.cm2,
+        intake_runner_volume: circle_area(1.2 * units.inch) * 0.5 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.2 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 0.5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -201,7 +201,7 @@ public node S54B32 {
     label bore(87.0 * units.mm)
     label stroke(91.0 * units.mm)
     label rod_length(139.0 * units.mm)
-    label rod_mass(250 * units.g) // guesstimate based on aftermarket chromoly rods - stock rods are titanium
+    label rod_mass(250 * units.g)
 	label piston_mass(347 * units.g)
     label compression_height(32.00 * units.mm)
 	label deck_height((217.0 + 0) * units.mm)
@@ -278,7 +278,7 @@ public node S54B32 {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.5,
-        runner_flow_rate: k_carb(850.0),
+        runner_flow_rate: k_carb(550.0),
         runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -288,7 +288,7 @@ public node S54B32 {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(800.0),
         primary_tube_length: 20.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
+        primary_flow_rate: k_carb(450.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
 		length: 700 * units.mm,
@@ -301,7 +301,7 @@ public node S54B32 {
 	label pipe_length_2(0.0 * units.inch)
 	label pipe_length_3(0.2 * units.inch)
 	
-	label exhaust_stagger(8 * units.inch)
+	label exhaust_stagger(12 * units.inch)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -404,7 +404,7 @@ public node S54B32 {
         ))
 }
 
-// 2004 BMW M3 E46
+// 2004 BMW M3 (E46)
 public node bmw_m3_e46_vehicle {
     alias output __out:
         vehicle(
@@ -417,10 +417,37 @@ public node bmw_m3_e46_vehicle {
         );
 }
 
-public node bmw_m3_e46_transmission {
+// 2007 BMW Z4 M Coupe (E86)
+public node bmw_z4_m_e86_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1465 * units.kg,
+            drag_coefficient: 0.35,
+            cross_sectional_area: 1.91 * (units.m * units.m),
+            diff_ratio: 3.62,
+            tire_radius: 330.2 * units.mm, // 255/40ZR18
+            rolling_resistance: 500 * units.N
+        );
+}
+
+// 2002 BMW Z3 M Roadster (E36/7)
+public node bmw_z3_m_e36_7_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1400 * units.kg,
+            drag_coefficient: 0.42,
+            cross_sectional_area: 1.83* (units.m * units.m),
+            diff_ratio: 3.15,
+            tire_radius: 313.5 * units.mm, // 245/40ZR17
+            rolling_resistance: 500 * units.N
+        );
+}
+
+// for M3 E46
+public node getrag_420g_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 500 * units.lb_ft
+            max_clutch_torque: 700 * units.lb_ft
         )
         .add_gear(4.23)
         .add_gear(2.53)
@@ -430,9 +457,36 @@ public node bmw_m3_e46_transmission {
         .add_gear(0.83);
 }
 
+// for Z4M
+public node zf_gs6_37bz_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 700 * units.lb_ft
+        )
+        .add_gear(4.350)
+        .add_gear(2.496)
+        .add_gear(1.665)
+        .add_gear(1.234)
+        .add_gear(1.000)
+        .add_gear(0.851);
+}
+
+// for Z3M
+public node zf_s5_31_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 600 * units.lb_ft
+        )
+        .add_gear(4.21)
+        .add_gear(2.49)
+        .add_gear(1.67)
+        .add_gear(1.24)
+        .add_gear(1.00);
+}
+
 public node main {
 	set_engine(S54B32())
     set_vehicle(bmw_m3_e46_vehicle())
-    set_transmission(bmw_m3_e46_transmission())
+    set_transmission(getrag_420g_transmission())
 }
 
