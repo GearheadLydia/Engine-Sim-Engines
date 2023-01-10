@@ -80,9 +80,9 @@ public node cosworth_gma_v12_lobe_profile_exh_lo {
 public node cosworth_gma_v12_lobe_profile_int_hi {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 275 * units.deg,
+            duration_at_50_thou: 280 * units.deg,
             gamma: 1.0,
-            lift: 14.0 * units.mm,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -90,9 +90,9 @@ public node cosworth_gma_v12_lobe_profile_int_hi {
 public node cosworth_gma_v12_lobe_profile_exh_hi {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 270 * units.deg,
+            duration_at_50_thou: 275 * units.deg,
             gamma: 1.0,
-            lift: 13.5 * units.mm,
+            lift: 10.0 * units.mm,
             steps: 100
         );
 }
@@ -104,8 +104,8 @@ public node cosworth_gma_v12_camshaft_builder {
     input ex_lobe_profile_hi: cosworth_gma_v12_lobe_profile_exh_hi();
     input intake_lobe_center_lo: 95.0 * units.deg;
     input exhaust_lobe_center_lo: 95.0 * units.deg;
-    input intake_lobe_center_hi: 65.0 * units.deg;
-    input exhaust_lobe_center_hi: 65.0 * units.deg;
+    input intake_lobe_center_hi: 130.0 * units.deg;
+    input exhaust_lobe_center_hi: 100.0 * units.deg;
     input advance_in: 0.0 * units.deg;
     input advance_ex: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
@@ -281,7 +281,7 @@ public node cosworth_gma_v12_head {
             vtec_exhaust_camshaft: cam_ex_hi,
             intake_camshaft: cam_in_lo,
             exhaust_camshaft: cam_ex_lo,
-            min_rpm: 5800 * units.rpm
+            min_rpm: 6000 * units.rpm
 		),
         flip_display: flip_display
     )
@@ -604,10 +604,10 @@ public node cosworth_gma_v12 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(00000 * units.rpm, 15 * units.deg)
-        .add_sample(01000 * units.rpm, 45 * units.deg)
-        .add_sample(02000 * units.rpm, 50 * units.deg)
-        .add_sample(03000 * units.rpm, 52 * units.deg)
-        .add_sample(04000 * units.rpm, 55 * units.deg)
+        .add_sample(01000 * units.rpm, 40 * units.deg)
+        .add_sample(02000 * units.rpm, 40 * units.deg)
+        .add_sample(03000 * units.rpm, 40 * units.deg)
+        .add_sample(04000 * units.rpm, 40 * units.deg)
         .add_sample(05000 * units.rpm, 58 * units.deg)
         .add_sample(06000 * units.rpm, 60 * units.deg)
         .add_sample(07000 * units.rpm, 60 * units.deg)
