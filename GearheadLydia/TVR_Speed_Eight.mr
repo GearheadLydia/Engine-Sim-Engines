@@ -200,8 +200,8 @@ public node ajp8 {
             burning_efficiency_randomness: 0.2,
             max_burning_efficiency: 0.85),
         throttle_gamma: 1.0,
-		hf_gain: 0.2,
-		jitter: 0.5
+		hf_gain: 0.3,
+		jitter: 0.9
     )
 
     label bore(91.0 * units.mm)
