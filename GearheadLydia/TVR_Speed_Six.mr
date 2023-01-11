@@ -275,7 +275,7 @@ public node speedsix {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(800.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.996,
+        idle_throttle_plate_position: 0.9955,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(275.0),
         runner_length: 12.0 * units.inch,
