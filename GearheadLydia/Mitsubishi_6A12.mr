@@ -9,7 +9,7 @@ label cycle(2 * 360 * units.deg)
 public node mitsubishi_6a12_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 8000 * units.rpm;
+    input rev_limit: 8050 * units.rpm;
 	input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -164,8 +164,8 @@ public node mitsubishi_6a12_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
         intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-        exhaust_runner_volume: circle_area(0.9 * units.inch) * 3 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -183,14 +183,14 @@ public node mitsubishi_6a12 {
 
     engine engine(
         name: "Mitsubishi 6A12",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
         redline: 7800 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 4.0,
             burning_efficiency_randomness: 0.2,
             max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
     )
 
     label bore(78.4 * units.mm)
@@ -392,21 +392,21 @@ public node mitsubishi_6a12 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 65 * units.deg)
-		.add_sample(7000 * units.rpm, 70 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
-		.add_sample(9000 * units.rpm, 75 * units.deg)
+        .add_sample(1000 * units.rpm, 55 * units.deg)
+        .add_sample(2000 * units.rpm, 55 * units.deg)
+        .add_sample(3000 * units.rpm, 55 * units.deg)
+        .add_sample(4000 * units.rpm, 56 * units.deg)
+        .add_sample(5000 * units.rpm, 58 * units.deg)
+        .add_sample(6000 * units.rpm, 60 * units.deg)
+		.add_sample(7000 * units.rpm, 62 * units.deg)
+		.add_sample(8000 * units.rpm, 64 * units.deg)
+		.add_sample(9000 * units.rpm, 64 * units.deg)
 
     engine.add_ignition_module(
         mitsubishi_6a12_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 8000 * units.rpm
+            rev_limit: 8050 * units.rpm
         )
     )
 }
