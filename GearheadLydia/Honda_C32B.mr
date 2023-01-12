@@ -235,10 +235,10 @@ public node honda_c32b_head {
 		
     generic_cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 30.0 * units.cc,
-        intake_runner_cross_section_area: 10 * units.cm2,
-        exhaust_runner_volume: 30.0 * units.cc,
-        exhaust_runner_cross_section_area: 10 * units.cm2,
+        intake_runner_volume: circle_area(1.15 * units.inch) * 1.2 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.15 * units.inch),
+        exhaust_runner_volume: circle_area(0.83 * units.inch) * 1.2 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.83 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -346,7 +346,7 @@ public node c32b {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.996,
         throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(150.0),
+        runner_flow_rate: k_carb(325.0),
         runner_length: 4.5 * units.inch,
         velocity_decay: 0.1
     )
@@ -354,7 +354,7 @@ public node c32b {
     exhaust_system_parameters es_params0(
         outlet_flow_rate: k_carb(300.0),
         primary_tube_length: 9.0 * units.inch,
-        primary_flow_rate: k_carb(200.0),
+        primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.2, //0.5
         volume: 25.0 * units.L
     )
@@ -362,7 +362,7 @@ public node c32b {
     exhaust_system_parameters es_params1(
         outlet_flow_rate: k_carb(300.0),
         primary_tube_length: 24.0 * units.inch,
-        primary_flow_rate: k_carb(200.0),
+        primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.2, //0.5
         volume: 25.0 * units.L
     )
@@ -370,7 +370,7 @@ public node c32b {
     exhaust_system_parameters es_params2(
         outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 6.0 * units.inch,
-        primary_flow_rate: k_carb(200.0),
+        primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.0, //0.5
         volume: 50.0 * units.L
     )
@@ -378,7 +378,7 @@ public node c32b {
     exhaust_system_parameters es_params3(
         outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 20.0 * units.inch,
-        primary_flow_rate: k_carb(200.0),
+        primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.0, //0.5
         volume: 50.0 * units.L
     )
@@ -472,16 +472,16 @@ public node c32b {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 65 * units.deg)
-		.add_sample(7000 * units.rpm, 70 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
-		.add_sample(9000 * units.rpm, 75 * units.deg)
+        .add_sample(0000 * units.rpm, 25 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 42 * units.deg)
+        .add_sample(3000 * units.rpm, 45 * units.deg)
+        .add_sample(4000 * units.rpm, 48 * units.deg)
+        .add_sample(5000 * units.rpm, 50 * units.deg)
+        .add_sample(6000 * units.rpm, 55 * units.deg)
+		.add_sample(7000 * units.rpm, 57 * units.deg)
+		.add_sample(8000 * units.rpm, 60 * units.deg)
+		.add_sample(9000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
         honda_c32b_distributor(
