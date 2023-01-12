@@ -263,7 +263,7 @@ public node w15 {
             burning_efficiency_randomness: 0.2,
             max_burning_efficiency: 0.85),
         throttle_gamma: 1.0,
-		simulation_frequency: 3800
+		simulation_frequency: 4800
     )
 
     label crank_moment(

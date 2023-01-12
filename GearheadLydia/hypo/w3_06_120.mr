@@ -223,8 +223,7 @@ public node w6 {
             max_turbulence_effect: 4.0,
             burning_efficiency_randomness: 0.2,
             max_burning_efficiency: 0.85),
-        throttle_gamma: 1.0,
-		simulation_frequency: 3800
+        throttle_gamma: 1.0
     )
 
     label crank_moment(
