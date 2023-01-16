@@ -15,7 +15,7 @@ label cycle(2 * 360 * units.deg)
 public node cizeta_v16_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 8250 * units.rpm;
+    input rev_limit: 8550 * units.rpm;
 	input limiter_duration: 0.10;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -234,7 +234,7 @@ public node cizeta_v16 {
         name: "Cizeta V16",
         starter_torque: 400 * units.lb_ft,
 		starter_speed: 800 * units.rpm,
-        redline: 8000 * units.rpm,
+        redline: 8500 * units.rpm,
         throttle_gamma: 1.0,
 		simulation_frequency: 4400
     )
@@ -573,7 +573,7 @@ public node cizeta_v16 {
         cizeta_v16_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 8250 * units.rpm
+            rev_limit: 8550 * units.rpm
         )
     )
 }
