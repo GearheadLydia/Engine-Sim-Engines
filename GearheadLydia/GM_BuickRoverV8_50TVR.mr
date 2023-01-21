@@ -271,12 +271,12 @@ public node rover_v8_50_225 {
         velocity_decay: 0.1
     )
 	
-	label exhaust_radius((1.5 * units.inch)/2)
+	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 12.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        primary_flow_rate: k_carb(550.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
 		length: 650 * units.mm,
