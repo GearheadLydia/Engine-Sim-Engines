@@ -371,14 +371,14 @@ public node cizeta_v16 {
 	exhaust_system exhaustRL(es_params_shrt, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	exhaust_system exhaustRR(es_params_shrt, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(90 * units.mm)
-	label pipe_length_2(45 * units.mm)
+	label pipe_length_1(150 * units.mm)
+	label pipe_length_2(75 * units.mm)
 	label pipe_length_3(0 * units.mm)
-	label pipe_length_4(40 * units.mm)
+	label pipe_length_4(50 * units.mm)
 	
-	label exhaust_stagger_FR(90 * units.mm)
+	label exhaust_stagger_FR(150 * units.mm)
 	label exhaust_stagger_LR(25 * units.mm)
-	label exhaust_stagger_X(10 * units.mm)
+	label exhaust_stagger_X(30 * units.mm)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // Front, starting from right side of vehicle
     b0
