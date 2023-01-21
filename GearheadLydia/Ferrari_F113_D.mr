@@ -525,3 +525,5 @@ public node main {
     set_vehicle(ferrari_512tr_vehicle())
     set_transmission(ferrari_512tr_transmission())
 }
+
+main()

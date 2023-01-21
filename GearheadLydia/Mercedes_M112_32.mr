@@ -439,3 +439,5 @@ public node main {
     set_vehicle(mercedes_slk_320_vehicle())
     set_transmission(daimler_nsg370_transmission())
 }
+
+main()

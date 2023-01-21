@@ -466,3 +466,5 @@ public node main {
     set_vehicle(bmw_m5_e39_vehicle())
     set_transmission(getrag_420g_transmission())
 }
+
+main()

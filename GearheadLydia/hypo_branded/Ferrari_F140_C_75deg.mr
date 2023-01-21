@@ -536,3 +536,5 @@ public node main {
     set_vehicle(ferrari_599_gto_vehicle())
     set_transmission(ferrari_599_gto_transmission())
 }
+
+main()

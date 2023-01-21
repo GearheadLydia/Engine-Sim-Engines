@@ -462,3 +462,5 @@ public node main {
     set_vehicle(dodge_challenger_srt_392_vehicle())
     set_transmission(tremec_tr6060_transmission())
 }
+
+main()

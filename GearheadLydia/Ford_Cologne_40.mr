@@ -444,3 +444,4 @@ public node main {
     set_transmission(borgwarner_t5_transmission())
 }
 
+main()

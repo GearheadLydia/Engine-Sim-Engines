@@ -447,3 +447,5 @@ public node main {
     set_vehicle(tvr_chimaera_500_vehicle())
     set_transmission(borgwarner_t5_transmission())
 }
+
+main()

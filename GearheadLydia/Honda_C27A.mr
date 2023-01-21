@@ -424,3 +424,5 @@ public node main {
     set_vehicle(honda_accord_ce6_vehicle())
     set_transmission(honda_accord_ce6_transmission())
 }
+
+main()

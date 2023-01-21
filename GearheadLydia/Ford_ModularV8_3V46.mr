@@ -474,3 +474,5 @@ public node main {
     set_vehicle(ford_mustang_gt_s197_vehicle())
     set_transmission(tremec_tr3650_transmission())
 }
+
+main()

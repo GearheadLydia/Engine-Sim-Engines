@@ -405,3 +405,5 @@ public node main {
     set_vehicle(subaru_impreza_25rs_gm6_vehicle())
     set_transmission(subaru_impreza_25rs_gm6_transmission())
 }
+
+main()

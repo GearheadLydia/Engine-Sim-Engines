@@ -450,3 +450,4 @@ public node main {
     set_transmission(getrag_mt82_transmission())
 }
 
+main()

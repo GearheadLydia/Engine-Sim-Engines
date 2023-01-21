@@ -400,3 +400,5 @@ public node main {
     set_vehicle(honda_rc211v_vehicle())
     set_transmission(honda_rc211v_transmission())
 }
+
+main()

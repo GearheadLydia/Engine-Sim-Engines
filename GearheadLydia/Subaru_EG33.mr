@@ -435,3 +435,5 @@ public node main {
     set_vehicle(subaru_svx_cx3_vehicle())
     set_transmission(subaru_svx_cx3_transmission())
 }
+
+main()

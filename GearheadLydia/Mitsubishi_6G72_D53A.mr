@@ -456,3 +456,4 @@ public node main {
     set_transmission(mitsubishi_eclipse_d53a_transmission())
 }
 
+main()

@@ -463,3 +463,4 @@ public node main {
     set_transmission(volvo_s80_v8_transmission())
 }
 
+main()

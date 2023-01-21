@@ -421,3 +421,5 @@ public node main {
     set_vehicle(buick_regal_grand_national_vehicle())
     set_transmission(buick_regal_grand_national_transmission())
 }
+
+main()

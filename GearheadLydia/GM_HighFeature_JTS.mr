@@ -445,3 +445,4 @@ public node main {
     set_transmission(gm_f40cr_transmission())
 }
 
+main()

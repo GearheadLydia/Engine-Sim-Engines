@@ -543,3 +543,5 @@ public node main {
     set_vehicle(jaguar_xjs_vehicle())
     set_transmission(gm_hydramatic_thm400_transmission())
 }
+
+main()

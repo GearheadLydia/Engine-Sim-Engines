@@ -445,3 +445,4 @@ public node main {
     set_transmission(aisin_ay6_transmission())
 }
 
+main()

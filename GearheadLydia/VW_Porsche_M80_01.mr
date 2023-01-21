@@ -517,3 +517,5 @@ public node main {
     set_vehicle(porsche_carrera_gt_vehicle())
     set_transmission(porsche_carrera_gt_transmission())
 }
+
+main()

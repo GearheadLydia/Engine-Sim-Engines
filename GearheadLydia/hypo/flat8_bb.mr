@@ -427,3 +427,4 @@ public node main {
     set_transmission(ferrari_458_italia_transmission())
 }
 
+main()

@@ -457,3 +457,5 @@ public node main {
     set_vehicle(dodge_dakota_rt_dn_vehicle())
     set_transmission(chrysler_46re_transmission())
 }
+
+main()

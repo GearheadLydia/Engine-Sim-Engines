@@ -420,7 +420,7 @@ public node alfa_romeo_busso_30 {
 }
 
 // 1993 Alfa Romeo SZ
-public node ford_mustang_v6_s550_vehicle {
+public node alfa_romeo_sprint_zagato_vehicle {
     alias output __out:
         vehicle(
             mass: 2778 * units.lb,
@@ -432,7 +432,7 @@ public node ford_mustang_v6_s550_vehicle {
         );
 }
 
-public node getrag_mt82_transmission {
+public node alfa_romeo_sprint_zagato_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 500 * units.lb_ft
@@ -446,7 +446,8 @@ public node getrag_mt82_transmission {
 
 public node main {
     set_engine(alfa_romeo_busso_30())
-    set_vehicle(ford_mustang_v6_s550_vehicle())
-    set_transmission(getrag_mt82_transmission())
+    set_vehicle(alfa_romeo_sprint_zagato_vehicle())
+    set_transmission(alfa_romeo_sprint_zagato_transmission())
 }
 
+main()

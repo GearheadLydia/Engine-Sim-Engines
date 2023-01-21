@@ -529,3 +529,5 @@ public node main {
     set_vehicle(ford_mustang_triton68_sn95_vehicle())
     set_transmission(tremec_t56_transmission())
 }
+
+main()

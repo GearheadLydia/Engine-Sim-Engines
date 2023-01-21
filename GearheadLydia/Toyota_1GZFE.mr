@@ -535,3 +535,4 @@ public node main {
     set_transmission(toyota_century_gzg50_transmission())
 }
 
+main()

@@ -482,3 +482,5 @@ public node main {
     set_vehicle(volkswagen_corrado_vr6_vehicle())
     set_transmission(volkswagen_corrado_vr6_transmission())
 }
+
+main()

@@ -489,3 +489,4 @@ public node main {
     set_transmission(alfa_romeo_8c_competizione_transmission())
 }
 
+main()

@@ -407,3 +407,5 @@ public node main {
     set_vehicle(ford_falcon_fg_vehicle())
     set_transmission(ford_falcon_fg_transmission())
 }
+
+main()

@@ -425,3 +425,4 @@ public node main {
     set_transmission(toyota_r154_transmission())
 }
 
+main()

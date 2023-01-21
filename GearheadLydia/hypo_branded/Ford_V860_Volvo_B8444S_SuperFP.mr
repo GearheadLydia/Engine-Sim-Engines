@@ -458,3 +458,4 @@ public node main {
     set_transmission(albins_st6_transmission())
 }
 
+main()

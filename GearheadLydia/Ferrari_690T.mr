@@ -448,3 +448,5 @@ public node main {
     set_vehicle(alfa_giulia_qv_952_vehicle())
     set_transmission(zf_gs6_53bz_transmission())
 }
+
+main()

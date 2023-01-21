@@ -566,3 +566,4 @@ public node main {
     set_transmission(mclaren_f1_transmission())
 }
 
+main()

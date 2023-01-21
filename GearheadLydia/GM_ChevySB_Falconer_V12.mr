@@ -545,3 +545,5 @@ public node main {
     set_vehicle(chevrolet_corvette_falconer_zr12_c4_vehicle())
     set_transmission(tremec_t56_transmission())
 }
+
+main()

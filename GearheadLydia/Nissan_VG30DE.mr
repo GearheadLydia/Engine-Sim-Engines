@@ -454,3 +454,4 @@ public node main {
     set_transmission(nissan_fs5r30a_transmission())
 }
 
+main()

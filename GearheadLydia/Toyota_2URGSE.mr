@@ -465,3 +465,5 @@ public node main {
     set_vehicle(lexus_is_f_vehicle())
     set_transmission(toyota_aa80e_transmission())
 }
+
+main()

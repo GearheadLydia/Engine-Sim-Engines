@@ -373,3 +373,5 @@ public node main {
     set_vehicle(toyota_supra_jza80_vehicle())
     set_transmission(toyota_supra_jza80_transmission())
 }
+
+main()

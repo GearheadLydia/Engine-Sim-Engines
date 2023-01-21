@@ -482,3 +482,4 @@ public node main {
     set_transmission(getrag_420g_transmission())
 }
 
+main()

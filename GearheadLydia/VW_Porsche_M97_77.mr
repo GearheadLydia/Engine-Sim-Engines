@@ -446,3 +446,5 @@ public node main {
     set_vehicle(porsche_997_gt3_vehicle())
     set_transmission(porsche_997_gt3_transmission())
 }
+
+main()

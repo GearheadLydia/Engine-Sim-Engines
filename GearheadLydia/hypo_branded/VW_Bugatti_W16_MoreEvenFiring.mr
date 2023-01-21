@@ -692,3 +692,5 @@ public node main {
     set_vehicle(bugatti_veyron_16_4_vehicle())
     set_transmission(bugatti_veyron_16_4_transmission())
 }
+
+main()

@@ -437,3 +437,4 @@ public node main {
     set_transmission(tvr_sagaris_transmission())
 }
 
+main()

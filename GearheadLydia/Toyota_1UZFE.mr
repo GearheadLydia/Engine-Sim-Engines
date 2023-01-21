@@ -462,3 +462,5 @@ public node main {
     set_vehicle(lexus_sc400_uzz30_vehicle())
     set_transmission(toyota_a341e_transmission())
 }
+
+main()

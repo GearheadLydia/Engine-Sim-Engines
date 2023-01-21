@@ -396,3 +396,4 @@ public node main {
     set_transmission(porsche_944_s2_transmission())
 }
 
+main()

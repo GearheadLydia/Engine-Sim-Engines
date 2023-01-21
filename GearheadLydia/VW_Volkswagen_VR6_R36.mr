@@ -479,3 +479,5 @@ public node main {
     set_vehicle(volkswagen_passat_r36_b6_vehicle())
     set_transmission(volkswagen_passat_r36_b6_transmission())
 }
+
+main()

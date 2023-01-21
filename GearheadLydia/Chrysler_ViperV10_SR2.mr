@@ -518,3 +518,5 @@ public node main {
     set_vehicle(dodge_viper_gts_sr_vehicle())
     set_transmission(borgwarner_t56_transmission())
 }
+
+main()

@@ -398,3 +398,4 @@ public node main {
     set_transmission(nissan_fs6r92a_transmission())
 }
 
+main()

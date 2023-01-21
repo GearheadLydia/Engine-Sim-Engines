@@ -438,3 +438,4 @@ public node main {
     set_transmission(tvr_3000s_transmission())
 }
 
+main()

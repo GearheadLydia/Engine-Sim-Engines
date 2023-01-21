@@ -442,3 +442,4 @@ public node main {
     set_transmission(mitsubishi_fto_de3a_transmission())
 }
 
+main()

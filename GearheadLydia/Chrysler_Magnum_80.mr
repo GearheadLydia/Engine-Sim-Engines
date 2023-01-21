@@ -489,3 +489,5 @@ public node main {
     set_vehicle(dodge_ram_vehicle())
     set_transmission(chrysler_48re_transmission())
 }
+
+main()

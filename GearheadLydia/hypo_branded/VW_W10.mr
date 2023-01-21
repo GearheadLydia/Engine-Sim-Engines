@@ -599,3 +599,5 @@ public node main {
     set_vehicle(volkswagen_w12_roadster_concept_vehicle())
     set_transmission(volkswagen_w12_roadster_concept_transmission())
 }
+
+main()

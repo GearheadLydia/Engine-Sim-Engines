@@ -473,3 +473,5 @@ public node main {
     set_vehicle(ford_mustang_cobra_foxbody_vehicle())
     set_transmission(borgwarner_t5_transmission())
 }
+
+main()

@@ -547,3 +547,5 @@ public node main {
     set_vehicle(lister_storm_vehicle())
     set_transmission(hewland_tgt_a_transmission())
 }
+
+main()

@@ -462,3 +462,4 @@ public node main {
     set_transmission(ford_5r44e_transmission())
 }
 
+main()

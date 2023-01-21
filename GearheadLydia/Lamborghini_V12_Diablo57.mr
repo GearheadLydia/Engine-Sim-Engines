@@ -574,3 +574,4 @@ public node main {
     set_transmission(lamborghini_diablo_transmission())
 }
 
+main()

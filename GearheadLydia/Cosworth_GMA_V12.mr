@@ -657,3 +657,4 @@ public node main {
     set_transmission(gma_t50_transmission())
 }
 
+main()

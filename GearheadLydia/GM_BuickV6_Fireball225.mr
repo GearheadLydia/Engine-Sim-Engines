@@ -392,3 +392,5 @@ public node main {
     set_vehicle(buick_special_vehicle())
     set_transmission(buick_special_transmission())
 }
+
+main()

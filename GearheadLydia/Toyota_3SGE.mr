@@ -394,3 +394,4 @@ public node main {
     set_transmission(toyota_j160_transmission())
 }
 
+main()

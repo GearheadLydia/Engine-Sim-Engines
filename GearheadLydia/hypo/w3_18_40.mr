@@ -656,3 +656,5 @@ public node main {
     set_vehicle(lamborghini_murcielago_vehicle())
     set_transmission(lamborghini_murcielago_transmission())
 }
+
+main()

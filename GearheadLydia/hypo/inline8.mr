@@ -443,3 +443,5 @@ public node main {
     set_vehicle(nissan_skyline_gtr_bnr34_vehicle())
     set_transmission(nissan_skyline_gtr_bnr34_transmission())
 }
+
+main()

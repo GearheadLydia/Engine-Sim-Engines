@@ -433,3 +433,5 @@ public node main {
     set_vehicle(dmc_delorean_vehicle())
     set_transmission(renault_un1_transmission())
 }
+
+main()

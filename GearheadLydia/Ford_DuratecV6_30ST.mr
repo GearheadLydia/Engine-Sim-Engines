@@ -445,3 +445,4 @@ public node main {
     set_transmission(ford_mondeo_st220_transmission())
 }
 
+main()

@@ -522,3 +522,5 @@ public node main {
     set_vehicle(audi_r8_v10_vehicle())
     set_transmission(audi_r8_v10_transmission())
 }
+
+main()

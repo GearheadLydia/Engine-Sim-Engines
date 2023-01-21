@@ -580,3 +580,5 @@ public node main {
     set_vehicle(chevrolet_camaro_fbody_vehicle())
     set_transmission(tremec_t56_camaro_transmission())
 }
+
+main()

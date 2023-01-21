@@ -439,3 +439,5 @@ public node main {
     set_vehicle(porsche_993_carrera_s_vehicle())
     set_transmission(porsche_993_carrera_s_transmission())
 }
+
+main()

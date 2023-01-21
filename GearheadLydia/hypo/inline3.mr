@@ -364,3 +364,5 @@ public node main {
     set_vehicle(honda_beat_pp1_vehicle())
     set_transmission(honda_beat_pp1_transmission())
 }
+
+main()

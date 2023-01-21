@@ -418,3 +418,5 @@ public node main {
     set_vehicle(nissan_skyline_25gtt_er34_vehicle())
     set_transmission(nissan_fs5r30a_transmission())
 }
+
+main()

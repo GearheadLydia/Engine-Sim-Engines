@@ -439,3 +439,5 @@ public node main {
     set_vehicle(pontiac_fiero_gt_vehicle())
     set_transmission(muncie_getrag_282_transmission())
 }
+
+main()

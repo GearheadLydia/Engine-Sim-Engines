@@ -439,3 +439,5 @@ public node main {
     set_vehicle(chevrolet_s10_vehicle())
     set_transmission(borgwarner_t5_transmission())
 }
+
+main()

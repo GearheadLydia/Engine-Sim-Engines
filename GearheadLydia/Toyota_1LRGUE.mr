@@ -513,3 +513,5 @@ public node main {
     set_vehicle(lexus_lfa_vehicle())
     set_transmission(lexus_lfa_transmission())
 }
+
+main()

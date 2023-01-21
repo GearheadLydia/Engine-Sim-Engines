@@ -426,3 +426,5 @@ public node main {
     set_vehicle(mercedes_c36_amg_w202_vehicle())
     set_transmission(mercedes_c36_amg_w202_transmission())
 }
+
+main()

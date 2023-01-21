@@ -573,3 +573,5 @@ public node main {
     set_vehicle(cadillac_sixteen_concept_vehicle())
     set_transmission(gm_4l85e_transmission())
 }
+
+main()

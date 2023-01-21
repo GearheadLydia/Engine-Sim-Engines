@@ -639,3 +639,5 @@ public node main {
     set_vehicle(bentley_continental_gt_vehicle())
     set_transmission(bentley_continental_gt_transmission())
 }
+
+main()

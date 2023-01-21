@@ -478,3 +478,4 @@ public node main {
     set_transmission(ferrari_f40_transmission())
 }
 
+main()

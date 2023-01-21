@@ -489,3 +489,5 @@ public node main {
     set_vehicle(bmw_m3_e92_vehicle())
     set_transmission(zf_gs6_53bz_transmission())
 }
+
+main()

@@ -477,3 +477,4 @@ public node main {
     set_transmission(zf_6hp26_transmission())
 }
 
+main()

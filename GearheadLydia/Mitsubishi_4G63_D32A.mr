@@ -396,3 +396,4 @@ public node main {
     set_transmission(mitsubishi_eclipse_d32a_transmission())
 }
 
+main()

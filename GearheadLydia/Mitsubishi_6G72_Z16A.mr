@@ -463,3 +463,4 @@ public node main {
     set_transmission(mitsubishi_3000gt_z15a_sl_transmission())
 }
 
+main()

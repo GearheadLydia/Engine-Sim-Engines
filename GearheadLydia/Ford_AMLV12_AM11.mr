@@ -549,3 +549,4 @@ public node main {
     set_transmission(aston_martin_vantage_transmission())
 }
 
+main()

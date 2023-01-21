@@ -449,3 +449,5 @@ public node main {
     set_vehicle(mercedes_vehicle())
     set_transmission(mercedes_transmission())
 }
+
+main()

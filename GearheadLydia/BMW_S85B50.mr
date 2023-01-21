@@ -521,3 +521,4 @@ public node main {
     set_transmission(zf_gs6_53bz_transmission())
 }
 
+main()

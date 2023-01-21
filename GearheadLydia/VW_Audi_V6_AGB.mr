@@ -432,3 +432,5 @@ public node main {
     set_vehicle(audi_s4_b5_vehicle())
     set_transmission(audi_s4_b5_transmission())
 }
+
+main()

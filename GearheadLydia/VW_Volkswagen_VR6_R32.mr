@@ -480,3 +480,5 @@ public node main {
     set_vehicle(volkswagen_golf_r32_mkiv_vehicle())
     set_transmission(volkswagen_golf_r32_mkiv_transmission())
 }
+
+main()

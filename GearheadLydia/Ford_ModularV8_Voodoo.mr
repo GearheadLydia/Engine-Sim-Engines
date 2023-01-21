@@ -453,3 +453,5 @@ public node main {
     set_vehicle(ford_shelby_gt350r_s550_vehicle())
     set_transmission(tremec_tr3160_transmission())
 }
+
+main()

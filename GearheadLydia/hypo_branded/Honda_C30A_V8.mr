@@ -553,3 +553,5 @@ public node main {
     set_vehicle(honda_nsx_na2_vehicle())
     set_transmission(honda_nsx_na2_transmission())
 }
+
+main()

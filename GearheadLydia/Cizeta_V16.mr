@@ -609,3 +609,4 @@ public node main {
     set_transmission(zf_s5_42_transmission())
 }
 
+main()

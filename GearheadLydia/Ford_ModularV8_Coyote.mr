@@ -464,3 +464,5 @@ public node main {
     set_vehicle(ford_mustang_gt_s550_vehicle())
     set_transmission(getrag_mt82_transmission())
 }
+
+main()

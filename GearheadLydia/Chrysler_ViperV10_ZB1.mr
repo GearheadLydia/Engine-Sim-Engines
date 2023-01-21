@@ -506,3 +506,5 @@ public node main {
     set_vehicle(dodge_viper_srt10_zb_vehicle())
     set_transmission(tremec_t56_transmission())
 }
+
+main()

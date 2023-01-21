@@ -472,3 +472,5 @@ public node main {
     set_vehicle(zenith_umbra_rs_sv0_vehicle())
     set_transmission(zenith_umbra_rs_sv0_transmission())
 }
+
+main()

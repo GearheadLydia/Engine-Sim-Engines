@@ -455,3 +455,5 @@ public node main {
     set_vehicle(mercedes_clk_63_amg_vehicle())
     set_transmission(mercedes_7g_tronic_transmission())
 }
+
+main()

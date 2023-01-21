@@ -451,3 +451,5 @@ public node main {
     set_vehicle(lexus_is350_vehicle())
     set_transmission(toyota_a760e_transmission())
 }
+
+main()

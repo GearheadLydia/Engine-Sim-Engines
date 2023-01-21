@@ -479,3 +479,4 @@ public node main {
     set_transmission(acura_tl_ua7_transmission())
 }
 
+main()

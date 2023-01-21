@@ -517,3 +517,4 @@ public node main {
     set_transmission(honda_s2000_ap1_transmission())
 }
 
+main()

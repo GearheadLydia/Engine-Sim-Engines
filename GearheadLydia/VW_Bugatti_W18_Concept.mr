@@ -655,3 +655,5 @@ public node main {
     set_vehicle(bugatti_18_3_chiron_vehicle())
     set_transmission(bugatti_18_3_chiron_transmission())
 }
+
+main()

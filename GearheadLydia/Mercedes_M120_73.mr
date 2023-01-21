@@ -533,3 +533,5 @@ public node main {
     set_vehicle(pagani_zonda_vehicle())
     set_transmission(pagani_zonda_transmission())
 }
+
+main()

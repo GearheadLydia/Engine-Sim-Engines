@@ -398,3 +398,4 @@ public node main {
     set_transmission(nissan_fs5w71c_transmission())
 }
 
+main()

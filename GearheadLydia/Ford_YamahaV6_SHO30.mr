@@ -445,3 +445,4 @@ public node main {
     set_transmission(ford_taurus_sho_transmission())
 }
 
+main()

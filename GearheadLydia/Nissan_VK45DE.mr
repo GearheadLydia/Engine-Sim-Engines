@@ -462,3 +462,4 @@ public node main {
     set_transmission(infiniti_m45_y50_transmission())
 }
 
+main()
