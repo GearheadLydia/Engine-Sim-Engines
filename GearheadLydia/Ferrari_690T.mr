@@ -277,7 +277,7 @@ public node F690T {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1500.0),
-        primary_tube_length: 10.0 * units.inch,
+        primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(600.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
@@ -285,7 +285,7 @@ public node F690T {
 		volume: 2800 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.2, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(4 * units.inch)
 	label pipe_length_2(0 * units.inch)
