@@ -231,7 +231,7 @@ public node ferrari_f130_b {
             burning_efficiency_randomness: 0.2,
             max_burning_efficiency: 0.85),
         throttle_gamma: 2.0,
-		simulation_frequency: 7500
+		simulation_frequency: 6500
     )
 
     label crank_moment(
@@ -327,12 +327,12 @@ public node ferrari_f130_b {
 		impulse_response: ir_lib.default_0
 	)
 	
-	label pipe_length_1(5.2 * units.inch)
-	label pipe_length_2(4.4 * units.inch)
-	label pipe_length_3(3.8 * units.inch)
-	label pipe_length_4(3.0 * units.inch)
-	label pipe_length_5(3.8 * units.inch)
-	label pipe_length_6(4.4 * units.inch)
+	label pipe_length_1(2.2 * units.inch)
+	label pipe_length_2(1.4 * units.inch)
+	label pipe_length_3(0.8 * units.inch)
+	label pipe_length_4(0.0 * units.inch)
+	label pipe_length_5(0.8 * units.inch)
+	label pipe_length_6(1.4 * units.inch)
 	
 	label pipe_stagger(20 * units.mm)
 
