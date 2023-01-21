@@ -203,8 +203,7 @@ public node SHO30 {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 800 * units.rpm,
         redline: 7500 * units.rpm,
-        throttle_gamma: 0.8,
-		simulation_frequency: 6800
+        throttle_gamma: 1.0
     )
 
     wires wires()
