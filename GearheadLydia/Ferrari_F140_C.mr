@@ -51,7 +51,7 @@ public node ferrari_f140_c_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 245 * units.deg,
-            gamma: 1.5,
+            gamma: 1.0,
             lift: 11.0 * units.mm,
             steps: 100
         );
@@ -61,7 +61,7 @@ public node ferrari_f140_c_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 240 * units.deg,
-            gamma: 1.5,
+            gamma: 1.0,
             lift: 10.0 * units.mm,
             steps: 100
         );
@@ -72,8 +72,7 @@ public node ferrari_f140_c_camshaft_builder {
 	input ex_lobe_profile: ferrari_f140_c_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 110.0 * units.deg;
-    input intake_lobe_center: lobe_separation;
+    input intake_lobe_center: 110.0 * units.deg;
     input exhaust_lobe_center: 105.0 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
@@ -192,8 +191,8 @@ public node ferrari_f140_c_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.2 * units.inch) * 4 * units.inch,
         intake_runner_cross_section_area: circle_area(1.2 * units.inch),
-        exhaust_runner_volume: circle_area(1.2 * units.inch) * 8 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.2 * units.inch),
+        exhaust_runner_volume: circle_area(1.0 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(1.0 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -225,13 +224,13 @@ public node ferrari_f140_c {
         name: "Ferrari F140 CE",
         starter_torque: 300 * units.lb_ft,
 		starter_speed: 600 * units.rpm,
-        redline: 8250 * units.rpm,
+        redline: 8000 * units.rpm, // actual: 8250
         fuel: fuel(
             max_turbulence_effect: 4.0,
             burning_efficiency_randomness: 0.2,
             max_burning_efficiency: 0.85),
         throttle_gamma: 2.0,
-		simulation_frequency: 7500
+		simulation_frequency: 6400
     )
 
     label crank_moment(
@@ -334,14 +333,14 @@ public node ferrari_f140_c {
 	//label pipe_length_5(3.0 * units.cm)
 	//label pipe_length_6(2.5 * units.cm)
 	
-	label pipe_length_1(5.2 * units.inch)
-	label pipe_length_2(4.4 * units.inch)
-	label pipe_length_3(3.8 * units.inch)
-	label pipe_length_4(3.0 * units.inch)
-	label pipe_length_5(3.8 * units.inch)
-	label pipe_length_6(4.4 * units.inch)
+	label pipe_length_1(2.2 * units.inch)
+	label pipe_length_2(1.4 * units.inch)
+	label pipe_length_3(0.8 * units.inch)
+	label pipe_length_4(0.0 * units.inch)
+	label pipe_length_5(0.8 * units.inch)
+	label pipe_length_6(1.4 * units.inch)
 	
-	label pipe_stagger(0 * units.mm)
+	label pipe_stagger(40 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 32.5 * units.deg) // L (first)
     b0
