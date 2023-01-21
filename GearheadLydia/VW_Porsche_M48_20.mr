@@ -12,7 +12,7 @@ label cycle(2 * 360 * units.deg)
 public node porsche_m48_20_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7000 * units.rpm;
+    input rev_limit: 7050 * units.rpm;
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -422,7 +422,7 @@ public node v8_bns {
         porsche_m48_20_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 7000 * units.rpm
+            rev_limit: 7050 * units.rpm
         )
     )
 }
