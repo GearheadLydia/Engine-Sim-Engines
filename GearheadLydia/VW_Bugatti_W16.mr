@@ -407,10 +407,10 @@ public node w16 {
 	label exhaust_stagger_FR(0.1 * units.inch)
 	label exhaust_stagger_LR(1.0 * units.inch)
 	label exhaust_stagger_IO(0.3 * units.inch)
-	label pipe_length_1(12.0 * units.mm)
-	label pipe_length_2(4.0 * units.mm)
+	label pipe_length_1(24.0 * units.mm)
+	label pipe_length_2(8.0 * units.mm)
 	label pipe_length_3(0.0 * units.mm)
-	label pipe_length_4(8.0 * units.mm)
+	label pipe_length_4(16.0 * units.mm)
 
     cylinder_bank bLO(bank_params, angle: 52.5 * units.deg) // LO (first)
 	//cylinder_bank bLO(bank_params, angle: 45 * units.deg, position_x: -position_xO_offset, position_y: position_yO_offset) // LO (first)
