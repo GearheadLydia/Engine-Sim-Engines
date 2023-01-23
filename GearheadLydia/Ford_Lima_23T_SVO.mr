@@ -38,7 +38,7 @@ private node add_sym_sample {
 
 // http://vb.foureyedpride.com/showthread.php?160258-86-SVO-cam
 // http://www.merkurencyclopedia.com/Motor/camshaft.html
-public node ford_limade_lobe_profile_int {
+public node ford_lima_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 226.0 * units.deg,
@@ -48,7 +48,7 @@ public node ford_limade_lobe_profile_int {
         );
 }
 
-public node ford_limade_lobe_profile_exh {
+public node ford_lima_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 234.0 * units.deg,
@@ -335,8 +335,8 @@ public node lima_23t {
     engine.add_crankshaft(c0)
 
     ford_lima_camshaft_builder camshaft(
-	    lobe_profile: ford_limade_lobe_profile_int(),
-		ex_lobe_profile: ford_limade_lobe_profile_exh()
+	    lobe_profile: ford_lima_lobe_profile_int(),
+		ex_lobe_profile: ford_lima_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
