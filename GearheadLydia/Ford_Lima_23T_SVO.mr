@@ -59,8 +59,8 @@ public node ford_lima_lobe_profile_exh {
 }
 
 public node ford_lima_camshaft_builder {
-    input lobe_profile: ford_limade_lobe_profile_int();
-	input ex_lobe_profile: ford_limade_lobe_profile_exh();
+    input lobe_profile: ford_lima_lobe_profile_int();
+	input ex_lobe_profile: ford_lima_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 112.0 * units.deg;
