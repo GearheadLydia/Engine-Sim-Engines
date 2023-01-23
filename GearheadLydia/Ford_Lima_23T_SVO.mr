@@ -343,7 +343,7 @@ public node lima_23t {
         ford_lima_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: false
+			flip_display: true
         )
     )
 
