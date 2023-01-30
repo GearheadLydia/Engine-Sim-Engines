@@ -188,10 +188,10 @@ public node mercedes_m120_73_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 80.0 * units.cc,
-        intake_runner_cross_section_area: 20 * units.cm2,
-        exhaust_runner_volume: 80.0 * units.cc,
-        exhaust_runner_cross_section_area: 20 * units.cm2,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 6 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 8 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -217,7 +217,7 @@ public node m120_73 {
             burning_efficiency_randomness: 0.2,
             max_burning_efficiency: 0.85),
         throttle_gamma: 0.8,
-		simulation_frequency: 6800
+		simulation_frequency: 6500
     )
 
     label bore(91.5 * units.mm)
@@ -318,14 +318,17 @@ public node m120_73 {
 	
 	label exh_vol_warble(-0.1)
 	
-	label pipe_length_1(10 * units.mm)
-	label pipe_length_2(5 * units.mm)
-	label pipe_length_3(0 * units.mm)
+	label pipe_length_1(15 * units.mm)
+	label pipe_length_2(10 * units.mm)
+	label pipe_length_3(5 * units.mm)
 	label pipe_length_4(0 * units.mm)
 	label pipe_length_5(5 * units.mm)
 	label pipe_length_6(10 * units.mm)
 	
-	label exhaust_stagger(15 * units.mm)
+	label exhaust_stagger(10 * units.mm)
+	
+	label exh_vol_L0(1.0)
+	label exh_vol_R0(1.0)
 		
     cylinder_bank b0(bank_params, angle: 30 * units.deg) // L (first)
     b0
@@ -337,7 +340,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 1.0
+			sound_attenuation: exh_vol_L0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -347,7 +350,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 1.0 + exh_vol_warble
+			sound_attenuation: exh_vol_L0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -357,7 +360,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 1.0
+			sound_attenuation: exh_vol_L0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -367,7 +370,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: 1.0 + exh_vol_warble
+			sound_attenuation: exh_vol_L0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -377,7 +380,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_5 + exhaust_stagger,
-			sound_attenuation: 1.0
+			sound_attenuation: exh_vol_L0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -387,7 +390,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_6 + exhaust_stagger,
-			sound_attenuation: 1.0 + exh_vol_warble
+			sound_attenuation: exh_vol_L0 + exh_vol_warble
         )
 
     cylinder_bank b1(bank_params, angle: -30 * units.deg) // R (second)
@@ -400,7 +403,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
-			sound_attenuation: 1.0 + exh_vol_warble
+			sound_attenuation: exh_vol_R0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -410,7 +413,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
-			sound_attenuation: 1.0
+			sound_attenuation: exh_vol_R0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -420,7 +423,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
-			sound_attenuation: 1.0 + exh_vol_warble
+			sound_attenuation: exh_vol_R0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -430,7 +433,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4,
-			sound_attenuation: 1.0
+			sound_attenuation: exh_vol_R0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -440,7 +443,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_5,
-			sound_attenuation: 1.0 + exh_vol_warble
+			sound_attenuation: exh_vol_R0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -450,7 +453,7 @@ public node m120_73 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_6,
-			sound_attenuation: 1.0
+			sound_attenuation: exh_vol_R0
         )
 
     engine
