@@ -204,6 +204,7 @@ public node mercedes_m104_36 {
     label crank_mass(5 * units.kg)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(6 * units.inch)
+	// deck height may be 217.63mm??
 
     label crank_moment(
         disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
