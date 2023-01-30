@@ -204,7 +204,7 @@ public node vr5_23 {
     label flywheel_radius(6 * units.inch)
 
     engine engine(
-        name: "Volkswagen VR5 12V",
+        name: "Volkswagen VR5 10V",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 850 * units.rpm,
         redline: 6400 * units.rpm,

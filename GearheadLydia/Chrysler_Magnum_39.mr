@@ -6,7 +6,7 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 18436572
+// firing order: 165432
 
 public node dodge_magnum_v6_distributor {
     input wires;
