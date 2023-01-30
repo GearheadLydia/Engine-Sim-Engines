@@ -435,7 +435,7 @@ public node nissan_skyline_gtr_bnr34_vehicle {
             cross_sectional_area: 2.4276 * (units.m * units.m),
             diff_ratio: 3.545,
             tire_radius: 326.4 * units.mm, // 245/40R18
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1580 * units.kg * 9.81 * (245.0/275.0) * 0.01
         );
 }
 
