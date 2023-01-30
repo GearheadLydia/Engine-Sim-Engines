@@ -72,7 +72,7 @@ public node bmw_s85b50_camshaft_builder {
 	//input exhaust_lobe_center: lobe_separation;
     input intake_lobe_center: 140.5 * units.deg;
     input exhaust_lobe_center: 123.75 * units.deg;
-    input advance: -8.375 * units.deg;
+    input advance: 8.375 * units.deg;
 	//input advance: 0 * units.deg;
     input base_radius: 15.0 * units.mm;
 
