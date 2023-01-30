@@ -105,7 +105,7 @@ public node falconer_v12_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 	
-	// firing order: 1-12-5-8-3-10-6-7-2-11-4-9
+	// firing order: 1-10-9-6-5-12-11-4-3-8-7-2
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center +  0 * rot60) // # 1
