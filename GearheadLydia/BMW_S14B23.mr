@@ -10,7 +10,7 @@ public node bmw_s14b23_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7250 * units.rpm;
-	input limiter_duration: 0.09;
+	input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
@@ -297,7 +297,7 @@ public node S14B23 {
 	
     exhaust_system exhaust(
 		es_params,
-		audio_volume: 1.0 * 0.05,
+		audio_volume: 1.0 * 0.001,
 		impulse_response: ir_lib.default_0
 	)
  
