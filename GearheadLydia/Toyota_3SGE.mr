@@ -160,8 +160,8 @@ public node toyota_3sge_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.18 * units.inch) * 6 * units.inch,
         intake_runner_cross_section_area: circle_area(1.18 * units.inch),
-        exhaust_runner_volume: circle_area(0.98 * units.inch) * 8 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.98 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 8 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -179,6 +179,8 @@ public node toyota_3sge_beams {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 7500 * units.rpm,
+		hf_gain: 0.05,
+		jitter: 0.55,
         throttle_gamma: 2.0
     )
 	
@@ -258,26 +260,29 @@ public node toyota_3sge_beams {
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(600.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9955,
+        idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(450.0),
         runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
+	
+	label exhaust_radius((4.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
+        outlet_flow_rate: k_carb(400.0),
+        primary_tube_length: 12.5 * units.inch,
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-        volume: 1.0 * units.L
+		collector_cross_section_area: circle_area(exhaust_radius),
+		length: 2500 * units.mm,
+		volume: 2500 * units.mm * circle_area(exhaust_radius)
     )
 	
     exhaust_system exhaust(
 		es_params,
 		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 200 * units.mm
+		impulse_response: ir_lib.default_0
 	)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
@@ -289,7 +294,7 @@ public node toyota_3sge_beams {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 5.0 * units.inch,
+			primary_length: 1.5 * units.inch,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -299,7 +304,7 @@ public node toyota_3sge_beams {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 5.0 * units.inch,
+			primary_length: 1.3 * units.inch,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -309,8 +314,8 @@ public node toyota_3sge_beams {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 4.6 * units.inch,
-			sound_attenuation: 1.0
+			primary_length: 0.0 * units.inch,
+			sound_attenuation: 1.05
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -319,7 +324,7 @@ public node toyota_3sge_beams {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 5.0 * units.inch,
+			primary_length: 1.0 * units.inch,
 			sound_attenuation: 1.0
         )
 
@@ -344,10 +349,10 @@ public node toyota_3sge_beams {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 30 * units.deg)
-        .add_sample(2000 * units.rpm, 40 * units.deg)
-        .add_sample(3000 * units.rpm, 40 * units.deg)
-        .add_sample(4000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 50 * units.deg)
+        .add_sample(2000 * units.rpm, 50 * units.deg)
+        .add_sample(3000 * units.rpm, 50 * units.deg)
+        .add_sample(4000 * units.rpm, 50 * units.deg)
         .add_sample(5000 * units.rpm, 50 * units.deg)
         .add_sample(6000 * units.rpm, 50 * units.deg)
         .add_sample(7000 * units.rpm, 50 * units.deg)
