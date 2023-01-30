@@ -9,7 +9,7 @@ label cycle(2 * 360 * units.deg)
 public node honda_f20c_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 9000 * units.rpm;
+    input rev_limit: 9050 * units.rpm;
 	input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -61,7 +61,7 @@ public node honda_f20c_lobe_profile_exh_lo {
 public node honda_f20c_lobe_profile_int_hi {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 267 * units.deg,
+            duration_at_50_thou: 267.0 * units.deg,
             gamma: 1.0,
             lift: 12.15 * units.mm,
             steps: 100
@@ -71,7 +71,7 @@ public node honda_f20c_lobe_profile_int_hi {
 public node honda_f20c_lobe_profile_exh_hi {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 263 * units.deg,
+            duration_at_50_thou: 263.0 * units.deg,
             gamma: 1.0,
             lift: 11.1 * units.mm,
             steps: 100
@@ -206,8 +206,8 @@ public node honda_f20c_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.08 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.08 * units.inch),
-        exhaust_runner_volume: circle_area(0.98 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.98 * units.inch),
+        exhaust_runner_volume: circle_area(0.65 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.65 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -227,10 +227,10 @@ public node F20C {
 
     engine engine(
         name: "Honda F20C",
-        starter_torque: 180 * units.lb_ft,
+        starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 9000 * units.rpm,
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
     )
 	
 	label lean_angle(7 * units.deg)
@@ -310,20 +310,22 @@ public node F20C {
         intake_flow_rate: k_carb(600.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9967,
-        throttle_gamma: 1.5,
+        throttle_gamma: 1.0,
         runner_flow_rate: k_carb(550.0),
         runner_length: 4.0 * units.inch,
         velocity_decay: 0.1
     )
+	
+	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(500.0),
-        primary_tube_length: 15.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
+        primary_tube_length: 20.0 * units.inch,
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area((3.0 * units.inch) / 2),
-		length: 500 * units.mm,
-		volume: 500 * units.mm * circle_area((3.0 * units.inch) / 2)
+		collector_cross_section_area: circle_area(exhaust_radius),
+		length: 1500 * units.mm,
+		volume: 1500 * units.mm * circle_area(exhaust_radius)
     )
 	
     exhaust_system exhaust(
@@ -342,7 +344,7 @@ public node F20C {
             intake: intake,
             exhaust_system: exhaust,
 			//primary_length: 11.8 * units.inch,
-			primary_length: 13.6 * units.inch,
+			primary_length: 3.0 * units.inch,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -353,7 +355,7 @@ public node F20C {
             intake: intake,
             exhaust_system: exhaust,
 			//primary_length: 12.3 * units.inch,
-			primary_length: 14.6 * units.inch,
+			primary_length: 5.0 * units.inch,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -363,7 +365,7 @@ public node F20C {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 10.0 * units.inch,
+			primary_length: 1.0 * units.inch,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -374,7 +376,7 @@ public node F20C {
             intake: intake,
             exhaust_system: exhaust,
 			//primary_length: 9.5 * units.inch,
-			primary_length: 9.0 * units.inch,
+			primary_length: 0.0 * units.inch,
 			sound_attenuation: 1.0
         )
 
@@ -398,22 +400,22 @@ public node F20C {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample( 0000 * units.rpm, 20 * units.deg)
-        .add_sample( 1000 * units.rpm, 25 * units.deg)
-        .add_sample( 2000 * units.rpm, 30 * units.deg)
-        .add_sample( 3000 * units.rpm, 35 * units.deg)
-        .add_sample( 4000 * units.rpm, 40 * units.deg)
+        .add_sample( 1000 * units.rpm, 50 * units.deg)
+        .add_sample( 2000 * units.rpm, 50 * units.deg)
+        .add_sample( 3000 * units.rpm, 48 * units.deg)
+        .add_sample( 4000 * units.rpm, 46 * units.deg)
         .add_sample( 5000 * units.rpm, 45 * units.deg)
-        .add_sample( 6000 * units.rpm, 46 * units.deg)
-        .add_sample( 7000 * units.rpm, 48 * units.deg)
-        .add_sample( 8000 * units.rpm, 49 * units.deg)
-        .add_sample( 9000 * units.rpm, 50 * units.deg)
-        .add_sample(10000 * units.rpm, 50 * units.deg)
+        .add_sample( 6000 * units.rpm, 44 * units.deg)
+        .add_sample( 7000 * units.rpm, 43 * units.deg)
+        .add_sample( 8000 * units.rpm, 42 * units.deg)
+        .add_sample( 9000 * units.rpm, 41 * units.deg)
+        .add_sample(10000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
         honda_f20c_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 9000 * units.rpm
+            rev_limit: 9050 * units.rpm
         ))
 }
 
