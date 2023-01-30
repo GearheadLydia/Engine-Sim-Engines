@@ -10,7 +10,7 @@ public node mitsubishi_6g72_z16a_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7250 * units.rpm;
-	input limiter_duration: 0.1;
+	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/6.0) * cycle)
@@ -113,7 +113,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node mitsubishi_6g72_z16a_head {
@@ -123,7 +123,7 @@ public node mitsubishi_6g72_z16a_head {
     input flip_display: false;
 	
 	input flow_attenuation: 1.1;
-    input lift_scale: 50.0;
+    input lift_scale: 1.27;
     alias output __out: head;
 
     function intake_flow(1.25 * units.mm)
@@ -161,10 +161,10 @@ public node mitsubishi_6g72_z16a_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 100.0 * units.cc,
-        intake_runner_cross_section_area: 35 * units.cm2,
-        exhaust_runner_volume: 100.0 * units.cc,
-        exhaust_runner_cross_section_area: 35 * units.cm2,
+        intake_runner_volume: circle_area(1.1 * units.inch) * 5 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.9 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -275,28 +275,26 @@ public node mitsubishi_6g72_z16a {
 		runner_length: 6.0 * units.inch,
 		velocity_decay: 0.1
 	)
-
+	
+	label exhaust_radius((4.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 30.0 * units.inch,
-        primary_flow_rate: k_carb(850.0),
+        outlet_flow_rate: k_carb(1400.0),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(450.0),
         velocity_decay: 1.0, //0.5
-        volume: 50.0 * units.L
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 2400 * units.mm,
+		volume: (1800 * units.mm * circle_area(exhaust_radius)) + (600 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 200 * units.mm)
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 350 * units.mm)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.5, impulse_response: ir_lib.default_0)
 
-	// NA Eclipse-like headers
-	// label pipe_length_1(0.0 * units.inch)
-	// label pipe_length_2(0.2 * units.inch)
-	// label pipe_length_3(3.0 * units.inch)
-
-	// TT headers
-	label pipe_length_1(2.3 * units.inch)
-	label pipe_length_2(1.5 * units.inch)
-	label pipe_length_3(1.2 * units.inch)
+	label pipe_length_1(3.2 * units.inch)
+	label pipe_length_2(0.0 * units.inch)
+	label pipe_length_3(0.8 * units.inch)
+	
+	label exhaust_stagger(270 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 30.0 * units.deg)
     b0
@@ -306,8 +304,9 @@ public node mitsubishi_6g72_z16a {
             rod_journal: rj0,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_1
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -315,17 +314,19 @@ public node mitsubishi_6g72_z16a {
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_2
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_3
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger,
+			sound_attenuation: 0.7
         )
 
     cylinder_bank b1(bank_params, angle: -30.0 * units.deg)
@@ -336,7 +337,7 @@ public node mitsubishi_6g72_z16a {
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_1
         )
         .add_cylinder(
@@ -345,16 +346,16 @@ public node mitsubishi_6g72_z16a {
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_3
         )
 
