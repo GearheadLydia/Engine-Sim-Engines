@@ -44,7 +44,7 @@ public node hypo_flat10_scd_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 245 * units.deg,
-            gamma: 1.5,
+            gamma: 1.0,
             lift: 11.0 * units.mm,
             steps: 100
         );
@@ -54,7 +54,7 @@ public node hypo_flat10_scd_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 240 * units.deg,
-            gamma: 1.5,
+            gamma: 1.0,
             lift: 10.0 * units.mm,
             steps: 100
         );
@@ -65,9 +65,8 @@ public node hypo_flat10_scd_camshaft_builder {
 	input ex_lobe_profile: hypo_flat10_scd_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 110.0 * units.deg;
-    input intake_lobe_center: lobe_separation;
-    input exhaust_lobe_center: 105.0 * units.deg;
+    input intake_lobe_center: 100.0 * units.deg;
+    input exhaust_lobe_center: 100.0 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
@@ -87,14 +86,15 @@ public node hypo_flat10_scd_camshaft_builder {
     camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
     camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
 
+
 	label rot18(18 * units.deg)
-    label rot30(30 * units.deg)
+	label rot30(30 * units.deg)
 	label rot36(36 * units.deg)
+	label rot54(54 * units.deg)
 	label rot60(60 * units.deg)
 	label rot72(72 * units.deg)
     label rot90(90 * units.deg)
-    label rot120(120 * units.deg)
-    label rot180(180 * units.deg)
+	label rot120(120 * units.deg)
     label rot360(360 * units.deg)
 	
 	// firing order: 1-8-9-2-3-10-5-4-7-6
@@ -140,50 +140,57 @@ private node add_flow_sample {
 public node hypo_flat10_scd_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 51.0 * units.cc;
+    input chamber_volume: 46.0 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation: 1.1;
+	input flow_attenuation_in: 1.0;
+	input flow_attenuation_ex: 1.0;
     input lift_scale: 50.0;
     alias output __out: head;
 
-    function intake_flow(1 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
+        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
+        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
+        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
+        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
+        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
+        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
+        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
+        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
-    function exhaust_flow(1 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
+        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
+        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
+        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
+        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
+        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
+        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
+        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
+        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 100.0 * units.cc,
-        intake_runner_cross_section_area: 2 * 12.4087 * units.cm2,
+        intake_runner_volume: circle_area(1.2 * units.inch) * 6 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.2 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 6 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -199,29 +206,29 @@ public node flat10_scd {
 
     wires wires()
 
-    label bore(86.0 * units.mm)
-    label stroke(68.8 * units.mm)
-    label rod_length(115 * units.mm)
-    label rod_mass(350 * units.g) // guesstimate based on aftermarket chromoly rods - stock rods are titanium
-	label piston_mass(380 * units.g)
-    label compression_height(30 * units.mm)
-	label piston_dome(0 * units.cc)
+    label bore(90.0 * units.mm)
+    label stroke(78.5 * units.mm)
+    label rod_length(120.0 * units.mm)
+    label rod_mass(434 * units.g)
+	label piston_mass(290 * units.g)
+    label compression_height(30.0 * units.mm)
+	label piston_dome(0.0 * units.cc)
 	label deck_clearance(1.0 * units.mm)
-    label crank_mass(35 * units.lb)
-    label flywheel_mass(15 * units.lb)
-    label flywheel_radius(5 * units.inch)
+    label crank_mass(75 * units.lb)
+    label flywheel_mass(20 * units.lb)
+    label flywheel_radius(6 * units.inch)
 
     engine engine(
         name: "H10 Type D (shared pins)",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 900 * units.rpm,
         redline: 9500 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 4.0,
             burning_efficiency_randomness: 0.2,
             max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0,
-		simulation_frequency: 7500
+        throttle_gamma: 1.0,
+		simulation_frequency: 6500
     )
 
     label crank_moment(
@@ -258,10 +265,9 @@ public node flat10_scd {
         .add_rod_journal(rj07)
         .add_rod_journal(rj09)
 
-
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: 0,
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -282,38 +288,57 @@ public node flat10_scd {
         deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
-    performer_rpm_intake intake(
-        carburetor_cfm: 650.0,
-        idle_flow_rate_cfm: 0.001,
-        idle_throttle_plate_position: 0.996
-    )
+	intake intakeL(
+		plenum_volume: 1.0 * units.L,
+		plenum_cross_section_area: 50.0 * units.cm2,
+		intake_flow_rate: k_carb(750.0),
+		idle_flow_rate: k_carb(0.1),
+		idle_throttle_plate_position: 0.998,
+		throttle_gamma: 2.0,
+		runner_flow_rate: k_carb(550.0),
+		runner_length: 12.0 * units.inch,
+		velocity_decay: 0.1
+	)
+
+	intake intakeR(
+		plenum_volume: 1.0 * units.L,
+		plenum_cross_section_area: 50.0 * units.cm2,
+		intake_flow_rate: k_carb(750.0),
+		idle_flow_rate: k_carb(0.1),
+		idle_throttle_plate_position: 0.998,
+		throttle_gamma: 2.0,
+		runner_flow_rate: k_carb(550.0),
+		runner_length: 12.0 * units.inch,
+		velocity_decay: 0.1
+	)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(800.0),
+        outlet_flow_rate: k_carb(1300.0),
         primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(250.0),
-        velocity_decay: 0.4, //0.5
-        volume: 50.0 * units.L
+        primary_flow_rate: k_carb(550.0),
+        velocity_decay: 1.0, //0.5
+        volume: 50.0 * units.L,
+        length: 500 * units.mm
     )
 
-    exhaust_system exhaustL(
+    exhaust_system exhaust(
 		es_params,
-        length: 495 * units.mm,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
-    exhaust_system exhaustR(
-		es_params,
-        length: 500 * units.mm,
 		audio_volume: 1.0 * 0.01,
 		impulse_response: ir_lib.default_0
 	)
 	
-	label pipe_length_1(10.0 * units.inch)
-	label pipe_length_2(9.5 * units.inch)
-	label pipe_length_3(8.0 * units.inch)
-	label pipe_length_4(7.5 * units.inch)
-	label pipe_length_5(7.0 * units.inch)
+	label pipe_length_1(3.0 * units.inch)
+	label pipe_length_2(2.5 * units.inch)
+	label pipe_length_3(1.0 * units.inch)
+	label pipe_length_4(0.5 * units.inch)
+	label pipe_length_5(0.0 * units.inch)
+	
+	label exhaust_stagger(10 * units.mm)
+	
+	label exh_vol_L1(0.8)
+	label exh_vol_L3(1.0)
+	label exh_vol_R1(0.64)
+	label exh_vol_R3(0.8)
 
     cylinder_bank b0(bank_params, angle: -90.0 * units.deg) // R (first)
     b0
@@ -322,45 +347,50 @@ public node flat10_scd {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj01,
             ignition_wire: wires.wire01,
-            intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_1
+            intake: intakeR,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger,
+			sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj03,
             ignition_wire: wires.wire03,
-            intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_2
+            intake: intakeR,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger,
+			sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj05,
             ignition_wire: wires.wire05,
-            intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_3
+            intake: intakeR,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger,
+			sound_attenuation: exh_vol_R3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj07,
             ignition_wire: wires.wire07,
-            intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_4
+            intake: intakeR,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4 + exhaust_stagger,
+			sound_attenuation: exh_vol_R3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj09,
             ignition_wire: wires.wire09,
-            intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_5
+            intake: intakeR,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_5 + exhaust_stagger,
+			sound_attenuation: exh_vol_R3
         )
 
     cylinder_bank b1(bank_params, angle: 90.0 * units.deg) // L (second)
@@ -370,45 +400,50 @@ public node flat10_scd {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj01,
             ignition_wire: wires.wire02,
-            intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_1
+            intake: intakeL,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1,
+			sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj03,
             ignition_wire: wires.wire04,
-            intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_2
+            intake: intakeL,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2,
+			sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj05,
             ignition_wire: wires.wire06,
-            intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_3
+            intake: intakeL,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3,
+			sound_attenuation: exh_vol_L3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj07,
             ignition_wire: wires.wire08,
-            intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_4
+            intake: intakeL,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4,
+			sound_attenuation: exh_vol_L3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj09,
             ignition_wire: wires.wire10,
-            intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_5
+            intake: intakeL,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_5,
+			sound_attenuation: exh_vol_L3
         )
 
     engine
@@ -425,7 +460,8 @@ public node flat10_scd {
     b0.set_cylinder_head (
         hypo_flat10_scd_head(
             intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0
+            exhaust_camshaft: camshaft.exhaust_cam_0,
+            flip_display: false
         )
     )
     b1.set_cylinder_head (
@@ -438,16 +474,17 @@ public node flat10_scd {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 49 * units.deg)
-        .add_sample(4000 * units.rpm, 52 * units.deg)
-        .add_sample(5000 * units.rpm, 56 * units.deg)
-        .add_sample(6000 * units.rpm, 62 * units.deg)
-		.add_sample(7000 * units.rpm, 68 * units.deg)
-		.add_sample(8000 * units.rpm, 70 * units.deg)
-		.add_sample(9000 * units.rpm, 72 * units.deg)
+        .add_sample(00000 * units.rpm, 30 * units.deg)
+        .add_sample(01000 * units.rpm, 48 * units.deg)
+        .add_sample(02000 * units.rpm, 65 * units.deg)
+        .add_sample(03000 * units.rpm, 65 * units.deg)
+        .add_sample(04000 * units.rpm, 65 * units.deg)
+        .add_sample(05000 * units.rpm, 65 * units.deg)
+        .add_sample(06000 * units.rpm, 65 * units.deg)
+		.add_sample(07000 * units.rpm, 65 * units.deg)
+		.add_sample(08000 * units.rpm, 65 * units.deg)
+		.add_sample(09000 * units.rpm, 63 * units.deg)
+		.add_sample(10000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
         hypo_flat10_scd_distributor(
@@ -490,3 +527,5 @@ public node main {
     set_vehicle(ferrari_458_italia_vehicle())
     set_transmission(ferrari_458_italia_transmission())
 }
+
+main()
