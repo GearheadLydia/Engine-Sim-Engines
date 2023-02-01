@@ -8,7 +8,7 @@ label cycle(2 * 360 * units.deg)
 
 // firing order: 1-4-9-6-3-8-5-2-7-10
 
-public node hypo_flat10_sn18d_distributor {
+public node hypo_flat10_sn36d_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 9650 * units.rpm;
@@ -40,7 +40,7 @@ private node wires {
     output wire10: ignition_wire();
 }
 
-public node hypo_flat10_sn18d_lobe_profile_int {
+public node hypo_flat10_sn36d_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 245 * units.deg,
@@ -50,7 +50,7 @@ public node hypo_flat10_sn18d_lobe_profile_int {
         );
 }
 
-public node hypo_flat10_sn18d_lobe_profile_exh {
+public node hypo_flat10_sn36d_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 240 * units.deg,
@@ -60,9 +60,9 @@ public node hypo_flat10_sn18d_lobe_profile_exh {
         );
 }
 
-public node hypo_flat10_sn18d_camshaft_builder {
-    input in_lobe_profile: hypo_flat10_sn18d_lobe_profile_int();
-	input ex_lobe_profile: hypo_flat10_sn18d_lobe_profile_exh();
+public node hypo_flat10_sn36d_camshaft_builder {
+    input in_lobe_profile: hypo_flat10_sn36d_lobe_profile_int();
+	input ex_lobe_profile: hypo_flat10_sn36d_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 100.0 * units.deg;
@@ -137,7 +137,7 @@ private node add_flow_sample {
     this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
-public node hypo_flat10_sn18d_head {
+public node hypo_flat10_sn36d_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 46.0 * units.cc;
@@ -201,7 +201,7 @@ public node hypo_flat10_sn18d_head {
 }
 
 
-public node flat10_sn18d {
+public node flat10_sn36d {
     alias output __out: engine;
 
     wires wires()
@@ -462,20 +462,20 @@ public node flat10_sn18d {
 
     engine.add_crankshaft(c0)
 
-    hypo_flat10_sn18d_camshaft_builder camshaft(
-	    in_lobe_profile: hypo_flat10_sn18d_lobe_profile_int(),
-		ex_lobe_profile: hypo_flat10_sn18d_lobe_profile_exh()
+    hypo_flat10_sn36d_camshaft_builder camshaft(
+	    in_lobe_profile: hypo_flat10_sn36d_lobe_profile_int(),
+		ex_lobe_profile: hypo_flat10_sn36d_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        hypo_flat10_sn18d_head(
+        hypo_flat10_sn36d_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
             flip_display: false
         )
     )
     b1.set_cylinder_head (
-        hypo_flat10_sn18d_head(
+        hypo_flat10_sn36d_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: true
@@ -497,7 +497,7 @@ public node flat10_sn18d {
 		.add_sample(10000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
-        hypo_flat10_sn18d_distributor(
+        hypo_flat10_sn36d_distributor(
             wires: wires,
             timing_curve: timing_curve,
             rev_limit: 9650 * units.rpm
@@ -533,7 +533,7 @@ public node ferrari_458_italia_transmission {
 }
 
 public node main {
-    set_engine(flat10_sn18d())
+    set_engine(flat10_sn36d())
     set_vehicle(ferrari_458_italia_vehicle())
     set_transmission(ferrari_458_italia_transmission())
 }
