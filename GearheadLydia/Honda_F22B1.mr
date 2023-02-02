@@ -4,7 +4,7 @@ units units()
 constants constants()
 impulse_response_library ir_lib()
 
-label cycle(2 * 360 * units.deg)
+label cycle(-2 * 360 * units.deg)
 
 public node honda_f22b1_distributor {
     input wires;
@@ -99,22 +99,22 @@ public node honda_f22b1_camshaft_builder {
     label rot360(360 * units.deg)
 
     _intake_cam_0_lo
-        .add_lobe(rot360 + intake_lobe_center_lo + 0 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_lo + 3 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_lo + 1 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_lo + 2 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_lo - 0 * rot180)
+		.add_lobe(rot360 - intake_lobe_center_lo - 3 * rot180)
+		.add_lobe(rot360 - intake_lobe_center_lo - 1 * rot180)
+		.add_lobe(rot360 - intake_lobe_center_lo - 2 * rot180)
 
     _intake_cam_0_hi
-        .add_lobe(rot360 + intake_lobe_center_hi + 0 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_hi + 3 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_hi + 1 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_hi + 2 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_hi - 0 * rot180)
+		.add_lobe(rot360 - intake_lobe_center_hi - 3 * rot180)
+		.add_lobe(rot360 - intake_lobe_center_hi - 1 * rot180)
+		.add_lobe(rot360 - intake_lobe_center_hi - 2 * rot180)
 
 	_exhaust_cam_0
-        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot180)
-        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
+        .add_lobe(rot360 + exhaust_lobe_center - 0 * rot180)
+        .add_lobe(rot360 + exhaust_lobe_center - 3 * rot180)
+		.add_lobe(rot360 + exhaust_lobe_center - 1 * rot180)
+		.add_lobe(rot360 + exhaust_lobe_center - 2 * rot180)
 }
 
 private node add_flow_sample {
@@ -179,8 +179,8 @@ public node honda_f22b1_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(0.8 * units.inch) * 2 * units.inch,
         intake_runner_cross_section_area: circle_area(0.8 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 2 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 2 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -203,9 +203,9 @@ public node F22B1 {
     engine engine(
         name: "Honda F22B1",
         starter_torque: 180 * units.lb_ft,
-        starter_speed: 1200 * units.rpm,
+        starter_speed: -1200 * units.rpm,
         redline: 6000 * units.rpm,
-        throttle_gamma: 2.0,
+        throttle_gamma: 1.0,
 		hf_gain: 0.007,
 		jitter: 0.3
     )
@@ -305,7 +305,7 @@ public node F22B1 {
 	
     exhaust_system exhaust(
 		es_params,
-		audio_volume: 1.0 * 0.05,
+		audio_volume: 1.0 * 0.02,
 		impulse_response: ir_lib.default_0
 	)
  
@@ -370,14 +370,14 @@ public node F22B1 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample( 0000 * units.rpm, 15 * units.deg)
-        .add_sample( 1000 * units.rpm, 20 * units.deg)
-        .add_sample( 2000 * units.rpm, 25 * units.deg)
-        .add_sample( 3000 * units.rpm, 30 * units.deg)
-        .add_sample( 4000 * units.rpm, 35 * units.deg)
-        .add_sample( 5000 * units.rpm, 40 * units.deg)
-        .add_sample( 6000 * units.rpm, 40 * units.deg)
-        .add_sample( 7000 * units.rpm, 40 * units.deg)
+        .add_sample( 0000 * units.rpm, -15 * units.deg)
+        .add_sample( 1000 * units.rpm, -20 * units.deg)
+        .add_sample( 2000 * units.rpm, -25 * units.deg)
+        .add_sample( 3000 * units.rpm, -30 * units.deg)
+        .add_sample( 4000 * units.rpm, -35 * units.deg)
+        .add_sample( 5000 * units.rpm, -40 * units.deg)
+        .add_sample( 6000 * units.rpm, -40 * units.deg)
+        .add_sample( 7000 * units.rpm, -40 * units.deg)
 
     engine.add_ignition_module(
         honda_f22b1_distributor(
@@ -394,7 +394,7 @@ public node honda_accord_ce1_vehicle {
             mass: 1450 * units.kg,
             drag_coefficient: 0.32,
             cross_sectional_area: 2.1 * (units.m * units.m),
-            diff_ratio: 4.265,
+            diff_ratio: -4.265,
             tire_radius: 307.5 * units.mm, // 195/60R15
             rolling_resistance: 400 * units.N
         );
