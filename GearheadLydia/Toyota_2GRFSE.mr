@@ -6,8 +6,6 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 18736542
-
 public node toyota_2grfse_distributor {
     input wires;
     input timing_curve;
@@ -195,7 +193,6 @@ public node toyota_2grfse {
 		//hf_gain: 0.005
     )
 
-	// https://performanceparts.ford.com/download/PDFS/Coyote%20Technical%20Reference2.pdf
     label bore(94.0 * units.mm)
     label stroke(83.0 * units.mm)
     label rod_length(147.5 * units.mm)
