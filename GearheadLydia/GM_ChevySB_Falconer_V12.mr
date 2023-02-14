@@ -223,7 +223,7 @@ public node falconer_v12 {
 		starter_speed: 1000 * units.rpm,
         redline: 6500 * units.rpm,
         throttle_gamma: 2.0,
-		simulation_frequency: 7000,
+		simulation_frequency: 6000,
 		// jitter: 0.7,
 		// hf_gain: 0.15
 		jitter: 0.6,
