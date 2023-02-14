@@ -181,7 +181,7 @@ public node ford_cologne_40 {
     wires wires()
 
     engine engine(
-        name: "Ford Cologne V6",
+        name: "Ford Cologne V6 SOHC",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 900 * units.rpm,
         redline: 6000 * units.rpm,
