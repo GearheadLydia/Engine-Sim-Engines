@@ -122,7 +122,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node mercedes_m156_63_head {
@@ -132,7 +132,7 @@ public node mercedes_m156_63_head {
     input flip_display: false;
 	
 	input flow_attenuation: 0.95;
-    input lift_scale: 50.0;
+    input lift_scale: 1.0;
     alias output __out: head;
 
     function intake_flow(1 * units.mm)
@@ -172,8 +172,8 @@ public node mercedes_m156_63_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 3 * units.inch,
         intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -191,14 +191,10 @@ public node m113_55 {
 
     engine engine(
         name: "Mercedes-AMG M156",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1500 * units.rpm,
         redline: 7000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
     )
 
     label bore(102.2 * units.mm)
@@ -271,17 +267,23 @@ public node m113_55 {
         deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
-    performer_rpm_intake intake(
-        carburetor_cfm: 550.0,
-        idle_flow_rate_cfm: 0.001,
-        idle_throttle_plate_position: 0.996
+    intake intake(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(550),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.996,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(350.0),
+        runner_length: 5.5 * units.inch,
+        velocity_decay: 0.1
     )
 	
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1200.0),
-        primary_tube_length: 15.0 * units.inch,
+        outlet_flow_rate: k_carb(600.0),
+        primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
@@ -291,11 +293,11 @@ public node m113_55 {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
 
-	label pipe_length_1(3 * bore_spacing)
-	label pipe_length_2(2 * bore_spacing)
-	label pipe_length_3(1.2 * bore_spacing)
+	label pipe_length_1(3.8 * bore_spacing)
+	label pipe_length_2(2.8 * bore_spacing)
+	label pipe_length_3(1.3 * bore_spacing)
 	label pipe_length_4(0.0 * bore_spacing)
-	label exhaust_stagger(35 * units.mm)
+	label exhaust_stagger(20 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -404,15 +406,15 @@ public node m113_55 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 20 * units.deg)
-        .add_sample(2000 * units.rpm, 25 * units.deg)
-        .add_sample(3000 * units.rpm, 30 * units.deg)
-        .add_sample(4000 * units.rpm, 35 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 50 * units.deg)
+        .add_sample(3000 * units.rpm, 50 * units.deg)
+        .add_sample(4000 * units.rpm, 50 * units.deg)
+        .add_sample(5000 * units.rpm, 50 * units.deg)
+        .add_sample(6000 * units.rpm, 50 * units.deg)
 		.add_sample(7000 * units.rpm, 50 * units.deg)
-		.add_sample(8000 * units.rpm, 55 * units.deg)
-		.add_sample(9000 * units.rpm, 60 * units.deg)
+		.add_sample(8000 * units.rpm, 50 * units.deg)
+		.add_sample(9000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         mercedes_m156_63_distributor(
