@@ -79,9 +79,9 @@ public node lamborghini_v12_murcielago_camshaft_builder {
 	input ex_lobe_profile: lamborghini_v12_murcielago_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input intake_lobe_center: 95.0 * units.deg;
-    input exhaust_lobe_center: 95.0 * units.deg;
-    input advance: -26.0 * units.deg;
+    input intake_lobe_center: 105.0 * units.deg;
+    input exhaust_lobe_center: 105.0 * units.deg;
+    input advance: 10.0 * units.deg;
     input base_radius: 16.0 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -157,7 +157,7 @@ public node lamborghini_v12_murcielago_head {
     input chamber_volume: 35.0 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation: 1.25;
+	input flow_attenuation: 1.0;
     input lift_scale: 1.25;
     alias output __out: head;
 
@@ -307,7 +307,7 @@ public node murcielago_v12 {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.997,
         throttle_gamma: 4.0,
-        runner_flow_rate: k_carb(700.0),
+        runner_flow_rate: k_carb(500.0),
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
 	)
@@ -319,7 +319,7 @@ public node murcielago_v12 {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.997,
         throttle_gamma: 4.0,
-        runner_flow_rate: k_carb(700.0),
+        runner_flow_rate: k_carb(500.0),
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
 	)
@@ -331,7 +331,7 @@ public node murcielago_v12 {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.997,
         throttle_gamma: 4.0,
-        runner_flow_rate: k_carb(700.0),
+        runner_flow_rate: k_carb(500.0),
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
 	)
@@ -343,7 +343,7 @@ public node murcielago_v12 {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.997,
         throttle_gamma: 4.0,
-        runner_flow_rate: k_carb(700.0),
+        runner_flow_rate: k_carb(500.0),
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
 	)
@@ -372,7 +372,7 @@ public node murcielago_v12 {
 	
 	label exhaust_stagger_FR(5 * units.mm)
 	label exhaust_stagger_LR(10 * units.mm)
-	label exhaust_stagger_X(5 * units.mm)
+	label exhaust_stagger_X(0 * units.mm)
  
     cylinder_bank b0(bank_params, angle: -30 * units.deg) // R (first)
     b0
@@ -524,14 +524,14 @@ public node murcielago_v12 {
     timing_curve
         .add_sample(0000 * units.rpm, 15 * units.deg)
         .add_sample(1000 * units.rpm, 50 * units.deg)
-        .add_sample(2000 * units.rpm, 50 * units.deg)
-        .add_sample(3000 * units.rpm, 51 * units.deg)
-        .add_sample(4000 * units.rpm, 52 * units.deg)
-        .add_sample(5000 * units.rpm, 53 * units.deg)
-        .add_sample(6000 * units.rpm, 54 * units.deg)
-        .add_sample(7000 * units.rpm, 55 * units.deg)
-        .add_sample(8000 * units.rpm, 60 * units.deg)
-		.add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(2000 * units.rpm, 55 * units.deg)
+        .add_sample(3000 * units.rpm, 48 * units.deg)
+        .add_sample(4000 * units.rpm, 42 * units.deg)
+        .add_sample(5000 * units.rpm, 38 * units.deg)
+        .add_sample(6000 * units.rpm, 37 * units.deg)
+        .add_sample(7000 * units.rpm, 34 * units.deg)
+        .add_sample(8000 * units.rpm, 30 * units.deg)
+		.add_sample(9000 * units.rpm, 30 * units.deg)
 
     engine.add_ignition_module(
         lamborghini_v12_murcielago_distributor(

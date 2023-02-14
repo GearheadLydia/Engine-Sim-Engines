@@ -236,7 +236,7 @@ public node cizeta_v16 {
 		starter_speed: 800 * units.rpm,
         redline: 8500 * units.rpm,
         throttle_gamma: 1.0,
-		simulation_frequency: 4400
+		simulation_frequency: 4000
     )
 
 	// most dimensions made up
@@ -562,11 +562,11 @@ public node cizeta_v16 {
         .add_sample(1000 * units.rpm, 62 * units.deg)
         .add_sample(2000 * units.rpm, 67 * units.deg)
         .add_sample(3000 * units.rpm, 73 * units.deg)
-        .add_sample(4000 * units.rpm, 77 * units.deg)
-        .add_sample(5000 * units.rpm, 82 * units.deg)
-        .add_sample(6000 * units.rpm, 89 * units.deg)
-		.add_sample(7000 * units.rpm, 84 * units.deg)
-		.add_sample(8000 * units.rpm, 79 * units.deg)
+        .add_sample(4000 * units.rpm, 75 * units.deg)
+        .add_sample(5000 * units.rpm, 75 * units.deg)
+        .add_sample(6000 * units.rpm, 75 * units.deg)
+		.add_sample(7000 * units.rpm, 75 * units.deg)
+		.add_sample(8000 * units.rpm, 75 * units.deg)
 		.add_sample(9000 * units.rpm, 72 * units.deg)
 
     engine.add_ignition_module(

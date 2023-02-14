@@ -74,7 +74,7 @@ public node dodge_v10_camshaft_builder {
     input lobe_separation: 114.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-    input advance: -3.0 * units.deg;
+    input advance: 3.0 * units.deg;
     input base_radius: 0.75 * units.inch;
 
     output intake_cam_0: _intake_cam_0;
@@ -283,7 +283,7 @@ public node viper_v10 {
     intake intake(
         plenum_volume: 4.0 * units.L,
         plenum_cross_section_area: 200.0 * units.cm2,
-        intake_flow_rate: k_carb(1550.0),
+        intake_flow_rate: k_carb(1650.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
@@ -295,7 +295,7 @@ public node viper_v10 {
 	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(725.0),
+        outlet_flow_rate: k_carb(775.0),
         primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(600.0),
         velocity_decay: 1.0, //0.5
@@ -466,11 +466,11 @@ public node viper_v10 {
         .add_sample(0000 * units.rpm, 15 * units.deg)
         .add_sample(1000 * units.rpm, 42 * units.deg)
         .add_sample(2000 * units.rpm, 49 * units.deg)
-        .add_sample(3000 * units.rpm, 52 * units.deg)
-        .add_sample(4000 * units.rpm, 52 * units.deg)
-        .add_sample(5000 * units.rpm, 52 * units.deg)
-        .add_sample(6000 * units.rpm, 52 * units.deg)
-		.add_sample(7000 * units.rpm, 52 * units.deg)
+        .add_sample(3000 * units.rpm, 50 * units.deg)
+        .add_sample(4000 * units.rpm, 50 * units.deg)
+        .add_sample(5000 * units.rpm, 50 * units.deg)
+        .add_sample(6000 * units.rpm, 50 * units.deg)
+		.add_sample(7000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         dodge_v10_distributor(

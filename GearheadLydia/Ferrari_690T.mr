@@ -277,7 +277,7 @@ public node F690T {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1500.0),
-        primary_tube_length: 20.0 * units.inch,
+        primary_tube_length: 8.0 * units.inch,
         primary_flow_rate: k_carb(600.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
@@ -285,11 +285,11 @@ public node F690T {
 		volume: 2800 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(4 * units.inch)
 	label pipe_length_2(0 * units.inch)
-	label pipe_length_3(4 * units.inch)
+	label pipe_length_3(3 * units.inch)
 	
 	label exhaust_stagger(4 * units.inch)
 
@@ -385,13 +385,13 @@ public node F690T {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 85 * units.deg)
-        .add_sample(2000 * units.rpm, 90 * units.deg)
-        .add_sample(3000 * units.rpm, 90 * units.deg)
-        .add_sample(4000 * units.rpm, 90 * units.deg)
-        .add_sample(5000 * units.rpm, 90 * units.deg)
-        .add_sample(6000 * units.rpm, 90 * units.deg)
-		.add_sample(7000 * units.rpm, 85 * units.deg)
+        .add_sample(1000 * units.rpm, 75 * units.deg)
+        .add_sample(2000 * units.rpm, 80 * units.deg)
+        .add_sample(3000 * units.rpm, 80 * units.deg)
+        .add_sample(4000 * units.rpm, 80 * units.deg)
+        .add_sample(5000 * units.rpm, 80 * units.deg)
+        .add_sample(6000 * units.rpm, 80 * units.deg)
+		.add_sample(7000 * units.rpm, 75 * units.deg)
 
     engine.add_ignition_module(
         ferrari_690t_distributor(

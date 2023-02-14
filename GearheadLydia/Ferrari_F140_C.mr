@@ -221,7 +221,7 @@ public node ferrari_f140_c {
     label flywheel_radius(6 * units.inch)
 
     engine engine(
-        name: "Ferrari F140 CE",
+        name: "Ferrari F140 B/C/CE",
         starter_torque: 300 * units.lb_ft,
 		starter_speed: 600 * units.rpm,
         redline: 8000 * units.rpm, // actual: 8250
@@ -489,11 +489,11 @@ public node ferrari_f140_c {
         .add_sample(2000 * units.rpm, 45 * units.deg)
         .add_sample(3000 * units.rpm, 49 * units.deg)
         .add_sample(4000 * units.rpm, 52 * units.deg)
-        .add_sample(5000 * units.rpm, 56 * units.deg)
-        .add_sample(6000 * units.rpm, 62 * units.deg)
-		.add_sample(7000 * units.rpm, 65 * units.deg)
-		.add_sample(8000 * units.rpm, 65 * units.deg)
-		.add_sample(9000 * units.rpm, 65 * units.deg)
+        .add_sample(5000 * units.rpm, 55 * units.deg)
+        .add_sample(6000 * units.rpm, 58 * units.deg)
+		.add_sample(7000 * units.rpm, 58 * units.deg)
+		.add_sample(8000 * units.rpm, 58 * units.deg)
+		.add_sample(9000 * units.rpm, 58 * units.deg)
 
     engine.add_ignition_module(
         ferrari_f140_c_distributor(
@@ -517,7 +517,20 @@ public node ferrari_599_gto_vehicle {
         );
 }
 
-public node ferrari_599_gto_transmission {
+// 2003 Ferrari Enzo Ferrari
+public node ferrari_enzo_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3009 * units.lb,
+            drag_coefficient: 0.35,
+            cross_sectional_area: 1.94 * (units.m * units.m),
+            diff_ratio: 4.1,
+            tire_radius: 362.00 * units.mm, // 345/35ZR19
+            rolling_resistance: 600 * units.N
+        );
+}
+
+public node ferrari_f1_sequential_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 1500 * units.lb_ft
@@ -532,8 +545,8 @@ public node ferrari_599_gto_transmission {
 
 public node main {
     set_engine(ferrari_f140_c())
-    set_vehicle(ferrari_599_gto_vehicle())
-    set_transmission(ferrari_599_gto_transmission())
+    set_vehicle(ferrari_enzo_vehicle())
+    set_transmission(ferrari_f1_sequential_transmission())
 }
 
 main()
