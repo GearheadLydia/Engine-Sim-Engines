@@ -9,7 +9,7 @@ label cycle(2 * 360 * units.deg)
 public node honda_e07a_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 11500 * units.rpm;
+    input rev_limit: 9050 * units.rpm;
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -37,9 +37,9 @@ private node add_sym_sample {
 public node honda_e07a_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 240 * units.deg,
+            duration_at_50_thou: 220 * units.deg,
             gamma: 1.0,
-            lift: 8.58 * units.mm,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -47,9 +47,9 @@ public node honda_e07a_lobe_profile_int {
 public node honda_e07a_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 236 * units.deg,
+            duration_at_50_thou: 216 * units.deg,
             gamma: 1.0,
-            lift: 8.28 * units.mm,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -59,11 +59,11 @@ public node honda_e07a_camshaft_builder {
 	input ex_lobe_profile: honda_e07a_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 105.0 * units.deg;
+    input lobe_separation: 100.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-    input advance: 4.0 * units.deg;
-    input base_radius: 16.0 * units.mm;
+    input advance: -24.0 * units.deg;
+    input base_radius: 12.0 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
     output exhaust_cam_0: _exhaust_cam_0;
@@ -81,17 +81,18 @@ public node honda_e07a_camshaft_builder {
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
+    label rot240(240 * units.deg)
     label rot360(360 * units.deg)
 
     _intake_cam_0
-        .add_lobe(rot360 + intake_lobe_center)
-		.add_lobe(rot360 + intake_lobe_center + 2 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 4 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot240)
+		.add_lobe(rot360 + intake_lobe_center + 1 * rot240)
+		.add_lobe(rot360 + intake_lobe_center + 2 * rot240)
 
 	_exhaust_cam_0
-        .add_lobe(rot360 - exhaust_lobe_center)
-        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 4 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot240)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot240)
+		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot240)
 }
 
 private node add_flow_sample {
@@ -116,42 +117,42 @@ public node honda_e07a_head {
     function intake_flow(1 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 65 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 120 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 155 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 220 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
         .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 245 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 255 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
     function exhaust_flow(1 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 75 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 105 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 130 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 150 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 158 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 164 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 168 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 176 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
 
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 15.0 * units.cc,
-        intake_runner_cross_section_area: 12.4087 * units.cm2,
-        exhaust_runner_volume: 15.0 * units.cc,
-        exhaust_runner_cross_section_area: 12.4087 * units.cm2,
+        intake_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.7 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 7 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -166,15 +167,15 @@ public node e07a {
 
     engine engine(
         name: "Honda E07A",
-        starter_torque: 100 * units.lb_ft,
+        starter_torque: 80 * units.lb_ft,
         starter_speed: 1500 * units.rpm,
-        redline: 11000 * units.rpm,
+        redline: 9000 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 4.0,
             burning_efficiency_randomness: 0.2,
             max_burning_efficiency: 0.85
         ),
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
     )
 	
 	label lean_angle(0 * units.deg)
@@ -188,7 +189,7 @@ public node e07a {
 	label piston_dome(0.0 * units.cc)
 	label deck_clearance(0.2 * units.mm)
     label crank_mass(5 * units.kg)
-    label flywheel_mass(15 * units.lb)
+    label flywheel_mass(5 * units.lb)
     label flywheel_radius(4 * units.inch)
 
     label crank_moment(
@@ -214,7 +215,7 @@ public node e07a {
         tdc: 90 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle: 0.0)
+    rod_journal rj0(angle: (0.0/3.0) * 360 * units.deg)
     rod_journal rj1(angle: (2.0/3.0) * 360 * units.deg)
     rod_journal rj2(angle: (1.0/3.0) * 360 * units.deg)
 	
@@ -251,9 +252,9 @@ public node e07a {
 		plenum_cross_section_area: 20.0 * units.cm2,
 		intake_flow_rate: k_carb(350.0),
 		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.99,
+		idle_throttle_plate_position: 0.995,
 		throttle_gamma: 1.0,
-		runner_flow_rate: k_carb(200.0),
+		runner_flow_rate: k_carb(110.0),
 		runner_length: 5.0 * units.inch,
 		velocity_decay: 0.1
 	)
@@ -262,12 +263,12 @@ public node e07a {
 	
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(350.0),
-        primary_tube_length: 16.0 * units.inch,
-        primary_flow_rate: k_carb(200.0),
+        primary_tube_length: 7.0 * units.inch,
+        primary_flow_rate: k_carb(105.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
 		length: 500 * units.mm,
-		volume: (200 * units.mm * circle_area(exhaust_radius)) + (4 * units.L)
+		volume: (200 * units.mm * circle_area(exhaust_radius)) + (2 * units.L)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
@@ -322,23 +323,23 @@ public node e07a {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(    0 * units.rpm, 25 * units.deg)
-        .add_sample( 1000 * units.rpm, 40 * units.deg)
-        .add_sample( 2000 * units.rpm, 45 * units.deg)
-        .add_sample( 3000 * units.rpm, 50 * units.deg)
-        .add_sample( 4000 * units.rpm, 55 * units.deg)
+        .add_sample( 1000 * units.rpm, 60 * units.deg)
+        .add_sample( 2000 * units.rpm, 60 * units.deg)
+        .add_sample( 3000 * units.rpm, 60 * units.deg)
+        .add_sample( 4000 * units.rpm, 60 * units.deg)
         .add_sample( 5000 * units.rpm, 60 * units.deg)
         .add_sample( 6000 * units.rpm, 60 * units.deg)
 		.add_sample( 7000 * units.rpm, 60 * units.deg)
 		.add_sample( 8000 * units.rpm, 60 * units.deg)
 		.add_sample( 9000 * units.rpm, 60 * units.deg)
-		.add_sample(10000 * units.rpm, 65 * units.deg)
-		.add_sample(11000 * units.rpm, 65 * units.deg)
+		.add_sample(10000 * units.rpm, 60 * units.deg)
+		.add_sample(11000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
         honda_e07a_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 11500 * units.rpm
+            rev_limit: 9050 * units.rpm
         ))
 }
 
