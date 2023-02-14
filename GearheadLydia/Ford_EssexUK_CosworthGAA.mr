@@ -1,0 +1,452 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+public node ford_cosworth_gaa_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 9250 * units.rpm;
+	input limiter_duration: 0.09;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire1, (0.0/6.0) * cycle)
+            .connect_wire(wires.wire4, (1.0/6.0) * cycle)
+			.connect_wire(wires.wire2, (2.0/6.0) * cycle)
+			.connect_wire(wires.wire5, (3.0/6.0) * cycle)
+			.connect_wire(wires.wire3, (4.0/6.0) * cycle)
+			.connect_wire(wires.wire6, (5.0/6.0) * cycle);
+}
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+    output wire3: ignition_wire();
+    output wire4: ignition_wire();
+    output wire5: ignition_wire();
+    output wire6: ignition_wire();
+}
+
+public node ford_cosworth_gaa_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 240 * units.deg,
+            gamma: 1.0,
+            lift: 450 * units.thou,
+            steps: 100
+        );
+}
+
+public node ford_cosworth_gaa_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 240 * units.deg,
+            gamma: 1.0,
+            lift: 450 * units.thou,
+            steps: 100
+        );
+}
+
+public node ford_cosworth_gaa_camshaft_builder {
+    input in_lobe_profile: ford_cosworth_gaa_lobe_profile_int();
+	input ex_lobe_profile: ford_cosworth_gaa_lobe_profile_exh();
+    input intake_lobe_profile: in_lobe_profile;
+    input exhaust_lobe_profile: ex_lobe_profile;
+    input intake_lobe_center: 100.0 * units.deg;
+    input exhaust_lobe_center: 100.0 * units.deg;
+    input advance: -25.0 * units.deg;
+    input base_radius: 16 * units.mm;
+
+    output intake_cam_0: _intake_cam_0;
+    output exhaust_cam_0: _exhaust_cam_0;
+    output intake_cam_1: _intake_cam_1;
+    output exhaust_cam_1: _exhaust_cam_1;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+
+    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+
+
+    label rot30(30 * units.deg)
+	label rot60(60 * units.deg)
+    label rot90(90 * units.deg)
+    label rot120(120 * units.deg)
+    label rot180(180 * units.deg)
+    label rot360(360 * units.deg)
+
+    _intake_cam_1
+        .add_lobe(rot360 + intake_lobe_center + (1 * rot120))
+		.add_lobe(rot360 + intake_lobe_center + (3 * rot120))
+		.add_lobe(rot360 + intake_lobe_center + (5 * rot120))
+
+	_exhaust_cam_1
+        .add_lobe(rot360 - exhaust_lobe_center + (1 * rot120))
+		.add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
+		.add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
+
+    _intake_cam_0
+        .add_lobe(rot360 + intake_lobe_center + (0 * rot120))
+		.add_lobe(rot360 + intake_lobe_center + (2 * rot120))
+		.add_lobe(rot360 + intake_lobe_center + (4 * rot120))
+
+	_exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center + (0 * rot120))
+		.add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
+		.add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
+}
+
+private node add_flow_sample {
+    input lift;
+    input flow;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
+}
+
+public node ford_cosworth_gaa_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 20.0 * units.cc;
+    input flip_display: false;
+	
+	input flow_attenuation: 1.0;
+    input lift_scale: 1.0;
+    alias output __out: head;
+
+    function intake_flow(1.0 * units.mm)
+    intake_flow
+        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
+
+    function exhaust_flow(1.0 * units.mm)
+    exhaust_flow
+        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
+
+		
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: circle_area(0.8 * units.inch) * 7 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 7 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+public node ford_cosworth_gaa_itb {
+    input throttlebody_cfm: 350;
+    input idle_flow_rate_cfm: 0.001;
+    input idle_throttle_plate_position: 0.999;
+    input throttle_gamma: 6.0;
+
+    alias output __out: intake;
+
+    intake intake(
+        plenum_volume: (circle_area(1.5 * units.inch) * 12 * units.inch) / 6,
+        plenum_cross_section_area: circle_area(1.5 * units.inch),
+        intake_flow_rate: k_carb(throttlebody_cfm),
+        idle_flow_rate: k_carb(idle_flow_rate_cfm),
+        idle_throttle_plate_position: idle_throttle_plate_position,
+        throttle_gamma: throttle_gamma,
+        runner_flow_rate: k_carb(450.0),
+        runner_length: 6 * units.inch,
+        velocity_decay: 0.1
+    )
+}
+
+public node ford_cosworth_gaa {
+    alias output __out: engine;
+
+    wires wires()
+
+    engine engine(
+        name: "Ford Cosworth GAA V6",
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 900 * units.rpm,
+        redline: 9000 * units.rpm,
+        throttle_gamma: 2.0,
+		hf_gain: 0.01,
+		jitter: 0.5
+    )
+
+    label bore(100.0 * units.mm)
+	label bore_spacing(107.0 * units.mm)
+    label stroke(72.42 * units.mm)
+    label rod_length(123.2 * units.mm) // unknown, guess
+    label rod_mass(587.0 * units.g)
+	label piston_mass(400 * units.g)
+    label compression_height(46.0 * units.mm)
+	label deck_height((205.33 + 0.2) * units.mm) // copied from basic Essex V6, which is in turn copied from Essex V4
+	label piston_dome(-10 * units.cc) // guess
+    label crank_mass(50 * units.lb)
+    label flywheel_mass(30 * 2 * units.lb)
+    label flywheel_radius(6 * units.inch)
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 15 * units.kg, radius: 8.0 * units.cm)
+    )
+
+    crankshaft c0(
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 10.0 * units.lb_ft,
+        moment_of_inertia: crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 120.0 * units.deg
+    )
+
+    rod_journal rj0(angle:  0  * units.deg)
+    rod_journal rj1(angle:  60 * units.deg)
+    rod_journal rj2(angle: 240 * units.deg)
+    rod_journal rj3(angle: 300 * units.deg)
+    rod_journal rj4(angle: 120 * units.deg)
+    rod_journal rj5(angle: 180 * units.deg)
+
+    c0
+        .add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
+
+
+    piston_parameters piston_params(
+        mass: piston_mass,
+        //blowby: k_28inH2O(0.1),
+        compression_height: compression_height,
+        wrist_pin_position: 0.0,
+        displacement: piston_dome
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
+        center_of_mass: 0.0,
+        length: rod_length
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: bore,
+        deck_height: deck_height
+    )
+
+    ford_cosworth_gaa_itb itb1()
+	ford_cosworth_gaa_itb itb2()
+	ford_cosworth_gaa_itb itb3()
+	ford_cosworth_gaa_itb itb4()
+	ford_cosworth_gaa_itb itb5()
+	ford_cosworth_gaa_itb itb6()
+	
+	label exhaust_radius((4.0 * units.inch)/2)
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(400.0),
+        primary_tube_length: 20.0 * units.inch,
+        primary_flow_rate: k_carb(400.0),
+        velocity_decay: 1.0, //0.5
+		collector_cross_section_area: circle_area(exhaust_radius),
+		length: 600 * units.mm,
+		volume: (600 * units.mm * circle_area(exhaust_radius))
+    )
+
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+
+	// flat 6 trick to exhausts
+	
+    cylinder_bank b0(bank_params, angle: 30.0 * units.deg) // L (first)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire1,
+            intake: itb1,
+            exhaust_system: exhaustL,
+			primary_length: 3 * units.inch,
+			sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire2,
+            intake: itb2,
+            exhaust_system: exhaustL,
+			primary_length: 2 * units.inch,
+			sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire3,
+            intake: itb3,
+            exhaust_system: exhaustL,
+			primary_length: 1 * units.inch,
+			sound_attenuation: 1.0
+        )
+
+    cylinder_bank b1(bank_params, angle: -30.0 * units.deg) // R (second)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire4,
+            intake: itb4,
+            exhaust_system: exhaustR,
+			primary_length: 0 * units.inch,
+			sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire5,
+            intake: itb5,
+            exhaust_system: exhaustR,
+			primary_length: 2 * units.inch,
+			sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire6,
+            intake: itb6,
+            exhaust_system: exhaustR,
+			primary_length: 1 * units.inch,
+			sound_attenuation: 1.0
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+        .add_cylinder_bank(b1)
+
+    engine.add_crankshaft(c0)
+
+    ford_cosworth_gaa_camshaft_builder camshaft(
+	    in_lobe_profile: ford_cosworth_gaa_lobe_profile_int(),
+		ex_lobe_profile: ford_cosworth_gaa_lobe_profile_exh()
+	)
+
+    b0.set_cylinder_head (
+        ford_cosworth_gaa_head(
+            intake_camshaft: camshaft.intake_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0,
+            flip_display: true
+        )
+    )
+    b1.set_cylinder_head (
+        ford_cosworth_gaa_head(
+            intake_camshaft: camshaft.intake_cam_1,
+            exhaust_camshaft: camshaft.exhaust_cam_1,
+            flip_display: false
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample( 0000 * units.rpm, 40 * units.deg)
+        .add_sample( 1000 * units.rpm, 65 * units.deg)
+        .add_sample( 2000 * units.rpm, 70 * units.deg)
+        .add_sample( 3000 * units.rpm, 70 * units.deg)
+        .add_sample( 4000 * units.rpm, 60 * units.deg)
+        .add_sample( 5000 * units.rpm, 55 * units.deg)
+        .add_sample( 6000 * units.rpm, 55 * units.deg)
+		.add_sample( 7000 * units.rpm, 55 * units.deg)
+		.add_sample( 8000 * units.rpm, 55 * units.deg)
+		.add_sample( 9000 * units.rpm, 55 * units.deg)
+		.add_sample(10000 * units.rpm, 55 * units.deg)
+
+    engine.add_ignition_module(
+        ford_cosworth_gaa_distributor(
+            wires: wires,
+            timing_curve: timing_curve
+        )
+    )
+}
+
+// 1974 Ford Capri RS3100 Cosworth 3.4 (MkI)
+public node ford_capri_rs3100_mk1_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1040 * units.kg,
+            drag_coefficient: 0.4, // guess
+            cross_sectional_area: 1.95 * (units.m * units.m), // guess
+            diff_ratio: 3.31,
+            tire_radius: 331 * units.mm, // unknown 16x15 wheel tire combo
+            rolling_resistance: 600 * units.N
+        );
+}
+
+public node ford_capri_rs3100_mk1_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 500 * units.lb_ft
+        )
+        .add_gear(3.163)
+        .add_gear(1.95)
+        .add_gear(1.412)
+        .add_gear(1.00);
+}
+
+public node main {
+    set_engine(ford_cosworth_gaa())
+    set_vehicle(ford_capri_rs3100_mk1_vehicle())
+    set_transmission(ford_capri_rs3100_mk1_transmission())
+}
+
+main()
