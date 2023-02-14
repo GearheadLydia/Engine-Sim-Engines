@@ -186,7 +186,7 @@ public node gm_vortec_llr {
 	label piston_dome(0.0 * units.cc)
 	label deck_clearance(0.5 * units.mm)
     label crank_mass(5 * units.kg)
-    label flywheel_mass(35 * units.lb)
+    label flywheel_mass(50 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
