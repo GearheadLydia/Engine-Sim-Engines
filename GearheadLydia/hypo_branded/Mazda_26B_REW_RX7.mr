@@ -74,7 +74,7 @@ private node mazda_13b_rew {
         throttle_gamma: 1.0,
         rotor_calculation_quality: 1024,
         rotor_housing_resolution: 1024,
-		simulation_frequency: (75000/6)
+		simulation_frequency: (75000/12)
     )
 
     wires wires()
