@@ -79,9 +79,9 @@ private node mazda_13b_rew {
 
     wires wires()
 
-    label eccentricity(17.5 * units.mm)
-    label rotor_radius(119.0 * units.mm)
-    label rotor_depth(60 * units.mm)
+    label eccentricity(15.0 * units.mm)
+    label rotor_radius(105.0 * units.mm)
+    label rotor_depth(80 * units.mm)
 	label rotor_depression_volume(30 * units.cc)
     label intake_port_start(62.5 * units.deg)
     label intake_port_end(47.5 * units.deg)
@@ -90,7 +90,7 @@ private node mazda_13b_rew {
     label exhaust_port_start(47.5 * units.deg)
     label exhaust_port_end(62.5 * units.deg)
 	label exhaust_flow_rate(k_carb(550))
-	label exhaust_runner_area(circle_area(0.65 * units.inch))
+	label exhaust_runner_area(circle_area(0.55 * units.inch))
     label spark_plug_angle(-20 * units.deg)
 	label rotor_mass(20 * units.kg)
     label rotor_I(disk_moment_of_inertia(mass: rotor_mass, radius: rotor_radius))

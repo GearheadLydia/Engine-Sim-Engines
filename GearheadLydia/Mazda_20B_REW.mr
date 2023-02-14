@@ -78,9 +78,9 @@ private node mazda_20b_rew {
 
     wires wires()
 
-    label eccentricity(17.5 * units.mm)
-    label rotor_radius(119.0 * units.mm)
-    label rotor_depth(60 * units.mm)
+    label eccentricity(15.0 * units.mm)
+    label rotor_radius(105.0 * units.mm)
+    label rotor_depth(80 * units.mm)
 	label rotor_depression_volume(30 * units.cc)
     label intake_port_start(62.5 * units.deg)
     label intake_port_end(47.5 * units.deg)
