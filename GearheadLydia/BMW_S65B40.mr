@@ -477,8 +477,8 @@ public node zf_gs6_53bz_transmission {
             max_clutch_torque: 900 * units.lb_ft
         )
         .add_gear(4.055)
-        .add_gear(2.369)
-        .add_gear(1.592)
+        .add_gear(2.396)
+        .add_gear(1.582)
         .add_gear(1.192)
         .add_gear(1.000)
         .add_gear(0.872);
