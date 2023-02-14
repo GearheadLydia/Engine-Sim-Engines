@@ -170,8 +170,8 @@ public node bmw_s54b32_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.2 * units.inch) * 0.5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.2 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 0.5 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 0.5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -311,7 +311,7 @@ public node S54B32 {
 		volume: (2500 * units.mm * circle_area(exhaust_radius)) + (300 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(1.2 * units.inch)
 	label pipe_length_2(0.0 * units.inch)

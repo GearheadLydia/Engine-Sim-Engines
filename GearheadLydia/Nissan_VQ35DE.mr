@@ -289,8 +289,8 @@ public node vq35 {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.2, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(2.0 * units.inch)
-	label pipe_length_2(1.0 * units.inch)
+	label pipe_length_1(3.0 * units.inch)
+	label pipe_length_2(1.5 * units.inch)
 	label pipe_length_3(0.0 * units.inch)
 	
 	label exhaust_stagger(0.2 * units.inch)

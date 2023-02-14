@@ -11,7 +11,7 @@ label cycle(2 * 360 * units.deg)
 public node nissan_vk45_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7000 * units.rpm;
+    input rev_limit: 7050 * units.rpm;
 	input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -173,10 +173,10 @@ public node nissan_vk45_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 100.0 * units.cc,
-        intake_runner_cross_section_area: 35 * units.cm2,
-        exhaust_runner_volume: 100.0 * units.cc,
-        exhaust_runner_cross_section_area: 35 * units.cm2,
+        intake_runner_volume: circle_area(1.3 * units.inch) * 2 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.3 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 2 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -288,7 +288,7 @@ public node vk45 {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(900.0),
-        primary_tube_length: 20.0 * units.inch,
+        primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(180.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
@@ -426,7 +426,7 @@ public node vk45 {
         nissan_vk45_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 7000 * units.rpm
+            rev_limit: 7050 * units.rpm
         )
     )
 }

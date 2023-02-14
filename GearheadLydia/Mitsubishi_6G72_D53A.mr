@@ -188,10 +188,10 @@ public node mitsubishi_6g72_d53a_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 100.0 * units.cc,
-        intake_runner_cross_section_area: 35 * units.cm2,
-        exhaust_runner_volume: 100.0 * units.cc,
-        exhaust_runner_cross_section_area: 35 * units.cm2,
+        intake_runner_volume: circle_area(1.4 * units.inch) * 5 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.4 * units.inch),
+        exhaust_runner_volume: circle_area(1.0 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(1.0 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -302,18 +302,28 @@ public node mitsubishi_6g72_d53a {
 		runner_length: 6.0 * units.inch,
 		velocity_decay: 0.1
 	)
-
+	
+	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 30.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
+        outlet_flow_rate: k_carb(800.0),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(450.0),
         velocity_decay: 1.0, //0.5
-        volume: 50.0 * units.L
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 2400 * units.mm,
+		volume: (2200 * units.mm * circle_area(exhaust_radius)) + (200 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 250 * units.mm)
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 450 * units.mm)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.5, impulse_response: ir_lib.default_0)
+
+	label pipe_length_1(0.0 * units.inch)
+	label pipe_length_2(0.3 * units.inch)
+	label pipe_length_3(3.0 * units.inch)
+	
+	label exhaust_stagger(200 * units.mm)
+
+	// engine is mounted backwards compared to 3000GT version
 
     cylinder_bank b0(bank_params, angle: 30.0 * units.deg)
     b0
@@ -323,8 +333,8 @@ public node mitsubishi_6g72_d53a {
             rod_journal: rj0,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 0.0 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -332,8 +342,8 @@ public node mitsubishi_6g72_d53a {
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 0.2 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -341,8 +351,8 @@ public node mitsubishi_6g72_d53a {
             rod_journal: rj4,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 3.0 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3
         )
 
     cylinder_bank b1(bank_params, angle: -30.0 * units.deg)
@@ -353,8 +363,9 @@ public node mitsubishi_6g72_d53a {
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 0.0 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger,
+			sound_attenuation: 0.3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -362,8 +373,9 @@ public node mitsubishi_6g72_d53a {
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 0.2 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger,
+			sound_attenuation: 0.3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -371,8 +383,9 @@ public node mitsubishi_6g72_d53a {
             rod_journal: rj5,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 3.0 * units.inch
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger,
+			sound_attenuation: 0.3
         )
 
     engine
@@ -406,15 +419,15 @@ public node mitsubishi_6g72_d53a {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 35 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 65 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 70 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
+        .add_sample(6000 * units.rpm, 70 * units.deg)
 		.add_sample(7000 * units.rpm, 70 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
-		.add_sample(9000 * units.rpm, 75 * units.deg)
+		.add_sample(8000 * units.rpm, 70 * units.deg)
+		.add_sample(9000 * units.rpm, 70 * units.deg)
 
     engine.add_ignition_module(
         mitsubishi_6g72_d53a_distributor(
