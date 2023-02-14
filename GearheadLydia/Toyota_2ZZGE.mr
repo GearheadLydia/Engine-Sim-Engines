@@ -320,30 +320,31 @@ public node toyota_2zzge {
         velocity_decay: 0.1
     )
 	
-	label exhaust_radius((4.5 * units.inch)/2)
+	label exhaust_radius_celica((4.5 * units.inch)/2)
+	label exhaust_radius_elise((4.5 * units.inch)/2)
 
     exhaust_system_parameters es_params_toyota_celica(
         outlet_flow_rate: k_carb(400.0),
         primary_tube_length: 12.5 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
+		collector_cross_section_area: circle_area(exhaust_radius_celica),
 		length: 2500 * units.mm,
-		volume: 2500 * units.mm * circle_area(exhaust_radius)
+		volume: 2500 * units.mm * circle_area(exhaust_radius_celica)
     )
 
     exhaust_system_parameters es_params_lotus_elise(
         outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: 15.0 * units.inch,
+        primary_tube_length: 12.5 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
+		collector_cross_section_area: circle_area(exhaust_radius_elise),
 		length: 500 * units.mm,
-		volume: 500 * units.mm * circle_area(exhaust_radius)
+		volume: 500 * units.mm * circle_area(exhaust_radius_elise)
     )
 	
-    exhaust_system exhaust(es_params_toyota_celica, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-	// exhaust_system exhaust(es_params_lotus_elise, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
+    // exhaust_system exhaust(es_params_toyota_celica, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+	exhaust_system exhaust(es_params_lotus_elise, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
