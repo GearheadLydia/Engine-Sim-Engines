@@ -205,7 +205,7 @@ public node chevrolet_ls7 {
 		// jitter: 0.7,
 		// hf_gain: 0.15
 		jitter: 0.6,
-		hf_gain: 0.1
+		hf_gain: 0.3
 		// jitter: 0.1,
 		// hf_gain: 0.1
     )
@@ -298,7 +298,7 @@ public node chevrolet_ls7 {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
         primary_tube_length: 20.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
 		length: 700 * units.mm,
@@ -307,12 +307,12 @@ public node chevrolet_ls7 {
 
     exhaust_system exhaustL(
 		es_params,
-		audio_volume: 1.0 * 0.01,
+		audio_volume: 1.0 * 0.001,
 		impulse_response: ir_lib.default_0
 	)
     exhaust_system exhaustR(
 		es_params,
-		audio_volume: 1.0 * 0.01,
+		audio_volume: 1.0 * 0.001,
 		impulse_response: ir_lib.default_0
 	)
 
