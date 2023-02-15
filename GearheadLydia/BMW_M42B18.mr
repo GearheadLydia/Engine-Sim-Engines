@@ -172,8 +172,6 @@ public node bmw_m42b18_head {
     )
 }
 
-// http://www.m42club.com/forum/index.php?topic=17052.0
-
 public node M42B18 {
     alias output __out: engine;
 
