@@ -237,7 +237,7 @@ public node cadillac_ls_v16 {
 		starter_speed: 600 * units.rpm,
         redline: 6000 * units.rpm, // 6250?
         throttle_gamma: 2.0,
-		simulation_frequency: 4500,
+		simulation_frequency: 4000,
 		jitter: 0.7,
 		hf_gain: 0.15
     )
@@ -324,7 +324,7 @@ public node cadillac_ls_v16 {
     )
 
     intake intake(
-        plenum_volume: 0.3 * units.L,
+        plenum_volume: 0.6 * units.L,
         plenum_cross_section_area: circle_area(45 * units.mm),
         intake_flow_rate: k_carb(1250),
         idle_flow_rate: k_carb(0.001),
@@ -334,17 +334,21 @@ public node cadillac_ls_v16 {
         runner_length: 12.0 * units.inch,
         velocity_decay: 0.1
     )
+	
+	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(900.0),
         primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(750.0),
         velocity_decay: 1.0, //0.5
-        volume: 30.0 * units.L
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 1000 * units.mm,
+		volume: (1000 * units.mm * circle_area(exhaust_radius)) * 2
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 500 * units.mm)
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 550 * units.mm)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
 
 	label exhaust_stagger(0.2 * bore_spacing)
 
