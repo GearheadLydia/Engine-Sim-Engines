@@ -6,10 +6,10 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-public node nissan_l28_distributor {
+public node nissan_l24_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7000 * units.rpm;
+    input rev_limit: 7300 * units.rpm;
 	input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -43,7 +43,7 @@ private node add_sym_sample {
 
 // https://www.atlanticz.ca/zclub/techtips/cam/index.htm
 
-public node nissan_l28_lobe_profile_int {
+public node nissan_l24_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 248.0 * units.deg,
@@ -53,7 +53,7 @@ public node nissan_l28_lobe_profile_int {
         );
 }
 
-public node nissan_l28_lobe_profile_exh {
+public node nissan_l24_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 248.0 * units.deg,
@@ -63,9 +63,9 @@ public node nissan_l28_lobe_profile_exh {
         );
 }
 
-public node nissan_l28_camshaft_builder {
-    input lobe_profile: nissan_l28_lobe_profile_int();
-	input ex_lobe_profile: nissan_l28_lobe_profile_exh();
+public node nissan_l24_camshaft_builder {
+    input lobe_profile: nissan_l24_lobe_profile_int();
+	input ex_lobe_profile: nissan_l24_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
 	input lobe_separation: 109.0 * units.deg;
@@ -118,10 +118,10 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node nissan_l28_head {
+public node nissan_l24_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 44.6 * units.cc;
+    input chamber_volume: 42.4 * units.cc;
     input flip_display: false;
 	
 	input flow_attenuation_in: 0.6;
@@ -184,14 +184,14 @@ public node nissan_l28_head {
 // https://www.zhome.com/ZCMnL/tech/head.htm
 // https://forums.hybridz.org/topic/126770-why-l28-piston-deck-height/
 // https://nzdatsun.com/forum/viewtopic.php?t=330
-public node nissan_l28_engine {
+public node nissan_l24_engine {
     alias output __out: engine;
 
     engine engine(
-        name: "Nissan L28",
+        name: "Nissan L24",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
-        redline: 6500 * units.rpm,
+        redline: 7000 * units.rpm,
         throttle_gamma: 1.0,
 		hf_gain: 0.1,
 		jitter: 0.5
@@ -199,15 +199,15 @@ public node nissan_l28_engine {
 	
 	label lean_angle(0 * units.deg)
 
-    label bore(86.0 * units.mm)
+    label bore(83.0 * units.mm)
 	label bore_spacing(96.5 * units.mm) // actually 98mm between 3-4, but 96.5mm everywhere else
-    label stroke(79.0 * units.mm)
-    label rod_length(130.35 * units.mm)
+    label stroke(73.7 * units.mm)
+    label rod_length(132.97 * units.mm)
     label rod_mass(250 * units.g)
 	label piston_mass(347 * units.g)
     label compression_height(38.10 * units.mm)
 	label deck_height((207.85 + 1.2) * units.mm)
-	label piston_dome(-10.9 * units.cc) // early '75-'80 -- '81-'83 are flat
+	label piston_dome(0 * units.cc) // guess
     label crank_mass(4.0 * units.kg)
     label flywheel_mass(8.5 * units.kg)
     label flywheel_radius(5.5 * units.inch)
@@ -290,7 +290,7 @@ public node nissan_l28_engine {
 	label exhaust_radius((2.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(300.0),
+        outlet_flow_rate: k_carb(320.0),
         primary_tube_length: 18 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
@@ -376,13 +376,13 @@ public node nissan_l28_engine {
 
     engine.add_crankshaft(c0)
 
-    nissan_l28_camshaft_builder camshaft(
-	    lobe_profile: nissan_l28_lobe_profile_int(),
-		ex_lobe_profile: nissan_l28_lobe_profile_exh()
+    nissan_l24_camshaft_builder camshaft(
+	    lobe_profile: nissan_l24_lobe_profile_int(),
+		ex_lobe_profile: nissan_l24_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        nissan_l28_head(
+        nissan_l24_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: false // exhaust is always on the right, cross-flow heads put the intake on the left
@@ -392,30 +392,30 @@ public node nissan_l28_engine {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 60 * units.deg)
-        .add_sample(2000 * units.rpm, 65 * units.deg)
-        .add_sample(3000 * units.rpm, 64 * units.deg)
-        .add_sample(4000 * units.rpm, 63 * units.deg)
-        .add_sample(5000 * units.rpm, 62 * units.deg)
-        .add_sample(6000 * units.rpm, 61 * units.deg)
-        .add_sample(7000 * units.rpm, 60 * units.deg)
-        .add_sample(8000 * units.rpm, 60 * units.deg)
+        .add_sample(1000 * units.rpm, 70 * units.deg)
+        .add_sample(2000 * units.rpm, 75 * units.deg)
+        .add_sample(3000 * units.rpm, 74 * units.deg)
+        .add_sample(4000 * units.rpm, 73 * units.deg)
+        .add_sample(5000 * units.rpm, 72 * units.deg)
+        .add_sample(6000 * units.rpm, 71 * units.deg)
+        .add_sample(7000 * units.rpm, 70 * units.deg)
+        .add_sample(8000 * units.rpm, 70 * units.deg)
 
     engine.add_ignition_module(
-        nissan_l28_distributor(
+        nissan_l24_distributor(
             wires: wires,
             timing_curve: timing_curve
         ))
 }
 
-// 1977 Datsun 280Z (S30)
-public node datsun_280z_s30_vehicle {
+// 1972 Datsun 240Z (S30)
+public node datsun_240z_s30_vehicle {
     alias output __out:
         vehicle(
-            mass: 1221 * units.kg,
+            mass: 1070 * units.kg,
             drag_coefficient: 0.42,
-            cross_sectional_area: 1.75 * (units.m * units.m),
-            diff_ratio: 3.545,
+            cross_sectional_area: 1.74 * (units.m * units.m),
+            diff_ratio: 3.900,
             tire_radius: 313.5 * units.mm, // 195/70HR14
             rolling_resistance: 400 * units.N
         );
@@ -437,8 +437,8 @@ public node nissan_fs5c71b_wr_transmission {
 }
 
 public node main {
-	set_engine(nissan_l28_engine())
-    set_vehicle(datsun_280z_s30_vehicle())
+	set_engine(nissan_l24_engine())
+    set_vehicle(datsun_240z_s30_vehicle())
     set_transmission(nissan_fs5c71b_wr_transmission())
 }
 
