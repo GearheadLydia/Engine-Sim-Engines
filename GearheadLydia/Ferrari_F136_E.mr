@@ -9,11 +9,11 @@ label cycle(2 * 360 * units.deg)
 // firing order: 15374826
 // in standard:  27638145
 
-public node ferrari_f136_f_distributor {
+public node ferrari_f136_e_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 9250 * units.rpm;
-	input limiter_duration: 0.06;
+    input rev_limit: 8750 * units.rpm;
+	input limiter_duration: 0.07;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -37,7 +37,7 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-public node ferrari_f136_f_lobe_profile_int {
+public node ferrari_f136_e_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 280 * units.deg,
@@ -47,7 +47,7 @@ public node ferrari_f136_f_lobe_profile_int {
         );
 }
 
-public node ferrari_f136_f_lobe_profile_exh {
+public node ferrari_f136_e_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 275 * units.deg,
@@ -57,9 +57,9 @@ public node ferrari_f136_f_lobe_profile_exh {
         );
 }
 
-public node ferrari_f136_f_camshaft_builder {
-    input in_lobe_profile: ferrari_f136_f_lobe_profile_int();
-	input ex_lobe_profile: ferrari_f136_f_lobe_profile_exh();
+public node ferrari_f136_e_camshaft_builder {
+    input in_lobe_profile: ferrari_f136_e_lobe_profile_int();
+	input ex_lobe_profile: ferrari_f136_e_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 115.0 * units.deg;
@@ -119,7 +119,7 @@ private node add_flow_sample {
     this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
-public node ferrari_f136_f_head {
+public node ferrari_f136_e_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 51.0 * units.cc;
@@ -170,8 +170,8 @@ public node ferrari_f136_f_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 4 * units.inch,
         intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -181,16 +181,16 @@ public node ferrari_f136_f_head {
     )
 }
 
-public node F136_F {
+public node F136_E {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Ferrari F136 F",
+        name: "Ferrari F136 E",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
-        redline: 9000 * units.rpm,
+        redline: 8500 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 4.0,
             burning_efficiency_randomness: 0.2,
@@ -198,7 +198,7 @@ public node F136_F {
         throttle_gamma: 1.0
     )
 
-    label bore(94.0 * units.mm)
+    label bore(92.0 * units.mm)
     label stroke(81.0 * units.mm)
     label rod_length(144.0 * units.mm)
     label rod_mass(621.5 * units.g)
@@ -267,20 +267,32 @@ public node F136_F {
         deck_height: deck_height
     )
 
-    intake intake(
+    intake intakeL(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(2000),
+        intake_flow_rate: k_carb(600),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9985,
+        idle_throttle_plate_position: 0.998,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(750.0),
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
     )
 
+    intake intakeR(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(600),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.998,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(750.0),
+        runner_length: 6.5 * units.inch,
+        velocity_decay: 0.1
+    )
+
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(2000.0),
+        outlet_flow_rate: k_carb(1100.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(650.0),
         velocity_decay: 1.0, //0.5
@@ -290,15 +302,15 @@ public node F136_F {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(5 * units.mm)
-	label pipe_length_2(15 * units.mm)
-	label pipe_length_3(10 * units.mm)
-	label pipe_length_4(0 * units.mm)
+	label pipe_length_1(50 * units.mm)
+	label pipe_length_2(20 * units.mm)
+	label pipe_length_3(0 * units.mm)
+	label pipe_length_4(30 * units.mm)
 	
-	label exhaust_stagger(20 * units.mm)
+	label exhaust_stagger(70 * units.mm)
 	
-	label exh_vol_L(1.0)
-	label exh_vol_R(0.8)
+	label exh_vol_L(0.8)
+	label exh_vol_R(1.0)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -307,7 +319,7 @@ public node F136_F {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             ignition_wire: wires.wire1,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
 			sound_attenuation: exh_vol_L
@@ -317,7 +329,7 @@ public node F136_F {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
 			sound_attenuation: exh_vol_L
@@ -327,7 +339,7 @@ public node F136_F {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
 			sound_attenuation: exh_vol_L
@@ -337,7 +349,7 @@ public node F136_F {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire4,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4,
 			sound_attenuation: exh_vol_L
@@ -350,7 +362,7 @@ public node F136_F {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             ignition_wire: wires.wire8,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
 			sound_attenuation: exh_vol_R
@@ -360,7 +372,7 @@ public node F136_F {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire7,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
 			sound_attenuation: exh_vol_R
@@ -370,7 +382,7 @@ public node F136_F {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire6,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
 			sound_attenuation: exh_vol_R
@@ -380,7 +392,7 @@ public node F136_F {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire5,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4 + exhaust_stagger,
 			sound_attenuation: exh_vol_R
@@ -392,20 +404,20 @@ public node F136_F {
 
     engine.add_crankshaft(c0)
 
-    ferrari_f136_f_camshaft_builder camshaft(
-	    in_lobe_profile: ferrari_f136_f_lobe_profile_int(),
-		ex_lobe_profile: ferrari_f136_f_lobe_profile_exh()
+    ferrari_f136_e_camshaft_builder camshaft(
+	    in_lobe_profile: ferrari_f136_e_lobe_profile_int(),
+		ex_lobe_profile: ferrari_f136_e_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        ferrari_f136_f_head(
+        ferrari_f136_e_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: true
         )
     )
     b1.set_cylinder_head (
-        ferrari_f136_f_head(
+        ferrari_f136_e_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: false
@@ -426,45 +438,43 @@ public node F136_F {
 		.add_sample(9000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
-        ferrari_f136_f_distributor(
+        ferrari_f136_e_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 9250 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
 
-// 2010 Ferrari 458 Italia
-public node ferrari_458_italia_vehicle {
+// 2007 Ferrari F430 Coupe (Type F131)
+public node ferrari_f430_vehicle {
     alias output __out:
         vehicle(
-            mass: 3285 * units.lb,
-            drag_coefficient: 0.33,
-            cross_sectional_area: 1.95 * (units.m * units.m),
-            diff_ratio: 5.14,
-            tire_radius: 356.87 * units.mm, // 295/35ZR20
+            mass: 3197 * units.lb,
+            drag_coefficient: 0.35,
+            cross_sectional_area: 1.94 * (units.m * units.m),
+            diff_ratio: 4.44,
+            tire_radius: 341.5 * units.mm, // 295/35ZR20
             rolling_resistance: 550 * units.N
         );
 }
 
-public node ferrari_458_italia_transmission {
+public node ferrari_f430_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 700 * units.lb_ft
         )
-        .add_gear(3.08)
-        .add_gear(2.19)
-        .add_gear(1.63)
-        .add_gear(1.29)
+        .add_gear(3.29)
+        .add_gear(2.16)
+        .add_gear(1.61)
+        .add_gear(1.27)
         .add_gear(1.03)
-        .add_gear(0.84)
-        .add_gear(0.69);
+        .add_gear(0.82);
 }
 
 public node main {
-    set_engine(F136_F())
-    set_vehicle(ferrari_458_italia_vehicle())
-    set_transmission(ferrari_458_italia_transmission())
+    set_engine(F136_E())
+    set_vehicle(ferrari_f430_vehicle())
+    set_transmission(ferrari_f430_transmission())
 }
 
 main()
