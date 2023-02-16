@@ -187,7 +187,7 @@ public node nissan_vr38dett_engine {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
     )
 
     label bore(95.5 * units.mm)
@@ -300,11 +300,11 @@ public node nissan_vr38dett_engine {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.2, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(6.0 * units.inch)
-	label pipe_length_2(3.0 * units.inch)
+	label pipe_length_1(5.0 * units.inch)
+	label pipe_length_2(2.5 * units.inch)
 	label pipe_length_3(0.0 * units.inch)
 	
-	label exhaust_stagger(1 * units.inch)
+	label exhaust_stagger(0.5 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 30.0 * units.deg)
     b0
