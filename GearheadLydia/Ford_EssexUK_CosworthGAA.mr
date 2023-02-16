@@ -218,7 +218,7 @@ public node ford_cosworth_gaa {
 	label deck_height((205.33 + 0.2) * units.mm) // copied from basic Essex V6, which is in turn copied from Essex V4
 	label piston_dome(-10 * units.cc) // guess
     label crank_mass(50 * units.lb)
-    label flywheel_mass(30 * 2 * units.lb)
+    label flywheel_mass(30 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
