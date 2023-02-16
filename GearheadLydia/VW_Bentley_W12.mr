@@ -589,15 +589,15 @@ public node w12 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 60 * units.deg)
-        .add_sample(2000 * units.rpm, 60 * units.deg)
-        .add_sample(3000 * units.rpm, 60 * units.deg)
-        .add_sample(4000 * units.rpm, 60 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 60 * units.deg)
-		.add_sample(7000 * units.rpm, 60 * units.deg)
-		.add_sample(8000 * units.rpm, 60 * units.deg)
-		.add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(1000 * units.rpm, 52 * units.deg)
+        .add_sample(2000 * units.rpm, 52 * units.deg)
+        .add_sample(3000 * units.rpm, 52 * units.deg)
+        .add_sample(4000 * units.rpm, 52 * units.deg)
+        .add_sample(5000 * units.rpm, 52 * units.deg)
+        .add_sample(6000 * units.rpm, 52 * units.deg)
+		.add_sample(7000 * units.rpm, 52 * units.deg)
+		.add_sample(8000 * units.rpm, 52 * units.deg)
+		.add_sample(9000 * units.rpm, 52 * units.deg)
 
     engine.add_ignition_module(
         audi_w12_distributor(
