@@ -1,34 +1,33 @@
 import "engine_sim.mr"
 
-// literally nothing done on this yet!!!
-
 units units()
 constants constants()
 impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-//firing order: 1 7 4 10 2 8 6 12 3 9 5 11
+// firing order is a total guess
+//firing order: 1 7 5 11 3 9 6 12 2 8 4 10
 
-public node lamborghini_v12_diablo_distributor {
+public node bugatti_v12_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 8250 * units.rpm;
+    input rev_limit: 8750 * units.rpm;
 	input limiter_duration: 0.07;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, (0.0/12.0) * cycle)
             .connect_wire(wires.wire07, (1.0/12.0) * cycle)
-			.connect_wire(wires.wire04, (2.0/12.0) * cycle)
-            .connect_wire(wires.wire10, (3.0/12.0) * cycle)
-            .connect_wire(wires.wire02, (4.0/12.0) * cycle)
-			.connect_wire(wires.wire08, (5.0/12.0) * cycle)
+			.connect_wire(wires.wire05, (2.0/12.0) * cycle)
+            .connect_wire(wires.wire11, (3.0/12.0) * cycle)
+            .connect_wire(wires.wire03, (4.0/12.0) * cycle)
+			.connect_wire(wires.wire09, (5.0/12.0) * cycle)
             .connect_wire(wires.wire06, (6.0/12.0) * cycle)
             .connect_wire(wires.wire12, (7.0/12.0) * cycle)
-			.connect_wire(wires.wire03, (8.0/12.0) * cycle)
-            .connect_wire(wires.wire09, (9.0/12.0) * cycle)
-            .connect_wire(wires.wire05, (10.0/12.0) * cycle)
-			.connect_wire(wires.wire11, (11.0/12.0) * cycle);
+			.connect_wire(wires.wire02, (8.0/12.0) * cycle)
+            .connect_wire(wires.wire08, (9.0/12.0) * cycle)
+            .connect_wire(wires.wire04, (10.0/12.0) * cycle)
+			.connect_wire(wires.wire10, (11.0/12.0) * cycle);
 }
 
 private node wires {
@@ -56,7 +55,7 @@ private node add_sym_sample {
     this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
-public node lamborghini_v12_diablo_lobe_profile_int {
+public node bugatti_v12_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 210 * units.deg,
@@ -66,7 +65,7 @@ public node lamborghini_v12_diablo_lobe_profile_int {
         );
 }
 
-public node lamborghini_v12_diablo_lobe_profile_exh {
+public node bugatti_v12_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 210 * units.deg,
@@ -76,9 +75,9 @@ public node lamborghini_v12_diablo_lobe_profile_exh {
         );
 }
 
-public node lamborghini_v12_diablo_camshaft_builder {
-    input in_lobe_profile: lamborghini_v12_diablo_lobe_profile_int();
-	input ex_lobe_profile: lamborghini_v12_diablo_lobe_profile_exh();
+public node bugatti_v12_camshaft_builder {
+    input in_lobe_profile: bugatti_v12_lobe_profile_int();
+	input ex_lobe_profile: bugatti_v12_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 90.0 * units.deg;
@@ -109,39 +108,39 @@ public node lamborghini_v12_diablo_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 	
-	//firing order: 1 7 4 10 2 8 6 12 3 9 5 11
-	
+	//firing order: 1 7 5 11 3 9 6 12 2 8 4 10
+
     _intake_cam_0
-		.add_lobe(rot360 + intake_lobe_center +  7 * rot60) // #12
-		.add_lobe(rot360 + intake_lobe_center + 11 * rot60) // #11
-		.add_lobe(rot360 + intake_lobe_center +  3 * rot60) // #10
-		.add_lobe(rot360 + intake_lobe_center +  9 * rot60) //  #9
-		.add_lobe(rot360 + intake_lobe_center +  5 * rot60) //  #8
-        .add_lobe(rot360 + intake_lobe_center +  1 * rot60) //  #7
+        .add_lobe(rot360 + intake_lobe_center + 7 * rot60) // #12
+		.add_lobe(rot360 + intake_lobe_center + 3 * rot60) // #11
+		.add_lobe(rot360 + intake_lobe_center + 11 * rot60) // #10
+		.add_lobe(rot360 + intake_lobe_center + 5 * rot60) // #9
+		.add_lobe(rot360 + intake_lobe_center + 9 * rot60) // #8
+		.add_lobe(rot360 + intake_lobe_center + 1 * rot60) // #7
 
     _intake_cam_1
-		.add_lobe(rot360 + intake_lobe_center +  0 * rot60)  // #1
-		.add_lobe(rot360 + intake_lobe_center +  4 * rot60)  // #2
-		.add_lobe(rot360 + intake_lobe_center +  8 * rot60)  // #3
-		.add_lobe(rot360 + intake_lobe_center +  2 * rot60)  // #4
-		.add_lobe(rot360 + intake_lobe_center + 10 * rot60)  // #5
-        .add_lobe(rot360 + intake_lobe_center +  6 * rot60)  // #6
+		.add_lobe(rot360 + intake_lobe_center + 0 * rot60) // #1
+		.add_lobe(rot360 + intake_lobe_center + 8 * rot60) // #2
+		.add_lobe(rot360 + intake_lobe_center + 4 * rot60) // #3
+		.add_lobe(rot360 + intake_lobe_center + 10 * rot60) // #4
+		.add_lobe(rot360 + intake_lobe_center + 2 * rot60) // #5
+        .add_lobe(rot360 + intake_lobe_center + 6 * rot60) // #6
 
-    _exhaust_cam_0
-		.add_lobe(rot360 - exhaust_lobe_center +  7 * rot60) // #12
-		.add_lobe(rot360 - exhaust_lobe_center + 11 * rot60) // #11
-		.add_lobe(rot360 - exhaust_lobe_center +  3 * rot60) // #10
-		.add_lobe(rot360 - exhaust_lobe_center +  9 * rot60) //  #9
-		.add_lobe(rot360 - exhaust_lobe_center +  5 * rot60) //  #8
-        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot60) //  #7
+	_exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot60) // #12
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot60) // #11
+		.add_lobe(rot360 - exhaust_lobe_center + 11 * rot60) // #10
+		.add_lobe(rot360 - exhaust_lobe_center + 5 * rot60) // #9
+		.add_lobe(rot360 - exhaust_lobe_center + 9 * rot60) // #8
+		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot60) // #7
 
-    _exhaust_cam_1
-		.add_lobe(rot360 - exhaust_lobe_center +  0 * rot60)  // #1
-		.add_lobe(rot360 - exhaust_lobe_center +  4 * rot60)  // #2
-		.add_lobe(rot360 - exhaust_lobe_center +  8 * rot60)  // #3
-		.add_lobe(rot360 - exhaust_lobe_center +  2 * rot60)  // #4
-		.add_lobe(rot360 - exhaust_lobe_center + 10 * rot60)  // #5
-        .add_lobe(rot360 - exhaust_lobe_center +  6 * rot60)  // #6
+	_exhaust_cam_1
+		.add_lobe(rot360 - exhaust_lobe_center + 0 * rot60) // #1
+		.add_lobe(rot360 - exhaust_lobe_center + 8 * rot60) // #2
+		.add_lobe(rot360 - exhaust_lobe_center + 4 * rot60) // #3
+		.add_lobe(rot360 - exhaust_lobe_center + 10 * rot60) // $4
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot60) // #5
+        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot60) // #6
 }
 
 private node add_flow_sample {
@@ -153,14 +152,14 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node lamborghini_v12_diablo_head {
+public node bugatti_v12_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 35.0 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation_in: 1.2;
-	input flow_attenuation_ex: 1.2;
+	input flow_attenuation_in: 1.5;
+	input flow_attenuation_ex: 1.5;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -228,14 +227,14 @@ public node bugatti_v12 {
 	label piston_dome(0.0 * units.cc)
 	label deck_clearance(0.5 * units.mm)
     label crank_mass(3.8 * units.kg)
-    label flywheel_mass(7 * units.kg)
+    label flywheel_mass(6 * units.kg)
     label flywheel_radius(6 * units.inch)
 
     engine engine(
         name: "Bugatti V12",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 1200 * units.rpm,
-        redline: 8000 * units.rpm,
+        starter_speed: 1300 * units.rpm,
+        redline: 8500 * units.rpm,
         throttle_gamma: 1.0,
 		simulation_frequency: 6000
     )
@@ -263,12 +262,12 @@ public node bugatti_v12 {
         tdc: 120.0 * units.deg
     )
 
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: 240*units.deg)
-    rod_journal rj2(angle: 120*units.deg)
-    rod_journal rj3(angle: 120*units.deg)
-    rod_journal rj4(angle: 240*units.deg)
-    rod_journal rj5(angle: 0*units.deg)
+    rod_journal rj0(angle:  0  * units.deg)
+    rod_journal rj1(angle: 120 * units.deg)
+    rod_journal rj2(angle: 240 * units.deg)
+    rod_journal rj3(angle: 240 * units.deg)
+    rod_journal rj4(angle: 120 * units.deg)
+    rod_journal rj5(angle:  0  * units.deg)
 	
     c0
         .add_rod_journal(rj0)
@@ -306,7 +305,7 @@ public node bugatti_v12 {
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(1400.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9985,
+        idle_throttle_plate_position: 0.9989,
         throttle_gamma: 2.0,
         runner_flow_rate: k_carb(600.0),
         runner_length: 6.5 * units.inch,
@@ -318,9 +317,9 @@ public node bugatti_v12 {
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(1400.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9985,
+        idle_throttle_plate_position: 0.9989,
         throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(600.0),
+        runner_flow_rate: k_carb(800.0),
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
 	)
@@ -328,13 +327,13 @@ public node bugatti_v12 {
 	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(2400.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(600.0),
+        outlet_flow_rate: k_carb(1500.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(800.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
+		collector_cross_section_area: circle_area(exhaust_radius) * 4,
 		length: 480 * units.mm,
-		volume: 480 * units.mm * circle_area(exhaust_radius)
+		volume: 480 * units.mm * circle_area(exhaust_radius) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
@@ -346,8 +345,8 @@ public node bugatti_v12 {
 	label pipe_length_5(0 * units.mm)
 	label pipe_length_6(40 * units.mm)
 	
-	label exhaust_stagger_FR(60 * units.mm)
-	label exhaust_stagger_LR(20 * units.mm)
+	label exhaust_stagger_FR(160 * units.mm)
+	label exhaust_stagger_LR(40 * units.mm)
  
     cylinder_bank b0(bank_params, angle: -30 * units.deg) // R (first)
     b0
@@ -469,20 +468,20 @@ public node bugatti_v12 {
 
     engine.add_crankshaft(c0)
 
-    lamborghini_v12_diablo_camshaft_builder camshaft(
-	    in_lobe_profile: lamborghini_v12_diablo_lobe_profile_int(),
-		ex_lobe_profile: lamborghini_v12_diablo_lobe_profile_exh()
+    bugatti_v12_camshaft_builder camshaft(
+	    in_lobe_profile: bugatti_v12_lobe_profile_int(),
+		ex_lobe_profile: bugatti_v12_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        lamborghini_v12_diablo_head(
+        bugatti_v12_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0
         )
     )
 
     b1.set_cylinder_head (
-        lamborghini_v12_diablo_head(
+        bugatti_v12_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
 			flip_display: true
@@ -492,34 +491,32 @@ public node bugatti_v12 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 50 * units.deg)
-        .add_sample(2000 * units.rpm, 55 * units.deg)
-        .add_sample(3000 * units.rpm, 55 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 54 * units.deg)
-        .add_sample(6000 * units.rpm, 53 * units.deg)
-        .add_sample(7000 * units.rpm, 52 * units.deg)
-        .add_sample(8000 * units.rpm, 51 * units.deg)
-		.add_sample(9000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 70 * units.deg)
+        .add_sample(2000 * units.rpm, 135 * units.deg)
+        .add_sample(3000 * units.rpm, 135 * units.deg)
+        .add_sample(4000 * units.rpm, 135 * units.deg)
+        .add_sample(5000 * units.rpm, 134 * units.deg)
+        .add_sample(6000 * units.rpm, 133 * units.deg)
+        .add_sample(7000 * units.rpm, 132 * units.deg)
+        .add_sample(8000 * units.rpm, 131 * units.deg)
+		.add_sample(9000 * units.rpm, 130 * units.deg)
 
     engine.add_ignition_module(
-        lamborghini_v12_diablo_distributor(
+        bugatti_v12_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 8250 * units.rpm
+            timing_curve: timing_curve
         ))
 }
 
 // 1994 Bugatti EB110 Super Sport
-// mostly Lamborghini specs still
 public node bugatti_eb110_vehicle {
     alias output __out:
         vehicle(
-            mass: 3126 * units.lb,
-            drag_coefficient: 0.31,
-            cross_sectional_area: 1.87 * (units.m * units.m),
-            diff_ratio: 3.83,
-            tire_radius: 332.5 * units.mm, // 335/35ZR17
+            mass: 3671 * units.lb,
+            drag_coefficient: 0.3,
+            cross_sectional_area: 1.83 * (units.m * units.m),
+            diff_ratio: 3.181,
+            tire_radius: 326.5 * units.mm, // 325/30ZR18
             rolling_resistance: 600 * units.N
         );
 }
@@ -529,11 +526,12 @@ public node bugatti_eb110_transmission {
         transmission(
             max_clutch_torque: 1000 * units.lb_ft
         )
-        .add_gear(2.31)
-        .add_gear(1.52)
-        .add_gear(1.12)
-        .add_gear(0.88)
-        .add_gear(0.676);
+        .add_gear(3.758)
+		.add_gear(2.522)
+        .add_gear(1.834)
+        .add_gear(1.424)
+        .add_gear(1.147)
+        .add_gear(0.949);
 }
 
 public node main {
