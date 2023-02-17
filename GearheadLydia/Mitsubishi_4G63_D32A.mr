@@ -258,7 +258,7 @@ public node mitsubishi_4g63t {
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(500.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.9965,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(450.0),
         runner_length: 3.0 * units.inch,
