@@ -1,8 +1,5 @@
 import "engine_sim.mr"
 
-// Honda m97_77 replica by GearheadLydia
-// 2022-09-18 | revision 1
-
 units units()
 constants constants()
 impulse_response_library ir_lib()
@@ -200,8 +197,8 @@ public node m97_77 {
 
     engine engine(
         name: "Porsche M97.77",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
         redline: 8500 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 4.0,
