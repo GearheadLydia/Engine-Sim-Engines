@@ -383,11 +383,11 @@ public node c32b {
         volume: 50.0 * units.L
     )
 
-    exhaust_system exhaust0(es_params0, audio_volume: 0.8 * 0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.01), length: 1500 * units.mm)
-    exhaust_system exhaust1(es_params1, audio_volume: 0.72 * 0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.01), length: 1500 * units.mm)
+    exhaust_system exhaust0(es_params0, audio_volume: 0.8 * 0.01, impulse_response: ir_lib.default_0, length: 1500 * units.mm)
+    exhaust_system exhaust1(es_params1, audio_volume: 0.72 * 0.01, impulse_response: ir_lib.default_0, length: 1500 * units.mm)
 
-    exhaust_system exhaust2(es_params2, audio_volume: 1.0 * 0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.01), length: 1500 * units.mm)
-    exhaust_system exhaust3(es_params3, audio_volume: 0.9 * 0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.01), length: 1500 * units.mm)
+    exhaust_system exhaust2(es_params2, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 1500 * units.mm)
+    exhaust_system exhaust3(es_params3, audio_volume: 0.9 * 0.01, impulse_response: ir_lib.default_0, length: 1500 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
