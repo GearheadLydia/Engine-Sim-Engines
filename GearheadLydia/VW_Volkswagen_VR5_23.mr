@@ -64,21 +64,21 @@ public node volkswagen_vr5_camshaft_builder {
     input advance: -0.1 * units.deg;
     input base_radius: 17 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
 
     label rot30(30 * units.deg)
@@ -89,21 +89,21 @@ public node volkswagen_vr5_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_0
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + (0 * rot144))
 		.add_lobe(rot360 + intake_lobe_center + (4 * rot144))
 		.add_lobe(rot360 + intake_lobe_center + (3 * rot144))
 
-    _intake_cam_1
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + (1 * rot144))
 		.add_lobe(rot360 + intake_lobe_center + (2 * rot144))
 
-	_exhaust_cam_0
+	_exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + (0 * rot144))
 		.add_lobe(rot360 - exhaust_lobe_center + (4 * rot144))
 		.add_lobe(rot360 - exhaust_lobe_center + (3 * rot144))
 
-	_exhaust_cam_1
+	_exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + (1 * rot144))
 		.add_lobe(rot360 - exhaust_lobe_center + (2 * rot144))
 }
@@ -236,11 +236,11 @@ public node vr5_23 {
         tdc: 90 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle: (((0.0 / 5.0) * 360) + 7.5) * units.deg)
-	rod_journal rj1(angle: (((2.0 / 5.0) * 360) - 7.5) * units.deg)
-	rod_journal rj2(angle: (((3.0 / 5.0) * 360) + 7.5) * units.deg)
-	rod_journal rj3(angle: (((4.0 / 5.0) * 360) - 7.5) * units.deg)
-    rod_journal rj4(angle: (((1.0 / 5.0) * 360) + 7.5) * units.deg)
+    rod_journal rj0(angle: (((0.0 / 5.0) * 360) - 7.5) * units.deg)
+	rod_journal rj1(angle: (((2.0 / 5.0) * 360) + 7.5) * units.deg)
+	rod_journal rj2(angle: (((3.0 / 5.0) * 360) - 7.5) * units.deg)
+	rod_journal rj3(angle: (((4.0 / 5.0) * 360) + 7.5) * units.deg)
+    rod_journal rj4(angle: (((1.0 / 5.0) * 360) - 7.5) * units.deg)
 
     c0
         .add_rod_journal(rj0)
@@ -310,9 +310,9 @@ public node vr5_23 {
 	label pipe_length_6(40 * units.mm)
 	label exhaust_stagger(40 * units.mm)
 
-	cylinder_bank b0(bank_params, angle: 7.5 * units.deg + lean_angle) // L (first) | angle: 7.5
-    //cylinder_bank b0(bank_params, angle: 0, position_x: -position_x_offset, position_y: position_y_offset) // L (first) | angle: -7.5
-    b0
+	cylinder_bank bR(bank_params, angle: -7.5 * units.deg + lean_angle) // R (first) | angle: 7.5
+    //cylinder_bank bR(bank_params, angle: 0, position_x: position_x_offset, position_y: position_y_offset) // R (first) | angle: -7.5
+    bR
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
@@ -344,9 +344,9 @@ public node vr5_23 {
 			sound_attenuation: 0.81
         )
 
-	cylinder_bank b1(bank_params, angle: -7.5 * units.deg + lean_angle) // R (second)
-    //cylinder_bank b1(bank_params, angle: 0, position_x: position_x_offset, position_y: position_y_offset) // R (second) | angle: 7.5
-    b1
+	cylinder_bank bL(bank_params, angle: 7.5 * units.deg + lean_angle) // L (second)
+    //cylinder_bank bL(bank_params, angle: 0, position_x: -position_x_offset, position_y: position_y_offset) // L (second) | angle: 7.5
+    bL
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
@@ -369,8 +369,8 @@ public node vr5_23 {
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bR)
+        .add_cylinder_bank(bL)
 
     engine.add_crankshaft(c0)
 
@@ -379,28 +379,28 @@ public node vr5_23 {
 		ex_lobe_profile: volkswagen_vr5_lobe_profile_exh()
 	)
 
-    b0.set_cylinder_head (
+    bR.set_cylinder_head (
         volkswagen_vr5_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
 			flow_attenuation: 0.65,
 			intake_runner_volume: circle_area(0.9 * units.inch) * 2 * units.inch,
 			intake_runner_cross_section_area: circle_area(0.9 * units.inch),
 			exhaust_runner_volume: circle_area(0.68 * units.inch) * 5 * units.inch,
 			exhaust_runner_cross_section_area: circle_area(0.48 * units.inch),
-            flip_display: false
+            flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bL.set_cylinder_head (
         volkswagen_vr5_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
 			flow_attenuation: 0.65,
 			intake_runner_volume: circle_area(0.9 * units.inch) * 5 * units.inch,
 			intake_runner_cross_section_area: circle_area(0.9 * units.inch),
 			exhaust_runner_volume: circle_area(0.68 * units.inch) * 2 * units.inch,
 			exhaust_runner_cross_section_area: circle_area(0.48 * units.inch),
-            flip_display: false
+            flip_display: true
         )
     )
 
