@@ -31,36 +31,33 @@ private node wires {
     output wire5: ignition_wire();
 }
 
-// camshafts borrowed from Ange Yaghi's Hayabusa
-
 public node honda_rc211v_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-			duration_at_50_thou: 240 * units.deg,
-			gamma: 1.0,
-			lift: 345 * units.thou,
-			steps: 100
+            duration_at_50_thou: 268 * units.deg,
+            gamma: 1.0,
+            lift: 10.2 * units.mm,
+            steps: 100
         );
 }
 
 public node honda_rc211v_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-			duration_at_50_thou: 250 * units.deg,
-			gamma: 1.0,
-			lift: 294 * units.thou,
-			steps: 100
+            duration_at_50_thou: 264 * units.deg,
+            gamma: 1.0,
+            lift: 10.2 * units.mm,
+            steps: 100
         );
 }
 
 public node honda_rc211v_camshaft_builder {
     input in_lobe_profile: honda_rc211v_lobe_profile_int();
     input ex_lobe_profile: honda_rc211v_lobe_profile_exh();
-    input lobe_separation: 80.0 * units.deg;
-    input intake_lobe_center: lobe_separation;
-    input exhaust_lobe_center: lobe_separation;
-    input advance: -30.0 * units.deg;
-    input base_radius: 500 * units.thou;
+    input intake_lobe_center: 100.0 * units.deg;
+    input exhaust_lobe_center: 100.0 * units.deg;
+    input advance: -20.0 * units.deg;
+    input base_radius: 12.0 * units.mm;
 
     output intake_cam_F: _intake_cam_F;
     output exhaust_cam_F: _exhaust_cam_F;
@@ -105,7 +102,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node honda_rc211v_head {
@@ -114,43 +111,54 @@ public node honda_rc211v_head {
     input chamber_volume: 30.0 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation: 1.0;
+	input flow_attenuation_in: 1.0;
+	input flow_attenuation_ex: 1.0;
     input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(50 * units.thou)
+    function intake_flow(1.0 * units.mm)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(50 * lift_scale, 40 * flow_attenuation)
-        .add_flow_sample(100 * lift_scale, 80 * flow_attenuation)
-        .add_flow_sample(150 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(200 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(250 * lift_scale, 190 * flow_attenuation)
-        .add_flow_sample(300 * lift_scale, 210 * flow_attenuation)
-        .add_flow_sample(350 * lift_scale, 225 * flow_attenuation)
-        .add_flow_sample(400 * lift_scale, 230 * flow_attenuation)
-        .add_flow_sample(450 * lift_scale, 240 * flow_attenuation)
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
+        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
+        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
+        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
+        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
+        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
+        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
+        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
+        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
-    function exhaust_flow(50 * units.thou)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(50 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(100 * lift_scale, 70 * flow_attenuation)
-        .add_flow_sample(150 * lift_scale, 100 * flow_attenuation)
-        .add_flow_sample(200 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(250 * lift_scale, 140 * flow_attenuation)
-        .add_flow_sample(300 * lift_scale, 150 * flow_attenuation)
-        .add_flow_sample(350 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(400 * lift_scale, 165 * flow_attenuation)
-        .add_flow_sample(450 * lift_scale, 170 * flow_attenuation)
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
+        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
+        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
+        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
+        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
+        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
+        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
+        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
+        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(0.5 * units.inch) * 3 * units.inch,
-        intake_runner_cross_section_area: circle_area(0.5 * units.inch),
-        exhaust_runner_volume: circle_area(0.5 * units.inch) * 5 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.5 * units.inch),
+        intake_runner_volume: circle_area(1.0 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -174,15 +182,16 @@ public node honda_rc211v_engine {
     label compression_height(20 * units.mm)
 	label piston_dome(0.0 * units.cc)
 	label deck_clearance(0.0 * units.mm)
-    label crank_mass(5 * units.lb)
-    label flywheel_mass(5 * units.lb)
-    label flywheel_radius(3 * units.inch)
+    label crank_mass(2.0 * units.kg)
+    label flywheel_mass(2.0 * units.kg)
+    label flywheel_radius(3.0 * units.inch)
 
     engine engine(
         name: "Honda RC211V",
-        starter_torque: 300 * units.lb_ft,
+        starter_torque: 50 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 15000 * units.rpm,
+		simulation_frequency: 9000,
         throttle_gamma: 1.0
     )
 
@@ -200,7 +209,7 @@ public node honda_rc211v_engine {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 2.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -241,27 +250,27 @@ public node honda_rc211v_engine {
     )
 
     intake intake(
-        plenum_volume: 0.2 * units.L,
-        plenum_cross_section_area: 5.0 * units.cm2,
-        intake_flow_rate: k_carb(900.0),
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 50.0 * units.cm2,
+        intake_flow_rate: k_carb(600.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.992,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(750.0),
-        runner_length: 1.5 * units.inch,
+        runner_flow_rate: k_carb(400.0),
+        runner_length: 3.0 * units.inch,
         velocity_decay: 0.1
     )
 	
-	label exhaust_radius((2.5 * units.inch)/2)
+	label exhaust_radius((1.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1250.0),
-        primary_tube_length: 5.0 * units.inch,
-        primary_flow_rate: k_carb(600.0),
+        outlet_flow_rate: k_carb(450.0),
+        primary_tube_length: 12.0 * units.inch,
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 100 * units.mm,
-		volume: 100 * units.mm * circle_area(exhaust_radius) + (2 * units.L)
+		length: 500 * units.mm,
+		volume: 500 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system exhaust(
@@ -279,7 +288,7 @@ public node honda_rc211v_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 6 * units.inch
+			primary_length: 4 * units.inch
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -288,7 +297,7 @@ public node honda_rc211v_engine {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 6 * units.inch
+			primary_length: 2 * units.inch
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
@@ -297,7 +306,7 @@ public node honda_rc211v_engine {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 6 * units.inch
+			primary_length: 4 * units.inch
         )
 
     cylinder_bank bR(bank_params, angle: 37.75 * units.deg) // R (second)
@@ -343,22 +352,22 @@ public node honda_rc211v_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample( 0000 * units.rpm, 30 * units.deg)
-        .add_sample( 1000 * units.rpm, 40 * units.deg)
-        .add_sample( 2000 * units.rpm, 45 * units.deg)
-        .add_sample( 3000 * units.rpm, 50 * units.deg)
+        .add_sample( 0000 * units.rpm, 20 * units.deg)
+        .add_sample( 1000 * units.rpm, 50 * units.deg)
+        .add_sample( 2000 * units.rpm, 55 * units.deg)
+        .add_sample( 3000 * units.rpm, 55 * units.deg)
         .add_sample( 4000 * units.rpm, 55 * units.deg)
-        .add_sample( 5000 * units.rpm, 60 * units.deg)
-        .add_sample( 6000 * units.rpm, 65 * units.deg)
-		.add_sample( 7000 * units.rpm, 70 * units.deg)
-		.add_sample( 8000 * units.rpm, 75 * units.deg)
-		.add_sample( 9000 * units.rpm, 80 * units.deg)
-		.add_sample(10000 * units.rpm, 85 * units.deg)
-		.add_sample(11000 * units.rpm, 90 * units.deg)
-		.add_sample(12000 * units.rpm, 95 * units.deg)
-		.add_sample(13000 * units.rpm, 95 * units.deg)
-		.add_sample(14000 * units.rpm, 95 * units.deg)
-		.add_sample(15000 * units.rpm, 95 * units.deg)
+        .add_sample( 5000 * units.rpm, 55 * units.deg)
+        .add_sample( 6000 * units.rpm, 55 * units.deg)
+        .add_sample( 7000 * units.rpm, 55 * units.deg)
+        .add_sample( 8000 * units.rpm, 55 * units.deg)
+        .add_sample( 9000 * units.rpm, 55 * units.deg)
+        .add_sample(10000 * units.rpm, 55 * units.deg)
+        .add_sample(11000 * units.rpm, 55 * units.deg)
+        .add_sample(12000 * units.rpm, 55 * units.deg)
+        .add_sample(13000 * units.rpm, 55 * units.deg)
+        .add_sample(14000 * units.rpm, 55 * units.deg)
+        .add_sample(15000 * units.rpm, 55 * units.deg)
 
     engine.add_ignition_module(
         honda_rc211v_distributor(
@@ -373,12 +382,12 @@ public node honda_rc211v_engine {
 public node honda_rc211v_vehicle {
     alias output __out:
         vehicle(
-            mass: 148 * units.kg,
-            drag_coefficient: 0.32,
-            cross_sectional_area: 1.78 * (units.m * units.m),
+            mass: (148 + 6) * units.kg,
+            drag_coefficient: 0.5,
+            cross_sectional_area: 1.0 * (units.m * units.m),
             diff_ratio: 4.062,
             tire_radius: 314 * units.mm, // 245/40ZR17
-            rolling_resistance: 250 * units.N
+            rolling_resistance: 10 * units.N
         );
 }
 
