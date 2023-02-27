@@ -8,6 +8,7 @@ label cycle(2 * 360 * units.deg)
 
 // cylinders are numbered LS-like for lack of data; firing order is as even as possible
 // crankshaft arrangement is confirmed via diagram, but is relative anyway
+// unlike the Urraco, uses non-mirrored(?) V8 crankshafts
 // kind of just did whatever I wanted here
 
 // firing order: 1-12-5-10-7-14-3-16-6-15-8-11-4-9-2-13
@@ -214,8 +215,8 @@ public node cizeta_v16_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 4 * units.inch,
         intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -325,9 +326,9 @@ public node cizeta_v16 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(400),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.994,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(850.0),
+        runner_flow_rate: k_carb(650.0),
         runner_length: 4.5 * units.inch,
         velocity_decay: 0.1
     )
@@ -337,9 +338,9 @@ public node cizeta_v16 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(400),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.994,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(450.0),
+        runner_flow_rate: k_carb(650.0),
         runner_length: 4.5 * units.inch,
         velocity_decay: 0.1
     )
@@ -378,7 +379,6 @@ public node cizeta_v16 {
 	
 	label exhaust_stagger_FR(150 * units.mm)
 	label exhaust_stagger_LR(25 * units.mm)
-	label exhaust_stagger_X(30 * units.mm)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // Front, starting from right side of vehicle
     b0
@@ -425,7 +425,7 @@ public node cizeta_v16 {
             ignition_wire: wires.wire09,
             intake: intakeR,
             exhaust_system: exhaustFR,
-			primary_length: pipe_length_4 + exhaust_stagger_LR + exhaust_stagger_X
+			primary_length: pipe_length_4 + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -434,7 +434,7 @@ public node cizeta_v16 {
             ignition_wire: wires.wire11,
             intake: intakeR,
             exhaust_system: exhaustFR,
-			primary_length: pipe_length_3 + exhaust_stagger_LR + exhaust_stagger_X
+			primary_length: pipe_length_3 + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -443,7 +443,7 @@ public node cizeta_v16 {
             ignition_wire: wires.wire13,
             intake: intakeR,
             exhaust_system: exhaustFR,
-			primary_length: pipe_length_2 + exhaust_stagger_LR + exhaust_stagger_X
+			primary_length: pipe_length_2 + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -452,7 +452,7 @@ public node cizeta_v16 {
             ignition_wire: wires.wire15,
             intake: intakeR,
             exhaust_system: exhaustFR,
-			primary_length: pipe_length_1 + exhaust_stagger_LR + exhaust_stagger_X
+			primary_length: pipe_length_1 + exhaust_stagger_LR
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // Rear, starting from right side of vehicle
@@ -464,7 +464,7 @@ public node cizeta_v16 {
             ignition_wire: wires.wire02,
             intake: intakeL,
             exhaust_system: exhaustRL,
-			primary_length: pipe_length_1 + exhaust_stagger_FR + exhaust_stagger_X
+			primary_length: pipe_length_1 + exhaust_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -473,7 +473,7 @@ public node cizeta_v16 {
             ignition_wire: wires.wire04,
             intake: intakeL,
             exhaust_system: exhaustRL,
-			primary_length: pipe_length_2 + exhaust_stagger_FR + exhaust_stagger_X
+			primary_length: pipe_length_2 + exhaust_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -482,7 +482,7 @@ public node cizeta_v16 {
             ignition_wire: wires.wire06,
             intake: intakeL,
             exhaust_system: exhaustRL,
-			primary_length: pipe_length_3 + exhaust_stagger_FR + exhaust_stagger_X
+			primary_length: pipe_length_3 + exhaust_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -491,7 +491,7 @@ public node cizeta_v16 {
             ignition_wire: wires.wire08,
             intake: intakeL,
             exhaust_system: exhaustRL,
-			primary_length: pipe_length_4 + exhaust_stagger_FR + exhaust_stagger_X
+			primary_length: pipe_length_4 + exhaust_stagger_FR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
