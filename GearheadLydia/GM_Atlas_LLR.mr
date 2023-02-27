@@ -26,7 +26,6 @@ private node wires {
     output wire3: ignition_wire();
     output wire4: ignition_wire();
     output wire5: ignition_wire();
-    output wire6: ignition_wire();
 }
 
 public node gm_vortec_llr_lobe_profile_int {
