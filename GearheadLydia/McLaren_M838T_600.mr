@@ -280,7 +280,7 @@ public node mclaren_m838t_600 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(2000),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9985,
+        idle_throttle_plate_position: 0.999,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(650.0),
         runner_length: 6.5 * units.inch,
