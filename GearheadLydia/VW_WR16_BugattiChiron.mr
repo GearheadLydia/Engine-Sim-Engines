@@ -269,7 +269,7 @@ public node w16 {
     label flywheel_radius(6 * units.inch)
 
     engine engine(
-        name: "Bugatti W16 (Naturally Aspirated)",
+        name: "Bugatti Chiron W16",
         starter_torque: 250 * units.lb_ft,
 		starter_speed: 850 * units.rpm,
         redline: 6800 * units.rpm,
@@ -658,20 +658,20 @@ public node w16 {
     )
 }
 
-// 2006 Bugatti Veyron 16.4
-public node bugatti_veyron_16_4_vehicle {
+// 2019 Bugatti Chiron Super Sport 300+
+public node bugatti_chiron_vehicle {
     alias output __out:
         vehicle(
-            mass: 4044 * units.lb,
-            drag_coefficient: 0.41,
-            cross_sectional_area: 2.07 * (units.m * units.m),
+            mass: 4360 * units.lb,
+            drag_coefficient: 0.36,
+            cross_sectional_area: 1.95 * (units.m * units.m),
             diff_ratio: 3.643,
-            tire_radius: 401.32 * units.mm, // P365/35R21.5
-            rolling_resistance: 800 * units.N
+            tire_radius: 355.5 * units.mm, // P355/25R21
+            rolling_resistance: 600 * units.N
         );
 }
 
-public node bugatti_veyron_16_4_transmission {
+public node bugatti_chiron_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 2000 * units.lb_ft
@@ -687,8 +687,8 @@ public node bugatti_veyron_16_4_transmission {
 
 public node main {
     set_engine(w16())
-    set_vehicle(bugatti_veyron_16_4_vehicle())
-    set_transmission(bugatti_veyron_16_4_transmission())
+    set_vehicle(bugatti_chiron_vehicle())
+    set_transmission(bugatti_chiron_transmission())
 }
 
 main()
