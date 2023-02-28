@@ -41,7 +41,7 @@ public node mitsubishi_6g72_d53a_gt_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 248 * units.deg,
-            gamma: 1.3,
+            gamma: 1.0,
             lift: 355 * units.thou,
             steps: 100
         );
@@ -51,7 +51,7 @@ public node mitsubishi_6g72_d53a_gt_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 248 * units.deg,
-            gamma: 1.3,
+            gamma: 1.0,
             lift: 331 * units.thou,
             steps: 100
         );
@@ -62,7 +62,7 @@ public node mitsubishi_6g72_d53a_gts_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 248 * units.deg,
-            gamma: 1.3,
+            gamma: 1.0,
             lift: 355 * units.thou, // assumption
             steps: 100
         );
@@ -72,7 +72,7 @@ public node mitsubishi_6g72_d53a_gts_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 252 * units.deg,
-            gamma: 1.3,
+            gamma: 1.0,
             lift: 331 * units.thou, // assumption
             steps: 100
         );
@@ -146,7 +146,7 @@ private node add_flow_sample {
 public node mitsubishi_6g72_d53a_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 48.0 * units.cc; // real? - 48cc for DOHC turbo confirmed
+    input chamber_volume: 43.0 * units.cc; // real
     input flip_display: false;
 	
 	input flow_attenuation: 0.8;

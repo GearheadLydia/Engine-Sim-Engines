@@ -1,5 +1,7 @@
 import "engine_sim.mr"
 
+// TO DO: convert to MIVEC (i.e., VVL and VCT); find cam specs
+
 units units()
 constants constants()
 impulse_response_library ir_lib()
@@ -32,6 +34,7 @@ private node wires {
 
 
 // https://www.lilevo.com/mirage/Manuals/6A12%20Series%20Engine%20Workshop%20Manual%20PWEE9202-AB.pdf
+// https://www.andysautosport.com/images/vehicle_specs/fto_6A12-MIVEC_V6_engine_manual.pdf
 public node mitsubishi_6a12_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
