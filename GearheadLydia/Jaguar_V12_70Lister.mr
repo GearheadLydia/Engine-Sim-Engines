@@ -70,7 +70,7 @@ public node jaguar_v12_70lister_camshaft_builder {
 	input ex_lobe_profile: jaguar_v12_70lister_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 110.0 * units.deg;
+    input lobe_separation: 100.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
     input advance: 35.0 * units.deg;
@@ -532,17 +532,46 @@ public node jaguar_v12_70lister {
     )
 }
 
+// 1993 Lister Storm road car
+public node lister_storm_v12_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3668 * units.lb,
+            drag_coefficient: 0.35, // guess
+            cross_sectional_area: 1.981 * 1.32 * 0.9 * (units.m * units.m), // estimated
+            diff_ratio: (3.400 * 0.777), // from GTR2
+            tire_radius: 355 * units.mm, // 335/35ZR18
+            rolling_resistance: 800 * units.N
+        );
+}
+
 // 2003 Lister Storm GT
-public node lister_storm_vehicle {
+public node lister_storm_gt_vehicle {
     alias output __out:
         vehicle(
             mass: 2425 * units.lb,
             drag_coefficient: 0.40, // guess
             cross_sectional_area: 1.981 * 1.32 * 0.9 * (units.m * units.m), // estimated
             diff_ratio: (3.400 * 0.777), // from GTR2
-            tire_radius: 355 * units.mm, // from GTR2
-            rolling_resistance: 800 * units.N
+            tire_radius: 345.5 * units.mm, // from GTR2
+            rolling_resistance: 600 * units.N
         );
+}
+
+// this is the only "Getrag 6 speed" that fits the bill
+// for the road car - can't find another that makes sense
+// unless they used something bespoke
+public node getrag_560g_transmission { 
+    alias output __out:
+        transmission(
+            max_clutch_torque: 1200 * units.lb_ft
+        )
+        .add_gear(4.25)
+        .add_gear(2.53)
+        .add_gear(1.68)
+		.add_gear(1.24)
+		.add_gear(1.00)
+		.add_gear(0.83);
 }
 
 // ratios from GTR2
@@ -559,9 +588,10 @@ public node hewland_tgt_a_transmission {
 		.add_gear(1.083); // 26/24
 }
 
+
 public node main {
     set_engine(jaguar_v12_70lister())
-    set_vehicle(lister_storm_vehicle())
+    set_vehicle(lister_storm_gt_vehicle())
     set_transmission(hewland_tgt_a_transmission())
 }
 
