@@ -1,0 +1,465 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+public node mitsubishi_6g75_dk4a_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 6600 * units.rpm;
+	input limiter_duration: 0.08;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire1, (0.0/6.0) * cycle)
+            .connect_wire(wires.wire2, (1.0/6.0) * cycle)
+			.connect_wire(wires.wire3, (2.0/6.0) * cycle)
+			.connect_wire(wires.wire4, (3.0/6.0) * cycle)
+			.connect_wire(wires.wire5, (4.0/6.0) * cycle)
+			.connect_wire(wires.wire6, (5.0/6.0) * cycle);
+}
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+    output wire3: ignition_wire();
+    output wire4: ignition_wire();
+    output wire5: ignition_wire();
+    output wire6: ignition_wire();
+}
+
+
+// uses some non-MIVEC specs
+public node mitsubishi_6g75_dk4a_lobe_profile_int_lo {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 215 * units.deg,
+            gamma: 1.0,
+            lift: 210 * units.thou,
+            steps: 100
+        );
+}
+
+public node mitsubishi_6g75_dk4a_lobe_profile_int_hi {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 248 * units.deg,
+            gamma: 1.0,
+            lift: 355 * units.thou,
+            steps: 100
+        );
+}
+
+public node mitsubishi_6g75_dk4a_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 256 * units.deg,
+            gamma: 1.0,
+            lift: 331 * units.thou,
+            steps: 100
+        );
+}
+
+public node mitsubishi_6g75_dk4a_camshaft_builder {
+    input in_lobe_profile_lo: mitsubishi_6g75_dk4a_lobe_profile_int_lo();
+    input in_lobe_profile_hi: mitsubishi_6g75_dk4a_lobe_profile_int_hi();
+    input ex_lobe_profile: mitsubishi_6g75_dk4a_lobe_profile_exh();
+    input lobe_separation: 115.0 * units.deg;
+    input intake_lobe_center_lo: lobe_separation;
+    input intake_lobe_center_hi: lobe_separation - (10 * units.deg);
+    input exhaust_lobe_center: lobe_separation;
+    input advance: 0.0 * units.deg;
+    input base_radius: 16 * units.mm;
+
+    output intake_cam_0_lo: _intake_cam_0_lo;
+    output intake_cam_1_lo: _intake_cam_1_lo;
+    output intake_cam_0_hi: _intake_cam_0_hi;
+    output intake_cam_1_hi: _intake_cam_1_hi;
+    output exhaust_cam_0: _exhaust_cam_0;
+    output exhaust_cam_1: _exhaust_cam_1;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0_lo(params, lobe_profile: in_lobe_profile_lo)
+    camshaft _intake_cam_0_hi(params, lobe_profile: in_lobe_profile_hi)
+    camshaft _exhaust_cam_0(params, lobe_profile: ex_lobe_profile)
+
+    camshaft _intake_cam_1_lo(params, lobe_profile: in_lobe_profile_lo)
+    camshaft _intake_cam_1_hi(params, lobe_profile: in_lobe_profile_hi)
+    camshaft _exhaust_cam_1(params, lobe_profile: ex_lobe_profile)
+
+
+    label rot30(30 * units.deg)
+	label rot60(60 * units.deg)
+    label rot90(90 * units.deg)
+    label rot120(120 * units.deg)
+    label rot180(180 * units.deg)
+    label rot360(360 * units.deg)
+
+    _intake_cam_0_lo
+        .add_lobe(rot360 + intake_lobe_center_lo + (0 * rot120))
+		.add_lobe(rot360 + intake_lobe_center_lo + (2 * rot120))
+		.add_lobe(rot360 + intake_lobe_center_lo + (4 * rot120))
+
+    _intake_cam_1_lo
+        .add_lobe(rot360 + intake_lobe_center_lo + (1 * rot120))
+		.add_lobe(rot360 + intake_lobe_center_lo + (3 * rot120))
+		.add_lobe(rot360 + intake_lobe_center_lo + (5 * rot120))
+
+    _intake_cam_0_hi
+        .add_lobe(rot360 + intake_lobe_center_hi + (0 * rot120))
+		.add_lobe(rot360 + intake_lobe_center_hi + (2 * rot120))
+		.add_lobe(rot360 + intake_lobe_center_hi + (4 * rot120))
+
+    _intake_cam_1_hi
+        .add_lobe(rot360 + intake_lobe_center_hi + (1 * rot120))
+		.add_lobe(rot360 + intake_lobe_center_hi + (3 * rot120))
+		.add_lobe(rot360 + intake_lobe_center_hi + (5 * rot120))
+
+	_exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center + (0 * rot120))
+		.add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
+		.add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
+
+	_exhaust_cam_1
+        .add_lobe(rot360 - exhaust_lobe_center + (1 * rot120))
+		.add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
+		.add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
+}
+
+private node add_flow_sample {
+    input lift;
+    input flow;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
+}
+
+public node mitsubishi_6g75_dk4a_head {
+    input cam_in_lo;
+    input cam_in_hi;
+	input cam_ex;
+    input chamber_volume: 65.0 * units.cc; // real
+    input flip_display: false;
+	
+	input flow_attenuation: 0.85;
+    input lift_scale: 1.0;
+    alias output __out: head;
+
+    function intake_flow(1.0 * units.mm)
+    intake_flow
+        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
+
+    function exhaust_flow(1.0 * units.mm)
+    exhaust_flow
+        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
+
+		
+    generic_cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: circle_area(1.3 * units.inch) * 5 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.3 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+		valvetrain: vtec_valvetrain(
+            vtec_intake_camshaft: cam_in_hi,
+            vtec_exhaust_camshaft: cam_ex,
+            intake_camshaft: cam_in_lo,
+            exhaust_camshaft: cam_ex,
+            min_rpm: 2700 * units.rpm // guess
+		),
+        flip_display: flip_display
+    )
+}
+
+
+public node mitsubishi_6g75_dk4a {
+    alias output __out: engine;
+
+    wires wires()
+
+    engine engine(
+        name: "Mitsubishi 6G75 SOHC MIVEC",
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
+        redline: 6500 * units.rpm,
+        throttle_gamma: 2.0
+    )
+
+    label bore(95.0 * units.mm)
+    label stroke(90.0 * units.mm)
+    label rod_length(153.42 * units.mm) // real, may be improperly converted
+    label rod_mass(550 * units.g) // aftermarket
+	label piston_mass(400 * units.g) // guess
+    label compression_height(29.15 * units.mm) // real
+	label deck_height((228.0 + 1.5) * units.mm) // real
+	label piston_dome(0.25 * units.cc) // real, aftermarket?
+    label crank_mass(60 * units.lb)
+    label flywheel_mass(25 * 2 * units.lb)
+    label flywheel_radius(6 * units.inch)
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 15 * units.kg, radius: 8.0 * units.cm)
+    )
+
+    crankshaft c0(
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 5.0 * units.lb_ft,
+        moment_of_inertia: crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 120.0 * units.deg // +30 degrees
+    )
+
+    rod_journal rj0(angle: 0 * units.deg)
+    rod_journal rj1(angle: 60 * units.deg)
+    rod_journal rj2(angle: 240 * units.deg)
+    rod_journal rj3(angle: 300 * units.deg)
+    rod_journal rj4(angle: 120 * units.deg)
+    rod_journal rj5(angle: 180 * units.deg)
+
+    c0
+        .add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
+
+
+    piston_parameters piston_params(
+        mass: piston_mass,
+        //blowby: k_28inH2O(0.1),
+        compression_height: compression_height,
+        wrist_pin_position: 0.0,
+        displacement: piston_dome
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
+        center_of_mass: 0.0,
+        length: rod_length
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: bore,
+        deck_height: deck_height
+    )
+
+	intake intake (
+		plenum_volume: 2.0 * units.L,
+		plenum_cross_section_area: 40.0 * units.cm2,
+		intake_flow_rate: k_carb(500.0),
+		idle_flow_rate: k_carb(0.001),
+		idle_throttle_plate_position: 0.996,
+		throttle_gamma: 2.0,
+		runner_flow_rate: k_carb(450.0),
+		runner_length: 8.0 * units.inch,
+		velocity_decay: 0.1
+	)
+	
+	label exhaust_radius((3.5 * units.inch)/2)
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(600.0),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(350.0),
+        velocity_decay: 1.0, //0.5
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 2500 * units.mm,
+		volume: (2200 * units.mm * circle_area(exhaust_radius)) + (300 * units.mm * circle_area(exhaust_radius) * 2)
+    )
+
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.5, impulse_response: ir_lib.default_0)
+
+	label pipe_length_1(0.0 * units.inch)
+	label pipe_length_2(0.3 * units.inch)
+	label pipe_length_3(3.0 * units.inch)
+	
+	label exhaust_stagger(120 * units.mm)
+
+	// engine is mounted backwards compared to 3000GT version
+
+    cylinder_bank b0(bank_params, angle: 30.0 * units.deg)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire1,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3
+        )
+
+    cylinder_bank b1(bank_params, angle: -30.0 * units.deg)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire2,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire6,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+        .add_cylinder_bank(b1)
+
+    engine.add_crankshaft(c0)
+
+    mitsubishi_6g75_dk4a_camshaft_builder camshaft()
+
+    b0.set_cylinder_head (
+        mitsubishi_6g75_dk4a_head(
+            cam_in_lo: camshaft.intake_cam_0_lo,
+			cam_in_hi: camshaft.intake_cam_0_hi,
+            cam_ex: camshaft.exhaust_cam_0,
+            flip_display: true
+        )
+    )
+    b1.set_cylinder_head (
+        mitsubishi_6g75_dk4a_head(
+            cam_in_lo: camshaft.intake_cam_1_lo,
+			cam_in_hi: camshaft.intake_cam_1_hi,
+            cam_ex: camshaft.exhaust_cam_1,
+            flip_display: false
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 25 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 70 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
+        .add_sample(6000 * units.rpm, 70 * units.deg)
+		.add_sample(7000 * units.rpm, 70 * units.deg)
+		.add_sample(8000 * units.rpm, 70 * units.deg)
+		.add_sample(9000 * units.rpm, 70 * units.deg)
+
+    engine.add_ignition_module(
+        mitsubishi_6g75_dk4a_distributor(
+            wires: wires,
+            timing_curve: timing_curve
+        )
+    )
+}
+
+// 2001 Mitsubishi Eclipse GT (D53A)
+public node mitsubishi_eclipse_d53a_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3053 * units.lb,
+            drag_coefficient: 0.34,
+            cross_sectional_area: 1.9 * (units.m * units.m),
+            diff_ratio: 3.74,
+            tire_radius: 324 * units.mm, // 215/50R17
+            rolling_resistance: 500 * units.N
+        );
+}
+
+public node mitsubishi_eclipse_d53a_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 500 * units.lb_ft
+        )
+        .add_gear(3.33)
+        .add_gear(2.11)
+        .add_gear(1.41)
+        .add_gear(1.03)
+        .add_gear(0.76);
+}
+
+public node main {
+    set_engine(mitsubishi_6g75_dk4a())
+    set_vehicle(mitsubishi_eclipse_d53a_vehicle())
+    set_transmission(mitsubishi_eclipse_d53a_transmission())
+}
+
+main()
