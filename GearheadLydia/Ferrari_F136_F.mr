@@ -64,7 +64,7 @@ public node ferrari_f136_f_camshaft_builder {
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 115.0 * units.deg;
     input exhaust_lobe_center: 115.0 * units.deg;
-    input advance: -15.0 * units.deg;
+    input advance: 15.0 * units.deg;
     input base_radius: 15 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -73,7 +73,7 @@ public node ferrari_f136_f_camshaft_builder {
     output exhaust_cam_1: _exhaust_cam_1;
 
     camshaft_parameters params(
-        advance: -advance,
+        advance: advance,
         base_radius: base_radius
     )
 

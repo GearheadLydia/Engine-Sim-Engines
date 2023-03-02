@@ -73,7 +73,7 @@ public node bmw_m42b18_camshaft_builder {
     output exhaust_cam_0: _exhaust_cam_0;
 
     camshaft_parameters params(
-        advance: -advance,
+        advance: advance,
         base_radius: base_radius
     )
 

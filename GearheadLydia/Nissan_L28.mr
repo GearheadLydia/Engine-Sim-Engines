@@ -78,7 +78,7 @@ public node nissan_l28_camshaft_builder {
     output exhaust_cam_0: _exhaust_cam_0;
 
     camshaft_parameters params(
-        advance: -advance,
+        advance: advance,
         base_radius: base_radius
     )
 
