@@ -355,7 +355,7 @@ public node vw_ea113_18_20v {
         ))
 }
 
-// 1994 Mazda MX-5 Miata (NA8C)
+// 2002 Volkswagen Golf GTI (MkIV)
 public node volkswagen_golf_gti_mkiv_vehicle {
     alias output __out:
         vehicle(
