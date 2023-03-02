@@ -42,14 +42,13 @@ private node add_sym_sample {
     this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
-// cams borrowed from S54B32 temporarily
-
+// https://www.pistonheads.com/gassing/topic.asp?h=0&f=152&t=1210549
 public node tvr_speed_six_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 260 * units.deg,
+            duration_at_50_thou: 268 * units.deg,
             gamma: 1.0,
-            lift: 12.0 * units.mm,
+            lift: 10.16 * units.mm,
             steps: 100
         );
 }
@@ -57,9 +56,9 @@ public node tvr_speed_six_lobe_profile_int {
 public node tvr_speed_six_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 260 * units.deg,
+            duration_at_50_thou: 268 * units.deg,
             gamma: 1.0,
-            lift: 12.0 * units.mm,
+            lift: 10.16 * units.mm,
             steps: 100
         );
 }
@@ -69,9 +68,9 @@ public node tvr_speed_six_camshaft_builder {
 	input ex_lobe_profile: tvr_speed_six_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 100.0 * units.deg;
-    input intake_lobe_center: 100.0 * units.deg;
-    input exhaust_lobe_center: 100.0 * units.deg;
+    input lobe_separation: 106.0 * units.deg;
+    input intake_lobe_center: 113.5 * units.deg;
+    input exhaust_lobe_center: 107.5 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 16.0 * units.mm;
 
@@ -182,31 +181,32 @@ public node tvr_speed_six_head {
     )
 }
 
+// http://www.rndengineering.co.uk/downloads/SPEED6%20SPREADS.pdf
 public node speedsix {
     alias output __out: engine;
 
     engine engine(
         name: "TVR Speed Six",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 1200 * units.rpm,
+        starter_speed: 1800 * units.rpm,
         redline: 7500 * units.rpm,
         throttle_gamma: 1.0,
-		hf_gain: 0.3,
-		jitter: 0.7
+		hf_gain: 0.05,
+		jitter: 0.6
     )
 	
 	label lean_angle(-30 * units.deg)
 
     label bore(96.0 * units.mm)
     label stroke(92.0 * units.mm)
-    label rod_length(150.0 * units.mm) // guess
+    label rod_length(144.5 * units.mm)
     label rod_mass(450 * units.g)
 	label piston_mass(347 * units.g)
-    label compression_height(32.00 * units.mm)
-	label deck_clearance(0.5 * units.mm)
+    label compression_height(30.5 * units.mm)
+	label deck_height((220.0 + 1.5) * units.mm) // deck height estimated from a drawing and the known stroke measurement
 	label piston_dome(10.0 * units.cc)
     label crank_mass(4.0 * units.kg)
-    label flywheel_mass(12.5 * units.kg)
+    label flywheel_mass(8.5 * units.kg) // 4.3kg flywheel, plus unknown clutch
     label flywheel_radius(6.5 * units.inch)
 
     label crank_moment(
@@ -225,7 +225,7 @@ public node speedsix {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -267,7 +267,7 @@ public node speedsix {
 
     cylinder_bank_parameters bank_params(
         bore: bore,
-        deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
+        deck_height: deck_height
     )
 
     intake intake(
@@ -275,7 +275,7 @@ public node speedsix {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(800.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9955,
+        idle_throttle_plate_position: 0.9974,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(275.0),
         runner_length: 12.0 * units.inch,
@@ -285,16 +285,16 @@ public node speedsix {
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(800.0),
+        outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(275.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 700 * units.mm,
-		volume: (500 * units.mm * circle_area(exhaust_radius)) + (200 * units.mm * circle_area(exhaust_radius) * 2)
+		length: 2000 * units.mm,
+		volume: (1800 * units.mm * circle_area(exhaust_radius)) + (200 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(4.0 * units.inch)
 	label pipe_length_2(0.0 * units.inch)
@@ -389,12 +389,12 @@ public node speedsix {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 45 * units.deg)
-        .add_sample(2000 * units.rpm, 50 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 50 * units.deg)
-        .add_sample(5000 * units.rpm, 50 * units.deg)
-        .add_sample(6000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 66 * units.deg)
+        .add_sample(4000 * units.rpm, 62 * units.deg)
+        .add_sample(5000 * units.rpm, 58 * units.deg)
+        .add_sample(6000 * units.rpm, 54 * units.deg)
         .add_sample(7000 * units.rpm, 50 * units.deg)
         .add_sample(8000 * units.rpm, 50 * units.deg)
 
