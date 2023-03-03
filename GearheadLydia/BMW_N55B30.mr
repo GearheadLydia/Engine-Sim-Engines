@@ -188,7 +188,7 @@ public node N55B30 {
     engine engine(
         name: "BMW N55B30",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 800 * units.rpm,
+        starter_speed: 1500 * units.rpm,
         redline: 7000 * units.rpm, // actual: 7200
         throttle_gamma: 1.0,
 		hf_gain: 0.2,
