@@ -154,8 +154,10 @@ public node hypo_v4_45_180_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 30.0 * units.cc,
-        intake_runner_cross_section_area: 2 * 12.4087 * units.cm2,
+        intake_runner_volume: circle_area(1.2 * units.inch) * 6 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.2 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 6 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -173,8 +175,8 @@ public node v4_45_180 {
 
     engine engine(
         name: "V4 45deg OF",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
         redline: 8000 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 4.0,
@@ -192,7 +194,7 @@ public node v4_45_180 {
 	label piston_dome(0.0 * units.cc)
 	label deck_clearance(1.0 * units.mm)
     label crank_mass(5 * units.kg)
-    label flywheel_mass(25 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -209,7 +211,7 @@ public node v4_45_180 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -344,13 +346,13 @@ public node v4_45_180 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 65 * units.deg)
+        .add_sample(0000 * units.rpm, 20 * units.deg)
+        .add_sample(1000 * units.rpm, 75 * units.deg)
+        .add_sample(2000 * units.rpm, 75 * units.deg)
+        .add_sample(3000 * units.rpm, 75 * units.deg)
+        .add_sample(4000 * units.rpm, 75 * units.deg)
+        .add_sample(5000 * units.rpm, 75 * units.deg)
+        .add_sample(6000 * units.rpm, 75 * units.deg)
 		.add_sample(7000 * units.rpm, 70 * units.deg)
 		.add_sample(8000 * units.rpm, 75 * units.deg)
 		.add_sample(9000 * units.rpm, 75 * units.deg)
@@ -364,36 +366,35 @@ public node v4_45_180 {
     )
 }
 
-// 2003 Nissan 350Z
-public node nissan_350z_z33_vehicle {
+// 1992 Nissan 240SX Hatchback (RMS13)
+public node nissan_240sx_rms13_vehicle {
     alias output __out:
         vehicle(
-            mass: 3188 * units.lb,
-            drag_coefficient: 0.29,
-            cross_sectional_area: 21.1 * (units.foot * units.foot),
-            diff_ratio: 3.533,
-            tire_radius: 330.2 * units.mm, // 225/45R18
-            rolling_resistance: 500 * units.N
+            mass: 1203 * units.kg,
+            drag_coefficient: 0.31,
+            cross_sectional_area: 1.81 * (units.m * units.m),
+            diff_ratio: 4.083,
+            tire_radius: 307.5 * units.mm, // 195/60HR15
+            rolling_resistance: 460 * units.N
         );
 }
 
-public node nissan_350z_z33_transmission {
+public node nissan_fs5w71c_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 500 * units.lb_ft
         )
-        .add_gear(3.794)
-        .add_gear(2.324)
-        .add_gear(1.624)
-        .add_gear(1.271)
+        .add_gear(3.321)
+        .add_gear(1.902)
+        .add_gear(1.308)
         .add_gear(1.000)
-        .add_gear(0.794);
+        .add_gear(0.759);
 }
 
 public node main {
-    set_engine(v4_45_180())
-    set_vehicle(nissan_350z_z33_vehicle())
-    set_transmission(nissan_350z_z33_transmission())
+	set_engine(v4_45_180())
+    set_vehicle(nissan_240sx_rms13_vehicle())
+    set_transmission(nissan_fs5w71c_transmission())
 }
 
 main()
