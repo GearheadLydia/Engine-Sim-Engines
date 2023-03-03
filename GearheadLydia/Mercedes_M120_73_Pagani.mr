@@ -212,10 +212,6 @@ public node m120_73 {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
         throttle_gamma: 0.8,
 		simulation_frequency: 6500
     )
@@ -254,12 +250,12 @@ public node m120_73 {
         tdc: 120.0 * units.deg
     )
 
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: 120*units.deg)
-    rod_journal rj2(angle: 240*units.deg)
-    rod_journal rj3(angle: 240*units.deg)
-    rod_journal rj4(angle: 120*units.deg)
-    rod_journal rj5(angle: 0*units.deg)
+    rod_journal rj0(angle:  0  * units.deg)
+    rod_journal rj1(angle: 120 * units.deg)
+    rod_journal rj2(angle: 240 * units.deg)
+    rod_journal rj3(angle: 240 * units.deg)
+    rod_journal rj4(angle: 120 * units.deg)
+    rod_journal rj5(angle:  0  * units.deg)
 	
     c0
         .add_rod_journal(rj0)
@@ -293,13 +289,25 @@ public node m120_73 {
         deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
-	intake intake(
+	intake intakeL(
 		plenum_volume: 3.0 * units.L,
 		plenum_cross_section_area: 150.0 * units.cm2,
-		intake_flow_rate: k_carb(800.0),
+		intake_flow_rate: k_carb(400.0),
 		idle_flow_rate: k_carb(0.1),
 		idle_throttle_plate_position: 0.993,
-		throttle_gamma: 0.9,
+		throttle_gamma: 2.0,
+		runner_flow_rate: k_carb(750.0),
+		runner_length: 12.0 * units.inch,
+		velocity_decay: 0.1
+	)
+
+	intake intakeR(
+		plenum_volume: 3.0 * units.L,
+		plenum_cross_section_area: 150.0 * units.cm2,
+		intake_flow_rate: k_carb(400.0),
+		idle_flow_rate: k_carb(0.1),
+		idle_throttle_plate_position: 0.993,
+		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(750.0),
 		runner_length: 12.0 * units.inch,
 		velocity_decay: 0.1
@@ -337,7 +345,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             ignition_wire: wires.wire01,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
 			sound_attenuation: exh_vol_L0
@@ -347,7 +355,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire02,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
 			sound_attenuation: exh_vol_L0 + exh_vol_warble
@@ -357,7 +365,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire03,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
 			sound_attenuation: exh_vol_L0
@@ -367,7 +375,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire04,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4 + exhaust_stagger,
 			sound_attenuation: exh_vol_L0 + exh_vol_warble
@@ -377,7 +385,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire05,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_5 + exhaust_stagger,
 			sound_attenuation: exh_vol_L0
@@ -387,7 +395,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire06,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_6 + exhaust_stagger,
 			sound_attenuation: exh_vol_L0 + exh_vol_warble
@@ -400,7 +408,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             ignition_wire: wires.wire07,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
 			sound_attenuation: exh_vol_R0 + exh_vol_warble
@@ -410,7 +418,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire08,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
 			sound_attenuation: exh_vol_R0
@@ -420,7 +428,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire09,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
 			sound_attenuation: exh_vol_R0 + exh_vol_warble
@@ -430,7 +438,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire10,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4,
 			sound_attenuation: exh_vol_R0
@@ -440,7 +448,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire11,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_5,
 			sound_attenuation: exh_vol_R0 + exh_vol_warble
@@ -450,7 +458,7 @@ public node m120_73 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire12,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_6,
 			sound_attenuation: exh_vol_R0
@@ -482,34 +490,58 @@ public node m120_73 {
         )
     )
 
-    function timing_curve(1000 * units.rpm)
-    timing_curve
+    function timing_curve_s73(1000 * units.rpm)
+    timing_curve_s73
         .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 20 * units.deg)
-        .add_sample(2000 * units.rpm, 25 * units.deg)
-        .add_sample(3000 * units.rpm, 30 * units.deg)
-        .add_sample(4000 * units.rpm, 35 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 32 * units.deg)
+        .add_sample(2000 * units.rpm, 35 * units.deg)
+        .add_sample(3000 * units.rpm, 38 * units.deg)
+        .add_sample(4000 * units.rpm, 40 * units.deg)
+        .add_sample(5000 * units.rpm, 43 * units.deg)
+        .add_sample(6000 * units.rpm, 47 * units.deg)
 		.add_sample(7000 * units.rpm, 50 * units.deg)
-		.add_sample(8000 * units.rpm, 55 * units.deg)
-		.add_sample(9000 * units.rpm, 60 * units.deg)
+		.add_sample(8000 * units.rpm, 50 * units.deg)
+
+    function timing_curve_f(1000 * units.rpm)
+    timing_curve_f
+        .add_sample(0000 * units.rpm, 15 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 37 * units.deg)
+        .add_sample(3000 * units.rpm, 39 * units.deg)
+        .add_sample(4000 * units.rpm, 41 * units.deg)
+        .add_sample(5000 * units.rpm, 46 * units.deg)
+        .add_sample(6000 * units.rpm, 53 * units.deg)
+		.add_sample(7000 * units.rpm, 53 * units.deg)
+		.add_sample(8000 * units.rpm, 53 * units.deg)
 
     engine.add_ignition_module(
         mercedes_m120_73_distributor(
             wires: wires,
-            timing_curve: timing_curve
+            timing_curve: timing_curve_s73
         )
     )
 }
 
 // 2005 Pagani Zonda S 7.3
-public node pagani_zonda_vehicle {
+public node pagani_zonda_s_73_vehicle {
     alias output __out:
         vehicle(
-            mass: 3023 * units.lb,
+            mass: 1280 * units.kg,
             drag_coefficient: 0.30, // estimated
-            cross_sectional_area: 2.0 * (units.m * units.m), // estimated
+            cross_sectional_area: 1.95 * (units.m * units.m), // A-C's estimate
+            diff_ratio: 3.0,
+            tire_radius: 349.5 * units.mm, // 345/35ZR18
+            rolling_resistance: 600 * units.N
+        );
+}
+
+// 2006 Pagani Zonda F
+public node pagani_zonda_f_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1300 * units.kg,
+            drag_coefficient: 0.30, // estimated
+            cross_sectional_area: 1.95 * (units.m * units.m), // A-C's estimate
             diff_ratio: 3.0,
             tire_radius: 354.33 * units.mm, // 335/30ZR20
             rolling_resistance: 600 * units.N
@@ -532,7 +564,7 @@ public node pagani_zonda_transmission {
 
 public node main {
     set_engine(m120_73())
-    set_vehicle(pagani_zonda_vehicle())
+    set_vehicle(pagani_zonda_s_73_vehicle())
     set_transmission(pagani_zonda_transmission())
 }
 
