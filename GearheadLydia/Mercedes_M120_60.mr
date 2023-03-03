@@ -575,7 +575,7 @@ public node pagani_zonda_c12_vehicle {
 }
 
 // gears borrowed from McLaren F1 for lack of information
-public node pagani_zonda_c12_transmission {
+public node pagani_zonda_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 1000 * units.lb_ft
