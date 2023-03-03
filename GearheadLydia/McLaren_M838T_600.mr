@@ -197,10 +197,7 @@ public node mclaren_m838t_600 {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 8500 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
+        fuel: fuel(max_burning_efficiency: 0.95), // free power to simulate unavailable turbo
         throttle_gamma: 1.0,
 		simulation_frequency: 9000
     )
@@ -424,7 +421,7 @@ public node mclaren_m838t_600 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 70 * units.deg)
         .add_sample(2000 * units.rpm, 80 * units.deg)
         .add_sample(3000 * units.rpm, 80 * units.deg)
         .add_sample(4000 * units.rpm, 80 * units.deg)
