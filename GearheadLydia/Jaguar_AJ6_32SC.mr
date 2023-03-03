@@ -58,9 +58,8 @@ public node jaguar_aj6_camshaft_builder {
 	input ex_lobe_profile: jaguar_aj6_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 110 * units.deg;
-    input intake_lobe_center: lobe_separation;
-    input exhaust_lobe_center: lobe_separation;
+    input intake_lobe_center: 110 * units.deg;
+    input exhaust_lobe_center: 110 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 15.0 * units.mm;
 
@@ -83,7 +82,7 @@ public node jaguar_aj6_camshaft_builder {
     label rot360(360 * units.deg)
 
     _intake_cam_0
-        .add_lobe(rot360 + intake_lobe_center)
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot120)
 		.add_lobe(rot360 + intake_lobe_center + 4 * rot120)
 		.add_lobe(rot360 + intake_lobe_center + 2 * rot120)
 		.add_lobe(rot360 + intake_lobe_center + 5 * rot120)
@@ -91,7 +90,7 @@ public node jaguar_aj6_camshaft_builder {
 		.add_lobe(rot360 + intake_lobe_center + 3 * rot120)
 
 	_exhaust_cam_0
-        .add_lobe(rot360 - exhaust_lobe_center)
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot120)
 		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
 		.add_lobe(rot360 - exhaust_lobe_center + 5 * rot120)
@@ -114,49 +113,53 @@ public node jaguar_aj6_head {
     input chamber_volume: 40.0 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation: 1.0;
+	input flow_attenuation_in: 1.0;
+	input flow_attenuation_ex: 1.0;
     input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(1 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 65 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 120 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 155 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 245 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 255 * flow_attenuation)
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
+        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
+        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
+        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
+        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
+        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
+        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
+        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
+        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
-    function exhaust_flow(1 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 75 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 105 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 130 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 150 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 158 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 164 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 168 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 176 * flow_attenuation)
-
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
+        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
+        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
+        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
+        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
+        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
+        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
+        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
+        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.1 * units.inch) * 4 * units.inch,
         intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 2 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 2 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -171,15 +174,11 @@ public node jaguar_aj6_32sc {
 
     engine engine(
         name: "Jaguar AJ6",
-        starter_torque: 100 * units.lb_ft,
-        starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+        starter_speed: 1200 * units.rpm,
         redline: 6500 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85
-        ),
-        throttle_gamma: 2.0
+        fuel: fuel(max_burning_efficiency: 1.0), // simulates unavailable supercharger
+        throttle_gamma: 1.0
     )
 	
 	label lean_angle(22 * units.deg)
@@ -190,7 +189,7 @@ public node jaguar_aj6_32sc {
     label rod_mass(450 * units.g)
 	label piston_mass(300 * units.g)
     label compression_height(37.6 * units.mm)
-	label piston_dome(0.0 * units.cc) // guess
+	label piston_dome(25.0 * units.cc) // guess, makes compression come out right
 	label deck_height((254.3 + 0.2) * units.mm) // guesstimate
     label crank_mass(5 * units.kg)
     label flywheel_mass(25 * units.lb)
@@ -212,19 +211,19 @@ public node jaguar_aj6_32sc {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
         tdc: 90 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: 120*units.deg)
-    rod_journal rj2(angle: 240*units.deg)
-    rod_journal rj3(angle: 240*units.deg)
-    rod_journal rj4(angle: 120*units.deg)
-    rod_journal rj5(angle: 0*units.deg)
+    rod_journal rj0(angle:  0  * units.deg)
+    rod_journal rj1(angle: 120 * units.deg)
+    rod_journal rj2(angle: 240 * units.deg)
+    rod_journal rj3(angle: 240 * units.deg)
+    rod_journal rj4(angle: 120 * units.deg)
+    rod_journal rj5(angle:  0  * units.deg)
 	
     c0
         .add_rod_journal(rj0)
@@ -257,32 +256,38 @@ public node jaguar_aj6_32sc {
         deck_height: deck_height
     )
 
-    performer_rpm_intake intake(
-        carburetor_cfm: 700.0,
-        idle_flow_rate_cfm: 0.1,
-        idle_throttle_plate_position: 0.994
+    intake intake(
+        plenum_volume: 3.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(700.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.998,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(550.0),
+        runner_length: 6.0 * units.inch,
+        velocity_decay: 0.1
     )
 	
 	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500.0),
+        outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 28.0 * units.inch,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 500 * units.mm,
-		volume: 500 * units.mm * circle_area(exhaust_radius)
+		length: 2000 * units.mm,
+		volume: 2000 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.04, impulse_response: ir_lib.default_0)
 	
 	// 7M-GE stock
-	label pipe_length_1(25 * units.mm)
-	label pipe_length_2(20 * units.mm)
-	label pipe_length_3(15 * units.mm)
-	label pipe_length_4(10 * units.mm)
-	label pipe_length_5(5 * units.mm)
+	label pipe_length_1(48 * units.mm)
+	label pipe_length_2(40 * units.mm)
+	label pipe_length_3(32 * units.mm)
+	label pipe_length_4(16 * units.mm)
+	label pipe_length_5(8 * units.mm)
 	label pipe_length_6(0 * units.mm)
 	
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
@@ -295,7 +300,7 @@ public node jaguar_aj6_32sc {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
-			sound_attenuation: 0.8
+			sound_attenuation: 1.0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -345,7 +350,7 @@ public node jaguar_aj6_32sc {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_6,
-			sound_attenuation: 0.8
+			sound_attenuation: 1.0
         )
 
     engine
@@ -369,53 +374,51 @@ public node jaguar_aj6_32sc {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 20 * units.deg)
-        .add_sample(2000 * units.rpm, 30 * units.deg)
-        .add_sample(3000 * units.rpm, 35 * units.deg)
-        .add_sample(4000 * units.rpm, 40 * units.deg)
-        .add_sample(5000 * units.rpm, 45 * units.deg)
-        .add_sample(6000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 85 * units.deg)
+        .add_sample(3000 * units.rpm, 85 * units.deg)
+        .add_sample(4000 * units.rpm, 75 * units.deg)
+        .add_sample(5000 * units.rpm, 65 * units.deg)
+        .add_sample(6000 * units.rpm, 55 * units.deg)
         .add_sample(7000 * units.rpm, 50 * units.deg)
         .add_sample(8000 * units.rpm, 50 * units.deg)
-        .add_sample(9000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         jaguar_aj6_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6600 * units.rpm
+            timing_curve: timing_curve
         ))
 }
 
-// 1992 Toyota Supra Turbo 3.0 (MA70)
-public node toyota_supra_ma70_vehicle {
+// 1993 Aston Martin DB7
+public node aston_martin_db7_vehicle {
     alias output __out:
         vehicle(
-            mass: 1611 * units.kg,
-            drag_coefficient: 0.32,
-            cross_sectional_area: 1.91 * (units.m * units.m),
-            diff_ratio: 3.73,
-            tire_radius: 316 * units.mm, // 225/50R16
-            rolling_resistance: 490 * units.N
+            mass: 1650 * units.kg,
+            drag_coefficient: 0.31,
+            cross_sectional_area: 1.92 * (units.m * units.m),
+            diff_ratio: 3.54,
+            tire_radius: 321.5 * units.mm, // 245/40ZR18
+            rolling_resistance: 480 * units.N
         );
 }
 
-public node toyota_r154_transmission {
+public node getrag_290_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 700 * units.lb_ft
+            max_clutch_torque: 600 * units.lb_ft
         )
-        .add_gear(3.250)
-        .add_gear(1.955)
-        .add_gear(1.310)
-        .add_gear(1.000)
-        .add_gear(0.753);
+        .add_gear(3.55)
+        .add_gear(2.04)
+        .add_gear(1.39)
+        .add_gear(1.00)
+        .add_gear(0.755);
 }
 
 public node main {
 	set_engine(jaguar_aj6_32sc())
-    set_vehicle(toyota_supra_ma70_vehicle())
-    set_transmission(toyota_r154_transmission())
+    set_vehicle(aston_martin_db7_vehicle())
+    set_transmission(getrag_290_transmission())
 }
 
 main()
