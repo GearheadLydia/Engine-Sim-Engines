@@ -282,7 +282,6 @@ public node jaguar_aj6_32sc {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.04, impulse_response: ir_lib.default_0)
 	
-	// 7M-GE stock
 	label pipe_length_1(48 * units.mm)
 	label pipe_length_2(40 * units.mm)
 	label pipe_length_3(32 * units.mm)
