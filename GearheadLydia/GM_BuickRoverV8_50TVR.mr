@@ -204,7 +204,7 @@ public node rover_v8_50_225 {
     engine engine(
         name: "Rover V8 (TVR)",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
+		starter_speed: 1200 * units.rpm,
         redline: 6000 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 3.0,
@@ -264,7 +264,7 @@ public node rover_v8_50_225 {
         plenum_cross_section_area: 100 * units.cm2,
         intake_flow_rate: k_carb(600),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(350.0),
         runner_length: 3.0 * units.inch,
@@ -400,8 +400,8 @@ public node rover_v8_50_225 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 25 * units.deg)
-        .add_sample(2000 * units.rpm, 35 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 45 * units.deg)
         .add_sample(3000 * units.rpm, 45 * units.deg)
         .add_sample(4000 * units.rpm, 45 * units.deg)
         .add_sample(5000 * units.rpm, 45 * units.deg)
