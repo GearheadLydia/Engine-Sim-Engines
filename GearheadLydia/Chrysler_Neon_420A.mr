@@ -14,7 +14,7 @@ label cycle(2 * 360 * units.deg)
 public node chrysler_neon_420a_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7550 * units.rpm;
+    input rev_limit: 7200 * units.rpm;
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -175,7 +175,7 @@ public node chrysler_neon_420a {
         name: "Chrysler 420A",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
-        redline: 7500 * units.rpm,
+        redline: 7000 * units.rpm,
 		hf_gain: 0.005,
 		jitter: 0.6,
         throttle_gamma: 1.0
