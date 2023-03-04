@@ -158,8 +158,8 @@ public node nissan_rb26_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.4 * units.inch) * 2 * units.inch,
         intake_runner_cross_section_area: circle_area(1.4 * units.inch),
-        exhaust_runner_volume: circle_area(1.4 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.4 * units.inch),
+        exhaust_runner_volume: circle_area(1.2 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(1.2 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -172,7 +172,7 @@ public node nissan_rb26_head {
 public node nissan_rb26_itb {
     input throttlebody_cfm: 550.0;
     input idle_flow_rate_cfm: 0.001;
-    input idle_throttle_plate_position: 0.9994;
+    input idle_throttle_plate_position: 0.99975;
     input throttle_gamma: 12.0;
 
     alias output __out: intake;
@@ -197,12 +197,12 @@ public node nissan_rb26dett {
     engine engine(
         name: "Nissan RB26DETT",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 900 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 8000 * units.rpm,
         fuel: fuel(
-            max_turbulence_effect: 4.0,
+            max_turbulence_effect: 1.0,
             burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85
+            max_burning_efficiency: 2.00 // free power to simulate unavailable turbo
         ),
         throttle_gamma: 1.0
     )
@@ -237,7 +237,7 @@ public node nissan_rb26dett {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -335,7 +335,7 @@ public node nissan_rb26dett {
             intake: intake1,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.64
+			sound_attenuation: 0.8
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -345,7 +345,7 @@ public node nissan_rb26dett {
             intake: intake2,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 0.8
+			sound_attenuation: 1.0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -355,7 +355,7 @@ public node nissan_rb26dett {
             intake: intake3,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.64
+			sound_attenuation: 0.8
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -407,16 +407,16 @@ public node nissan_rb26dett {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 40 * units.deg)
-        .add_sample(1000 * units.rpm, 70 * units.deg)
-        .add_sample(2000 * units.rpm, 70 * units.deg)
-        .add_sample(3000 * units.rpm, 70 * units.deg)
-        .add_sample(4000 * units.rpm, 70 * units.deg)
-        .add_sample(5000 * units.rpm, 70 * units.deg)
-        .add_sample(6000 * units.rpm, 70 * units.deg)
-        .add_sample(7000 * units.rpm, 70 * units.deg)
-        .add_sample(8000 * units.rpm, 70 * units.deg)
-        .add_sample(9000 * units.rpm, 70 * units.deg)
+        .add_sample(0000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 75 * units.deg)
+        .add_sample(2000 * units.rpm, 80 * units.deg)
+        .add_sample(3000 * units.rpm, 72 * units.deg)
+        .add_sample(4000 * units.rpm, 64 * units.deg)
+        .add_sample(5000 * units.rpm, 56 * units.deg)
+        .add_sample(6000 * units.rpm, 48 * units.deg)
+        .add_sample(7000 * units.rpm, 42 * units.deg)
+        .add_sample(8000 * units.rpm, 36 * units.deg)
+        .add_sample(9000 * units.rpm, 30 * units.deg)
 
     engine.add_ignition_module(
         nissan_rb26_distributor(
