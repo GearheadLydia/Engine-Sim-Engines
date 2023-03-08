@@ -298,8 +298,8 @@ public node S62B50 {
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
 	
 	label exhaust_stagger(10 * units.mm)
-	label exhaust_volume_L(1.0)
-	label exhaust_volume_R(0.7)
+	label exhaust_volume_L(0.7)
+	label exhaust_volume_R(1.0)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -310,8 +310,8 @@ public node S62B50 {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 3.0 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_R
+			primary_length: 5.0 * units.inch + exhaust_stagger,
+			sound_attenuation: exhaust_volume_L
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -320,8 +320,8 @@ public node S62B50 {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.5 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_R
+			primary_length: 1.5 * units.inch + exhaust_stagger,
+			sound_attenuation: exhaust_volume_L
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -330,8 +330,8 @@ public node S62B50 {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.5 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_R
+			primary_length: 3.5 * units.inch + exhaust_stagger,
+			sound_attenuation: exhaust_volume_L
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -341,7 +341,7 @@ public node S62B50 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: 0.0 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_R
+			sound_attenuation: exhaust_volume_L
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -353,8 +353,8 @@ public node S62B50 {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 2.5 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L
+			primary_length: 4.5 * units.inch + exhaust_stagger,
+			sound_attenuation: exhaust_volume_R
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -363,8 +363,8 @@ public node S62B50 {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.0 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L
+			primary_length: 3.0 * units.inch + exhaust_stagger,
+			sound_attenuation: exhaust_volume_R
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -374,7 +374,7 @@ public node S62B50 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: 1.0 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L
+			sound_attenuation: exhaust_volume_R
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -384,7 +384,7 @@ public node S62B50 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: 0.5 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L
+			sound_attenuation: exhaust_volume_R
         )
 
     engine
