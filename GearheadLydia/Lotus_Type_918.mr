@@ -171,8 +171,8 @@ public node lotus_type_918_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(0.9 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 5 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -272,7 +272,7 @@ public node lotus_type_918_engine {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(800.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9985,
+        idle_throttle_plate_position: 0.9975,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(150.0),
         runner_length: 3.5 * units.inch,
@@ -288,8 +288,8 @@ public node lotus_type_918_engine {
 		length: 500 * units.mm
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-	exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
+	exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(bore_spacing * 1.5)
 	label pipe_length_2(bore_spacing * 1.0)
@@ -434,37 +434,35 @@ public node lotus_type_918_engine {
     )
 }
 
-// 2011 McLaren MP4-12C
-public node mclaren_mp4_12c_vehicle {
+// 1996 Lotus Esprit V8 (S4 X180)
+public node lotus_esprit_v8_x180_vehicle {
     alias output __out:
         vehicle(
-            mass: 3161 * units.lb,
+            mass: 3042 * units.lb,
             drag_coefficient: 0.36,
-            cross_sectional_area: 1.9 * (units.m * units.m),
-            diff_ratio: 3.31,
-            tire_radius: 345.5 * units.mm, // 305/30ZR20
+            cross_sectional_area: 2.0 * (units.m * units.m), // guesstimate
+            diff_ratio: 3.89,
+            tire_radius: 329 * units.mm, // 285/35ZR18
             rolling_resistance: 600 * units.N
         );
 }
 
-public node mclaren_mp4_12c_transmission {
+public node renault_un1_027_transaxle {
     alias output __out:
         transmission(
             max_clutch_torque: 700 * units.lb_ft
         )
-        .add_gear(3.98)
-        .add_gear(2.61)
-        .add_gear(1.90)
-        .add_gear(1.48)
-        .add_gear(1.16)
-        .add_gear(0.91)
-        .add_gear(0.69);
+        .add_gear(3.364)
+        .add_gear(2.059)
+        .add_gear(1.381)
+        .add_gear(1.037)
+        .add_gear(0.760); // 0.8205 in non-V8 Esprit
 }
 
 public node main {
     set_engine(lotus_type_918_engine())
-    set_vehicle(mclaren_mp4_12c_vehicle())
-    set_transmission(mclaren_mp4_12c_transmission())
+    set_vehicle(lotus_esprit_v8_x180_vehicle())
+    set_transmission(renault_un1_027_transaxle())
 }
 
 main()
