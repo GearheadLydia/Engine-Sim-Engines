@@ -381,7 +381,7 @@ public node S65B40 {
             exhaust_system: exhaust,
             ignition_wire: wires.wire1,
 			primary_length: pipe_length_1,
-			sound_attenuation: exhaust_volume_L
+			sound_attenuation: exhaust_volume_L - 0.25
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.05)),
@@ -391,7 +391,7 @@ public node S65B40 {
             exhaust_system: exhaust,
             ignition_wire: wires.wire2,
 			primary_length: pipe_length_2,
-			sound_attenuation: exhaust_volume_L - 0.25
+			sound_attenuation: exhaust_volume_L
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.05)),
@@ -401,7 +401,7 @@ public node S65B40 {
             exhaust_system: exhaust,
             ignition_wire: wires.wire3,
 			primary_length: pipe_length_3,
-			sound_attenuation: exhaust_volume_L - 0.25
+			sound_attenuation: exhaust_volume_L
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.05)),
@@ -411,7 +411,7 @@ public node S65B40 {
             exhaust_system: exhaust,
             ignition_wire: wires.wire4,
 			primary_length: pipe_length_4,
-			sound_attenuation: exhaust_volume_L
+			sound_attenuation: exhaust_volume_L - 0.25
         )
 
     engine
