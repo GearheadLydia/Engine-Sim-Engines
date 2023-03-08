@@ -345,11 +345,11 @@ public node bmw_m70b50_engine {
 	label pipe_length_1(bore_spacing * 0.8)
 	label pipe_length_2(bore_spacing * 0.4)
 	label pipe_length_3(bore_spacing * 0.0)
-	label pipe_length_4(bore_spacing * 0.2)
-	label pipe_length_5(bore_spacing * 0.6)
-	label pipe_length_6(bore_spacing * 1.0)
+	label pipe_length_4(bore_spacing * 0.5)
+	label pipe_length_5(bore_spacing * 0.9)
+	label pipe_length_6(bore_spacing * 1.3)
 	
-	label pipe_length_stagger(50 * units.mm)
+	label pipe_length_stagger(30 * units.mm)
  
     cylinder_bank b0(bank_params, angle: -30 * units.deg) // R (first)
     b0
