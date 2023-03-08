@@ -306,7 +306,8 @@ public node F136_Y {
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire1,
-			primary_length: pipe_length_1 + exhaust_stagger
+			primary_length: pipe_length_1 + exhaust_stagger,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -324,7 +325,8 @@ public node F136_Y {
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire3,
-			primary_length: pipe_length_3 + exhaust_stagger
+			primary_length: pipe_length_3 + exhaust_stagger,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -354,7 +356,8 @@ public node F136_Y {
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire7,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -363,7 +366,8 @@ public node F136_Y {
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire6,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
