@@ -440,7 +440,7 @@ public node audi_rs4_b7_vehicle {
             mass: 3638 * units.lb,
             drag_coefficient: 0.31,
             cross_sectional_area: 2.17 * (units.m * units.m),
-            diff_ratio: 3.333,
+            diff_ratio: 4.111,
             tire_radius: 330 * units.mm, // 255/35ZR19
             rolling_resistance: 500 * units.N
         );
@@ -457,6 +457,32 @@ public node audi_rs4_b7_transmission {
         .add_gear(1.133)
         .add_gear(0.919)
         .add_gear(0.778);
+}
+
+// 2008 Audi R8 Coupe 4.2 FSI quattro (Type 42)
+public node audi_r8_v8_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3604 * units.lb,
+            drag_coefficient: 0.34,
+            cross_sectional_area: 1.99 * (units.m * units.m),
+            diff_ratio: 3.462,
+            tire_radius: 330 * units.mm, // 295/30ZR19
+            rolling_resistance: 500 * units.N
+        );
+}
+
+public node audi_r8_v8_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 700 * units.lb_ft
+        )
+        .add_gear(4.373)
+        .add_gear(2.709)
+        .add_gear(1.878)
+        .add_gear(1.411)
+        .add_gear(1.126)
+        .add_gear(0.928);
 }
 
 public node main {
