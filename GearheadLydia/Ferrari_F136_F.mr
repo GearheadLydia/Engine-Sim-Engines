@@ -290,15 +290,15 @@ public node F136_F {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(5 * units.mm)
-	label pipe_length_2(15 * units.mm)
-	label pipe_length_3(10 * units.mm)
-	label pipe_length_4(0 * units.mm)
+	label pipe_length_1(40 * units.mm)
+	label pipe_length_2(10 * units.mm)
+	label pipe_length_3(0 * units.mm)
+	label pipe_length_4(30 * units.mm)
 	
-	label exhaust_stagger(20 * units.mm)
+	label exhaust_stagger(30 * units.mm)
 	
-	label exh_vol_L(1.0)
-	label exh_vol_R(0.8)
+	label exh_vol_L(0.8)
+	label exh_vol_R(1.0)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
