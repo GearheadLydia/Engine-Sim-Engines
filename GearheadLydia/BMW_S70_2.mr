@@ -12,7 +12,7 @@ label cycle(2 * 360 * units.deg)
 public node bmw_s70_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7750 * units.rpm;
+    input rev_limit: 7750 * units.rpm; // top speed run spec: 8000
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -198,8 +198,8 @@ public node bmw_s70_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.2 * units.inch) * 2 * units.inch,
         intake_runner_cross_section_area: circle_area(1.2 * units.inch),
-        exhaust_runner_volume: circle_area(1.0 * units.inch) * 2 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -230,9 +230,9 @@ public node S70_2 {
     engine engine(
         name: "BMW S70/2",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 800 * units.rpm,
+        starter_speed: 1000 * units.rpm,
         redline: 7500 * units.rpm,
-        throttle_gamma: 2.0,
+        throttle_gamma: 1.0,
 		simulation_frequency: 6500,
 		hf_gain: 0.025,
 		jitter: 0.7
@@ -303,11 +303,11 @@ public node S70_2 {
 		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: 50.0 * units.cm2,
 		intake_flow_rate: k_carb(500.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.993,
-		throttle_gamma: 0.8,
+		idle_flow_rate: k_carb(0.001),
+		idle_throttle_plate_position: 0.997,
+		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(850.0),
-		runner_length: 2.0 * units.inch,
+		runner_length: 6.0 * units.inch,
 		velocity_decay: 0.1
 	)
 
@@ -315,17 +315,17 @@ public node S70_2 {
 		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: 50.0 * units.cm2,
 		intake_flow_rate: k_carb(500.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.993,
-		throttle_gamma: 0.8,
+		idle_flow_rate: k_carb(0.001),
+		idle_throttle_plate_position: 0.997,
+		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(850.0),
-		runner_length: 2.0 * units.inch,
+		runner_length: 6.0 * units.inch,
 		velocity_decay: 0.1
 	)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(900.0),
-        primary_tube_length: 9.0 * units.inch,
+        primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(600.0),
         velocity_decay: 1.0, //0.5
         volume: 3.0 * units.L,
@@ -515,21 +515,20 @@ public node S70_2 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 35 * units.deg)
-        .add_sample(2000 * units.rpm, 50 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 45 * units.deg)
+        .add_sample(2000 * units.rpm, 52 * units.deg)
+        .add_sample(3000 * units.rpm, 55 * units.deg)
+        .add_sample(4000 * units.rpm, 52 * units.deg)
         .add_sample(5000 * units.rpm, 50 * units.deg)
-        .add_sample(6000 * units.rpm, 50 * units.deg)
-        .add_sample(7000 * units.rpm, 50 * units.deg)
-        .add_sample(8000 * units.rpm, 50 * units.deg)
-		.add_sample(9000 * units.rpm, 50 * units.deg)
+        .add_sample(6000 * units.rpm, 46 * units.deg)
+        .add_sample(7000 * units.rpm, 42 * units.deg)
+        .add_sample(8000 * units.rpm, 40 * units.deg)
+		.add_sample(9000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
         bmw_s70_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7750 * units.rpm
+            timing_curve: timing_curve
         ))
 }
 
