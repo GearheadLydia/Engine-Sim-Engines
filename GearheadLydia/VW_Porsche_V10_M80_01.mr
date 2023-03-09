@@ -41,6 +41,7 @@ private node wires {
     output wire10: ignition_wire();
 }
 
+// cams borrowed from RB26 for... some reason
 public node porsche_v10_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
@@ -187,8 +188,8 @@ public node porsche_v10_head {
         chamber_volume: 51.0 * units.cc,
         intake_runner_volume: circle_area(1.06 * units.inch) * 12 * units.inch,
         intake_runner_cross_section_area: circle_area(1.06 * units.inch),
-        exhaust_runner_volume: circle_area(1.05 * units.inch) * 7 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.05 * units.inch),
+        exhaust_runner_volume: circle_area(0.9 * units.inch) * 7 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -205,8 +206,8 @@ public node carrera_gt_v10 {
 
     engine engine(
         name: "Porsche M80.01 V10",
-        starter_torque: 400 * units.lb_ft,
-		starter_speed: 800 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
         redline: 8400 * units.rpm,
         throttle_gamma: 1.0,
 		simulation_frequency: 7200
@@ -286,7 +287,7 @@ public node carrera_gt_v10 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(1200),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9985,
+        idle_throttle_plate_position: 0.999,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(800.0),
         runner_length: 12.0 * units.inch,
@@ -298,7 +299,7 @@ public node carrera_gt_v10 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(1200),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9985,
+        idle_throttle_plate_position: 0.999,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(800.0),
         runner_length: 12.0 * units.inch,
@@ -466,16 +467,16 @@ public node carrera_gt_v10 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 50 * units.deg)
-        .add_sample(3000 * units.rpm, 55 * units.deg)
-        .add_sample(4000 * units.rpm, 58 * units.deg)
+        .add_sample(0000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 55 * units.deg)
+        .add_sample(2000 * units.rpm, 58 * units.deg)
+        .add_sample(3000 * units.rpm, 60 * units.deg)
+        .add_sample(4000 * units.rpm, 60 * units.deg)
         .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 60 * units.deg)
-		.add_sample(7000 * units.rpm, 60 * units.deg)
-		.add_sample(8000 * units.rpm, 60 * units.deg)
-		.add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(6000 * units.rpm, 59 * units.deg)
+		.add_sample(7000 * units.rpm, 56 * units.deg)
+		.add_sample(8000 * units.rpm, 54 * units.deg)
+		.add_sample(9000 * units.rpm, 54 * units.deg)
 
     engine.add_ignition_module(
         porsche_v10_distributor(
