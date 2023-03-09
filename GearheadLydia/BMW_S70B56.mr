@@ -304,8 +304,8 @@ public node bmw_s70b56_engine {
 		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: 50.0 * units.cm2,
 		intake_flow_rate: k_carb(500.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.996,
+		idle_flow_rate: k_carb(0.001),
+		idle_throttle_plate_position: 0.9975,
 		throttle_gamma: 0.8,
 		runner_flow_rate: k_carb(350.0),
 		runner_length: 2.0 * units.inch,
@@ -316,8 +316,8 @@ public node bmw_s70b56_engine {
 		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: 50.0 * units.cm2,
 		intake_flow_rate: k_carb(500.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.996,
+		idle_flow_rate: k_carb(0.001),
+		idle_throttle_plate_position: 0.9975,
 		throttle_gamma: 0.8,
 		runner_flow_rate: k_carb(350.0),
 		runner_length: 2.0 * units.inch,
@@ -506,7 +506,7 @@ public node bmw_s70b56_engine {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 25 * units.deg)
-        .add_sample(1000 * units.rpm, 55 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
         .add_sample(2000 * units.rpm, 75 * units.deg)
         .add_sample(3000 * units.rpm, 74 * units.deg)
         .add_sample(4000 * units.rpm, 70 * units.deg)
