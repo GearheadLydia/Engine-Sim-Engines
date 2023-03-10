@@ -43,7 +43,7 @@ public node volkswagen_w8_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 272 * units.deg,
-            gamma: 1.5,
+            gamma: 1.0,
             lift: 9.85 * units.mm,
             steps: 100
         );
@@ -53,7 +53,7 @@ public node volkswagen_w8_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 258 * units.deg,
-            gamma: 1.5,
+            gamma: 1.0,
             lift: 9.90 * units.mm,
             steps: 100
         );
@@ -233,12 +233,8 @@ public node w8 {
     engine engine(
         name: "Volkswagen W8",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 850 * units.rpm,
+		starter_speed: 1000 * units.rpm,
         redline: 6800 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 8.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
         throttle_gamma: 1.0,
 		simulation_frequency: 9000
     )
