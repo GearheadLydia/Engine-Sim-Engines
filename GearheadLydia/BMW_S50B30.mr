@@ -184,7 +184,7 @@ public node bmw_s50b30_head {
 public node bmw_s50b30_itb {
     input throttlebody_cfm: 350;
     input idle_flow_rate_cfm: 0.001;
-    input idle_throttle_plate_position: 0.999;
+    input idle_throttle_plate_position: 0.9993;
     input throttle_gamma: 6.0;
 
     alias output __out: intake;
@@ -210,7 +210,7 @@ public node S50B30 {
     engine engine(
         name: "BMW S50B30",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 800 * units.rpm,
+        starter_speed: 1000 * units.rpm,
         redline: 7000 * units.rpm, // actual: 7200
         throttle_gamma: 1.0,
 		hf_gain: 0.2,
@@ -254,12 +254,12 @@ public node S50B30 {
         tdc: 90.0 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: 120*units.deg)
-    rod_journal rj2(angle: 240*units.deg)
-    rod_journal rj3(angle: 240*units.deg)
-    rod_journal rj4(angle: 120*units.deg)
-    rod_journal rj5(angle: 0*units.deg)
+    rod_journal rj0(angle:  0  * units.deg)
+    rod_journal rj1(angle: 120 * units.deg)
+    rod_journal rj2(angle: 240 * units.deg)
+    rod_journal rj3(angle: 240 * units.deg)
+    rod_journal rj4(angle: 120 * units.deg)
+    rod_journal rj5(angle:  0  * units.deg)
 	
     c0
         .add_rod_journal(rj0)
