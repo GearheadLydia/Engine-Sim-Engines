@@ -269,7 +269,7 @@ public node V6_AGB {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(450.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.994,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(400.0),
         runner_length: 4.5 * units.inch,
