@@ -40,13 +40,13 @@ private node add_sym_sample {
     this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
-// cams borrowed from RB26 probably
+// https://www.contour.org/ubbthreads/ubbthreads.php?ubb=showflat&Number=679285
 public node ford_duratec_30_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 240 * units.deg,
-            gamma: 0.7,
-            lift: 8.58 * units.mm,
+            duration_at_50_thou: 232 * units.deg,
+            gamma: 1.0,
+            lift: 7.4 * units.mm,
             steps: 100
         );
 }
@@ -54,9 +54,9 @@ public node ford_duratec_30_lobe_profile_int {
 public node ford_duratec_30_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 236 * units.deg,
-            gamma: 0.7,
-            lift: 8.28 * units.mm,
+            duration_at_50_thou: 248 * units.deg,
+            gamma: 1.0,
+            lift: 7.0 * units.mm,
             steps: 100
         );
 }
@@ -66,10 +66,9 @@ public node ford_duratec_30_camshaft_builder {
 	input ex_lobe_profile: ford_duratec_30_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 115.0 * units.deg;
-    input intake_lobe_center: lobe_separation;
-    input exhaust_lobe_center: 121.0 * units.deg;
-    input advance: -10.0 * units.deg;
+    input intake_lobe_center: 112.0 * units.deg;
+    input exhaust_lobe_center: 112.0 * units.deg;
+    input advance: 0.0 * units.deg;
     input base_radius: 16.0 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -128,45 +127,44 @@ private node add_flow_sample {
 public node ford_duratec_30_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 55.0 * units.cc;
+    input chamber_volume: 55.0 * units.cc; // not sure where this number came from?
     input flip_display: false;
 	
-	input flow_attenuation: 1.05;
-    input lift_scale: 1.2;
+	input flow_attenuation: 1.0;
+    input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(1 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 65 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 120 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 155 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 220 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
         .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 245 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 255 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 75 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 105 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 130 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 150 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 158 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 164 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 168 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 176 * flow_attenuation)
-
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
@@ -202,7 +200,7 @@ public node Duratec30 {
     engine engine(
         name: "Ford Duratec V6",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 800 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm, // 7250
         throttle_gamma: 1.0
     )
@@ -397,8 +395,8 @@ public node Duratec30 {
     timing_curve
         .add_sample(0000 * units.rpm, 25 * units.deg)
         .add_sample(1000 * units.rpm, 50 * units.deg)
-        .add_sample(2000 * units.rpm, 55 * units.deg)
-        .add_sample(3000 * units.rpm, 60 * units.deg)
+        .add_sample(2000 * units.rpm, 60 * units.deg)
+        .add_sample(3000 * units.rpm, 65 * units.deg)
         .add_sample(4000 * units.rpm, 65 * units.deg)
         .add_sample(5000 * units.rpm, 65 * units.deg)
         .add_sample(6000 * units.rpm, 65 * units.deg)
