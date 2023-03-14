@@ -568,24 +568,24 @@ public node pagani_zonda_c12_vehicle {
             mass: 1250 * units.kg,
             drag_coefficient: 0.30, // estimated
             cross_sectional_area: 2.0 * (units.m * units.m), // estimated
-            diff_ratio: 2.8,
+            diff_ratio: 3.15,
             tire_radius: 349.5 * units.mm, // 345/35ZR18
             rolling_resistance: 600 * units.N
         );
 }
 
-// gears borrowed from McLaren F1 for lack of information
-public node pagani_zonda_transmission {
+// gears from TDU & NFSC
+public node pagani_zonda_c12_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1000 * units.lb_ft
+            max_clutch_torque: 1200 * units.lb_ft
         )
-        .add_gear(3.23)
-        .add_gear(2.19)
-        .add_gear(1.71)
-        .add_gear(1.39)
-        .add_gear(1.16)
-        .add_gear(0.93);
+        .add_gear(2.880)
+        .add_gear(1.773)
+        .add_gear(1.267)
+        .add_gear(1.000)
+        .add_gear(0.833)
+        .add_gear(0.710);
 }
 
 public node main {
