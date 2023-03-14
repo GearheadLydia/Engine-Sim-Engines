@@ -12,7 +12,7 @@ label cycle(2 * 360 * units.deg)
 public node bmw_s70_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7750 * units.rpm; // top speed run spec: 8000
+    input rev_limit: 7750 * units.rpm; // top speed run spec: 8300
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
