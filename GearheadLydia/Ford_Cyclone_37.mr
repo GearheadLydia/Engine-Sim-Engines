@@ -56,8 +56,7 @@ public node ford_cyclone_37_camshaft_builder {
 	input ex_lobe_profile: ford_cyclone_37_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 110.0 * units.deg;
-    input intake_lobe_center: lobe_separation;
+    input intake_lobe_center: 110.0 * units.deg;
     input exhaust_lobe_center: 112.0 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
@@ -113,7 +112,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node ford_cyclone_37_head {
@@ -123,10 +122,10 @@ public node ford_cyclone_37_head {
     input flip_display: false;
 	
 	input flow_attenuation: 1.0;
-    input lift_scale: 50.0;
+    input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(1.1 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -142,7 +141,7 @@ public node ford_cyclone_37_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.1 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -163,8 +162,8 @@ public node ford_cyclone_37_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.2 * units.inch) * 4 * units.inch,
         intake_runner_cross_section_area: circle_area(1.2 * units.inch),
-        exhaust_runner_volume: circle_area(1.2 * units.inch) * 7 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.2 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 7 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -183,13 +182,9 @@ public node ford_cyclone_37 {
     engine engine(
         name: "Ford Cyclone V6",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
+		starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0,
+        throttle_gamma: 1.0,
 		hf_gain: 0.05,
 		jitter: 0.5
     )
@@ -204,7 +199,7 @@ public node ford_cyclone_37 {
 	label deck_height((8.97 * units.inch) + (0 * units.mm))
 	label piston_dome(0 * units.cc)
     label crank_mass(65 * units.lb)
-    label flywheel_mass(25 * 2 * units.lb)
+    label flywheel_mass(50 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -221,7 +216,7 @@ public node ford_cyclone_37 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -270,10 +265,10 @@ public node ford_cyclone_37 {
 	intake intake (
 		plenum_volume: 5.0 * units.L,
 		plenum_cross_section_area: 100.0 * units.cm2,
-		intake_flow_rate: k_carb(600.0),
+		intake_flow_rate: k_carb(500.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.996,
-		throttle_gamma: 2.0,
+		idle_throttle_plate_position: 0.997,
+		throttle_gamma: 1.0,
 		runner_flow_rate: k_carb(500.0),
 		runner_length: 5.0 * units.inch,
 		velocity_decay: 0.1
@@ -281,28 +276,22 @@ public node ford_cyclone_37 {
 	
 	label exhaust_radius((3.5 * units.inch)/2)
 
-    exhaust_system_parameters es_params_L(
-        outlet_flow_rate: k_carb(600.0),
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 7.0 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 730 * units.mm,
-		volume: 730 * units.mm * circle_area(exhaust_radius)
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 2400 * units.mm,
+		volume: (1800 * units.mm * circle_area(exhaust_radius)) + (600 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system_parameters es_params_R(
-        outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 7.0 * units.inch,
-        primary_flow_rate: k_carb(250.0),
-        velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 700 * units.mm,
-		volume: 700 * units.mm * circle_area(exhaust_radius)
-    )
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 
-    exhaust_system exhaustL(es_params_L, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-    exhaust_system exhaustR(es_params_R, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+	label pipe_length_1(2.5 * units.inch)
+	label pipe_length_2(0.0 * units.inch)
+	label pipe_length_3(1.5 * units.inch)
+	label exhaust_stagger(30 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 30.0 * units.deg)
     b0
@@ -312,8 +301,8 @@ public node ford_cyclone_37 {
             rod_journal: rj0,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 3.5 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger,
 			sound_attenuation: 0.8
         )
         .add_cylinder(
@@ -322,8 +311,8 @@ public node ford_cyclone_37 {
             rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 1.0 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -332,8 +321,8 @@ public node ford_cyclone_37 {
             rod_journal: rj4,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 2.5 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger,
 			sound_attenuation: 0.9
         )
 
@@ -345,8 +334,8 @@ public node ford_cyclone_37 {
             rod_journal: rj1,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 3.5 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1,
 			sound_attenuation: 0.8
         )
         .add_cylinder(
@@ -355,8 +344,8 @@ public node ford_cyclone_37 {
             rod_journal: rj3,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 1.0 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -365,8 +354,8 @@ public node ford_cyclone_37 {
             rod_journal: rj5,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 2.5 * units.inch,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3,
 			sound_attenuation: 0.9
         )
 
@@ -399,15 +388,14 @@ public node ford_cyclone_37 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 65 * units.deg)
-		.add_sample(7000 * units.rpm, 70 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
-		.add_sample(9000 * units.rpm, 75 * units.deg)
+        .add_sample(1000 * units.rpm, 55 * units.deg)
+        .add_sample(2000 * units.rpm, 60 * units.deg)
+        .add_sample(3000 * units.rpm, 60 * units.deg)
+        .add_sample(4000 * units.rpm, 60 * units.deg)
+        .add_sample(5000 * units.rpm, 59 * units.deg)
+        .add_sample(6000 * units.rpm, 58 * units.deg)
+		.add_sample(7000 * units.rpm, 57 * units.deg)
+		.add_sample(8000 * units.rpm, 57 * units.deg)
 
     engine.add_ignition_module(
         ford_cyclone_37_distributor(
