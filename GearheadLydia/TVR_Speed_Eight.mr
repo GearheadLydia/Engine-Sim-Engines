@@ -10,7 +10,8 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 14527638 (deduced from engine rebuild manual)
+// firing order: 14527638
+// confirmed here: https://www.msextra.com/forums/viewtopic.php?t=66213
 
 label rot15(15 * units.deg)
 
