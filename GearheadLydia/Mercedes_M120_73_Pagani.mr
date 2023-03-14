@@ -190,8 +190,8 @@ public node mercedes_m120_73_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 6 * units.inch,
         intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 8 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.75 * units.inch) * 8 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -213,7 +213,8 @@ public node m120_73 {
 		starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
         throttle_gamma: 0.8,
-		simulation_frequency: 6500
+		simulation_frequency: 6000,
+		hf_gain: 0.1
     )
 
     label bore(91.5 * units.mm)
@@ -315,23 +316,23 @@ public node m120_73 {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1200.0),
-        primary_tube_length: 50.0 * units.inch,
+        primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(850.0),
         velocity_decay: 1.0, //0.5
-        volume: 30.0 * units.L,
+        volume: 10.0 * units.L,
 		length: 500 * units.mm
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.0005, impulse_response: ir_lib.default_0)
 	
-	label exh_vol_warble(-0.1)
+	label exh_vol_warble(-0.05)
 	
 	label pipe_length_1(15 * units.mm)
-	label pipe_length_2(10 * units.mm)
-	label pipe_length_3(5 * units.mm)
+	label pipe_length_2(9 * units.mm)
+	label pipe_length_3(3 * units.mm)
 	label pipe_length_4(0 * units.mm)
-	label pipe_length_5(5 * units.mm)
-	label pipe_length_6(10 * units.mm)
+	label pipe_length_5(6 * units.mm)
+	label pipe_length_6(12 * units.mm)
 	
 	label exhaust_stagger(10 * units.mm)
 	
@@ -348,7 +349,7 @@ public node m120_73 {
             intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: exh_vol_L0
+			sound_attenuation: exh_vol_L0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -378,7 +379,7 @@ public node m120_73 {
             intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: exh_vol_L0 + exh_vol_warble
+			sound_attenuation: exh_vol_L0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -411,7 +412,7 @@ public node m120_73 {
             intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
-			sound_attenuation: exh_vol_R0 + exh_vol_warble
+			sound_attenuation: exh_vol_R0 + (exh_vol_warble * 2)
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -431,7 +432,7 @@ public node m120_73 {
             intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
-			sound_attenuation: exh_vol_R0 + exh_vol_warble
+			sound_attenuation: exh_vol_R0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -451,7 +452,7 @@ public node m120_73 {
             intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_5,
-			sound_attenuation: exh_vol_R0 + exh_vol_warble
+			sound_attenuation: exh_vol_R0 + (exh_vol_warble * 2)
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -461,7 +462,7 @@ public node m120_73 {
             intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_6,
-			sound_attenuation: exh_vol_R0
+			sound_attenuation: exh_vol_R0 + exh_vol_warble
         )
 
     engine
@@ -517,7 +518,7 @@ public node m120_73 {
     engine.add_ignition_module(
         mercedes_m120_73_distributor(
             wires: wires,
-            timing_curve: timing_curve_s73
+            timing_curve: timing_curve_f
         )
     )
 }
@@ -529,10 +530,24 @@ public node pagani_zonda_s_73_vehicle {
             mass: 1280 * units.kg,
             drag_coefficient: 0.30, // estimated
             cross_sectional_area: 1.95 * (units.m * units.m), // A-C's estimate
-            diff_ratio: 3.0,
+            diff_ratio: 3.36,
             tire_radius: 349.5 * units.mm, // 345/35ZR18
             rolling_resistance: 600 * units.N
         );
+}
+
+// gears from TDU & NFSC
+public node pagani_zonda_s_73_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 1200 * units.lb_ft
+        )
+        .add_gear(2.880)
+        .add_gear(1.773)
+        .add_gear(1.267)
+        .add_gear(1.000)
+        .add_gear(0.833)
+        .add_gear(0.710);
 }
 
 // 2006 Pagani Zonda F
@@ -542,30 +557,30 @@ public node pagani_zonda_f_vehicle {
             mass: 1300 * units.kg,
             drag_coefficient: 0.30, // estimated
             cross_sectional_area: 1.95 * (units.m * units.m), // A-C's estimate
-            diff_ratio: 3.0,
+            diff_ratio: 3.36,
             tire_radius: 354.33 * units.mm, // 335/30ZR20
             rolling_resistance: 600 * units.N
         );
 }
 
-// gears borrowed from McLaren F1 for lack of information
-public node pagani_zonda_transmission {
+// gears from NFSC
+public node pagani_zonda_f_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 1200 * units.lb_ft
         )
-        .add_gear(3.23)
-        .add_gear(2.19)
-        .add_gear(1.71)
-        .add_gear(1.39)
-        .add_gear(1.16)
-        .add_gear(0.93);
+        .add_gear(2.750)
+        .add_gear(1.773)
+        .add_gear(1.267)
+        .add_gear(1.000)
+        .add_gear(0.833)
+        .add_gear(0.710);
 }
 
 public node main {
     set_engine(m120_73())
-    set_vehicle(pagani_zonda_s_73_vehicle())
-    set_transmission(pagani_zonda_transmission())
+    set_vehicle(pagani_zonda_f_vehicle())
+    set_transmission(pagani_zonda_f_transmission())
 }
 
 main()
