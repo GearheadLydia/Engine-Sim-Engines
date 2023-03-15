@@ -180,7 +180,7 @@ public node rb30e {
         throttle_gamma: 2.0
     )
 	
-	label lean_angle(-8.42 * units.deg)
+	label lean_angle(-10 * units.deg)
 
     label bore(86.0 * units.mm)
     label stroke(85.0 * units.mm)

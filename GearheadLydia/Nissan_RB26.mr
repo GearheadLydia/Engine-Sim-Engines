@@ -207,7 +207,7 @@ public node nissan_rb26dett {
         throttle_gamma: 1.0
     )
 	
-	label lean_angle(-8.42 * units.deg)
+	label lean_angle(-10 * units.deg)
 
     label bore(86.0 * units.mm)
     label stroke(73.7 * units.mm)
@@ -309,13 +309,13 @@ public node nissan_rb26dett {
         primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 600 * units.mm,
-		volume: 600 * units.mm * circle_area(exhaust_radius)
+		length: 2500 * units.mm,
+		volume: 2500 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system exhaust(
 		es_params,
-		audio_volume: 1.0 * 0.01,
+		audio_volume: 1.0 * 0.1,
 		impulse_response: ir_lib.default_0
 	)
 	

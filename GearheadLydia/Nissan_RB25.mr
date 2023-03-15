@@ -185,7 +185,7 @@ public node nissan_rb25det {
         throttle_gamma: 2.0
     )
 	
-	label lean_angle(-8.42 * units.deg)
+	label lean_angle(-10 * units.deg)
 
     label bore(86.0 * units.mm)
     label stroke(71.7 * units.mm)

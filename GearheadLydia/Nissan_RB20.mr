@@ -181,7 +181,7 @@ public node nissan_rb20det {
         throttle_gamma: 2.0
     )
 	
-	label lean_angle(-8.42 * units.deg)
+	label lean_angle(-10 * units.deg)
 
     label bore(78.0 * units.mm)
     label stroke(69.7 * units.mm)
