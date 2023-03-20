@@ -296,7 +296,7 @@ public node vg30 {
 		volume: (1800 * units.mm * circle_area(exhaust_radius)) + (1000 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.008, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(4.8 * units.inch)
 	label pipe_length_2(2.2 * units.inch)
