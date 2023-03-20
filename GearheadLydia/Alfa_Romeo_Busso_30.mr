@@ -293,11 +293,11 @@ public node alfa_romeo_busso_30 {
         primary_flow_rate: k_carb(750.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 800 * units.mm,
-		volume: (500 * units.mm * circle_area(exhaust_radius)) + (300 * units.mm * circle_area(exhaust_radius) * 2)
+		length: 2000 * units.mm,
+		volume: (1500 * units.mm * circle_area(exhaust_radius)) + (500 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(3 * units.inch)
 	label pipe_length_2(0 * units.inch)
