@@ -528,8 +528,8 @@ public node lamborghini_diablo_vt_60_transmission {
 
 public node main {
     set_engine(lamborghini_diablo_v12_60())
-    set_vehicle(lamborghini_diablo_vehicle())
-    set_transmission(lamborghini_diablo_transmission())
+    set_vehicle(lamborghini_diablo_vt_60_vehicle())
+    set_transmission(lamborghini_diablo_vt_60_transmission())
 }
 
 main()
