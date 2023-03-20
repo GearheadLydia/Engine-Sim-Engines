@@ -209,7 +209,7 @@ public node lamborghini_v12_diablo_head {
     )
 }
 
-public node murcielago_v12 {
+public node lamborghini_diablo_v12_57 {
     alias output __out: engine;
 
     label bore(87.0 * units.mm)
@@ -519,15 +519,15 @@ public node lamborghini_diablo_transmission {
         transmission(
             max_clutch_torque: 1000 * units.lb_ft
         )
-        .add_gear(2.31)
-        .add_gear(1.52)
-        .add_gear(1.12)
-        .add_gear(0.88)
+        .add_gear(2.313)
+        .add_gear(1.524)
+        .add_gear(1.125)
+        .add_gear(0.889)
         .add_gear(0.676);
 }
 
 public node main {
-    set_engine(murcielago_v12())
+    set_engine(lamborghini_diablo_v12_57())
     set_vehicle(lamborghini_diablo_vehicle())
     set_transmission(lamborghini_diablo_transmission())
 }

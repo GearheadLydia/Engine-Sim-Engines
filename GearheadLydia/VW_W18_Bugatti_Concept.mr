@@ -643,10 +643,10 @@ public node bugatti_18_3_chiron_transmission {
         transmission(
             max_clutch_torque: 2000 * units.lb_ft
         )
-        .add_gear(2.31)
-        .add_gear(1.52)
-        .add_gear(1.12)
-        .add_gear(0.88)
+        .add_gear(2.313)
+        .add_gear(1.524)
+        .add_gear(1.125)
+        .add_gear(0.889)
         .add_gear(0.676);
 }
 
