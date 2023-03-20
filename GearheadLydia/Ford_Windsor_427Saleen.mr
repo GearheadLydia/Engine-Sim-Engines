@@ -173,7 +173,7 @@ public node ford_windsor_427saleen_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.15 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.15 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 7 * units.inch,
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 3 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -196,8 +196,8 @@ public node saleen_427w_engine {
 		starter_speed: 1500 * units.rpm,
         redline: 6000 * units.rpm, // 6400?
         throttle_gamma: 2.0,
-		jitter: 0.6,
-		hf_gain: 0.05
+		jitter: 0.5,
+		hf_gain: 0.01
     )
 
     label bore(4.120 * units.inch)
@@ -277,7 +277,7 @@ public node saleen_427w_engine {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.998,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(450.0),
+        runner_flow_rate: k_carb(950.0),
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
     )
@@ -286,7 +286,7 @@ public node saleen_427w_engine {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1400.0),
-        primary_tube_length: 9.0 * units.inch,
+        primary_tube_length: 12.0 * units.inch,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
@@ -312,7 +312,8 @@ public node saleen_427w_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger_LR
+			primary_length: pipe_length_1 + exhaust_stagger_LR,
+			sound_attenuation: 0.3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -321,7 +322,8 @@ public node saleen_427w_engine {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger_LR
+			primary_length: pipe_length_2 + exhaust_stagger_LR,
+			sound_attenuation: 0.5
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -330,7 +332,8 @@ public node saleen_427w_engine {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger_LR
+			primary_length: pipe_length_3 + exhaust_stagger_LR,
+			sound_attenuation: 0.5
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -339,7 +342,8 @@ public node saleen_427w_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger_LR
+			primary_length: pipe_length_4 + exhaust_stagger_LR,
+			sound_attenuation: 0.3
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -360,7 +364,8 @@ public node saleen_427w_engine {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2,
+			sound_attenuation: 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -369,7 +374,8 @@ public node saleen_427w_engine {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3,
+			sound_attenuation: 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
