@@ -55,10 +55,9 @@ public node nissan_vg30_camshaft_builder {
 	input ex_lobe_profile: nissan_vg30_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 120.0 * units.deg;
-    input intake_lobe_center: 120.0 * units.deg;
-    input exhaust_lobe_center: 120.0 * units.deg;
-    input advance: -5.0 * units.deg;
+    input intake_lobe_center: 125.0 * units.deg;
+    input exhaust_lobe_center: 115.0 * units.deg;
+    input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -112,7 +111,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node nissan_vg30_head {
@@ -121,11 +120,11 @@ public node nissan_vg30_head {
     input chamber_volume: 48.4 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation: 0.85;
-    input lift_scale: 50.0;
+	input flow_attenuation: 0.9;
+    input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(1.15 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -141,7 +140,7 @@ public node nissan_vg30_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.15 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -162,8 +161,8 @@ public node nissan_vg30_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.1 * units.inch) * 9 * units.inch,
         intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 5 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -184,7 +183,7 @@ public node vg30 {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
-        throttle_gamma: 2.0,
+        throttle_gamma: 1.0,
 		hf_gain: 0.15,
 		jitter: 0.5
     )
@@ -262,24 +261,24 @@ public node vg30 {
     )
 
 	intake intake_L (
-		plenum_volume: 3.0 * units.L,
+		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: circle_area(1.2 * units.inch),
 		intake_flow_rate: k_carb(300.0),
 		idle_flow_rate: k_carb(0.001),
 		idle_throttle_plate_position: 0.9975,
-		throttle_gamma: 1.0,
+		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(500.0),
 		runner_length: 16.0 * units.inch,
 		velocity_decay: 0.1
 	)
 
 	intake intake_R (
-		plenum_volume: 3.0 * units.L,
+		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: circle_area(1.2 * units.inch),
 		intake_flow_rate: k_carb(300.0),
 		idle_flow_rate: k_carb(0.001),
 		idle_throttle_plate_position: 0.9975,
-		throttle_gamma: 1.0,
+		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(500.0),
 		runner_length: 16.0 * units.inch,
 		velocity_decay: 0.1
@@ -288,7 +287,7 @@ public node vg30 {
 	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(800.0),
+        outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 15.0 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
@@ -299,13 +298,13 @@ public node vg30 {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(4.0 * units.inch)
-	label pipe_length_2(1.1 * units.inch)
+	label pipe_length_1(4.8 * units.inch)
+	label pipe_length_2(2.2 * units.inch)
 	label pipe_length_3(0.0 * units.inch)
 	
 	label exhaust_stagger(90 * units.mm)
 
-    cylinder_bank b0(bank_params, angle: 30.0 * units.deg)
+    cylinder_bank b0(bank_params, angle: 30.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -315,7 +314,7 @@ public node vg30 {
             intake: intake_L,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -325,7 +324,7 @@ public node vg30 {
             intake: intake_L,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -338,7 +337,7 @@ public node vg30 {
 			sound_attenuation: 1.0
         )
 
-    cylinder_bank b1(bank_params, angle: -30.0 * units.deg)
+    cylinder_bank b1(bank_params, angle: -30.0 * units.deg) // R (second)
     b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -358,7 +357,7 @@ public node vg30 {
             intake: intake_R,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -368,7 +367,7 @@ public node vg30 {
             intake: intake_R,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.8
         )
 
     engine
@@ -400,14 +399,14 @@ public node vg30 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 60 * units.deg)
-        .add_sample(2000 * units.rpm, 62 * units.deg)
-        .add_sample(3000 * units.rpm, 63 * units.deg)
-        .add_sample(4000 * units.rpm, 64 * units.deg)
-        .add_sample(5000 * units.rpm, 65 * units.deg)
-        .add_sample(6000 * units.rpm, 66 * units.deg)
-		.add_sample(7000 * units.rpm, 66 * units.deg)
-		.add_sample(8000 * units.rpm, 66 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 67 * units.deg)
+        .add_sample(5000 * units.rpm, 63 * units.deg)
+        .add_sample(6000 * units.rpm, 59 * units.deg)
+		.add_sample(7000 * units.rpm, 55 * units.deg)
+		.add_sample(8000 * units.rpm, 55 * units.deg)
 
     engine.add_ignition_module(
         nissan_vg30_distributor(
