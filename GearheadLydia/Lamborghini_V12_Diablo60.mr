@@ -486,13 +486,13 @@ public node lamborghini_diablo_v12_60 {
     timing_curve
         .add_sample(0000 * units.rpm, 15 * units.deg)
         .add_sample(1000 * units.rpm, 35 * units.deg)
-        .add_sample(2000 * units.rpm, 56 * units.deg)
-        .add_sample(3000 * units.rpm, 53 * units.deg)
-        .add_sample(4000 * units.rpm, 50 * units.deg)
-        .add_sample(5000 * units.rpm, 47 * units.deg)
-        .add_sample(6000 * units.rpm, 44 * units.deg)
-        .add_sample(7000 * units.rpm, 41 * units.deg)
-        .add_sample(8000 * units.rpm, 41 * units.deg)
+        .add_sample(2000 * units.rpm, 41 * units.deg)
+        .add_sample(3000 * units.rpm, 43 * units.deg)
+        .add_sample(4000 * units.rpm, 43 * units.deg)
+        .add_sample(5000 * units.rpm, 42 * units.deg)
+        .add_sample(6000 * units.rpm, 41 * units.deg)
+        .add_sample(7000 * units.rpm, 40 * units.deg)
+        .add_sample(8000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
         lamborghini_v12_diablo_distributor(
