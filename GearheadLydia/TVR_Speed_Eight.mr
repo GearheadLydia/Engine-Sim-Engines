@@ -313,8 +313,8 @@ public node ajp8 {
 		volume: 2000 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(90 * units.mm)
 	label pipe_length_2(75 * units.mm)
