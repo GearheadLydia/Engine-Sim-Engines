@@ -311,7 +311,7 @@ public node ajp8 {
     exhaust_system exhaustL(es_params_L, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
     exhaust_system exhaustR(es_params_R, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 
-    cylinder_bank b0(bank_params, angle: -27.5 * units.deg) // R (first)
+    cylinder_bank b0(bank_params, angle: -37.5 * units.deg) // R (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -354,7 +354,7 @@ public node ajp8 {
 			sound_attenuation: 0.4
         )
 
-    cylinder_bank b1(bank_params, angle: 27.5 * units.deg) // L (second)
+    cylinder_bank b1(bank_params, angle: 37.5 * units.deg) // L (second)
     b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
