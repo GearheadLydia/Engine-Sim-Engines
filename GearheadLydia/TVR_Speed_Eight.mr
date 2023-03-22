@@ -134,9 +134,9 @@ public node tvr_ajp8_head {
     input chamber_volume: 57.0 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation_in: 0.8;
-	input flow_attenuation_ex: 0.8;
-    input lift_scale: 1.2;
+	input flow_attenuation_in: 0.84;
+	input flow_attenuation_ex: 0.84;
+    input lift_scale: 1.25;
     alias output __out: head;
 
     function intake_flow(1.0 * units.mm)
@@ -175,8 +175,8 @@ public node tvr_ajp8_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(0.9 * units.inch) * 9 * units.inch,
         intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 6 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 6 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -226,13 +226,13 @@ public node ajp8 {
     label bore(91.0 * units.mm)
     label stroke(86.0 * units.mm)
     label rod_length(144.0 * units.mm)
-    label rod_mass(621.5 * units.g)
+    label rod_mass(625 * units.g)
 	label piston_mass(400 * units.g)
     label compression_height(25.00 * units.mm)
 	label piston_dome(5.00 * units.cc)
 	label deck_clearance(0.5 * units.mm)
     label crank_mass(41 * units.lb)
-    label flywheel_mass(29 * 2 * units.lb)
+    label flywheel_mass(40 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -316,12 +316,12 @@ public node ajp8 {
     exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
     exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(60 * units.mm)
-	label pipe_length_2(45 * units.mm)
+	label pipe_length_1(90 * units.mm)
+	label pipe_length_2(75 * units.mm)
 	label pipe_length_3( 0  * units.mm)
-	label pipe_length_4(30 * units.mm)
+	label pipe_length_4(60 * units.mm)
 	
-	label exhaust_stagger(60 * units.mm)
+	label exhaust_stagger(150 * units.mm)
 
     cylinder_bank b0(bank_params, angle: -37.5 * units.deg) // R (first)
     b0
@@ -332,7 +332,7 @@ public node ajp8 {
             ignition_wire: wires.wire1,
             intake: itb1,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_1 + exhaust_stagger,
+			primary_length: pipe_length_1,
 			sound_attenuation: 0.4
         )
         .add_cylinder(
@@ -342,8 +342,8 @@ public node ajp8 {
             ignition_wire: wires.wire3,
             intake: itb3,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 0.5
+			primary_length: pipe_length_2,
+			sound_attenuation: 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -352,8 +352,8 @@ public node ajp8 {
             ignition_wire: wires.wire5,
             intake: itb5,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.5
+			primary_length: pipe_length_3,
+			sound_attenuation: 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -362,11 +362,11 @@ public node ajp8 {
             ignition_wire: wires.wire7,
             intake: itb7,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_4 + exhaust_stagger,
+			primary_length: pipe_length_4,
 			sound_attenuation: 0.4
         )
 
-    cylinder_bank b1(bank_params, angle: 37.5 * units.deg) // L (second)
+    cylinder_bank b1(bank_params, angle: 37.5 * units.deg) // L (second) - stagger on this side for sound reasons
     b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -375,8 +375,8 @@ public node ajp8 {
             ignition_wire: wires.wire2,
             intake: itb2,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_1,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_1 + exhaust_stagger,
+			sound_attenuation: 0.3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -385,7 +385,7 @@ public node ajp8 {
             ignition_wire: wires.wire4,
             intake: itb4,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_2,
+			primary_length: pipe_length_2 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -395,7 +395,7 @@ public node ajp8 {
             ignition_wire: wires.wire6,
             intake: itb6,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_3,
+			primary_length: pipe_length_3 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -405,8 +405,8 @@ public node ajp8 {
             ignition_wire: wires.wire8,
             intake: itb8,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_4,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_4 + exhaust_stagger,
+			sound_attenuation: 0.3
         )
 
     engine
