@@ -1,0 +1,208 @@
+
+outstanding mysteries: what even is the Lamborghini Urraco's firing order? (solved)
+
+---
+
+Inline 6
+142635 (L) - mirror/reverse of 153624, used in Mercedes-Benz I6s
+153624 (D) - basically every inline six ever
+
+
+V6
+123456 (D) - most V6s
+165432 (L) - mirror/reverse of 123456; Buick Fireball V6, Audi 90 deg V6, some others
+
+
+90 degree V8F NUMBERS
+8	7
+6	5
+4	3
+2	1
+
+
+90 degree V8F (E)
+0	90
+180	270
+180	270
+0	90
+
+90 degree V8F (O)
+180	270
+0	90
+180	270
+0	90
+
+90 degree V8 flatplane (ALL REORDERED TO GM LS CYLINDER NUMBERING - ALL CLOCKWISE)
+12765834 (E) - 1342/4312 | hypothetical (different order between banks)
+14387652 (E) - 1243/1243 | hypothetical (same order between banks)
+14527638 (E) - 1342/4213 | most Ferrari apparently, McLaren M838T, TVR Speed Eight (as far as I can tell)
+14587632 (E) - 1243/4213 | hypothetical (different order between banks)
+16327458 (E) - 1243/4312 | hypothetical (same order between banks)
+16387542 (E) - 1342/1243 | hypothetical (different order between banks)
+16527438 (E) - 1342/4312 | hypothetical (different order between banks)
+16587432 (E) - 1342/1342 | Lotus Type 918
+
+14365872 (O) - 1234/1234 | Shelby GT350
+
+90 degree V8X NUMBERS
+8	7
+6	5
+4	3
+2	1
+
+90 degree V8X (D) - swappable cylinders: 1/6, 2/3, 4/7, 5/8
+180	270
+90	180
+270	0
+0	90
+
+90 degree V8X (L) - swappable cylinders: 1/4, 2/5, 3/8, 6/7 - to switch to this layout, switch 3/5 4/6
+180	270
+270	0
+90	180
+0	90
+
+90 degree V8 crossplane (ALL REORDERED TO GM LS CYLINDER NUMBERING - ALL CLOCKWISE)
+13654872 (L) - FR adj - not used anywhere;           cylinder transposition of 15436872, CCW mirror image of 18736542, hypothetical 3/8 swap on S65
+15436872 (D) - RL adj - Ferrari F136 crossplane; Cadillac Blackwing LTA
+18436572 (D) - RR adj - Mopar; AMC; GM most (SBC/BBC/Buick/Pontiac/Olds/Cadillac/Northstar); Ford 1960s (FE / 385 / early Windsor) and SHO; Ford / Jaguar AJ-V8; Volvo B8444S and B32; Toyota UZ/VD; most Mercedes-Benz (M113, M156/M157/M152/M278) (4/7 swap on M119); Rover/MG/Triumph V8; Hudson V8; Alfa Romeo Montreal; Aston Martin Tadek Marek V8; Daimler V8
+18654372 (L) - RL adj - not used anywhere;           cylinder transposition and CCW mirror image of 18436572, hypothetical 6/7 swap on S65
+18724365 (L) - FL adj - not used anywhere;           cylinder transposition and CCW mirror image of 18726543, hypothetical 2/5 swap on S65
+18726543 (D) - FR adj - GM LS and L8T; Ford 351M, late Windsor, and early Modular; RR/Bentley L late; Volvo Penta; Cadillac BB pre-1963; Porsche M28/M48
+18736542 (D) - FL adj - Ford most (Nailhead, Y-block, Cleveland, Coyote/Miami, 4.4TD, Godzilla); some GM (Holden, Buick Nailhead, Cadillac Flathead); most BMW (M60, M62/S62); Toyota UR; Nissan VH/VK; Audi 4.2; MB M116/M117/M119; Hyundai Omega/Tau; RR/Bentley L early
+18754362 (L) - RR adj - BMW S65; Lamborghini Urraco; cylinder transposition of 18736542, CCW mirror image of 15436872
+
+W8 VW - firing angles
+  0	  90
+180	270
+  180	  270
+0	90
+W8 Vw - pin positions
+  15	  87
+0	72
+  15	  87
+0	72
+firing order: 15264837
+
+
+inline-8
+0
+180
+90
+270
+270
+90
+180
+0
+
+
+68 degree V10, odd fire (D)
+144	212
+216	284
+72	140
+288	356
+0	68
+
+even fire V10 (D)
+144	216
+216	288
+72	144
+288	0
+0	72
+
+even fire V10 (F) - LFA
+72	144
+288	0
+216	288
+144	216
+0	72
+
+90 degree V10, odd fire (D)
+144	234
+216	306
+72	162
+288	18
+0	90
+
+72 or 90 degree V10
+1-10-9-4-3-6-5-8-7-2 (D) - basically every V10, with or without odd firing
+1-4-3-8-7-10-9-6-5-2 (F) - William Moser's conjecture for the Lexus LFA
+
+
+60 (65) degree V12 (D)
+0	60
+120	180
+240	300
+240	300
+120	180
+0	60
+
+60 (65) degree V12 (L)
+0	60
+240	300
+120	180
+120	180
+240	300
+0	60
+
+L/R
+123654/123654 (D) - hypothetical
+123654/654123 (D) - hypothetical
+142635/142635 (L) - Lamborghini Aventador
+142635/635142 (L) - Lamborghini most (Miura, Diablo, Murcielago), Rolls-Royce V12 (Merlin, Griffon, Kestrel etc)
+145632/145632 (L) - hypothetical
+145632/632145 (L) - hypothetical
+153624/153624 (D) - Ferrari (except maybe 456M), BMW
+153624/624153 (D) - Lamborghini Countach, Mercedes-Benz / AMG / Pagani, Toyota 1GZ, Jaguar SOHC, maybe Ferrari 456M
+
+Ferrari flat-12 (guess)
+0	180
+120	300
+240	60
+240	60
+120	300
+0	180
+
+GUESS 1: 1-9-5-12-3-8-6-10-2-7-4-11
+GUESS 2: 1-10-5-7-3-11-6-9-2-12-4-8
+
+7 11 9 12 8 10
+
+Ferrari V12 65deg
+1-12-5-8-3-10-6-7-2-11-4-9
+
+W12 VAG - firing angles
+  0	  60
+120	180
+  240	  300
+240	300
+  120	  180
+0	60
+W12 VAG - pin positions
+  15	  87
+0	72
+  15	  87
+0	72
+  15	  87
+0	72
+
+W16 Bugatti - firing angles
+   45	  135
+180	270
+  315	   45
+270	0
+  135	  225
+90	180
+  225	  315
+0	90
+W16 Bugatti - pin positions
+  15	  105
+0	90
+  15	  105
+0	90
+  15	  105
+0	90
+  15	  105
+0	90
+
+hypothetical "cleaner" alternate: 1-14-3-16-7-12-5-10-13-8-9-4-11-2-15-6
