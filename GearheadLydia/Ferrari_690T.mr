@@ -197,14 +197,11 @@ public node F690T {
 
     engine engine(
         name: "Alfa Romeo 690T",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
         redline: 6500 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+        fuel: fuel(max_burning_efficiency: 0.99), // free power to compensate for not having turbos
+        throttle_gamma: 1.0
     )
 
     label crank_moment(
