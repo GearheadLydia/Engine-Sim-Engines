@@ -1,0 +1,254 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+label cycle(3 * 360 * units.deg)
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+}
+
+// this only exists to let me play with the flow rate
+public node sinusoidal_flow_port {
+    input start_angle;
+    input end_angle;
+    input max_flow_rate;
+    alias output __out:
+        wankel_peripheral_port(
+            start_angle: start_angle,
+            end_angle: end_angle,
+            flow_rate: flow_rate
+        );
+
+    function flow_rate()
+		flow_rate.add_sample(0.0, max_flow_rate * 0.000000)
+		flow_rate.add_sample(0.1, max_flow_rate * 0.156434)
+		flow_rate.add_sample(0.2, max_flow_rate * 0.309016)
+		flow_rate.add_sample(0.3, max_flow_rate * 0.453990)
+		flow_rate.add_sample(0.4, max_flow_rate * 0.587785)
+		flow_rate.add_sample(0.5, max_flow_rate * 0.707106)
+		flow_rate.add_sample(0.6, max_flow_rate * 0.809016)
+		flow_rate.add_sample(0.7, max_flow_rate * 0.891007)
+		flow_rate.add_sample(0.8, max_flow_rate * 0.951057)
+		flow_rate.add_sample(0.9, max_flow_rate * 0.987688)
+		flow_rate.add_sample(1.0, max_flow_rate * 1.000000)
+}
+
+public node reverse_sine_flow_port {
+    input start_angle;
+    input end_angle;
+    input max_flow_rate;
+    alias output __out:
+        wankel_peripheral_port(
+            start_angle: start_angle,
+            end_angle: end_angle,
+            flow_rate: flow_rate
+        );
+
+    function flow_rate()
+		flow_rate.add_sample(0.000000, max_flow_rate * 0.0)
+		flow_rate.add_sample(0.156434, max_flow_rate * 0.1)
+		flow_rate.add_sample(0.309016, max_flow_rate * 0.2)
+		flow_rate.add_sample(0.453990, max_flow_rate * 0.3)
+		flow_rate.add_sample(0.587785, max_flow_rate * 0.4)
+		flow_rate.add_sample(0.707106, max_flow_rate * 0.5)
+		flow_rate.add_sample(0.809016, max_flow_rate * 0.6)
+		flow_rate.add_sample(0.891007, max_flow_rate * 0.7)
+		flow_rate.add_sample(0.951057, max_flow_rate * 0.8)
+		flow_rate.add_sample(0.987688, max_flow_rate * 0.9)
+		flow_rate.add_sample(1.000000, max_flow_rate * 1.0)
+}
+
+private node mazda_13b_msp {
+    alias output __out: engine;
+
+    wankel_engine engine(
+        name: "Mazda 13B-MSP Renesis",
+        starter_torque: 120 * units.lb_ft,
+        starter_speed: 1500 * units.rpm,
+        redline: 9000 * units.rpm,
+        throttle_gamma: 1.0,
+        rotor_calculation_quality: 1024,
+        rotor_housing_resolution: 1024,
+		simulation_frequency: 10000
+    )
+
+    wires wires()
+
+    label eccentricity(15.0 * units.mm)
+    label rotor_radius(105.0 * units.mm)
+    label rotor_depth(80 * units.mm)
+	label rotor_depression_volume(10 * units.cc)
+    label intake_port_start(55 * units.deg)
+    label intake_port_end(40 * units.deg)
+	label intake_flow_rate(k_carb(650))
+	label intake_runner_area(circle_area(0.5 * units.inch))
+    label exhaust_port_start(50 * units.deg)
+    label exhaust_port_end(60 * units.deg)
+	label exhaust_flow_rate(k_carb(650))
+	label exhaust_runner_area(circle_area(0.55 * units.inch))
+    label spark_plug_angle(20 * units.deg)
+	label rotor_mass(20 * units.kg)
+    label rotor_I(disk_moment_of_inertia(mass: rotor_mass, radius: rotor_radius))
+    label crank_mass(3.8 * units.kg)
+    label flywheel_mass(8.5 * units.kg)
+    label flywheel_radius(5.5 * units.inch)
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: eccentricity)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 4 * units.kg, radius: 8.0 * units.cm)
+    )
+
+    crankshaft c0(
+        throw: eccentricity,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 10.0 * units.lb_ft,
+        moment_of_inertia: crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 0.0 * units.deg
+    )
+
+    rod_journal rj0(angle:  0 * units.deg)
+    rod_journal rj1(angle: 180 * units.deg)
+	
+    c0
+        .add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+
+    engine.add_crankshaft(c0)
+
+    wankel_rotor rotor0(
+        mass: rotor_mass,
+        moment_of_inertia: rotor_I,
+        radius: rotor_radius,
+        crown_gear_radius: 3 * eccentricity,
+        angle: 60 * units.deg,
+        depth: rotor_depth,
+        depression_volume: rotor_depression_volume
+    )
+
+    wankel_rotor rotor1(
+        mass: rotor_mass,
+        moment_of_inertia: rotor_I,
+        radius: rotor_radius,
+        crown_gear_radius: 3 * eccentricity,
+        angle: 240 * units.deg,
+        depth: rotor_depth,
+        depression_volume: rotor_depression_volume
+    )
+
+    intake intake(
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 50 * units.cm2,
+        intake_flow_rate: k_carb(650),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.997,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(450.0),
+        runner_length: 4.5 * units.inch,
+        velocity_decay: 0.1
+    )
+	
+	label exhaust_radius((4.0 * units.inch)/2)
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(500.0),
+        primary_tube_length: 6.0 * units.inch,
+        primary_flow_rate: k_carb(350.0),
+        velocity_decay: 1.0, //0.5
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 2400 * units.mm,
+		volume: 2400 * units.mm * circle_area(exhaust_radius)
+    )
+
+    exhaust_system exhaust(es_params, audio_volume: 10.0 * 0.01, impulse_response: ir_lib.default_0)
+
+    engine.add_rotor(
+        intake,
+        exhaust,
+        rotor0,
+        rj0,
+        wires.wire1,
+        sound_attenuation: 1.0,
+        primary_length: 3 * units.inch,
+        intake_port: reverse_sine_flow_port(constants.pi - intake_port_start, constants.pi - intake_port_end, intake_flow_rate),
+        exhaust_port: reverse_sine_flow_port(constants.pi + exhaust_port_start, constants.pi + exhaust_port_end, exhaust_flow_rate),
+        intake_runner_cross_section_area: intake_runner_area,
+        exhaust_cross_section_area: exhaust_runner_area,
+        spark_plug_angle: spark_plug_angle
+    )
+    engine.add_rotor(
+        intake,
+        exhaust,
+        rotor1,
+        rj1,
+        wires.wire2,
+        sound_attenuation: 1.0,
+        primary_length: 0 * units.inch,
+        intake_port: reverse_sine_flow_port(constants.pi - intake_port_start, constants.pi - intake_port_end, intake_flow_rate),
+        exhaust_port: reverse_sine_flow_port(constants.pi + exhaust_port_start, constants.pi + exhaust_port_end, exhaust_flow_rate),
+        intake_runner_cross_section_area: intake_runner_area,
+        exhaust_cross_section_area: exhaust_runner_area,
+        spark_plug_angle: spark_plug_angle
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 10 * units.deg)
+        .add_sample(1000 * units.rpm, 30 * units.deg)
+        .add_sample(2000 * units.rpm, 38 * units.deg)
+        .add_sample(3000 * units.rpm, 40 * units.deg)
+        .add_sample(4000 * units.rpm, 40 * units.deg)
+
+    engine.add_ignition_module(
+        ignition_module(timing_curve: timing_curve, rev_limit: 9500 * units.rpm, limiter_duration: 0.06)
+            .connect_wire(wires.wire1, (0.0 / 6.0) * cycle)
+            .connect_wire(wires.wire2, (1.0 / 6.0) * cycle)
+            .connect_wire(wires.wire1, (2.0 / 6.0) * cycle)
+            .connect_wire(wires.wire2, (3.0 / 6.0) * cycle)
+            .connect_wire(wires.wire1, (4.0 / 6.0) * cycle)
+            .connect_wire(wires.wire2, (5.0 / 6.0) * cycle)
+    )
+}
+
+// 1995 Mazda RX-7 (FD3S)
+public node mazda_rx7_fd3s_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1284 * units.kg,
+            drag_coefficient: 0.31,
+            cross_sectional_area: 1.8 * (units.m * units.m),
+            diff_ratio: 4.1,
+            tire_radius: 316 * units.mm, // 225/50R16V
+            rolling_resistance: 460 * units.N
+        );
+}
+
+public node mazda_rx7_fd3s_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 500 * units.lb_ft
+        )
+        .add_gear(3.483)
+        .add_gear(2.015)
+        .add_gear(1.391)
+        .add_gear(1.000)
+        .add_gear(0.719);
+}
+
+public node main {
+    set_engine(mazda_13b_msp())
+    set_vehicle(mazda_rx7_fd3s_vehicle())
+    set_transmission(mazda_rx7_fd3s_transmission())
+}
+
+main()
