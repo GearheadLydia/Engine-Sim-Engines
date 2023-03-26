@@ -302,11 +302,11 @@ public node koenigsegg_cc8s_engine {
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.001, impulse_response: ir_lib.default_0)
 
 	label pipe_length_1(0.0 * bore_spacing)
-	label pipe_length_2(0.18 * bore_spacing)
-	label pipe_length_3(0.36 * bore_spacing)
-	label pipe_length_4(0.54 * bore_spacing)
+	label pipe_length_2(0.3 * bore_spacing)
+	label pipe_length_3(0.6 * bore_spacing)
+	label pipe_length_4(0.9 * bore_spacing)
 
-	label exhaust_stagger_LR(0.12 * bore_spacing)
+	label exhaust_stagger_LR(0.60 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -317,8 +317,7 @@ public node koenigsegg_cc8s_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger_LR,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -327,7 +326,7 @@ public node koenigsegg_cc8s_engine {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger_LR
+			primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -336,7 +335,7 @@ public node koenigsegg_cc8s_engine {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger_LR
+			primary_length: pipe_length_3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -345,8 +344,7 @@ public node koenigsegg_cc8s_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger_LR,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_4
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -358,7 +356,7 @@ public node koenigsegg_cc8s_engine {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
+			primary_length: pipe_length_1 + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -367,8 +365,7 @@ public node koenigsegg_cc8s_engine {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_2 + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -377,8 +374,7 @@ public node koenigsegg_cc8s_engine {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_3 + exhaust_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -387,7 +383,7 @@ public node koenigsegg_cc8s_engine {
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4
+			primary_length: pipe_length_4 + exhaust_stagger_LR
         )
 
     engine
