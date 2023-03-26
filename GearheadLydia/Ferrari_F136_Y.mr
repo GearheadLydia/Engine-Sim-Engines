@@ -197,10 +197,10 @@ public node F136_Y {
 
     label bore(94.0 * units.mm)
     label stroke(84.5 * units.mm)
-    label rod_length(142.25 * units.mm)
+    label rod_length(140.98 * units.mm) // correct rod length is listed as 140.98mm for this engine
     label rod_mass(621.5 * units.g)
 	label piston_mass(400 * units.g)
-    label compression_height(25.00 * units.mm)
+    label compression_height(26.27 * units.mm) // totally inaccurate, just makes rod length correct
 	label piston_dome(5.00 * units.cc)
 	label deck_height(211.25 * units.mm)
     label crank_mass(41 * units.lb)
@@ -421,8 +421,7 @@ public node F136_Y {
     engine.add_ignition_module(
         ferrari_f136_y_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 8500 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
