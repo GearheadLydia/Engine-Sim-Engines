@@ -227,7 +227,7 @@ public node murcielago_v12 {
     engine engine(
         name: "Lamborghini V12",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 800 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 8000 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 8.0,
@@ -235,7 +235,7 @@ public node murcielago_v12 {
             max_burning_efficiency: 0.75
         ),
         throttle_gamma: 1.0,
-		simulation_frequency: 6200,
+		simulation_frequency: 6000,
 		jitter: 0.6
     )
 
@@ -372,7 +372,6 @@ public node murcielago_v12 {
 	
 	label exhaust_stagger_FR(5 * units.mm)
 	label exhaust_stagger_LR(30 * units.mm)
-	label exhaust_stagger_X(0 * units.mm)
  
     cylinder_bank b0(bank_params, angle: -30 * units.deg) // R (first)
     b0
@@ -383,7 +382,7 @@ public node murcielago_v12 {
             ignition_wire: wires.wire12,
             intake: intakeLF,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_1 + exhaust_stagger_LR + exhaust_stagger_FR + exhaust_stagger_X,
+			primary_length: pipe_length_1 + exhaust_stagger_LR + exhaust_stagger_FR,
 			sound_attenuation: 0.9
         )
 		.add_cylinder(
@@ -402,7 +401,7 @@ public node murcielago_v12 {
             ignition_wire: wires.wire10,
             intake: intakeLF,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_3 + exhaust_stagger_LR + exhaust_stagger_FR + exhaust_stagger_X,
+			primary_length: pipe_length_3 + exhaust_stagger_LR + exhaust_stagger_FR,
 			sound_attenuation: 0.9
         )
 		.add_cylinder(
@@ -421,7 +420,7 @@ public node murcielago_v12 {
             ignition_wire: wires.wire08,
             intake: intakeLR,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_5 + exhaust_stagger_LR + exhaust_stagger_X,
+			primary_length: pipe_length_5 + exhaust_stagger_LR,
 			sound_attenuation: 0.9
         )
 		.add_cylinder(
@@ -443,7 +442,7 @@ public node murcielago_v12 {
             ignition_wire: wires.wire01,
             intake: intakeRF,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_1 + exhaust_stagger_FR + exhaust_stagger_X,
+			primary_length: pipe_length_1 + exhaust_stagger_FR,
 			sound_attenuation: 0.9
         )
 		.add_cylinder(
@@ -462,7 +461,7 @@ public node murcielago_v12 {
             ignition_wire: wires.wire03,
             intake: intakeRF,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_3 + exhaust_stagger_FR + exhaust_stagger_X,
+			primary_length: pipe_length_3 + exhaust_stagger_FR,
 			sound_attenuation: 0.9
         )
 		.add_cylinder(
@@ -481,7 +480,7 @@ public node murcielago_v12 {
             ignition_wire: wires.wire05,
             intake: intakeRR,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_5 + exhaust_stagger_X,
+			primary_length: pipe_length_5,
 			sound_attenuation: 0.9
         )
 		.add_cylinder(
