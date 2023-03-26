@@ -179,8 +179,8 @@ public node chevrolet_ls7_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.45 * units.inch) * 8 * units.inch,
         intake_runner_cross_section_area: circle_area(1.45 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.75 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
