@@ -121,10 +121,12 @@ private node add_flow_sample {
 public node nissan_l24_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 42.4 * units.cc;
+    input chamber_volume: 42.4 * units.cc; // this is incorrect; only the 1970 240Z had an E31 head (42.4cc); this should be 47cc for an E88
     input flip_display: false;
 	
-	input flow_attenuation_in: 0.6;
+	// reference material: https://www.viczcar.com/forums/topic/4286-overview-of-l6-engine-heads/
+
+	input flow_attenuation_in: 0.6; // astonishingly similar maximum flow to a ported E88
 	input flow_attenuation_ex: 0.6;
     input lift_scale: 1.0 / 1.429; // rocker ratio
     alias output __out: head;
