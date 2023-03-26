@@ -268,7 +268,7 @@ public node toyota_4age_16v {
         velocity_decay: 0.1
     )
 	
-	label exhaust_radius((4.5 * units.inch)/2)
+	label exhaust_radius((2.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
@@ -280,11 +280,7 @@ public node toyota_4age_16v {
 		volume: 2500 * units.mm * circle_area(exhaust_radius)
     )
 	
-    exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -377,8 +373,8 @@ public node toyota_corolla_ae86_vehicle {
             drag_coefficient: 0.35,
             cross_sectional_area: 1.87 * (units.m * units.m), // estimate
             diff_ratio: 4.300,
-            tire_radius: 312.5 * units.mm, // 215/45R17
-            rolling_resistance: 460 * units.N
+            tire_radius: 294.5 * units.mm, // 185/70HR13
+            rolling_resistance: 300 * units.N
         );
 }
 
