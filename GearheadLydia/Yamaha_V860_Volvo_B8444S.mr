@@ -203,7 +203,7 @@ public node b8444s {
     engine engine(
         name: "Volvo B8444S",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+		starter_speed: 1200 * units.rpm,
         redline: 7500 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 4.0,
