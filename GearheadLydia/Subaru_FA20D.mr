@@ -1,8 +1,5 @@
 import "engine_sim.mr"
 
-// Honda fa20d replica by GearheadLydia
-// 2022-09-18 | revision 1
-
 units units()
 constants constants()
 impulse_response_library ir_lib()
