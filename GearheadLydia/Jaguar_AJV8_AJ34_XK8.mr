@@ -6,7 +6,7 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 15426378
+// firing order: 12734568
 // in standard:  21843657
 
 public node jaguar_aj34_distributor {
@@ -17,12 +17,12 @@ public node jaguar_aj34_distributor {
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
-            .connect_wire(wires.wire5, (1.0 / 8.0) * cycle)
-            .connect_wire(wires.wire4, (2.0 / 8.0) * cycle)
-            .connect_wire(wires.wire2, (3.0 / 8.0) * cycle)
-            .connect_wire(wires.wire6, (4.0 / 8.0) * cycle)
-            .connect_wire(wires.wire3, (5.0 / 8.0) * cycle)
-            .connect_wire(wires.wire7, (6.0 / 8.0) * cycle)
+            .connect_wire(wires.wire2, (1.0 / 8.0) * cycle)
+            .connect_wire(wires.wire7, (2.0 / 8.0) * cycle)
+            .connect_wire(wires.wire3, (3.0 / 8.0) * cycle)
+            .connect_wire(wires.wire4, (4.0 / 8.0) * cycle)
+            .connect_wire(wires.wire5, (5.0 / 8.0) * cycle)
+            .connect_wire(wires.wire6, (6.0 / 8.0) * cycle)
             .connect_wire(wires.wire8, (7.0 / 8.0) * cycle);
 }
 
@@ -86,7 +86,7 @@ public node jaguar_aj34_camshaft_builder {
     label rot90(90 * units.deg)
     label rot360(360 * units.deg)
 
-	// firing order: 15426378
+	// firing order: 12734568
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
@@ -302,7 +302,7 @@ public node AJ34 {
 	
 	label exhaust_stagger(30 * units.mm)
 
-    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
+    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (second)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -318,7 +318,7 @@ public node AJ34 {
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
-            ignition_wire: wires.wire2,
+            ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
@@ -328,7 +328,7 @@ public node AJ34 {
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
@@ -338,20 +338,20 @@ public node AJ34 {
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            ignition_wire: wires.wire4,
+            ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4 + exhaust_stagger,
 			sound_attenuation: 0.3
         )
 
-    cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (second)
+    cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (first)
     b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
-            ignition_wire: wires.wire5,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1
@@ -360,7 +360,7 @@ public node AJ34 {
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
-            ignition_wire: wires.wire6,
+            ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2
@@ -369,7 +369,7 @@ public node AJ34 {
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire7,
+            ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3

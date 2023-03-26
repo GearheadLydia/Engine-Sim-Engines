@@ -307,7 +307,7 @@ public node AJ35 {
 	label pipe_length_3(1 * bore_spacing)
 	label pipe_length_4(0 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
+    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (second)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -346,7 +346,7 @@ public node AJ35 {
 			primary_length: pipe_length_4
         )
 
-    cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (second)
+    cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (first)
     b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
