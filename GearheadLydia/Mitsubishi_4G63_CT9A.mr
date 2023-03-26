@@ -6,6 +6,7 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
+// trying out a wasted spark system
 public node mitsubishi_4g63_distributor {
     input wires;
     input timing_curve;
@@ -14,9 +15,13 @@ public node mitsubishi_4g63_distributor {
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
+            .connect_wire(wires.wire4, (0.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (1.0/4.0) * cycle)
             .connect_wire(wires.wire3, (1.0/4.0) * cycle)
+			.connect_wire(wires.wire1, (2.0/4.0) * cycle)
 			.connect_wire(wires.wire4, (2.0/4.0) * cycle)
-			.connect_wire(wires.wire2, (3.0/4.0) * cycle);
+			.connect_wire(wires.wire2, (3.0/4.0) * cycle)
+			.connect_wire(wires.wire3, (3.0/4.0) * cycle);
 }
 
 private node wires {
