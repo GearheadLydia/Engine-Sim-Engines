@@ -311,8 +311,8 @@ public node toyota_2jz {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.9 * units.inch,
-			sound_attenuation: 0.72
+			primary_length: 3.2 * units.inch,
+			sound_attenuation: 0.7
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -321,8 +321,8 @@ public node toyota_2jz {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.4 * units.inch,
-			sound_attenuation: 0.9
+			primary_length: 1.6 * units.inch,
+			sound_attenuation: 1.0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -331,8 +331,8 @@ public node toyota_2jz {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.2 * units.inch,
-			sound_attenuation: 0.72
+			primary_length: 0.4 * units.inch,
+			sound_attenuation: 0.7
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -341,7 +341,7 @@ public node toyota_2jz {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.1 * units.inch,
+			primary_length: 0.0 * units.inch,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -351,8 +351,8 @@ public node toyota_2jz {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.0 * units.inch,
-			sound_attenuation: 0.8
+			primary_length: 1.2 * units.inch,
+			sound_attenuation: 0.7
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -361,7 +361,7 @@ public node toyota_2jz {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.5 * units.inch,
+			primary_length: 2.8 * units.inch,
 			sound_attenuation: 1.0
         )
 
