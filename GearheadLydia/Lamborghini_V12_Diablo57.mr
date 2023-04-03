@@ -502,7 +502,7 @@ public node lamborghini_diablo_v12_57 {
 }
 
 // 1997 Lamborghini Diablo 5.7
-public node lamborghini_diablo_vehicle {
+public node lamborghini_diablo_57_vehicle {
     alias output __out:
         vehicle(
             mass: 3472 * units.lb,
@@ -514,7 +514,7 @@ public node lamborghini_diablo_vehicle {
         );
 }
 
-public node lamborghini_diablo_transmission {
+public node lamborghini_diablo_57_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 1000 * units.lb_ft
