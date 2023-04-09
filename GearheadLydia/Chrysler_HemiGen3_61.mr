@@ -8,11 +8,11 @@ label cycle(2 * 360 * units.deg)
 
 // firing order: 18436572
 
-public node chrysler_hemi_64_distributor {
+public node chrysler_hemi_61_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6400 * units.rpm;
-	input limiter_duration: 0.08;
+    input rev_limit: 6200 * units.rpm;
+	input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -38,36 +38,36 @@ private node wires {
 
 
 // https://www.onallcylinders.com/2021/06/24/2011-mopar-gen-iii-6-4l-392-hemi-apache-engine-guide-bore-stroke-cylinder-heads-cam-specs-more/
-// https://www.challengertalk.com/threads/head-and-cam-build-results-less-than-expected.629482/page-3#post8086689
-public node chrysler_hemi_64_lobe_profile_int {
+
+public node chrysler_hemi_61_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 251 * units.deg, // adv. 286
+            duration_at_50_thou: 248 * units.deg, // adv. 283
             gamma: 1.0,
             lift: 571 * units.thou,
             steps: 100
         );
 }
 
-public node chrysler_hemi_64_lobe_profile_exh {
+public node chrysler_hemi_61_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 253 * units.deg, // adv. 288
+            duration_at_50_thou: 251 * units.deg, // adv. 286
             gamma: 1.0,
-            lift: 536 * units.thou,
+            lift: 551 * units.thou,
             steps: 100
         );
 }
 
-public node chrysler_hemi_64_camshaft_builder {
-    input in_lobe_profile: chrysler_hemi_64_lobe_profile_int();
-	input ex_lobe_profile: chrysler_hemi_64_lobe_profile_exh();
+public node chrysler_hemi_61_camshaft_builder {
+    input in_lobe_profile: chrysler_hemi_61_lobe_profile_int();
+	input ex_lobe_profile: chrysler_hemi_61_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 119.0 * units.deg;
+    input lobe_separation: 117.25 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-    input advance: 15.0 * units.deg;
+    input advance: 9.25 * units.deg;
     input base_radius: 1.50 / 2 * units.inch;
 
     output intake_cam_0: _intake_cam_0;
@@ -128,7 +128,7 @@ private node add_flow_sample {
     this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
-public node chrysler_hemi_64_head {
+public node chrysler_hemi_61_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 73.4 * units.cc;
@@ -175,10 +175,10 @@ public node chrysler_hemi_64_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.025 * units.inch) * 4 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.025 * units.inch),
-        exhaust_runner_volume: circle_area(0.65 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.65 * units.inch),
+        intake_runner_volume: circle_area(1.015 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.015 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -189,13 +189,13 @@ public node chrysler_hemi_64_head {
 }
 
 
-public node chrysler_hemi_64 {
+public node chrysler_hemi_61 {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Dodge Hemi 392",
+        name: "Dodge SRT Hemi",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 6000 * units.rpm, // 6250
@@ -205,16 +205,16 @@ public node chrysler_hemi_64 {
     )
 
 
-	// source: https://www.onallcylinders.com/2021/06/24/2011-mopar-gen-iii-6-4l-392-hemi-apache-engine-guide-bore-stroke-cylinder-heads-cam-specs-more/
-    label bore(4.09 * units.inch)
+	// source: https://www.onallcylinders.com/2021/04/26/2005-10-mopar-gen-iii-6-1l-hemi-engine-guide-bore-stroke-cylinder-heads-cam-specs-more/
+    label bore(4.055 * units.inch)
 	label bore_spacing(4.460 * units.inch)
-    label stroke(3.72 * units.inch)
-    label rod_length(6.200 * units.inch)
+    label stroke(3.58 * units.inch)
+    label rod_length(6.242 * units.inch)
     label rod_mass(464 * units.g)
     label compression_height(1.21 * units.inch)
 	label piston_mass(444 * units.g)
-	label piston_dome(17.00 * units.cc)
-	label deck_height((9.25 * units.inch) + (40 * units.thou))
+	label piston_dome(3.00 * units.cc)
+	label deck_height(9.25 * units.inch)
     label crank_mass(57 * units.lb)
     label flywheel_mass(57 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -307,7 +307,7 @@ public node chrysler_hemi_64 {
 	label pipe_length_3(0.8 * bore_spacing)
 	label pipe_length_4(0.0 * bore_spacing)
 	
-	label exhaust_stagger(2.0 * units.inch)
+	label exhaust_stagger(1.0 * units.inch)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
     b0
@@ -318,8 +318,7 @@ public node chrysler_hemi_64 {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -328,8 +327,7 @@ public node chrysler_hemi_64 {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -338,8 +336,7 @@ public node chrysler_hemi_64 {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -348,8 +345,7 @@ public node chrysler_hemi_64 {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_4 + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -397,20 +393,20 @@ public node chrysler_hemi_64 {
 
     engine.add_crankshaft(c0)
 
-    chrysler_hemi_64_camshaft_builder camshaft(
-	    in_lobe_profile: chrysler_hemi_64_lobe_profile_int(),
-		ex_lobe_profile: chrysler_hemi_64_lobe_profile_exh()
+    chrysler_hemi_61_camshaft_builder camshaft(
+	    in_lobe_profile: chrysler_hemi_61_lobe_profile_int(),
+		ex_lobe_profile: chrysler_hemi_61_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        chrysler_hemi_64_head(
+        chrysler_hemi_61_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: false
         )
     )
     b1.set_cylinder_head (
-        chrysler_hemi_64_head(
+        chrysler_hemi_61_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: true
@@ -429,20 +425,20 @@ public node chrysler_hemi_64 {
 		.add_sample(7000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
-        chrysler_hemi_64_distributor(
+        chrysler_hemi_61_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
     )
 }
 
-// 2014 Dodge Challenger SRT 392
-public node dodge_challenger_srt_392_vehicle {
+// 2009 Dodge Challenger SRT8
+public node dodge_challenger_srt8_vehicle {
     alias output __out:
         vehicle(
             mass: 4171 * units.lb,
-            drag_coefficient: 0.356,
-            cross_sectional_area: 2.37 * (units.m) * (units.m),
+            drag_coefficient: 0.353,
+            cross_sectional_area: 2.35 * (units.m) * (units.m),
             diff_ratio: 3.91,
             tire_radius: 364.49 * units.mm, // 245/45ZR20
             rolling_resistance: 550 * units.N
@@ -463,8 +459,8 @@ public node tremec_tr6060_transmission {
 }
 
 public node main {
-    set_engine(chrysler_hemi_64())
-    set_vehicle(dodge_challenger_srt_392_vehicle())
+    set_engine(chrysler_hemi_61())
+    set_vehicle(dodge_challenger_srt8_vehicle())
     set_transmission(tremec_tr6060_transmission())
 }
 
