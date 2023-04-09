@@ -8,7 +8,7 @@ label cycle(2 * 360 * units.deg)
 
 // firing order: 18436572
 
-public node chrysler_hemi_392_distributor {
+public node chrysler_hemi_64_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6400 * units.rpm;
@@ -39,7 +39,7 @@ private node wires {
 
 // https://www.onallcylinders.com/2021/06/24/2011-mopar-gen-iii-6-4l-392-hemi-apache-engine-guide-bore-stroke-cylinder-heads-cam-specs-more/
 
-public node chrysler_hemi_392_lobe_profile_int {
+public node chrysler_hemi_64_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 286 * units.deg,
@@ -49,7 +49,7 @@ public node chrysler_hemi_392_lobe_profile_int {
         );
 }
 
-public node chrysler_hemi_392_lobe_profile_exh {
+public node chrysler_hemi_64_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 288 * units.deg,
@@ -59,9 +59,9 @@ public node chrysler_hemi_392_lobe_profile_exh {
         );
 }
 
-public node chrysler_hemi_392_camshaft_builder {
-    input in_lobe_profile: chrysler_hemi_392_lobe_profile_int();
-	input ex_lobe_profile: chrysler_hemi_392_lobe_profile_exh();
+public node chrysler_hemi_64_camshaft_builder {
+    input in_lobe_profile: chrysler_hemi_64_lobe_profile_int();
+	input ex_lobe_profile: chrysler_hemi_64_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 120.5 * units.deg;
@@ -128,7 +128,7 @@ private node add_flow_sample {
     this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
-public node chrysler_hemi_392_head {
+public node chrysler_hemi_64_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 73.4 * units.cc;
@@ -191,7 +191,7 @@ public node chrysler_hemi_392_head {
 }
 
 
-public node chrysler_hemi_392 {
+public node chrysler_hemi_64 {
     alias output __out: engine;
 
     wires wires()
@@ -390,20 +390,20 @@ public node chrysler_hemi_392 {
 
     engine.add_crankshaft(c0)
 
-    chrysler_hemi_392_camshaft_builder camshaft(
-	    in_lobe_profile: chrysler_hemi_392_lobe_profile_int(),
-		ex_lobe_profile: chrysler_hemi_392_lobe_profile_exh()
+    chrysler_hemi_64_camshaft_builder camshaft(
+	    in_lobe_profile: chrysler_hemi_64_lobe_profile_int(),
+		ex_lobe_profile: chrysler_hemi_64_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        chrysler_hemi_392_head(
+        chrysler_hemi_64_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: false
         )
     )
     b1.set_cylinder_head (
-        chrysler_hemi_392_head(
+        chrysler_hemi_64_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: true
@@ -423,7 +423,7 @@ public node chrysler_hemi_392 {
 		.add_sample(8000 * units.rpm, 33 * units.deg)
 
     engine.add_ignition_module(
-        chrysler_hemi_392_distributor(
+        chrysler_hemi_64_distributor(
             wires: wires,
             timing_curve: timing_curve,
             rev_limit: 6400 * units.rpm
@@ -458,7 +458,7 @@ public node tremec_tr6060_transmission {
 }
 
 public node main {
-    set_engine(chrysler_hemi_392())
+    set_engine(chrysler_hemi_64())
     set_vehicle(dodge_challenger_srt_392_vehicle())
     set_transmission(tremec_tr6060_transmission())
 }
