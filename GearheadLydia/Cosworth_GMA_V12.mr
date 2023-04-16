@@ -14,8 +14,8 @@ label cycle(2 * 360 * units.deg)
 public node cosworth_gma_v12_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 11750 * units.rpm;
-	input limiter_duration: 0.08;
+    input rev_limit: 12100 * units.rpm;
+	input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, (0.0/12.0) * cycle)
@@ -230,7 +230,7 @@ public node cosworth_gma_v12 {
         name: "Cosworth GMA V12",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1600 * units.rpm,
-        redline: 11500 * units.rpm,
+        redline: 12000 * units.rpm,
         throttle_gamma: 1.0,
 		simulation_frequency: 6000,
 		hf_gain: 0.01,
@@ -338,21 +338,21 @@ public node cosworth_gma_v12 {
 		impulse_response: ir_lib.default_0
 	)
 	
-	label exh_vol_L0(0.6)
-	label exh_vol_R0(0.6)
+	label exh_vol_L0(1.0)
+	label exh_vol_R0(1.0)
 	label exh_vol_L1(1.0)
 	label exh_vol_R1(1.0)
 	label exh_vol_stagger(0.0)
 	
 	// exhaust groupings are 1/3/5, 2/4/6
-	label pipe_length_1(40 * units.mm)
-	label pipe_length_2(32 * units.mm)
-	label pipe_length_3(24 * units.mm)
-	label pipe_length_4(16 * units.mm)
-	label pipe_length_5(8 * units.mm)
-	label pipe_length_6(0 * units.mm)
+	label pipe_length_1(50 * units.mm)
+	label pipe_length_2(20 * units.mm)
+	label pipe_length_3(10 * units.mm)
+	label pipe_length_4(00 * units.mm)
+	label pipe_length_5(30 * units.mm)
+	label pipe_length_6(40 * units.mm)
 	
-	label pipe_length_stagger(20 * units.mm)
+	label pipe_length_stagger(25 * units.mm)
  
     cylinder_bank b0(bank_params, angle: -30 * units.deg) // R (first)
     b0
