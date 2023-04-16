@@ -84,7 +84,7 @@ public node cosworth_gma_v12_camshaft_builder {
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 100.0 * units.deg;
     input exhaust_lobe_center: 100.0 * units.deg;
-    input advance: -15.0 * units.deg;
+    input advance: 10.0 * units.deg;
     input base_radius: 16 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -199,7 +199,7 @@ public node cosworth_gma_v12_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.2 * units.inch) * 7 * units.inch,
         intake_runner_cross_section_area: circle_area(1.2 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 7 * units.inch,
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 2 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -231,6 +231,7 @@ public node cosworth_gma_v12 {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1600 * units.rpm,
         redline: 12000 * units.rpm,
+        fuel: fuel(max_burning_efficiency: 0.85),
         throttle_gamma: 1.0,
 		simulation_frequency: 6000,
 		hf_gain: 0.01,
@@ -303,7 +304,7 @@ public node cosworth_gma_v12 {
 		plenum_cross_section_area: 50.0 * units.cm2,
 		intake_flow_rate: k_carb(1400.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.9987,
+		idle_throttle_plate_position: 0.999,
 		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(680.0),
 		runner_length: 4.0 * units.inch,
@@ -315,7 +316,7 @@ public node cosworth_gma_v12 {
 		plenum_cross_section_area: 50.0 * units.cm2,
 		intake_flow_rate: k_carb(1400.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.9987,
+		idle_throttle_plate_position: 0.999,
 		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(680.0),
 		runner_length: 4.0 * units.inch,
@@ -323,10 +324,10 @@ public node cosworth_gma_v12 {
 	)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1500.0),
-        primary_tube_length: 15.0 * units.inch,
+        outlet_flow_rate: k_carb(1300.0),
+        primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(450.0),
-        velocity_decay: 0.4, //0.5
+        velocity_decay: 1.0, //0.5
         volume: 5.0 * units.L,
 		collector_cross_section_area: circle_area(2.5 * units.inch) * 4,
 		length: 300 * units.mm
@@ -509,17 +510,20 @@ public node cosworth_gma_v12 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample( 0000 * units.rpm, 35 * units.deg)
-        .add_sample( 1000 * units.rpm, 45 * units.deg)
-        .add_sample( 2000 * units.rpm, 48 * units.deg)
-        .add_sample( 3000 * units.rpm, 48 * units.deg)
-        .add_sample( 4000 * units.rpm, 48 * units.deg)
-        .add_sample( 5000 * units.rpm, 48 * units.deg)
-        .add_sample( 6000 * units.rpm, 48 * units.deg)
-		.add_sample( 7000 * units.rpm, 48 * units.deg)
-		.add_sample( 8000 * units.rpm, 48 * units.deg)
-		.add_sample( 9000 * units.rpm, 48 * units.deg)
+        .add_sample( 0000 * units.rpm, 42 * units.deg)
+        .add_sample( 1000 * units.rpm, 53 * units.deg)
+        .add_sample( 2000 * units.rpm, 55 * units.deg)
+        .add_sample( 3000 * units.rpm, 55 * units.deg)
+        .add_sample( 4000 * units.rpm, 55 * units.deg)
+        .add_sample( 5000 * units.rpm, 55 * units.deg)
+        .add_sample( 6000 * units.rpm, 54 * units.deg)
+		.add_sample( 7000 * units.rpm, 53 * units.deg)
+		.add_sample( 8000 * units.rpm, 52 * units.deg)
+		.add_sample( 9000 * units.rpm, 50 * units.deg)
 		.add_sample(10000 * units.rpm, 48 * units.deg)
+		.add_sample(11000 * units.rpm, 46 * units.deg)
+		.add_sample(12000 * units.rpm, 44 * units.deg)
+		.add_sample(13000 * units.rpm, 44 * units.deg)
 
     engine.add_ignition_module(
         cosworth_gma_v12_distributor(
