@@ -8,8 +8,8 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-//firing order: 1 7 5 11 3 9 6 12 2 8 4 10
-// normalized:  1 2 9 10 5 6 11 12 3 4 7 8
+//firing order: 1 7 2 8 3 9 6 12 5 11 4 10
+// normalized:  1 2 3 4 5 6 11 12 9 10 7 8
 
 public node cosworth_gma_v12_distributor {
     input wires;
@@ -301,7 +301,7 @@ public node cosworth_gma_v12 {
 	intake intakeL(
 		plenum_volume: 1.0 * units.L,
 		plenum_cross_section_area: 50.0 * units.cm2,
-		intake_flow_rate: k_carb(1300.0),
+		intake_flow_rate: k_carb(1400.0),
 		idle_flow_rate: k_carb(0.001),
 		idle_throttle_plate_position: 0.9987,
 		throttle_gamma: 2.0,
@@ -313,7 +313,7 @@ public node cosworth_gma_v12 {
 	intake intakeR(
 		plenum_volume: 1.0 * units.L,
 		plenum_cross_section_area: 50.0 * units.cm2,
-		intake_flow_rate: k_carb(1300.0),
+		intake_flow_rate: k_carb(1400.0),
 		idle_flow_rate: k_carb(0.001),
 		idle_throttle_plate_position: 0.9987,
 		throttle_gamma: 2.0,
@@ -326,7 +326,7 @@ public node cosworth_gma_v12 {
         outlet_flow_rate: k_carb(1500.0),
         primary_tube_length: 15.0 * units.inch,
         primary_flow_rate: k_carb(450.0),
-        velocity_decay: 1.0, //0.5
+        velocity_decay: 0.4, //0.5
         volume: 5.0 * units.L,
 		collector_cross_section_area: circle_area(2.5 * units.inch) * 4,
 		length: 300 * units.mm
@@ -345,14 +345,14 @@ public node cosworth_gma_v12 {
 	label exh_vol_stagger(0.0)
 	
 	// exhaust groupings are 1/3/5, 2/4/6
-	label pipe_length_1(50 * units.mm)
+	label pipe_length_1(60 * units.mm)
 	label pipe_length_2(20 * units.mm)
-	label pipe_length_3(10 * units.mm)
+	label pipe_length_3(20 * units.mm)
 	label pipe_length_4(00 * units.mm)
-	label pipe_length_5(30 * units.mm)
+	label pipe_length_5(40 * units.mm)
 	label pipe_length_6(40 * units.mm)
 	
-	label pipe_length_stagger(25 * units.mm)
+	label pipe_length_stagger(30 * units.mm)
  
     cylinder_bank b0(bank_params, angle: -30 * units.deg) // R (first)
     b0
