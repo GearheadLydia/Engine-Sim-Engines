@@ -12,7 +12,7 @@ label cycle(2 * 360 * units.deg)
 public node bmw_s70_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7750 * units.rpm; // top speed run spec: 8300
+    input rev_limit: 7750 * units.rpm;
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -213,8 +213,10 @@ public node bmw_s70_head {
 // deck height for S52: 210mm
 
 public node S70_2 {
+	input rev_limit: 7750 * units.rpm;
+	
     alias output __out: engine;
-
+	
     label bore(86.0 * units.mm)
     label stroke(87.0 * units.mm)
     label rod_length(135.0 * units.mm)
@@ -327,7 +329,7 @@ public node S70_2 {
         outlet_flow_rate: k_carb(900.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(600.0),
-        velocity_decay: 1.0, //0.5
+        velocity_decay: 0.1, //0.5
         volume: 3.0 * units.L,
 		collector_cross_section_area: circle_area(2.0 * units.inch) * 2,
 		length: 600 * units.mm
@@ -515,20 +517,21 @@ public node S70_2 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 45 * units.deg)
-        .add_sample(2000 * units.rpm, 54 * units.deg)
-        .add_sample(3000 * units.rpm, 55 * units.deg)
-        .add_sample(4000 * units.rpm, 54 * units.deg)
-        .add_sample(5000 * units.rpm, 50 * units.deg)
-        .add_sample(6000 * units.rpm, 46 * units.deg)
-        .add_sample(7000 * units.rpm, 42 * units.deg)
-        .add_sample(8000 * units.rpm, 40 * units.deg)
-		.add_sample(9000 * units.rpm, 40 * units.deg)
+        .add_sample(1000 * units.rpm, 40 * units.deg)
+        .add_sample(2000 * units.rpm, 49 * units.deg)
+        .add_sample(3000 * units.rpm, 50 * units.deg)
+        .add_sample(4000 * units.rpm, 49 * units.deg)
+        .add_sample(5000 * units.rpm, 45 * units.deg)
+        .add_sample(6000 * units.rpm, 41 * units.deg)
+        .add_sample(7000 * units.rpm, 37 * units.deg)
+        .add_sample(8000 * units.rpm, 35 * units.deg)
+		.add_sample(9000 * units.rpm, 35 * units.deg)
 
     engine.add_ignition_module(
         bmw_s70_distributor(
             wires: wires,
-            timing_curve: timing_curve
+            timing_curve: timing_curve,
+			rev_limit: rev_limit
         ))
 }
 
@@ -539,7 +542,7 @@ public node mclaren_f1_vehicle {
             mass: 2509 * units.lb,
             drag_coefficient: 0.32,
             cross_sectional_area: 1.79 * (units.m * units.m),
-            diff_ratio: 2.37,
+            diff_ratio: 3.01,
             tire_radius: 358.14 * units.mm, // 315/45ZR17
             rolling_resistance: 600 * units.N
         );
@@ -559,7 +562,7 @@ public node mclaren_f1_transmission {
 }
 
 public node main {
-    set_engine(S70_2())
+    set_engine(S70_2(rev_limit: (7750 * units.rpm))) // original spec: 7750rpm limit; top speed run spec: 8300rpm limit
     set_vehicle(mclaren_f1_vehicle())
     set_transmission(mclaren_f1_transmission())
 }
