@@ -137,7 +137,7 @@ public node bmw_s70_camshaft_builder {
 		.add_lobe(rot360 - exhaust_lobe_center + 0 * rot60) // #1
 		.add_lobe(rot360 - exhaust_lobe_center + 8 * rot60) // #2
 		.add_lobe(rot360 - exhaust_lobe_center + 4 * rot60) // #3
-		.add_lobe(rot360 - exhaust_lobe_center + 10 * rot60) // $4
+		.add_lobe(rot360 - exhaust_lobe_center + 10 * rot60) // #4
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot60) // #5
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot60) // #6
 }
