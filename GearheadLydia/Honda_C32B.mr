@@ -47,7 +47,7 @@ public node honda_c32b_lobe_profile_int_lo {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 235.5 * units.deg,
-            gamma: 1.4,
+            gamma: 1.3,
             lift: 8.5 * units.mm,
             steps: 100
         );
@@ -57,7 +57,7 @@ public node honda_c32b_lobe_profile_exh_lo {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 240.5 * units.deg,
-            gamma: 1.4,
+            gamma: 1.3,
             lift: 8.2 * units.mm,
             steps: 100
         );
@@ -273,10 +273,10 @@ public node c32b {
 
     engine engine(
         name: "Honda C32B",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
         redline: 8000 * units.rpm,
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
     )
 
     label crank_moment(
@@ -345,7 +345,7 @@ public node c32b {
         intake_flow_rate: k_carb(500.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.996,
-        throttle_gamma: 2.0,
+        throttle_gamma: 1.0,
         runner_flow_rate: k_carb(325.0),
         runner_length: 4.5 * units.inch,
         velocity_decay: 0.1
@@ -353,34 +353,34 @@ public node c32b {
 
     exhaust_system_parameters es_params0(
         outlet_flow_rate: k_carb(300.0),
-        primary_tube_length: 9.0 * units.inch,
+        primary_tube_length: 13.0 * units.inch,
         primary_flow_rate: k_carb(300.0),
-        velocity_decay: 1.2, //0.5
-        volume: 25.0 * units.L
+        velocity_decay: 0.6, //0.5
+        volume: 2.5 * units.L
     )
 
     exhaust_system_parameters es_params1(
         outlet_flow_rate: k_carb(300.0),
-        primary_tube_length: 24.0 * units.inch,
+        primary_tube_length: 28.0 * units.inch,
         primary_flow_rate: k_carb(300.0),
-        velocity_decay: 1.2, //0.5
-        volume: 25.0 * units.L
+        velocity_decay: 0.6, //0.5
+        volume: 2.5 * units.L
     )
 
     exhaust_system_parameters es_params2(
         outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 6.0 * units.inch,
+        primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(300.0),
-        velocity_decay: 1.0, //0.5
-        volume: 50.0 * units.L
+        velocity_decay: 0.5, //0.5
+        volume: 5.0 * units.L
     )
 
     exhaust_system_parameters es_params3(
         outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 20.0 * units.inch,
+        primary_tube_length: 24.0 * units.inch,
         primary_flow_rate: k_carb(300.0),
-        velocity_decay: 1.0, //0.5
-        volume: 50.0 * units.L
+        velocity_decay: 0.5, //0.5
+        volume: 5.0 * units.L
     )
 
     exhaust_system exhaust0(es_params0, audio_volume: 0.8 * 0.01, impulse_response: ir_lib.default_0, length: 1500 * units.mm)
@@ -472,22 +472,21 @@ public node c32b {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 25 * units.deg)
-        .add_sample(1000 * units.rpm, 35 * units.deg)
-        .add_sample(2000 * units.rpm, 42 * units.deg)
-        .add_sample(3000 * units.rpm, 45 * units.deg)
-        .add_sample(4000 * units.rpm, 48 * units.deg)
+        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(1000 * units.rpm, 45 * units.deg)
+        .add_sample(2000 * units.rpm, 50 * units.deg)
+        .add_sample(3000 * units.rpm, 50 * units.deg)
+        .add_sample(4000 * units.rpm, 50 * units.deg)
         .add_sample(5000 * units.rpm, 50 * units.deg)
-        .add_sample(6000 * units.rpm, 55 * units.deg)
-		.add_sample(7000 * units.rpm, 57 * units.deg)
-		.add_sample(8000 * units.rpm, 60 * units.deg)
-		.add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(6000 * units.rpm, 50 * units.deg)
+		.add_sample(7000 * units.rpm, 50 * units.deg)
+		.add_sample(8000 * units.rpm, 50 * units.deg)
+		.add_sample(9000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         honda_c32b_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 8250 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
