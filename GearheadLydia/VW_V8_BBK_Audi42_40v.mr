@@ -211,7 +211,7 @@ public node v8_bns {
         throttle_gamma: 1.0,
 		hf_gain: 0.005,
 		noise: 0.5,
-		jitter: 0.75
+		jitter: 0.5
     )
 
     label crank_moment(
@@ -313,7 +313,7 @@ public node v8_bns {
             exhaust_system: exhaust,
             ignition_wire: wires.wire1,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.5
+			sound_attenuation: 0.25
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -322,7 +322,8 @@ public node v8_bns {
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire2,
-			primary_length: pipe_length_2 + exhaust_stagger
+			primary_length: pipe_length_2 + exhaust_stagger,
+			sound_attenuation: 0.5
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -331,7 +332,8 @@ public node v8_bns {
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire3,
-			primary_length: pipe_length_3 + exhaust_stagger
+			primary_length: pipe_length_3 + exhaust_stagger,
+			sound_attenuation: 0.5
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -341,7 +343,7 @@ public node v8_bns {
             exhaust_system: exhaust,
             ignition_wire: wires.wire4,
 			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: 0.5
+			sound_attenuation: 0.25
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
