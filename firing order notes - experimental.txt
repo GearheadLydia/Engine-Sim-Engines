@@ -205,7 +205,7 @@ second guess: RLRRLLRLLRLLRRLR
 third guess: RLRLRLRLLRLRLRLR
 1-14-5-16-7-12-3-10-6-9-8-13-4-15-2-11
 
-90 degree V16 crossplane (Cizeta V16T type)
+90 degree V16 crossplane (Cizeta V16T ??? type)
 45	135
 315	45
 135	225
@@ -325,3 +325,56 @@ W21 three-bank experimentation - 34 degree
 326	0	34
 
 1-8-15-2-9-16-4-11-18-6-13-20-7-14-21-5-12-19-3-10-17
+
+
+90 degree V16 - 2 x V8 style (Cizeta V16T actual)
+
+right side, assuming clockwise (must be mirrored front/back in Engine Sim, switching the banks)
+225	315   - row 5 from L side
+135	225   - row 6 from L side
+315	45    - row 7 from L side
+45	135   - row 8 from L side
+
+left side, assuming clockwise
+180	270   - row 4 from L side
+90	180   - row 3 from L side   
+270	0     - row 2 from L side
+0	90    - row 1 from L side
+
+numbers:
+R4	R8
+R3	R7
+R2	R6
+R1	R5
+
+L4	L8
+L3	L7
+L2	L6
+L1	L5
+
+firing order from camshaft image:
+L1-R6-L3-R5-L4-R7-L2-R8-L6-R1-L5-R3-L7-R4-L8-R2
+
+
+
+transposition:
+225	315   - row 5 from L side
+135	225   - row 6 from L side
+315	45    - row 7 from L side
+45	135   - row 8 from L side
+
+left side, assuming clockwise
+180	270   - row 4 from L side
+90	180   - row 3 from L side   
+270	0     - row 2 from L side
+0	90    - row 1 from L side
+
+numbers:
+16
+15
+14
+13
+4
+3
+2
+1	
