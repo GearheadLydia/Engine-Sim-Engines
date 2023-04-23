@@ -249,8 +249,8 @@ public node cizeta_v16 {
 
     engine engine(
         name: "Cizeta V16",
-        starter_torque: 400 * units.lb_ft,
-		starter_speed: 800 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
         redline: 8500 * units.rpm,
         throttle_gamma: 1.0,
 		simulation_frequency: 4000
@@ -382,18 +382,8 @@ public node cizeta_v16 {
 	
 	label exhaust_radius((3.0 * units.inch)/2)
 
-    exhaust_system_parameters es_params_long(
-        outlet_flow_rate: k_carb(300.0),
-        primary_tube_length: 20.0 * units.inch,
-        primary_flow_rate: k_carb(400.0),
-        velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 700 * units.mm,
-		volume: 700 * units.mm * circle_area(exhaust_radius)
-    )
-
-    exhaust_system_parameters es_params_shrt(
-        outlet_flow_rate: k_carb(300.0),
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
@@ -402,17 +392,15 @@ public node cizeta_v16 {
 		volume: 700 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustFL(es_params_long, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-	exhaust_system exhaustRL(es_params_shrt, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-    exhaust_system exhaustFR(es_params_long, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-	exhaust_system exhaustRR(es_params_shrt, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(300 * units.mm)
 	label pipe_length_2(150 * units.mm)
 	label pipe_length_3(0 * units.mm)
 	label pipe_length_4(100 * units.mm)
 	
-	label exhaust_stagger_FR(00 * units.mm) // handled by exhaust params for now
+	label exhaust_stagger_FR(150 * units.mm) // handled by exhaust params for now
 	label exhaust_stagger_LR(25 * units.mm)
 
     cylinder_bank bLF(bank_params, angle: 45.0 * units.deg, position_x: -engine_distance) // Front side of vehicle from left side of engine
@@ -423,7 +411,7 @@ public node cizeta_v16 {
             rod_journal: rjL1,
             ignition_wire: wires.wireL1,
             intake: intakeL,
-            exhaust_system: exhaustFL,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_1
         )
         .add_cylinder(
@@ -432,7 +420,7 @@ public node cizeta_v16 {
             rod_journal: rjL2,
             ignition_wire: wires.wireL2,
             intake: intakeL,
-            exhaust_system: exhaustFL,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_2
         )
         .add_cylinder(
@@ -441,7 +429,7 @@ public node cizeta_v16 {
             rod_journal: rjL3,
             ignition_wire: wires.wireL3,
             intake: intakeL,
-            exhaust_system: exhaustFL,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_3
         )
         .add_cylinder(
@@ -450,7 +438,7 @@ public node cizeta_v16 {
             rod_journal: rjL4,
             ignition_wire: wires.wireL4,
             intake: intakeL,
-            exhaust_system: exhaustFL,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_4
         )
 
@@ -462,7 +450,7 @@ public node cizeta_v16 {
             rod_journal: rjL1,
             ignition_wire: wires.wireL5,
             intake: intakeL,
-            exhaust_system: exhaustRL,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_1 + exhaust_stagger_FR
         )
         .add_cylinder(
@@ -471,7 +459,7 @@ public node cizeta_v16 {
             rod_journal: rjL2,
             ignition_wire: wires.wireL6,
             intake: intakeL,
-            exhaust_system: exhaustRL,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_2 + exhaust_stagger_FR
         )
         .add_cylinder(
@@ -480,7 +468,7 @@ public node cizeta_v16 {
             rod_journal: rjL3,
             ignition_wire: wires.wireL7,
             intake: intakeL,
-            exhaust_system: exhaustRL,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_3 + exhaust_stagger_FR
         )
         .add_cylinder(
@@ -489,7 +477,7 @@ public node cizeta_v16 {
             rod_journal: rjL4,
             ignition_wire: wires.wireL8,
             intake: intakeL,
-            exhaust_system: exhaustRL,
+            exhaust_system: exhaustL,
 			primary_length: pipe_length_4 + exhaust_stagger_FR
         )
 		
@@ -501,7 +489,7 @@ public node cizeta_v16 {
             rod_journal: rjR1,
             ignition_wire: wires.wireR1,
             intake: intakeR,
-            exhaust_system: exhaustRR,
+            exhaust_system: exhaustR,
 			primary_length: pipe_length_4 + exhaust_stagger_LR
         )
         .add_cylinder(
@@ -510,7 +498,7 @@ public node cizeta_v16 {
             rod_journal: rjR2,
             ignition_wire: wires.wireR2,
             intake: intakeR,
-            exhaust_system: exhaustRR,
+            exhaust_system: exhaustR,
 			primary_length: pipe_length_3 + exhaust_stagger_LR
         )
         .add_cylinder(
@@ -519,7 +507,7 @@ public node cizeta_v16 {
             rod_journal: rjR3,
             ignition_wire: wires.wireR3,
             intake: intakeR,
-            exhaust_system: exhaustRR,
+            exhaust_system: exhaustR,
 			primary_length: pipe_length_2 + exhaust_stagger_LR
         )
         .add_cylinder(
@@ -528,7 +516,7 @@ public node cizeta_v16 {
             rod_journal: rjR4,
             ignition_wire: wires.wireR4,
             intake: intakeR,
-            exhaust_system: exhaustRR,
+            exhaust_system: exhaustR,
 			primary_length: pipe_length_1 + exhaust_stagger_LR
         )
 		
@@ -540,7 +528,7 @@ public node cizeta_v16 {
             rod_journal: rjR1,
             ignition_wire: wires.wireR5,
             intake: intakeR,
-            exhaust_system: exhaustFR,
+            exhaust_system: exhaustR,
 			primary_length: pipe_length_4 + exhaust_stagger_FR + exhaust_stagger_LR
         )
         .add_cylinder(
@@ -549,7 +537,7 @@ public node cizeta_v16 {
             rod_journal: rjR2,
             ignition_wire: wires.wireR6,
             intake: intakeR,
-            exhaust_system: exhaustFR,
+            exhaust_system: exhaustR,
 			primary_length: pipe_length_3 + exhaust_stagger_FR + exhaust_stagger_LR
         )
         .add_cylinder(
@@ -558,7 +546,7 @@ public node cizeta_v16 {
             rod_journal: rjR3,
             ignition_wire: wires.wireR7,
             intake: intakeR,
-            exhaust_system: exhaustFR,
+            exhaust_system: exhaustR,
 			primary_length: pipe_length_2 + exhaust_stagger_FR + exhaust_stagger_LR
         )
         .add_cylinder(
@@ -567,7 +555,7 @@ public node cizeta_v16 {
             rod_journal: rjR4,
             ignition_wire: wires.wireR8,
             intake: intakeR,
-            exhaust_system: exhaustFR,
+            exhaust_system: exhaustR,
 			primary_length: pipe_length_1 + exhaust_stagger_FR + exhaust_stagger_LR
         )
 
