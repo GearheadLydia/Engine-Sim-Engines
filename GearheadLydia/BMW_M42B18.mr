@@ -215,7 +215,7 @@ public node M42B18 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -261,7 +261,7 @@ public node M42B18 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(400.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
+        idle_throttle_plate_position: 0.9975,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(300.0),
         runner_length: 8.0 * units.inch,
@@ -273,7 +273,7 @@ public node M42B18 {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(350.0),
         primary_tube_length: 12.0 * units.inch,
-        primary_flow_rate: k_carb(300.0),
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
 		length: 2300 * units.mm,

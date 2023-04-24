@@ -267,7 +267,7 @@ public node chrysler_pentastar_v6_36_engine {
 		plenum_cross_section_area: 100.0 * units.cm2,
 		intake_flow_rate: k_carb(900.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.997,
+		idle_throttle_plate_position: 0.998,
 		throttle_gamma: 1.0,
 		runner_flow_rate: k_carb(350.0),
 		runner_length: 7.0 * units.inch,
