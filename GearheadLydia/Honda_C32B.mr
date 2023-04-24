@@ -351,43 +351,16 @@ public node c32b {
         velocity_decay: 0.1
     )
 
-    exhaust_system_parameters es_params0(
-        outlet_flow_rate: k_carb(300.0),
-        primary_tube_length: 13.0 * units.inch,
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(1800.0),
+        primary_tube_length: 6.0 * units.inch,
         primary_flow_rate: k_carb(300.0),
         velocity_decay: 0.6, //0.5
-        volume: 2.5 * units.L
+        volume: 5.0 * units.L,
+		length: 1500 * units.mm
     )
 
-    exhaust_system_parameters es_params1(
-        outlet_flow_rate: k_carb(300.0),
-        primary_tube_length: 28.0 * units.inch,
-        primary_flow_rate: k_carb(300.0),
-        velocity_decay: 0.6, //0.5
-        volume: 2.5 * units.L
-    )
-
-    exhaust_system_parameters es_params2(
-        outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(300.0),
-        velocity_decay: 0.5, //0.5
-        volume: 5.0 * units.L
-    )
-
-    exhaust_system_parameters es_params3(
-        outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 24.0 * units.inch,
-        primary_flow_rate: k_carb(300.0),
-        velocity_decay: 0.5, //0.5
-        volume: 5.0 * units.L
-    )
-
-    exhaust_system exhaust0(es_params0, audio_volume: 0.8 * 0.01, impulse_response: ir_lib.default_0, length: 1500 * units.mm)
-    exhaust_system exhaust1(es_params1, audio_volume: 0.72 * 0.01, impulse_response: ir_lib.default_0, length: 1500 * units.mm)
-
-    exhaust_system exhaust2(es_params2, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0, length: 1500 * units.mm)
-    exhaust_system exhaust3(es_params3, audio_volume: 0.9 * 0.01, impulse_response: ir_lib.default_0, length: 1500 * units.mm)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -397,7 +370,8 @@ public node c32b {
             rod_journal: rj0,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaust0
+            exhaust_system: exhaust,
+			sound_attenuation: 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -405,7 +379,8 @@ public node c32b {
             rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaust2
+            exhaust_system: exhaust,
+			sound_attenuation: 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
@@ -413,7 +388,8 @@ public node c32b {
             rod_journal: rj4,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaust2
+            exhaust_system: exhaust,
+			sound_attenuation: 1.0
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -424,7 +400,9 @@ public node c32b {
             rod_journal: rj1,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaust1
+            exhaust_system: exhaust,
+			primary_length: 10 * units.inch,
+			sound_attenuation: 0.3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -432,7 +410,9 @@ public node c32b {
             rod_journal: rj3,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaust3
+            exhaust_system: exhaust,
+			primary_length: 10 * units.inch,
+			sound_attenuation: 0.3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
@@ -440,7 +420,9 @@ public node c32b {
             rod_journal: rj5,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaust3
+            exhaust_system: exhaust,
+			primary_length: 10 * units.inch,
+			sound_attenuation: 0.5
         )
 
     engine
