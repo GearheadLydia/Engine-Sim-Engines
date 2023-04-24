@@ -196,11 +196,7 @@ public node P60B40 {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 900 * units.rpm,
         redline: 8000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
     )
 
     label bore(94.0 * units.mm)
@@ -212,7 +208,7 @@ public node P60B40 {
 	label piston_dome(0.00 * units.cc) // this one is a guess
 	label deck_height((210.1 + 0.5) * units.mm) // guess?
     label crank_mass(45 * units.lb)
-    label flywheel_mass(29 * 2 * units.lb)
+    label flywheel_mass(25 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -430,8 +426,7 @@ public node P60B40 {
     engine.add_ignition_module(
         bmw_p60b40_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 8250 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
