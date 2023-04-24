@@ -293,7 +293,7 @@ public node mclaren_m630_engine {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.3
+			sound_attenuation: 0.2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -313,7 +313,7 @@ public node mclaren_m630_engine {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.3
+			sound_attenuation: 0.25
         )
 
     cylinder_bank b1(bank_params, angle: -60.0 * units.deg) // R (first)
@@ -334,7 +334,8 @@ public node mclaren_m630_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2,
+			sound_attenuation: 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -343,7 +344,8 @@ public node mclaren_m630_engine {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3,
+			sound_attenuation: 0.6
         )
 
     engine
