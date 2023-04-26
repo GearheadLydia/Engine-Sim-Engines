@@ -301,7 +301,7 @@ public node v8_bns {
 	label pipe_length_3(bore_spacing * 1.0)
 	label pipe_length_4(bore_spacing * 0.0)
 
-	label exhaust_stagger(30 * units.mm)
+	label exhaust_stagger(60 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
