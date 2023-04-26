@@ -295,12 +295,12 @@ public node AJ34 {
 		impulse_response: ir_lib.default_0
 	)
 
-	label pipe_length_1(2.4 * bore_spacing)
-	label pipe_length_2(1.6 * bore_spacing)
-	label pipe_length_3(0.8 * bore_spacing)
+	label pipe_length_1(3.0 * bore_spacing)
+	label pipe_length_2(2.0 * bore_spacing)
+	label pipe_length_3(1.0 * bore_spacing)
 	label pipe_length_4(0.0 * bore_spacing)
 	
-	label exhaust_stagger(30 * units.mm)
+	label exhaust_stagger(40 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (second)
     b0
@@ -311,8 +311,7 @@ public node AJ34 {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.3
+			primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -321,8 +320,7 @@ public node AJ34 {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 0.3
+			primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -331,8 +329,7 @@ public node AJ34 {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.3
+			primary_length: pipe_length_3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -341,8 +338,7 @@ public node AJ34 {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: 0.3
+			primary_length: pipe_length_4
         )
 
     cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (first)
@@ -354,7 +350,7 @@ public node AJ34 {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
+			primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -363,7 +359,7 @@ public node AJ34 {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -372,7 +368,7 @@ public node AJ34 {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -381,7 +377,7 @@ public node AJ34 {
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4
+			primary_length: pipe_length_4 + exhaust_stagger
         )
 
     engine
