@@ -121,7 +121,7 @@ private node add_flow_sample {
 public node nissan_l24_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 42.4 * units.cc; // this is incorrect; only the 1970 240Z had an E31 head (42.4cc); this should be 47cc for an E88
+    input chamber_volume: 47.0 * units.cc; // 47cc for E88 head casting (1971+), 42.4 for E31 head casting (1970 only)
     input flip_display: false;
 	
 	// reference material: https://www.viczcar.com/forums/topic/4286-overview-of-l6-engine-heads/
@@ -393,15 +393,15 @@ public node nissan_l24_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 70 * units.deg)
-        .add_sample(2000 * units.rpm, 75 * units.deg)
-        .add_sample(3000 * units.rpm, 74 * units.deg)
-        .add_sample(4000 * units.rpm, 73 * units.deg)
-        .add_sample(5000 * units.rpm, 72 * units.deg)
-        .add_sample(6000 * units.rpm, 71 * units.deg)
-        .add_sample(7000 * units.rpm, 70 * units.deg)
-        .add_sample(8000 * units.rpm, 70 * units.deg)
+        .add_sample(0000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 74 * units.deg)
+        .add_sample(2000 * units.rpm, 79 * units.deg)
+        .add_sample(3000 * units.rpm, 78 * units.deg)
+        .add_sample(4000 * units.rpm, 77 * units.deg)
+        .add_sample(5000 * units.rpm, 76 * units.deg)
+        .add_sample(6000 * units.rpm, 75 * units.deg)
+        .add_sample(7000 * units.rpm, 74 * units.deg)
+        .add_sample(8000 * units.rpm, 74 * units.deg)
 
     engine.add_ignition_module(
         nissan_l24_distributor(
