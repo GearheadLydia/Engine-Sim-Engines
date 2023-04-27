@@ -400,22 +400,22 @@ public node toyota_2jzgte_engine {
 }
 
 // 1997 Toyota Supra Turbo
-public node toyota_supra_jza80_vehicle {
+public node toyota_supra_turbo_jza80_vehicle {
     alias output __out:
         vehicle(
             mass: 1590 * units.kg,
             drag_coefficient: 0.34,
-            cross_sectional_area: 2.4276 * (units.m * units.m),
-            diff_ratio: 3.545,
-            tire_radius: 326.4 * units.mm, // 245/40R18
+            cross_sectional_area: 2.02 * (units.m * units.m), // fastestlaps.com
+            diff_ratio: 3.133, // USDM; JDM: 3.266
+            tire_radius: 317.5 * units.mm, // 255/40R17
             rolling_resistance: 500 * units.N
         );
 }
 
-public node toyota_supra_jza80_transmission {
+public node toyota_v160_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 500 * units.lb_ft
+            max_clutch_torque: 1200 * units.lb_ft
         )
         .add_gear(3.827)
         .add_gear(2.360)
@@ -425,10 +425,23 @@ public node toyota_supra_jza80_transmission {
         .add_gear(0.793);
 }
 
+public node toyota_v161_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 1200 * units.lb_ft
+        )
+        .add_gear(3.724)
+        .add_gear(2.246)
+        .add_gear(1.541)
+        .add_gear(1.205)
+        .add_gear(1.000)
+        .add_gear(0.818);
+}
+
 public node main {
     set_engine(toyota_2jzgte_engine())
-    set_vehicle(toyota_supra_jza80_vehicle())
-    set_transmission(toyota_supra_jza80_transmission())
+    set_vehicle(toyota_supra_turbo_jza80_vehicle())
+    set_transmission(toyota_v160_transmission())
 }
 
 main()
