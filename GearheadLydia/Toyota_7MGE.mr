@@ -385,35 +385,35 @@ public node toyota_7mge_engine {
         ))
 }
 
-// 1992 Toyota Supra Turbo 3.0 (MA70)
+// 1992 Toyota Supra 3.0 (MA70)
 public node toyota_supra_ma70_vehicle {
     alias output __out:
         vehicle(
-            mass: 1611 * units.kg,
+            mass: 1514 * units.kg,
             drag_coefficient: 0.32,
             cross_sectional_area: 1.91 * (units.m * units.m),
-            diff_ratio: 3.73,
+            diff_ratio: 4.30,
             tire_radius: 316 * units.mm, // 225/50R16
             rolling_resistance: 490 * units.N
         );
 }
 
-public node toyota_r154_transmission {
+public node toyota_w58_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 700 * units.lb_ft
         )
-        .add_gear(3.250)
-        .add_gear(1.955)
-        .add_gear(1.310)
+        .add_gear(3.285)
+        .add_gear(1.894)
+        .add_gear(1.275)
         .add_gear(1.000)
-        .add_gear(0.753);
+        .add_gear(0.783);
 }
 
 public node main {
 	set_engine(toyota_7mge_engine())
     set_vehicle(toyota_supra_ma70_vehicle())
-    set_transmission(toyota_r154_transmission())
+    set_transmission(toyota_w58_transmission())
 }
 
 main()
