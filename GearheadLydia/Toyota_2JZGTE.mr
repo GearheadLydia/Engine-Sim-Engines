@@ -119,7 +119,7 @@ private node add_flow_sample {
 public node toyota_2jz_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 65.0 * units.cc;
+    input chamber_volume: 44.5 * units.cc;
     input flip_display: false;
 	
 	input flow_attenuation: 1.0;
@@ -174,6 +174,7 @@ public node toyota_2jz_head {
     )
 }
 
+// https://www.supraforums.com/threads/all-piston-and-rod-weights-here.595763/
 public node toyota_2jzgte_engine {
     alias output __out: engine;
 
@@ -182,7 +183,7 @@ public node toyota_2jzgte_engine {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 6800 * units.rpm,
-        fuel: fuel(max_burning_efficiency: 1.0), // free power to supplant non-available turbo
+        fuel: fuel(max_burning_efficiency: 0.95), // free power to supplant non-available turbo
         throttle_gamma: 1.0
     )
 	
@@ -191,13 +192,13 @@ public node toyota_2jzgte_engine {
     label bore(86.0 * units.mm)
     label stroke(86.0 * units.mm)
     label rod_length(142.0 * units.mm)
-    label rod_mass(300 * units.g)
-	label piston_mass(280 * units.g)
+    label rod_mass(800 * units.g)
+	label piston_mass((407+132) * units.g)
     label compression_height(34.0 * units.mm)
-	label piston_dome(0.0 * units.cc)
-	label deck_height((219.0 + 1.0) * units.mm)
-    label crank_mass(5 * units.kg)
-    label flywheel_mass(25 * units.lb)
+	label piston_dome(-14.2 * units.cc)
+	label deck_height((219.0 + 1.3) * units.mm)
+    label crank_mass(59.5 * units.lb)
+    label flywheel_mass(20 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -216,7 +217,7 @@ public node toyota_2jzgte_engine {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -383,14 +384,14 @@ public node toyota_2jzgte_engine {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 55 * units.deg)
-        .add_sample(1000 * units.rpm, 65 * units.deg)
-        .add_sample(2000 * units.rpm, 67 * units.deg)
-        .add_sample(3000 * units.rpm, 63 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 47 * units.deg)
-        .add_sample(6000 * units.rpm, 39 * units.deg)
-        .add_sample(7000 * units.rpm, 34 * units.deg)
-        .add_sample(8000 * units.rpm, 34 * units.deg)
+        .add_sample(1000 * units.rpm, 68 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 66 * units.deg)
+        .add_sample(4000 * units.rpm, 58 * units.deg)
+        .add_sample(5000 * units.rpm, 50 * units.deg)
+        .add_sample(6000 * units.rpm, 44 * units.deg)
+        .add_sample(7000 * units.rpm, 38 * units.deg)
+        .add_sample(8000 * units.rpm, 38 * units.deg)
 
     engine.add_ignition_module(
         toyota_2jz_distributor(
