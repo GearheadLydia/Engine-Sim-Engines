@@ -267,38 +267,26 @@ public node toyota_2jzgte_engine {
         plenum_cross_section_area: circle_area(1.2 * units.inch),
         intake_flow_rate: k_carb(425),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.9955,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(225.0),
         runner_length: 10.0 * units.inch,
         velocity_decay: 0.1
     )
+	
+	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1000.0),
-        primary_tube_length: 15.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
+        outlet_flow_rate: k_carb(500.0),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(3.5 * units.inch / 2),
+		collector_cross_section_area: circle_area(exhaust_radius),
 		length: 2800 * units.mm,
-		volume: 2800 * units.mm * circle_area(3.5 * units.inch / 2)
+		volume: 2800 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system_parameters es_params_tuned(
-        outlet_flow_rate: k_carb(800.0),
-        primary_tube_length: 4.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
-        velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(4.5 * units.inch / 2),
-		length: 2800 * units.mm,
-		volume: 2800 * units.mm * circle_area(4.5 * units.inch / 2)
-    )
-
-    exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.3,
-		impulse_response: ir_lib.default_0
-	)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.15, impulse_response: ir_lib.default_0)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -386,12 +374,12 @@ public node toyota_2jzgte_engine {
         .add_sample(0000 * units.rpm, 55 * units.deg)
         .add_sample(1000 * units.rpm, 68 * units.deg)
         .add_sample(2000 * units.rpm, 70 * units.deg)
-        .add_sample(3000 * units.rpm, 66 * units.deg)
-        .add_sample(4000 * units.rpm, 58 * units.deg)
-        .add_sample(5000 * units.rpm, 50 * units.deg)
-        .add_sample(6000 * units.rpm, 44 * units.deg)
-        .add_sample(7000 * units.rpm, 38 * units.deg)
-        .add_sample(8000 * units.rpm, 38 * units.deg)
+        .add_sample(3000 * units.rpm, 67 * units.deg)
+        .add_sample(4000 * units.rpm, 61 * units.deg)
+        .add_sample(5000 * units.rpm, 54 * units.deg)
+        .add_sample(6000 * units.rpm, 47 * units.deg)
+        .add_sample(7000 * units.rpm, 40 * units.deg)
+        .add_sample(8000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
         toyota_2jz_distributor(
