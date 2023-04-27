@@ -193,13 +193,9 @@ public node S62B50 {
     engine engine(
         name: "BMW S62B50",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
+		starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
     )
 
     label bore(94.0 * units.mm)
@@ -415,22 +411,20 @@ public node S62B50 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 20 * units.deg)
-        .add_sample(2000 * units.rpm, 25 * units.deg)
-        .add_sample(3000 * units.rpm, 30 * units.deg)
-        .add_sample(4000 * units.rpm, 35 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 45 * units.deg)
-		.add_sample(7000 * units.rpm, 50 * units.deg)
-		.add_sample(8000 * units.rpm, 55 * units.deg)
-		.add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(0000 * units.rpm, 25 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 40 * units.deg)
+        .add_sample(3000 * units.rpm, 42 * units.deg)
+        .add_sample(4000 * units.rpm, 45 * units.deg)
+        .add_sample(5000 * units.rpm, 48 * units.deg)
+        .add_sample(6000 * units.rpm, 51 * units.deg)
+		.add_sample(7000 * units.rpm, 51 * units.deg)
+		.add_sample(8000 * units.rpm, 51 * units.deg)
 
     engine.add_ignition_module(
         bmw_s62b50_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7250 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
