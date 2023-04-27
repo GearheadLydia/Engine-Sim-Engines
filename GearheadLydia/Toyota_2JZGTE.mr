@@ -40,12 +40,13 @@ private node add_sym_sample {
     this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
+// https://www.eatsleepboost.lt/tech-info/jz-tech-info/1jz-2jz-cam-specs/
 public node toyota_2jz_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 240 * units.deg,
-            gamma: 0.7,
-            lift: 8.58 * units.mm,
+            duration_at_50_thou: 200 * units.deg, // technically at 1mm; 233 adv
+            gamma: 1.0,
+            lift: 8.25 * units.mm,
             steps: 100
         );
 }
@@ -53,22 +54,22 @@ public node toyota_2jz_lobe_profile_int {
 public node toyota_2jz_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 236 * units.deg,
-            gamma: 0.7,
-            lift: 8.28 * units.mm,
+            duration_at_50_thou: 205 * units.deg, // technically at 1mm; 233 adv
+            gamma: 1.0,
+            lift: 8.25 * units.mm,
             steps: 100
         );
 }
 
+// lobe separation is a guess
 public node toyota_2jz_camshaft_builder {
     input lobe_profile: toyota_2jz_lobe_profile_int();
 	input ex_lobe_profile: toyota_2jz_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 115.0 * units.deg;
-    input intake_lobe_center: 115.0 * units.deg;
-    input exhaust_lobe_center: 121.0 * units.deg;
-    input advance: 2.0 * units.deg;
+    input intake_lobe_center: 120.0 * units.deg;
+    input exhaust_lobe_center: 120.0 * units.deg;
+    input advance: 0.0 * units.deg;
     input base_radius: 16.0 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -381,15 +382,15 @@ public node toyota_2jz {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 65 * units.deg)
-        .add_sample(1000 * units.rpm, 72 * units.deg)
-        .add_sample(2000 * units.rpm, 75 * units.deg)
-        .add_sample(3000 * units.rpm, 70 * units.deg)
-        .add_sample(4000 * units.rpm, 58 * units.deg)
-        .add_sample(5000 * units.rpm, 46 * units.deg)
-        .add_sample(6000 * units.rpm, 40 * units.deg)
-        .add_sample(7000 * units.rpm, 35 * units.deg)
-        .add_sample(8000 * units.rpm, 35 * units.deg)
+        .add_sample(0000 * units.rpm, 55 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 67 * units.deg)
+        .add_sample(3000 * units.rpm, 63 * units.deg)
+        .add_sample(4000 * units.rpm, 55 * units.deg)
+        .add_sample(5000 * units.rpm, 47 * units.deg)
+        .add_sample(6000 * units.rpm, 39 * units.deg)
+        .add_sample(7000 * units.rpm, 34 * units.deg)
+        .add_sample(8000 * units.rpm, 34 * units.deg)
 
     engine.add_ignition_module(
         toyota_2jz_distributor(
@@ -398,7 +399,7 @@ public node toyota_2jz {
         ))
 }
 
-// 1997 Toyota Supra RZ
+// 1997 Toyota Supra Turbo
 public node toyota_supra_jza80_vehicle {
     alias output __out:
         vehicle(
