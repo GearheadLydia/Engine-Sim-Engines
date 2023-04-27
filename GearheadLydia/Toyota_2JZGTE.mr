@@ -174,7 +174,7 @@ public node toyota_2jz_head {
     )
 }
 
-public node toyota_2jz {
+public node toyota_2jzgte_engine {
     alias output __out: engine;
 
     engine engine(
@@ -426,7 +426,7 @@ public node toyota_supra_jza80_transmission {
 }
 
 public node main {
-    set_engine(toyota_2jz())
+    set_engine(toyota_2jzgte_engine())
     set_vehicle(toyota_supra_jza80_vehicle())
     set_transmission(toyota_supra_jza80_transmission())
 }
