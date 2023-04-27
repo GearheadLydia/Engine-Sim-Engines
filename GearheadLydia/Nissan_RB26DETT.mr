@@ -124,34 +124,34 @@ public node nissan_rb26_head {
     function intake_flow(1 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 65 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 60 * flow_attenuation)
         .add_flow_sample(2 * lift_scale, 90 * flow_attenuation)
         .add_flow_sample(3 * lift_scale, 120 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 155 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 150 * flow_attenuation)
         .add_flow_sample(5 * lift_scale, 180 * flow_attenuation)
         .add_flow_sample(6 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 245 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 255 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 230 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 255 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 280 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
     function exhaust_flow(1 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 75 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 80 * flow_attenuation)
         .add_flow_sample(3 * lift_scale, 105 * flow_attenuation)
         .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 130 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 150 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 158 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 164 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 168 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 176 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 142 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 200 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
 
 		
     cylinder_head head(
@@ -199,10 +199,7 @@ public node nissan_rb26dett {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 8000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 1.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 2.00 // free power to simulate unavailable turbo
+        fuel: fuel(max_burning_efficiency: 1.90 // free power to simulate unavailable turbo
         ),
         throttle_gamma: 1.0
     )
