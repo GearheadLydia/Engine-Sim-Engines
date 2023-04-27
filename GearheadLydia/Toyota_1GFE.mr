@@ -1,6 +1,6 @@
 import "engine_sim.mr"
 
-// SUPER UNFINISHED
+// super unfinished and absolutely full of guesswork
 
 units units()
 constants constants()
@@ -11,7 +11,7 @@ label cycle(2 * 360 * units.deg)
 public node toyota_1g_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7250 * units.rpm;
+    input rev_limit: 7200 * units.rpm;
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -60,7 +60,7 @@ public node toyota_1g_camshaft_builder {
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 120.0 * units.deg;
     input exhaust_lobe_center: 120.0 * units.deg;
-    input advance: 5.0 * units.deg;
+    input advance: 8.0 * units.deg;
     input base_radius: 16.0 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -110,7 +110,7 @@ private node add_flow_sample {
 public node toyota_1g_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 65.0 * units.cc;
+    input chamber_volume: 41.0 * units.cc; // total guess - borrowed from 1JZ
     input flip_display: false;
 	
 	input flow_attenuation_in: 1.0;
@@ -186,12 +186,12 @@ public node toyota_1gfe {
     label bore(75.0 * units.mm)
     label stroke(75.0 * units.mm)
     label rod_length(122.4 * units.mm) // correct
-    label rod_mass(300 * units.g)
-	label piston_mass(280 * units.g)
+    label rod_mass(500 * units.g)
+	label piston_mass(420 * units.g)
     label compression_height(30.4 * units.mm) // correct? (aftermarket)
-	label piston_dome(0.0 * units.cc)
-	label deck_height((185.0 + 1.0) * units.mm) // total guess
-    label crank_mass(5 * units.kg)
+	label piston_dome(7.0 * units.cc) // makes compression come out to 10.0:1
+	label deck_height((190.0 + 1.0) * units.mm) // total guess
+    label crank_mass(10 * units.kg)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(6 * units.inch)
 
@@ -211,7 +211,7 @@ public node toyota_1gfe {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -259,12 +259,12 @@ public node toyota_1gfe {
 	intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(500.0),
+        intake_flow_rate: k_carb(400.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(400.0),
-        runner_length: 6.0 * units.inch,
+        runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
 	)
 	
@@ -276,13 +276,11 @@ public node toyota_1gfe {
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2500 * units.mm,
-		volume: 2500 * units.mm * circle_area(exhaust_radius)
+		length: 2800 * units.mm,
+		volume: 2800 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
-	
-	label exhaust_stagger(1.8 * units.inch)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 	
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -293,7 +291,7 @@ public node toyota_1gfe {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 4.5 * units.inch + exhaust_stagger
+			primary_length: 6.3 * units.inch
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -302,7 +300,7 @@ public node toyota_1gfe {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 2.5 * units.inch + exhaust_stagger,
+			primary_length: 4.3 * units.inch,
 			sound_attenuation: 0.7
         )
 		.add_cylinder(
@@ -312,7 +310,7 @@ public node toyota_1gfe {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1 * units.inch + exhaust_stagger
+			primary_length: 2.8 * units.inch
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -365,14 +363,14 @@ public node toyota_1gfe {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 55 * units.deg)
-        .add_sample(1000 * units.rpm, 78 * units.deg)
-        .add_sample(2000 * units.rpm, 84 * units.deg)
-        .add_sample(3000 * units.rpm, 82 * units.deg)
-        .add_sample(4000 * units.rpm, 74 * units.deg)
-        .add_sample(5000 * units.rpm, 66 * units.deg)
-        .add_sample(6000 * units.rpm, 58 * units.deg)
-        .add_sample(7000 * units.rpm, 55 * units.deg)
-        .add_sample(8000 * units.rpm, 54 * units.deg)
+        .add_sample(1000 * units.rpm, 74 * units.deg)
+        .add_sample(2000 * units.rpm, 78 * units.deg)
+        .add_sample(3000 * units.rpm, 78 * units.deg)
+        .add_sample(4000 * units.rpm, 75 * units.deg)
+        .add_sample(5000 * units.rpm, 65 * units.deg)
+        .add_sample(6000 * units.rpm, 56 * units.deg)
+        .add_sample(7000 * units.rpm, 48 * units.deg)
+        .add_sample(8000 * units.rpm, 47 * units.deg)
 
     engine.add_ignition_module(
         toyota_1g_distributor(
