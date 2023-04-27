@@ -1,7 +1,5 @@
 import "engine_sim.mr"
 
-// SUPER UNFINISHED
-
 units units()
 constants constants()
 impulse_response_library ir_lib()
@@ -280,21 +278,12 @@ public node toyota_7mge_engine {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 	
-	// 7M-GE stock
 	label pipe_length_1(65 * units.mm)
 	label pipe_length_2(40 * units.mm)
 	label pipe_length_3(25 * units.mm)
 	label pipe_length_4(10 * units.mm)
 	label pipe_length_5(0 * units.mm)
 	label pipe_length_6(25 * units.mm)
-	
-	// 7M-GTE stock
-	// label pipe_length_2(40 * units.mm)
-	// label pipe_length_1(60 * units.mm)
-	// label pipe_length_3(20 * units.mm)
-	// label pipe_length_4(5 * units.mm)
-	// label pipe_length_5(15 * units.mm)
-	// label pipe_length_6(40 * units.mm)
 	
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
