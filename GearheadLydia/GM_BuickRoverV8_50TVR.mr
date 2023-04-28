@@ -162,8 +162,8 @@ public node rover_v8_50_head {
         chamber_volume: 33.0 * units.cc,
         intake_runner_volume: circle_area(1.4 * units.inch) * 3 * units.inch,
         intake_runner_cross_section_area: circle_area(1.4 * units.inch),
-        exhaust_runner_volume: circle_area(1.4 * units.inch) * 3 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.4 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -206,11 +206,7 @@ public node rover_v8_50_225 {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 6000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 3.0,
-            burning_efficiency_randomness: 0.5,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 1.5
+        throttle_gamma: 1.0
     )
 
     crankshaft c0(
@@ -276,7 +272,7 @@ public node rover_v8_50_225 {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 12.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
+        primary_flow_rate: k_carb(450.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
 		length: 650 * units.mm,
@@ -341,7 +337,7 @@ public node rover_v8_50_225 {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_1
+			primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -350,7 +346,7 @@ public node rover_v8_50_225 {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -359,7 +355,7 @@ public node rover_v8_50_225 {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -368,7 +364,7 @@ public node rover_v8_50_225 {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_4
+			primary_length: pipe_length_4 + exhaust_stagger
         )
 
     engine
@@ -411,14 +407,27 @@ public node rover_v8_50_225 {
     engine.add_ignition_module(
         rover_v8_50_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6250 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
 
-// 1964 Buick Special Coupe 225 4-spd
+// 2000 TVR Chimaera 500
 public node tvr_chimaera_500_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1060 * units.kg,
+            drag_coefficient: 0.4, // guesstimate
+            cross_sectional_area: 2.17 * (units.m * units.m), // guesstimate
+            diff_ratio: 3.45, // borrowed from the Cerbera
+            tire_radius: 313.5 * units.mm, // 245/45R16
+            rolling_resistance: 500 * units.N
+        );
+}
+
+// 2000 TVR Griffith 500
+// almost identical stats
+public node tvr_griffith_500_vehicle {
     alias output __out:
         vehicle(
             mass: 1060 * units.kg,
