@@ -253,13 +253,9 @@ public node w12 {
     engine engine(
         name: "Bentley (Audi) W12",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 850 * units.rpm,
+		starter_speed: 1200 * units.rpm,
         redline: 6800 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 8.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 1.5,
+        throttle_gamma: 1.0,
 		simulation_frequency: 6000
     )
 
@@ -277,7 +273,7 @@ public node w12 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -340,7 +336,7 @@ public node w12 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(800.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
+        idle_throttle_plate_position: 0.998,
         throttle_gamma: 2.0,
         runner_flow_rate: k_carb(800.0),
         runner_length: 4.0 * units.inch,
@@ -352,7 +348,7 @@ public node w12 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(800.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
+        idle_throttle_plate_position: 0.998,
         throttle_gamma: 2.0,
         runner_flow_rate: k_carb(800.0),
         runner_length: 4.0 * units.inch,
@@ -382,7 +378,7 @@ public node w12 {
 	
 	label exhaust_length_stagger_IO(1.8 * units.inch)
 	label exhaust_length_stagger_LR(1.5 * units.inch)
-	label exhaust_bore_spacing(35 * units.mm)
+	label exhaust_bore_spacing(60 * units.mm)
 	
 	label sound_attenuation_penalty(0.02)
 
@@ -431,7 +427,7 @@ public node w12 {
             intake: intake_R,
             exhaust_system: exhaustR,
 			primary_length: (exhaust_bore_spacing * 4) + exhaust_length_stagger_IO + exhaust_length_stagger_LR,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 4))
+			sound_attenuation: (0.7 - (sound_attenuation_penalty * 4))
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -441,7 +437,7 @@ public node w12 {
             intake: intake_R,
             exhaust_system: exhaustR,
 			primary_length: (exhaust_bore_spacing * 2) + exhaust_length_stagger_IO + exhaust_length_stagger_LR,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 2))
+			sound_attenuation: (0.7 - (sound_attenuation_penalty * 2))
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -451,7 +447,7 @@ public node w12 {
             intake: intake_R,
             exhaust_system: exhaustR,
 			primary_length: (exhaust_bore_spacing * 0) + exhaust_length_stagger_IO + exhaust_length_stagger_LR,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 0))
+			sound_attenuation: (0.7 - (sound_attenuation_penalty * 0))
         )
 	
     cylinder_bank bLI(bank_params, angle: 28.5 * units.deg) // LI (third)
@@ -465,7 +461,7 @@ public node w12 {
             intake: intake_L,
             exhaust_system: exhaustL,
 			primary_length: (exhaust_bore_spacing * 5) + exhaust_length_stagger_IO,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 5))
+			sound_attenuation: (0.7 - (sound_attenuation_penalty * 5))
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -475,7 +471,7 @@ public node w12 {
             intake: intake_L,
             exhaust_system: exhaustL,
 			primary_length: (exhaust_bore_spacing * 3) + exhaust_length_stagger_IO,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 3))
+			sound_attenuation: (0.7 - (sound_attenuation_penalty * 3))
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -485,7 +481,7 @@ public node w12 {
             intake: intake_L,
             exhaust_system: exhaustL,
 			primary_length: (exhaust_bore_spacing * 1) + exhaust_length_stagger_IO,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 1))
+			sound_attenuation: (0.7 - (sound_attenuation_penalty * 1))
         )
 
     cylinder_bank bRO(bank_params, angle: -43.5 * units.deg) // RO (fourth)
@@ -539,7 +535,7 @@ public node w12 {
 	label exhaust_runner_radius(0.85 * units.inch)
 	
 	label runner_length_shrt(2.0 * units.inch)
-	label runner_length_long(4.5 * units.inch)
+	label runner_length_long(5.0 * units.inch)
 
     bLO.set_cylinder_head (
         audi_w12_head(
