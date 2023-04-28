@@ -411,8 +411,7 @@ public node nissan_vg30de_engine {
     engine.add_ignition_module(
         nissan_vg30_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7200 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
