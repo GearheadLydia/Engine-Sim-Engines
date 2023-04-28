@@ -1,9 +1,5 @@
 import "engine_sim.mr"
 
-// Volkswagen VR6 3.2L by GearheadLydia
-// 2022-12-04 - revision 3
-// may technically mix Golf MkIV and Golf MkV specs
-
 units units()
 constants constants()
 impulse_response_library ir_lib()
@@ -203,6 +199,7 @@ public node vr6_r32 {
     wires wires()
 	
 	label lean_angle(0.0 * units.deg)
+	label bank_angle(15 * units.deg / 2)
 
     label bore(84.0 * units.mm)
     label stroke(95.9 * units.mm)
@@ -219,13 +216,9 @@ public node vr6_r32 {
     engine engine(
         name: "Volkswagen VR6 R32",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 850 * units.rpm,
+		starter_speed: 1200 * units.rpm,
         redline: 6800 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 8.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 1.5
+        throttle_gamma: 1.0
     )
 
     label crank_moment(
@@ -242,19 +235,19 @@ public node vr6_r32 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
         tdc: 90 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle:  7.5  * units.deg)
-    rod_journal rj1(angle: 112.5 * units.deg)
-    rod_journal rj2(angle: 247.5 * units.deg)
-    rod_journal rj3(angle: 232.5 * units.deg)
-    rod_journal rj4(angle: 127.5 * units.deg)
-    rod_journal rj5(angle: -7.5  * units.deg)
+    rod_journal rj0(angle:  0  * units.deg + bank_angle)
+    rod_journal rj1(angle: 120 * units.deg - bank_angle)
+    rod_journal rj2(angle: 240 * units.deg + bank_angle)
+    rod_journal rj3(angle: 240 * units.deg - bank_angle)
+    rod_journal rj4(angle: 120 * units.deg + bank_angle)
+    rod_journal rj5(angle:  0  * units.deg - bank_angle)
 
     c0
         .add_rod_journal(rj0)
@@ -293,7 +286,7 @@ public node vr6_r32 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(400.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.9965,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(300.0),
         runner_length: 9.0 * units.inch,
@@ -317,15 +310,15 @@ public node vr6_r32 {
 	label position_x_offset(deck_height * 0.13052619222005159154840622789549)  // sin(7.5)
 	label position_y_offset(deck_height * -0.00855513862618958885544247307144) // 1-cos(7.5)
 	
-	label pipe_length_1(40 * units.mm)
-	label pipe_length_2(20 * units.mm)
-	label pipe_length_3(00 * units.mm)
+	label pipe_length_1(60 * units.mm)
+	label pipe_length_2(40 * units.mm)
+	label pipe_length_3(20 * units.mm)
 	label pipe_length_4(00 * units.mm)
 	label pipe_length_5(20 * units.mm)
 	label pipe_length_6(40 * units.mm)
 	label exhaust_stagger(80 * units.mm)
 
-	cylinder_bank bL(bank_params, angle: 7.5 * units.deg + lean_angle) // L (first) | angle: 7.5
+	cylinder_bank bL(bank_params, angle: bank_angle + lean_angle) // L (first) | angle: 7.5
     //cylinder_bank bL(bank_params, angle: 0, position_x: -position_x_offset, position_y: position_y_offset) // L (first) | angle: -7.5
     bL
         .add_cylinder(
@@ -336,7 +329,7 @@ public node vr6_r32 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.72
+			sound_attenuation: 0.56
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -346,7 +339,7 @@ public node vr6_r32 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.9
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -356,10 +349,10 @@ public node vr6_r32 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_5 + exhaust_stagger,
-			sound_attenuation: 0.81
+			sound_attenuation: 0.63
         )
 
-	cylinder_bank bR(bank_params, angle: -7.5 * units.deg + lean_angle) // R (second)
+	cylinder_bank bR(bank_params, angle: -bank_angle + lean_angle) // R (second)
     //cylinder_bank bR(bank_params, angle: 0, position_x: position_x_offset, position_y: position_y_offset) // R (second) | angle: 7.5
     bR
         .add_cylinder(
@@ -408,7 +401,7 @@ public node vr6_r32 {
         volkswagen_vr6_head(
             intake_camshaft: camshaft.intake_cam_L,
             exhaust_camshaft: camshaft.exhaust_cam_L,			
-			intake_runner_volume: circle_area(1.1 * units.inch) * 5 * units.inch,
+			intake_runner_volume: circle_area(1.1 * units.inch) * 6 * units.inch,
 			intake_runner_cross_section_area: circle_area(1.1 * units.inch),
 			exhaust_runner_volume: circle_area(0.68 * units.inch) * 2 * units.inch,
 			exhaust_runner_cross_section_area: circle_area(0.68 * units.inch),
@@ -421,7 +414,7 @@ public node vr6_r32 {
             exhaust_camshaft: camshaft.exhaust_cam_R,
 			intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch,
 			intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-			exhaust_runner_volume: circle_area(0.68 * units.inch) * 5 * units.inch,
+			exhaust_runner_volume: circle_area(0.68 * units.inch) * 6 * units.inch,
 			exhaust_runner_cross_section_area: circle_area(0.68 * units.inch),
             flip_display: true
         )
@@ -430,21 +423,19 @@ public node vr6_r32 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 35 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 40 * units.deg)
+        .add_sample(2000 * units.rpm, 50 * units.deg)
         .add_sample(3000 * units.rpm, 55 * units.deg)
-        .add_sample(4000 * units.rpm, 60 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 60 * units.deg)
-		.add_sample(7000 * units.rpm, 60 * units.deg)
-		.add_sample(8000 * units.rpm, 60 * units.deg)
-		.add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(4000 * units.rpm, 55 * units.deg)
+        .add_sample(5000 * units.rpm, 55 * units.deg)
+        .add_sample(6000 * units.rpm, 55 * units.deg)
+		.add_sample(7000 * units.rpm, 55 * units.deg)
+		.add_sample(8000 * units.rpm, 55 * units.deg)
 
     engine.add_ignition_module(
         volkswagen_vr6_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7200 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
