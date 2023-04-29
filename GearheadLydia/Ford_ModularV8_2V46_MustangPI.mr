@@ -136,7 +136,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node ford_modular_2v46_head {
@@ -147,10 +147,10 @@ public node ford_modular_2v46_head {
 	
 	input flow_attenuation_in: 0.7;
 	input flow_attenuation_ex: 0.7;
-    input lift_scale: 50.0;
+    input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(1.15 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation_in)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation_in)
@@ -166,7 +166,7 @@ public node ford_modular_2v46_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
 
-    function exhaust_flow(1.15 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation_ex)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation_ex)
@@ -207,13 +207,9 @@ public node Mod2V46 {
     engine engine(
         name: "Ford Modular 2V",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
+		starter_speed: 1200 * units.rpm,
         redline: 6000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
 		//jitter: 0.3,
 		//hf_gain: 0.005
     )
@@ -303,35 +299,26 @@ public node Mod2V46 {
 
 	label exhaust_radius((3.0 * units.inch)/2)
 
-    exhaust_system_parameters es_params_L(
-        outlet_flow_rate: k_carb(250.0),
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(380.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 600 * units.mm,
-		volume: 600 * units.mm * circle_area(exhaust_radius)
+		length: 2400 * units.mm,
+		volume: 2400 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system_parameters es_params_R(
-        outlet_flow_rate: k_carb(250.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(380.0),
-        velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 650 * units.mm,
-		volume: 650 * units.mm * circle_area(exhaust_radius)
-    )
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 
-    exhaust_system exhaustL(es_params_L, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-    exhaust_system exhaustR(es_params_R, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-
-	label pipe_length_1(2.7 * bore_spacing)
-	label pipe_length_2(1.8 * bore_spacing)
-	label pipe_length_3(0.9 * bore_spacing)
+	label pipe_length_1(3.0 * bore_spacing)
+	label pipe_length_2(2.0 * bore_spacing)
+	label pipe_length_3(1.0 * bore_spacing)
 	label pipe_length_4(0.0 * bore_spacing)
+	
+	label exhaust_stagger(0.4 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
+    cylinder_bank b0(bank_params, angle: 45.0 * units.deg, display_depth: 0.6) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -339,9 +326,8 @@ public node Mod2V46 {
             rod_journal: rj0,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_1,
-			sound_attenuation: 0.7
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -349,9 +335,8 @@ public node Mod2V46 {
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_2,
-			sound_attenuation: 0.8
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -359,9 +344,8 @@ public node Mod2V46 {
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_3,
-			sound_attenuation: 0.9
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -369,12 +353,11 @@ public node Mod2V46 {
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_4,
-			sound_attenuation: 1.0
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4 + exhaust_stagger
         )
 
-    cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
+    cylinder_bank b1(bank_params, angle: -45.0 * units.deg, display_depth: 0.6) // R (second)
     b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -382,7 +365,7 @@ public node Mod2V46 {
             rod_journal: rj0,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_1,
 			sound_attenuation: 0.7
         )
@@ -392,9 +375,9 @@ public node Mod2V46 {
             rod_journal: rj1,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_2,
-			sound_attenuation: 0.8
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -402,9 +385,9 @@ public node Mod2V46 {
             rod_journal: rj2,
             ignition_wire: wires.wire7,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_3,
-			sound_attenuation: 0.9
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -412,9 +395,9 @@ public node Mod2V46 {
             rod_journal: rj3,
             ignition_wire: wires.wire8,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_4,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.7
         )
 
     engine
@@ -445,22 +428,19 @@ public node Mod2V46 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 21 * units.deg)
-        .add_sample(2000 * units.rpm, 24 * units.deg)
-        .add_sample(3000 * units.rpm, 26 * units.deg)
-        .add_sample(4000 * units.rpm, 29 * units.deg)
-        .add_sample(5000 * units.rpm, 32 * units.deg)
-        .add_sample(6000 * units.rpm, 35 * units.deg)
-		.add_sample(7000 * units.rpm, 35 * units.deg)
-		.add_sample(8000 * units.rpm, 35 * units.deg)
-		.add_sample(9000 * units.rpm, 35 * units.deg)
+        .add_sample(0000 * units.rpm, 25   * units.deg)
+        .add_sample(1000 * units.rpm, 29.5 * units.deg)
+        .add_sample(2000 * units.rpm, 30   * units.deg)
+        .add_sample(3000 * units.rpm, 30.5 * units.deg)
+        .add_sample(4000 * units.rpm, 31   * units.deg)
+        .add_sample(5000 * units.rpm, 31.5 * units.deg)
+        .add_sample(6000 * units.rpm, 32   * units.deg)
+		.add_sample(7000 * units.rpm, 32   * units.deg)
 
     engine.add_ignition_module(
         ford_modular_2v46_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6200 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
