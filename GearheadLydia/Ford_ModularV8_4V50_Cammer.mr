@@ -9,11 +9,11 @@ label cycle(2 * 360 * units.deg)
 // firing order: 13726548
 // in standard:  26543187
 
-public node ford_modular_3v54_distributor {
+public node ford_modular_cammer50_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6250 * units.rpm;
-	input limiter_duration: 0.1;
+    input rev_limit: 7100 * units.rpm;
+	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -37,47 +37,34 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-// 2V specs:
-// https://www.ford-trucks.com/forums/621045-stock-cam-specs.html
-// Non-PI:
-// Intake .462" lift/201 @.050"
-// Exhaust .462" lift/208 @.050"
-// 114 intake C/L
-// 113 exhaust C/L
-// PI:
-// Intake .507" lift/200 @.050"
-// Exhaust .534" lift/210 @.050"
-// 114 intake C/L
-// 115 exhaust C/L
-
-public node ford_modular_3v54_lobe_profile_int {
+public node ford_modular_cammer50_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 195 * units.deg,
-            gamma: 1.0,
-            lift: 11.15 * units.mm,
+            duration_at_50_thou: 256 * units.deg,
+            gamma: 1.4,
+            lift: 9.95 * units.mm,
             steps: 100
         );
 }
 
-public node ford_modular_3v54_lobe_profile_exh {
+public node ford_modular_cammer50_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 221 * units.deg,
-            gamma: 1.0,
-            lift: 11.07 * units.mm,
+            duration_at_50_thou: 250 * units.deg,
+            gamma: 1.4,
+            lift: 9.9 * units.mm,
             steps: 100
         );
 }
 
-public node ford_modular_3v54_camshaft_builder {
-    input in_lobe_profile: ford_modular_3v54_lobe_profile_int();
-	input ex_lobe_profile: ford_modular_3v54_lobe_profile_exh();
+public node ford_modular_cammer50_camshaft_builder {
+    input in_lobe_profile: ford_modular_cammer50_lobe_profile_int();
+	input ex_lobe_profile: ford_modular_cammer50_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 117.5 * units.deg;
-    input intake_lobe_center: lobe_separation;
-    input exhaust_lobe_center: lobe_separation;
+    input lobe_separation: 139.0 * units.deg;
+    input intake_lobe_center: 139.0 * units.deg;
+    input exhaust_lobe_center: 121.0 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
@@ -139,56 +126,55 @@ private node add_flow_sample {
     this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
-public node ford_modular_3v54_head {
+public node ford_modular_cammer50_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 49.8 * units.cc;
+    input chamber_volume: 57.0 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation_in: 0.9;
-	input flow_attenuation_ex: 0.7;
+	input flow_attenuation: 0.95;
     input lift_scale: 50.0;
     alias output __out: head;
 
-    function intake_flow(1.15 * units.mm)
+    function intake_flow(1.1 * units.mm)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation_in)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation_in)
-        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation_in)
-        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation_in)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.15 * units.mm)
+    function exhaust_flow(1.1 * units.mm)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation_ex)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation_ex)
-        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation_ex)
-        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation_ex)
-        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
+        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
+        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
+        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
+        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
+        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
+        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
+        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
+        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
+        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
 
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.2 * units.inch) * 5 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.2 * units.inch),
-        exhaust_runner_volume: circle_area(1.2 * units.inch) * 12 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.2 * units.inch),
+        intake_runner_volume: circle_area(1.05 * units.inch) * 5 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.05 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 12 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -199,16 +185,16 @@ public node ford_modular_3v54_head {
 }
 
 
-public node Mod3V54 {
+public node ModCammer50 {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Ford Modular 3V",
+        name: "Ford ''Cammer'' 4V",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 900 * units.rpm,
-        redline: 6000 * units.rpm,
+        redline: 7000 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 4.0,
             burning_efficiency_randomness: 0.2,
@@ -218,16 +204,16 @@ public node Mod3V54 {
 		//hf_gain: 0.005
     )
 
-	// https://fordauthority.com/fmc/ford-motor-company-engines/ford-modular-family/ford-5-4l-triton-engine/
-    label bore(90.22 * units.mm)
+	// https://fordauthority.com/fmc/ford-motor-company-engines/ford-modular-family/ford-4-6l-engine/
+    label bore(94.0 * units.mm)
 	label bore_spacing(100.0 * units.mm)
-    label stroke(105.8 * units.mm)
-    label rod_length(169.1 * units.mm)
+    label stroke(90.0 * units.mm)
+    label rod_length(150.7 * units.mm)
     label rod_mass(618 * units.g)
-    label compression_height(29.64 * units.mm)
+    label compression_height(31.01 * units.mm)
 	label piston_mass(361 * units.g)
 	label piston_dome(4.451 * units.cc)
-	label deck_height((256.0 + 0.2) * units.mm)
+	label deck_height((227.0 + 0.2) * units.mm)
     label crank_mass(54.3 * units.lb)
     label flywheel_mass(29 * 2 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -292,43 +278,43 @@ public node Mod3V54 {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(450),
+        intake_flow_rate: k_carb(650),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.994,
+        idle_throttle_plate_position: 0.9965,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(450.0),
-        runner_length: 4.5 * units.inch,
+        runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
     )
 
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params_L(
-        outlet_flow_rate: k_carb(350.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
+        outlet_flow_rate: k_carb(500.0),
+        primary_tube_length: 20.0 * units.inch,
+        primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 600 * units.mm,
-		volume: 600 * units.mm * circle_area(exhaust_radius)
+		length: 320 * units.mm,
+		volume: 320 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system_parameters es_params_R(
-        outlet_flow_rate: k_carb(350.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
+        outlet_flow_rate: k_carb(500.0),
+        primary_tube_length: 20.0 * units.inch,
+        primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 650 * units.mm,
-		volume: 650 * units.mm * circle_area(exhaust_radius)
+		length: 360 * units.mm,
+		volume: 360 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system exhaustL(es_params_L, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
     exhaust_system exhaustR(es_params_R, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 
-	label pipe_length_1(2.7 * bore_spacing)
-	label pipe_length_2(1.8 * bore_spacing)
-	label pipe_length_3(0.9 * bore_spacing)
+	label pipe_length_1(1.8 * bore_spacing)
+	label pipe_length_2(1.2 * bore_spacing)
+	label pipe_length_3(0.6 * bore_spacing)
 	label pipe_length_4(0.0 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
@@ -340,8 +326,7 @@ public node Mod3V54 {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_1,
-			sound_attenuation: 0.7
+			primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -350,8 +335,7 @@ public node Mod3V54 {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_2,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -360,8 +344,7 @@ public node Mod3V54 {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_3,
-			sound_attenuation: 0.9
+			primary_length: pipe_length_3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -370,8 +353,7 @@ public node Mod3V54 {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_4,
-			sound_attenuation: 1.0
+			primary_length: pipe_length_4
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -383,8 +365,7 @@ public node Mod3V54 {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_1,
-			sound_attenuation: 0.7
+			primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -393,8 +374,7 @@ public node Mod3V54 {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_2,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -403,8 +383,7 @@ public node Mod3V54 {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_3,
-			sound_attenuation: 0.9
+			primary_length: pipe_length_3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -413,8 +392,7 @@ public node Mod3V54 {
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_4,
-			sound_attenuation: 1.0
+			primary_length: pipe_length_4
         )
 
     engine
@@ -423,20 +401,20 @@ public node Mod3V54 {
 
     engine.add_crankshaft(c0)
 
-    ford_modular_3v54_camshaft_builder camshaft(
-	    in_lobe_profile: ford_modular_3v54_lobe_profile_int(),
-		ex_lobe_profile: ford_modular_3v54_lobe_profile_exh()
+    ford_modular_cammer50_camshaft_builder camshaft(
+	    in_lobe_profile: ford_modular_cammer50_lobe_profile_int(),
+		ex_lobe_profile: ford_modular_cammer50_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        ford_modular_3v54_head(
+        ford_modular_cammer50_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: true
         )
     )
     b1.set_cylinder_head (
-        ford_modular_3v54_head(
+        ford_modular_cammer50_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: false
@@ -446,21 +424,21 @@ public node Mod3V54 {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 20 * units.deg)
-        .add_sample(2000 * units.rpm, 25 * units.deg)
-        .add_sample(3000 * units.rpm, 30 * units.deg)
-        .add_sample(4000 * units.rpm, 35 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 45 * units.deg)
-		.add_sample(7000 * units.rpm, 40 * units.deg)
-		.add_sample(8000 * units.rpm, 40 * units.deg)
-		.add_sample(9000 * units.rpm, 40 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 50 * units.deg)
+        .add_sample(3000 * units.rpm, 50 * units.deg)
+        .add_sample(4000 * units.rpm, 50 * units.deg)
+        .add_sample(5000 * units.rpm, 50 * units.deg)
+        .add_sample(6000 * units.rpm, 50 * units.deg)
+		.add_sample(7000 * units.rpm, 50 * units.deg)
+		.add_sample(8000 * units.rpm, 50 * units.deg)
+		.add_sample(9000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
-        ford_modular_3v54_distributor(
+        ford_modular_cammer50_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 6250 * units.rpm
+            rev_limit: 7100 * units.rpm
         )
     )
 }
@@ -481,7 +459,7 @@ public node ford_mustang_gt_s197_vehicle {
 public node tremec_tr3650_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 550 * units.lb_ft
+            max_clutch_torque: 600 * units.lb_ft
         )
         .add_gear(3.38)
         .add_gear(2.00)
@@ -491,7 +469,7 @@ public node tremec_tr3650_transmission {
 }
 
 public node main {
-    set_engine(Mod3V54())
+    set_engine(ModCammer50())
     set_vehicle(ford_mustang_gt_s197_vehicle())
     set_transmission(tremec_tr3650_transmission())
 }
