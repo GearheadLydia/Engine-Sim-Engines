@@ -44,7 +44,7 @@ public node toyota_2zzge_lobe_profile_int_lo {
         harmonic_cam_lobe(
             duration_at_50_thou: 228.0 * units.deg,
             gamma: 1.0,
-            lift: 7.6 * units.mm,
+            lift: 7.25 * units.mm,
             steps: 100
         );
 }
@@ -54,7 +54,7 @@ public node toyota_2zzge_lobe_profile_exh_lo {
         harmonic_cam_lobe(
             duration_at_50_thou: 228.0 * units.deg,
             gamma: 1.0,
-            lift: 7.6 * units.mm,
+            lift: 7.25 * units.mm,
             steps: 100
         );
 }
@@ -85,10 +85,10 @@ public node toyota_2zzge_camshaft_builder {
     input in_lobe_profile_hi: toyota_2zzge_lobe_profile_int_hi();
     input ex_lobe_profile_hi: toyota_2zzge_lobe_profile_exh_hi();
     input lobe_separation: 99.0 * units.deg;
-    input intake_lobe_center_lo: 122.0 * units.deg;
-    input exhaust_lobe_center_lo: 122.0 * units.deg;
-    input intake_lobe_center_hi: 94.0 * units.deg;
-    input exhaust_lobe_center_hi: 94.0 * units.deg;
+    input intake_lobe_center_lo: 128.0 * units.deg; // calculated median: 105.5
+    input exhaust_lobe_center_lo: 128.0 * units.deg; // calculated median: 116.5
+    input intake_lobe_center_hi: 94.0 * units.deg; // calculated median: 109.5
+    input exhaust_lobe_center_hi: 94.0 * units.deg; // calculated median: 102.0
     input advance_in_lo: 0.0 * units.deg;
     input advance_ex_lo: 0.0 * units.deg;
 	input advance_in_hi: 0.0 * units.deg;
@@ -439,7 +439,7 @@ public node lotus_elise_111r_vehicle {
         );
 }
 
-// 2004 Toyota Celica GT-S ZZT231
+// 2004 Toyota Celica GT-S (ZZT231)
 public node toyota_celica_zzt231_vehicle {
     alias output __out:
         vehicle(
