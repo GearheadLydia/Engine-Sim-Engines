@@ -146,7 +146,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node ford_modular_cobra54_head {
@@ -156,10 +156,10 @@ public node ford_modular_cobra54_head {
     input flip_display: false;
 	
 	input flow_attenuation: 0.95;
-    input lift_scale: 50.0;
+    input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(1.1 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -175,7 +175,7 @@ public node ford_modular_cobra54_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.1 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -196,8 +196,8 @@ public node ford_modular_cobra54_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 12 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -216,13 +216,9 @@ public node ModCobra54 {
     engine engine(
         name: "Ford Triton 4V",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
-        redline: 6200 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+		starter_speed: 1200 * units.rpm,
+        redline: 6000 * units.rpm, // 6200
+        throttle_gamma: 1.0
 		//jitter: 0.3,
 		//hf_gain: 0.005
     )
@@ -301,44 +297,35 @@ public node ModCobra54 {
     intake intake(
         plenum_volume: 3.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(550),
+        intake_flow_rate: k_carb(450),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.996,
+        idle_throttle_plate_position: 0.994,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(500.0),
+        runner_flow_rate: k_carb(300.0),
         runner_length: 8.5 * units.inch,
         velocity_decay: 0.1
     )
 
 	label exhaust_radius((5.0 * units.inch)/2)
 
-    exhaust_system_parameters es_params_L(
-        outlet_flow_rate: k_carb(800.0),
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(700.0),
         primary_tube_length: 15.0 * units.inch,
-        primary_flow_rate: k_carb(500.0),
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 320 * units.mm,
-		volume: 320 * units.mm * circle_area(exhaust_radius)
+		length: 1200 * units.mm,
+		volume: 1200 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system_parameters es_params_R(
-        outlet_flow_rate: k_carb(800.0),
-        primary_tube_length: 15.0 * units.inch,
-        primary_flow_rate: k_carb(500.0),
-        velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 360 * units.mm,
-		volume: 360 * units.mm * circle_area(exhaust_radius)
-    )
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 
-    exhaust_system exhaustL(es_params_L, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-    exhaust_system exhaustR(es_params_R, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-
-	label pipe_length_1(2.4 * bore_spacing)
-	label pipe_length_2(1.6 * bore_spacing)
-	label pipe_length_3(0.8 * bore_spacing)
+	label pipe_length_1(2.7 * bore_spacing)
+	label pipe_length_2(1.8 * bore_spacing)
+	label pipe_length_3(0.9 * bore_spacing)
 	label pipe_length_4(0.0 * bore_spacing)
+
+	label exhaust_stagger(0.2 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -348,8 +335,8 @@ public node ModCobra54 {
             rod_journal: rj0,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_1
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -357,8 +344,8 @@ public node ModCobra54 {
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_2
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -366,8 +353,8 @@ public node ModCobra54 {
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_3
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -375,8 +362,8 @@ public node ModCobra54 {
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_4
+            exhaust_system: exhaust,
+			primary_length: pipe_length_4 + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -387,7 +374,7 @@ public node ModCobra54 {
             rod_journal: rj0,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_1
         )
         .add_cylinder(
@@ -396,7 +383,7 @@ public node ModCobra54 {
             rod_journal: rj1,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_2
         )
         .add_cylinder(
@@ -405,7 +392,7 @@ public node ModCobra54 {
             rod_journal: rj2,
             ignition_wire: wires.wire7,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_3
         )
         .add_cylinder(
@@ -414,7 +401,7 @@ public node ModCobra54 {
             rod_journal: rj3,
             ignition_wire: wires.wire8,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_4
         )
 
@@ -446,22 +433,19 @@ public node ModCobra54 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 25 * units.deg)
-        .add_sample(2000 * units.rpm, 40 * units.deg)
-        .add_sample(3000 * units.rpm, 45 * units.deg)
-        .add_sample(4000 * units.rpm, 50 * units.deg)
-        .add_sample(5000 * units.rpm, 45 * units.deg)
-        .add_sample(6000 * units.rpm, 40 * units.deg)
-		.add_sample(7000 * units.rpm, 40 * units.deg)
-		.add_sample(8000 * units.rpm, 40 * units.deg)
-		.add_sample(9000 * units.rpm, 40 * units.deg)
+        .add_sample(0000 * units.rpm, 5 * units.deg)
+        .add_sample(1000 * units.rpm, 30 * units.deg)
+        .add_sample(2000 * units.rpm, 37 * units.deg)
+        .add_sample(3000 * units.rpm, 39 * units.deg)
+        .add_sample(4000 * units.rpm, 39 * units.deg)
+        .add_sample(5000 * units.rpm, 39 * units.deg)
+        .add_sample(6000 * units.rpm, 39 * units.deg)
+		.add_sample(7000 * units.rpm, 39 * units.deg)
 
     engine.add_ignition_module(
         ford_modular_cobra54_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6400 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
