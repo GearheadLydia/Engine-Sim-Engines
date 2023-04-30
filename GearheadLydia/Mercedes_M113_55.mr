@@ -172,8 +172,8 @@ public node mercedes_m113_55_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 3 * units.inch,
         intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.75 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -283,21 +283,21 @@ public node m113_55 {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(450.0),
-        primary_tube_length: 10.0 * units.inch,
+        primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(250.0),
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
 		length: 2600 * units.mm,
 		volume: (2000 * units.mm * circle_area(exhaust_radius)) + (600 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.04, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.03, impulse_response: ir_lib.default_0)
 
-	label pipe_length_1(3.8 * bore_spacing)
-	label pipe_length_2(2.8 * bore_spacing)
-	label pipe_length_3(1.3 * bore_spacing)
+	label pipe_length_1(3.0 * bore_spacing)
+	label pipe_length_2(2.0 * bore_spacing)
+	label pipe_length_3(1.0 * bore_spacing)
 	label pipe_length_4(0.0 * bore_spacing)
 	
-	label exhaust_stagger(35 * units.mm)
+	label exhaust_stagger(80 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -309,7 +309,7 @@ public node m113_55 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.8
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -319,7 +319,7 @@ public node m113_55 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 0.3
+			sound_attenuation: 0.8 * 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -328,7 +328,8 @@ public node m113_55 {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+			primary_length: pipe_length_3 + exhaust_stagger,
+			sound_attenuation: 0.9 * 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -337,7 +338,8 @@ public node m113_55 {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger
+			primary_length: pipe_length_4 + exhaust_stagger,
+			sound_attenuation: 1.0
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -350,7 +352,7 @@ public node m113_55 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
-			sound_attenuation: 0.8
+			sound_attenuation: 0.7 * 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -360,7 +362,7 @@ public node m113_55 {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
-			sound_attenuation: 0.3
+			sound_attenuation: 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -369,7 +371,8 @@ public node m113_55 {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3,
+			sound_attenuation: 0.9
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -378,7 +381,8 @@ public node m113_55 {
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4
+			primary_length: pipe_length_4,
+			sound_attenuation: 1.0 * 0.8
         )
 
     engine
