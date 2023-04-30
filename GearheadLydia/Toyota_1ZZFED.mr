@@ -303,7 +303,7 @@ public node toyota_1zzfed_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 2.5 * units.inch,
+			primary_length: bore_spacing * 0.4,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -313,7 +313,7 @@ public node toyota_1zzfed_engine {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.7 * units.inch,
+			primary_length: bore_spacing * 0.1,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -323,7 +323,7 @@ public node toyota_1zzfed_engine {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.0 * units.inch,
+			primary_length: bore_spacing * 0.0,
 			sound_attenuation: 1.0
         )
 		.add_cylinder(
@@ -333,7 +333,7 @@ public node toyota_1zzfed_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.0 * units.inch,
+			primary_length: bore_spacing * 0.3,
 			sound_attenuation: 1.0
         )
 
