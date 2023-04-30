@@ -224,6 +224,7 @@ public node honda_b16a_head {
 }
 
 // https://kteller.com/honda-acura-b-series-piston-tech-guide/
+// https://zealautowerks.com/bseries.html
 public node honda_b16a_engine {
     alias output __out: engine;
 
@@ -242,12 +243,12 @@ public node honda_b16a_engine {
     label bore(81.0 * units.mm)
     label bore_spacing(90 * units.mm)
     label stroke(77.4 * units.mm)
-    label rod_length(134.3 * units.mm)
+    label rod_length(134.0 * units.mm)
     label rod_mass(350 * units.g)
 	label piston_mass(298 * units.g) // 
     label compression_height(30.0 * units.mm)
-	label deck_height((203.9 + 0.84) * units.mm)
-	label piston_dome(8.5 * units.cc) // calculated from 10.2:1 compression, assuming everything else is right
+	label deck_height((203.25 + 0.66) * units.mm)
+	label piston_dome(6.01 * units.cc)
     label crank_mass(4.0 * units.kg)
     label flywheel_mass(5.0 * units.kg)
     label flywheel_radius(5.0 * units.inch)
