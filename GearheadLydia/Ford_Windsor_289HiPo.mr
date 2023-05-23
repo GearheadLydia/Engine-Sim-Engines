@@ -9,11 +9,11 @@ label cycle(2 * 360 * units.deg)
 // firing order: 15486372
 // in standard:  21873654
 
-public node ford_windsor_58cobra_distributor {
+public node ford_windsor_289_kcode_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6250 * units.rpm;
-	input limiter_duration: 0.09;
+	input limiter_duration: 0.11;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -37,32 +37,34 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-public node ford_windsor_58cobra_lobe_profile_int {
+// https://stangnet.com/mustang-forums/threads/what-are-the-specs-for-a-289-original-hipo-cam.608636/
+
+public node ford_windsor_289_kcode_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 214 * units.deg,
+            duration_at_50_thou: 228 * units.deg,
             gamma: 1.0,
-            lift: 513 * units.thou,
+            lift: 478 * units.thou,
             steps: 100
         );
 }
 
-public node ford_windsor_58cobra_lobe_profile_exh {
+public node ford_windsor_289_kcode_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 220 * units.deg,
+            duration_at_50_thou: 227 * units.deg,
             gamma: 1.0,
-            lift: 529 * units.thou,
+            lift: 478 * units.thou,
             steps: 100
         );
 }
 
-public node ford_windsor_58cobra_camshaft_builder {
-    input in_lobe_profile: ford_windsor_58cobra_lobe_profile_int();
-	input ex_lobe_profile: ford_windsor_58cobra_lobe_profile_exh();
+public node ford_windsor_289_kcode_camshaft_builder {
+    input in_lobe_profile: ford_windsor_289_kcode_lobe_profile_int();
+	input ex_lobe_profile: ford_windsor_289_kcode_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 112.0 * units.deg;
+    input lobe_separation: 114.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
     input advance: 0.0 * units.deg;
@@ -126,13 +128,14 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node ford_windsor_58cobra_head {
+// https://www.vintage-mustang.com/threads/volume-of-65-hipo-cylinder-heads.400650/
+public node ford_windsor_289_kcode_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 60.5 * units.cc;
+    input chamber_volume: 54.5 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation: 0.85;
+	input flow_attenuation: 0.75;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -171,10 +174,10 @@ public node ford_windsor_58cobra_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.05 * units.inch) * 5 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 5 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        intake_runner_volume: circle_area(0.9 * units.inch) * 5 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -185,13 +188,13 @@ public node ford_windsor_58cobra_head {
 }
 
 
-public node Windsor50Cobra {
+public node ford_windsor_289_kcode_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Ford Windsor Cobra",
+        name: "Ford Windsor Hi-Po (K-code)",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 900 * units.rpm,
         redline: 6000 * units.rpm,
@@ -202,14 +205,14 @@ public node Windsor50Cobra {
 
     label bore(4 * units.inch)
 	label bore_spacing(4.38 * units.inch)
-    label stroke(3.5 * units.inch)
-    label rod_length(5.956 * units.inch)
+    label stroke(2.87 * units.inch)
+    label rod_length(5.155 * units.inch)
     label rod_mass(618 * units.g) // carried over, incorrect
-    label compression_height(1.769 * units.inch)
+    label compression_height(1.605 * units.inch)
 	label piston_mass(361 * units.g) // carried over, incorrect
-	label piston_dome(5 * units.cc)
-	label deck_height((9.503 * units.inch) + (40 * units.thou))
-    label crank_mass(55 * units.lb)
+	label piston_dome(2.7 * units.cc) // 10.45:1 compression
+	label deck_height((8.206 * units.inch) + (40 * units.thou))
+    label crank_mass(75 * units.lb)
     label flywheel_mass(50 * units.lb)
     label flywheel_radius(6 * units.inch)
 
@@ -273,35 +276,35 @@ public node Windsor50Cobra {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(550),
+        intake_flow_rate: k_carb(400), // actual measurement: 595 cm supposedly
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(450.0),
-        runner_length: 6.5 * units.inch,
+        runner_flow_rate: k_carb(200),
+        runner_length: 7.5 * units.inch,
         velocity_decay: 0.1
     )
 	
 	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500.0),
-        primary_tube_length: 9.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        outlet_flow_rate: k_carb(400),
+        primary_tube_length: 12.0 * units.inch,
+        primary_flow_rate: k_carb(200),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2600 * units.mm,
-		volume: 2600 * units.mm * circle_area(exhaust_radius) * 2
+		length: 2400 * units.mm,
+		volume: 2400 * units.mm * circle_area(exhaust_radius) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 
-	label pipe_length_1(2.7 * bore_spacing)
-	label pipe_length_2(1.8 * bore_spacing)
-	label pipe_length_3(0.9 * bore_spacing)
+	label pipe_length_1(3.0 * bore_spacing)
+	label pipe_length_2(2.0 * bore_spacing)
+	label pipe_length_3(1.0 * bore_spacing)
 	label pipe_length_4(0.0 * bore_spacing)
 	
-	label exhaust_stagger(0.2 * bore_spacing)
+	label exhaust_stagger(0.1 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -387,20 +390,20 @@ public node Windsor50Cobra {
 
     engine.add_crankshaft(c0)
 
-    ford_windsor_58cobra_camshaft_builder camshaft(
-	    in_lobe_profile: ford_windsor_58cobra_lobe_profile_int(),
-		ex_lobe_profile: ford_windsor_58cobra_lobe_profile_exh()
+    ford_windsor_289_kcode_camshaft_builder camshaft(
+	    in_lobe_profile: ford_windsor_289_kcode_lobe_profile_int(),
+		ex_lobe_profile: ford_windsor_289_kcode_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        ford_windsor_58cobra_head(
+        ford_windsor_289_kcode_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: true
         )
     )
     b1.set_cylinder_head (
-        ford_windsor_58cobra_head(
+        ford_windsor_289_kcode_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: false
@@ -409,52 +412,51 @@ public node Windsor50Cobra {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 30 * units.deg)
-        .add_sample(2000 * units.rpm, 33 * units.deg)
-        .add_sample(3000 * units.rpm, 33 * units.deg)
-        .add_sample(4000 * units.rpm, 30 * units.deg)
-        .add_sample(5000 * units.rpm, 26 * units.deg)
-        .add_sample(6000 * units.rpm, 22 * units.deg)
-		.add_sample(7000 * units.rpm, 22 * units.deg)
+        .add_sample(0000 * units.rpm, 64 * units.deg)
+        .add_sample(1000 * units.rpm, 69 * units.deg)
+        .add_sample(2000 * units.rpm, 69 * units.deg)
+        .add_sample(3000 * units.rpm, 68 * units.deg)
+        .add_sample(4000 * units.rpm, 67 * units.deg)
+        .add_sample(5000 * units.rpm, 66 * units.deg)
+        .add_sample(6000 * units.rpm, 64 * units.deg)
+		.add_sample(7000 * units.rpm, 64 * units.deg)
 
     engine.add_ignition_module(
-        ford_windsor_58cobra_distributor(
+        ford_windsor_289_kcode_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
     )
 }
 
-// 1995 Ford Mustang SVT Cobra R (SN95)
-public node ford_mustang_cobra_r_sn95_vehicle {
+// 1965 Ford Mustang 
+public node ford_mustang_fastback_1965_vehicle {
     alias output __out:
         vehicle(
-            mass: 3353 * units.lb,
-            drag_coefficient: 0.35,
-            cross_sectional_area: 2.05 * (units.m * units.m),
-            diff_ratio: 3.08,
-            tire_radius: 330 * units.mm, // 255/45R17
+            mass: 2943 * units.lb,
+            drag_coefficient: 0.5,
+            cross_sectional_area: 1.87 * (units.m * units.m),
+            diff_ratio: 3.00,
+            tire_radius: 326.5 * units.mm, // 245/45R17
             rolling_resistance: 500 * units.N
         );
 }
 
-public node borgwarner_t5_transmission {
+public node ford_3_25_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 600 * units.lb_ft
         )
-        .add_gear(3.35)
-        .add_gear(2.00)
-        .add_gear(1.33)
-        .add_gear(1.00)
-        .add_gear(0.68);
+        .add_gear(2.78)
+        .add_gear(1.93)
+        .add_gear(1.36)
+        .add_gear(1.00);
 }
 
 public node main {
-    set_engine(Windsor50Cobra())
-    set_vehicle(ford_mustang_cobra_r_sn95_vehicle())
-    set_transmission(borgwarner_t5_transmission())
+    set_engine(ford_windsor_289_kcode_engine())
+    set_vehicle(ford_mustang_fastback_1965_vehicle())
+    set_transmission(ford_3_25_transmission())
 }
 
 main()
