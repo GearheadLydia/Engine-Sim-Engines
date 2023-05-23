@@ -278,7 +278,7 @@ public node ford_windsor_289_kcode_engine {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(400), // actual measurement: 595 cm supposedly
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.996,
+        idle_throttle_plate_position: 0.995,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(200),
         runner_length: 7.5 * units.inch,
