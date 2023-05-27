@@ -445,7 +445,7 @@ public node ford_mustang_fastback_1965_vehicle {
 public node ford_3_25_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 600 * units.lb_ft
+            max_clutch_torque: 400 * units.lb_ft
         )
         .add_gear(2.78)
         .add_gear(1.93)
