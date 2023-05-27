@@ -40,9 +40,9 @@ private node wires {
 public node ford_modular_coyote_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 263 * units.deg,
-            gamma: 1.5,
-            lift: 13.0 * units.mm,
+            duration_at_50_thou: 211 * units.deg, // adv.: 263
+            gamma: 1.0,
+            lift: 12.0 * units.mm, // 13 on Boss
             steps: 100
         );
 }
@@ -50,9 +50,9 @@ public node ford_modular_coyote_lobe_profile_int {
 public node ford_modular_coyote_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 263 * units.deg,
-            gamma: 1.5,
-            lift: 13.0 * units.mm,
+            duration_at_50_thou: 211 * units.deg, // adv.: 263
+            gamma: 1.0,
+            lift: 11.0 * units.mm, // 13 on Boss
             steps: 100
         );
 }
@@ -62,9 +62,8 @@ public node ford_modular_coyote_camshaft_builder {
 	input ex_lobe_profile: ford_modular_coyote_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 139.0 * units.deg;
     input intake_lobe_center: 139.0 * units.deg;
-    input exhaust_lobe_center: 121.0 * units.deg;
+    input exhaust_lobe_center: 123.0 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
@@ -123,7 +122,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node ford_modular_coyote_head {
@@ -133,10 +132,10 @@ public node ford_modular_coyote_head {
     input flip_display: false;
 	
 	input flow_attenuation: 0.95;
-    input lift_scale: 50.0;
+    input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(1.1 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -152,7 +151,7 @@ public node ford_modular_coyote_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.1 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -173,7 +172,7 @@ public node ford_modular_coyote_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 12 * units.inch,
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 5 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -192,14 +191,10 @@ public node ModCoyote {
 
     engine engine(
         name: "Ford Coyote (Gen2)",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
 		//jitter: 0.3,
 		//hf_gain: 0.005
     )
@@ -239,9 +234,9 @@ public node ModCoyote {
         tdc: 135.0 * units.deg // -45 degrees
     )
 
-    rod_journal rj0(angle: 0.0)
+    rod_journal rj0(angle:   0.0 * units.deg)
     rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle: 90.0 * units.deg)
+    rod_journal rj2(angle:  90.0 * units.deg)
     rod_journal rj3(angle: 180.0 * units.deg)
 
     c0
@@ -279,33 +274,28 @@ public node ModCoyote {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(550),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.996,
+        idle_throttle_plate_position: 0.995,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(450.0),
+        runner_flow_rate: k_carb(300.0),
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
     )
 
+	label exhaust_radius((4.0 * units.inch)/2)
+
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 15.0 * units.inch,
+        outlet_flow_rate: k_carb(900.0),
+        primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(650.0),
         velocity_decay: 0.2, //0.5
-        volume: 10.0 * units.L
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 2500 * units.mm,
+		volume: 2500 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaustL(
-		es_params,
-		audio_volume: 0.8 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 320 * units.mm
-	)
-    exhaust_system exhaustR(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 380 * units.mm
-	)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.06, impulse_response: ir_lib.default_0)
+	
+	label exhaust_stagger(40 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -315,8 +305,9 @@ public node ModCoyote {
             rod_journal: rj0,
             ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 7.0 * units.inch
+            exhaust_system: exhaust,
+			primary_length: 7.0 * units.inch + exhaust_stagger,
+			sound_attenuation: 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -324,8 +315,9 @@ public node ModCoyote {
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 4.5 * units.inch
+            exhaust_system: exhaust,
+			primary_length: 4.5 * units.inch + exhaust_stagger,
+			sound_attenuation: 0.9
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -333,8 +325,8 @@ public node ModCoyote {
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 3.0 * units.inch
+            exhaust_system: exhaust,
+			primary_length: 3.0 * units.inch + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -342,8 +334,8 @@ public node ModCoyote {
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: 2.5 * units.inch
+            exhaust_system: exhaust,
+			primary_length: 2.5 * units.inch + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -354,8 +346,9 @@ public node ModCoyote {
             rod_journal: rj0,
             ignition_wire: wires.wire5,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 7.0 * units.inch
+            exhaust_system: exhaust,
+			primary_length: 7.0 * units.inch,
+			sound_attenuation: 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -363,8 +356,9 @@ public node ModCoyote {
             rod_journal: rj1,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: 4.5 * units.inch
+            exhaust_system: exhaust,
+			primary_length: 4.5 * units.inch,
+			sound_attenuation: 0.9
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -372,7 +366,7 @@ public node ModCoyote {
             rod_journal: rj2,
             ignition_wire: wires.wire7,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: 2.5 * units.inch
         )
         .add_cylinder(
@@ -381,7 +375,7 @@ public node ModCoyote {
             rod_journal: rj3,
             ignition_wire: wires.wire8,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: 2.0 * units.inch
         )
 
@@ -413,22 +407,20 @@ public node ModCoyote {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 25 * units.deg)
-        .add_sample(2000 * units.rpm, 40 * units.deg)
-        .add_sample(3000 * units.rpm, 45 * units.deg)
-        .add_sample(4000 * units.rpm, 50 * units.deg)
-        .add_sample(5000 * units.rpm, 45 * units.deg)
-        .add_sample(6000 * units.rpm, 40 * units.deg)
-		.add_sample(7000 * units.rpm, 40 * units.deg)
-		.add_sample(8000 * units.rpm, 40 * units.deg)
-		.add_sample(9000 * units.rpm, 40 * units.deg)
+        .add_sample(0000 * units.rpm, 35 * units.deg)
+        .add_sample(1000 * units.rpm, 53 * units.deg)
+        .add_sample(2000 * units.rpm, 55 * units.deg)
+        .add_sample(3000 * units.rpm, 56 * units.deg)
+        .add_sample(4000 * units.rpm, 55 * units.deg)
+        .add_sample(5000 * units.rpm, 52 * units.deg)
+        .add_sample(6000 * units.rpm, 49 * units.deg)
+		.add_sample(7000 * units.rpm, 46 * units.deg)
+		.add_sample(8000 * units.rpm, 46 * units.deg)
 
     engine.add_ignition_module(
         ford_modular_coyote_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7250 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
