@@ -195,13 +195,7 @@ public node chevrolet_bigblock_gen5_zz572_engine {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 900 * units.rpm,
         redline: 6000 * units.rpm,
-        throttle_gamma: 1.0,
-		// jitter: 0.7,
-		// hf_gain: 0.15
-		jitter: 0.6,
-		hf_gain: 0.1
-		// jitter: 0.1,
-		// hf_gain: 0.1
+        throttle_gamma: 1.0
     )
 
 	// various sources
@@ -299,11 +293,7 @@ public node chevrolet_bigblock_gen5_zz572_engine {
 		volume: 2500 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(bore_spacing * 3.0)
 	label pipe_length_2(bore_spacing * 2.0)
