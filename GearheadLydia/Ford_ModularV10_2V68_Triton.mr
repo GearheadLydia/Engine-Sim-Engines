@@ -12,7 +12,7 @@ label cycle(2 * 360 * units.deg)
 public node ford_modular_v10_triton68_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6100 * units.rpm;
+    input rev_limit: 5300 * units.rpm; // rev limit quoted variously as 5300, or 5300 in certain gears but 5600 in others
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -196,8 +196,8 @@ public node ford_modular_v10_triton68_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.1 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(1.1 * units.inch) * 12 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -217,7 +217,7 @@ public node ford_modularv10_2v68_triton {
         name: "Ford Triton V10 2V",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 900 * units.rpm,
-        redline: 6000 * units.rpm,
+        redline: 5000 * units.rpm,
         throttle_gamma: 1.0,
 		simulation_frequency: 7500
 		//jitter: 0.3,
@@ -310,9 +310,9 @@ public node ford_modularv10_2v68_triton {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(1500),
+        intake_flow_rate: k_carb(600),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9975,
+        idle_throttle_plate_position: 0.993,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(450.0),
         runner_length: 6.5 * units.inch,
@@ -322,16 +322,16 @@ public node ford_modularv10_2v68_triton {
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1300.0),
+        outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        primary_flow_rate: k_carb(150.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 3000 * units.mm,
-		volume: 3000 * units.mm * circle_area(exhaust_radius) * 2
+		length: 3500 * units.mm,
+		volume: 3500 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 
 	label pipe_length_1(4 * bore_spacing)
 	label pipe_length_2(3 * bore_spacing)
