@@ -293,7 +293,7 @@ public node ModCoyote {
 		volume: 2500 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.06, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 	
 	label exhaust_stagger(40 * units.mm)
 
