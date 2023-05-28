@@ -209,10 +209,10 @@ public node ford_modular_v8_3v46_engine {
     label rod_mass(618 * units.g) // 4v number?
     label compression_height(31.00 * units.mm)
 	label piston_mass(361 * units.g) // 4v number?
-	label piston_dome(-9.7 * units.cc)
-	label deck_height((227.0 + 0.2) * units.mm)
+	label piston_dome(-9.0 * units.cc) // had "-9.7" before; not sure where that came from; correct 9.8:1 compression ratio with this
+	label deck_height((227.0 + 0.762) * units.mm)
     label crank_mass(54.3 * units.lb)
-    label flywheel_mass(29 * 2 * units.lb)
+    label flywheel_mass(55 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -287,7 +287,7 @@ public node ford_modular_v8_3v46_engine {
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(350.0),
+        outlet_flow_rate: k_carb(400.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5

@@ -223,9 +223,9 @@ public node Mod2V46 {
     label compression_height(31.00 * units.mm)
 	label piston_mass(361 * units.g) // 4v number?
 	label piston_dome(-17 * units.cc) // quotes vary from 17 to 18.1?; 17cc produces correct compression ratio
-	label deck_height((227.0 + 0.75) * units.mm)
+	label deck_height((227.0 + 0.762) * units.mm)
     label crank_mass(54.3 * units.lb)
-    label flywheel_mass(29 * 2 * units.lb)
+    label flywheel_mass(55 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(

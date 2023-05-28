@@ -223,7 +223,7 @@ public node ford_modular_v8_2v54_engine {
     label compression_height(29.64 * units.mm)
 	label piston_mass(361 * units.g)
 	label piston_dome(-9 * units.cc) // calculated for 9.0:1 compression ratio
-	label deck_height((256.0 + 0.75) * units.mm)
+	label deck_height((256.0 + 0.762) * units.mm)
     label crank_mass(54.3 * units.lb)
     label flywheel_mass(55 * units.lb)
     label flywheel_radius(6 * units.inch)
