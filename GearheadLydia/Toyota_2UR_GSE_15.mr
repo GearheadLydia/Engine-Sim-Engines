@@ -7,15 +7,14 @@ impulse_response_library ir_lib()
 label cycle(2 * 360 * units.deg)
 
 // cam specs, cylinder head volume, and other dimensions are guesses
-// engine is based off of the IS F version, but other vehicles are included
 
 // firing order: 18736542
 
 public node toyota_2urgse_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6800 * units.rpm;
-	input limiter_duration: 0.07;
+    input rev_limit: 7300 * units.rpm;
+	input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -196,7 +195,7 @@ public node toyota_2urgse_engine {
         name: "Lexus 2UR-GSE",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
-        redline: 6500 * units.rpm,
+        redline: 7000 * units.rpm,
         throttle_gamma: 1.0
 		//jitter: 0.3,
 		//hf_gain: 0.005
@@ -208,7 +207,7 @@ public node toyota_2urgse_engine {
     label rod_mass(450 * units.g)
     label compression_height(30.0 * units.mm) // guess
 	label piston_mass(361 * units.g)
-	label piston_dome(-5.5 * units.cc) // -5.5cc for 11.8:1 compression (IS F); -3.0 cc for 12.3:1 compression (RC F)
+	label piston_dome(-3.0 * units.cc) // -5.5cc for 11.8:1 compression (IS F); -3.0 cc for 12.3:1 compression (RC F)
 	label deck_clearance(1.0 * units.mm) // guess
     label crank_mass(54.3 * units.lb)
     label flywheel_mass(20 * units.lb)
@@ -274,9 +273,9 @@ public node toyota_2urgse_engine {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(600),
+        intake_flow_rate: k_carb(700),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.996,
+        idle_throttle_plate_position: 0.9965,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(300.0),
         runner_length: 8.0 * units.inch,
@@ -286,7 +285,7 @@ public node toyota_2urgse_engine {
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500.0),
+        outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
@@ -297,7 +296,7 @@ public node toyota_2urgse_engine {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 	
-	label exhaust_bore_spacing(1.5 * units.inch)
+	label exhaust_bore_spacing(2 * units.inch)
 	label exhaust_stagger(exhaust_bore_spacing * 0.5)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
@@ -310,7 +309,7 @@ public node toyota_2urgse_engine {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: exhaust_bore_spacing * 3.0 + exhaust_stagger,
-			sound_attenuation: 0.6 * 1.2
+			sound_attenuation: 0.6 * 1.1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -339,7 +338,7 @@ public node toyota_2urgse_engine {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: exhaust_bore_spacing * 0.0 + exhaust_stagger,
-			sound_attenuation: 1.2
+			sound_attenuation: 1.1
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -362,7 +361,7 @@ public node toyota_2urgse_engine {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: exhaust_bore_spacing * 2.0,
-			sound_attenuation: 1.2
+			sound_attenuation: 1.1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -372,7 +371,7 @@ public node toyota_2urgse_engine {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: exhaust_bore_spacing * 1.0,
-			sound_attenuation: 1.2
+			sound_attenuation: 1.1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -413,15 +412,15 @@ public node toyota_2urgse_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 37 * units.deg)
-        .add_sample(1000 * units.rpm, 42 * units.deg)
-        .add_sample(2000 * units.rpm, 47 * units.deg)
-        .add_sample(3000 * units.rpm, 47 * units.deg)
-        .add_sample(4000 * units.rpm, 47 * units.deg)
-        .add_sample(5000 * units.rpm, 47 * units.deg)
-        .add_sample(6000 * units.rpm, 47 * units.deg)
-		.add_sample(7000 * units.rpm, 47 * units.deg)
-		.add_sample(8000 * units.rpm, 47 * units.deg)
+        .add_sample(0000 * units.rpm, 38 * units.deg)
+        .add_sample(1000 * units.rpm, 43 * units.deg)
+        .add_sample(2000 * units.rpm, 48 * units.deg)
+        .add_sample(3000 * units.rpm, 48 * units.deg)
+        .add_sample(4000 * units.rpm, 48 * units.deg)
+        .add_sample(5000 * units.rpm, 48 * units.deg)
+        .add_sample(6000 * units.rpm, 48 * units.deg)
+		.add_sample(7000 * units.rpm, 48 * units.deg)
+		.add_sample(8000 * units.rpm, 48 * units.deg)
 
     engine.add_ignition_module(
         toyota_2urgse_distributor(
@@ -431,15 +430,41 @@ public node toyota_2urgse_engine {
     )
 }
 
-// 2009 Lexus IS F (USE20)
-public node lexus_is_f_use20_vehicle {
+// 2015 Lexus RC F (USC10)
+public node lexus_rc_f_usc10_vehicle {
     alias output __out:
         vehicle(
-            mass: 1700 * units.kg,
-            drag_coefficient: 0.27,
+            mass: 1860 * units.kg,
+            drag_coefficient: 0.33,
             cross_sectional_area: 2.13 * (units.m * units.m),
             diff_ratio: 2.937,
-            tire_radius: 330 * units.mm, // 255/35ZR19
+            tire_radius: 338 * units.mm, // 275/35ZR19
+            rolling_resistance: 500 * units.N
+        );
+}
+
+// 2018 Lexus LC500 (URZ100)
+public node lexus_lc500_urz100_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1935 * units.kg,
+            drag_coefficient: 0.33,
+            cross_sectional_area: 2.14 * (units.m * units.m),
+            diff_ratio: 2.937,
+            tire_radius: 363 * units.mm, // 275/35RF21
+            rolling_resistance: 500 * units.N
+        );
+}
+
+// 2022 Lexus IS500 F-Sport Performance (USE30)
+public node lexus_is500_use30_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1765 * units.kg,
+            drag_coefficient: 0.3,
+            cross_sectional_area: 2.19 * (units.m * units.m),
+            diff_ratio: 3.133,
+            tire_radius: 334 * units.mm, // 255/35ZR19
             rolling_resistance: 500 * units.N
         );
 }
@@ -461,9 +486,28 @@ public node toyota_aa80e_transmission {
         .add_gear(0.685);
 }
 
+// for LC500
+// also known as Aisin AWR10L65
+public node toyota_aga0e_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 900 * units.lb_ft
+        )
+        .add_gear(4.923)
+        .add_gear(3.153)
+        .add_gear(2.349)
+        .add_gear(1.879)
+        .add_gear(1.462)
+        .add_gear(1.193)
+        .add_gear(1.000)
+        .add_gear(0.792)
+        .add_gear(0.640)
+        .add_gear(0.598);
+}
+
 public node main {
     set_engine(toyota_2urgse_engine())
-    set_vehicle(lexus_is_f_use20_vehicle())
+    set_vehicle(lexus_rc_f_usc10_vehicle())
     set_transmission(toyota_aa80e_transmission())
 }
 
