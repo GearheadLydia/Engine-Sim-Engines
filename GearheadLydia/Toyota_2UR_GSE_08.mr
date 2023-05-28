@@ -193,7 +193,7 @@ public node toyota_2urgse_engine {
     wires wires()
 
     engine engine(
-        name: "Toyota 2UR-GSE",
+        name: "Lexus 2UR-GSE",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 6500 * units.rpm,
@@ -444,45 +444,6 @@ public node lexus_is_f_use20_vehicle {
         );
 }
 
-// 2015 Lexus RC F (USC10)
-public node lexus_rc_f_usc10_vehicle {
-    alias output __out:
-        vehicle(
-            mass: 1860 * units.kg,
-            drag_coefficient: 0.33,
-            cross_sectional_area: 2.13 * (units.m * units.m),
-            diff_ratio: 2.937,
-            tire_radius: 338 * units.mm, // 275/35ZR19
-            rolling_resistance: 500 * units.N
-        );
-}
-
-// 2018 Lexus LC500 (URZ100)
-public node lexus_lc500_urz100_vehicle {
-    alias output __out:
-        vehicle(
-            mass: 1935 * units.kg,
-            drag_coefficient: 0.33,
-            cross_sectional_area: 2.14 * (units.m * units.m),
-            diff_ratio: 2.937,
-            tire_radius: 363 * units.mm, // 275/35RF21
-            rolling_resistance: 500 * units.N
-        );
-}
-
-// 2022 Lexus IS500 F-Sport Performance (USE30)
-public node lexus_is500_use30_vehicle {
-    alias output __out:
-        vehicle(
-            mass: 1765 * units.kg,
-            drag_coefficient: 0.3,
-            cross_sectional_area: 2.19 * (units.m * units.m),
-            diff_ratio: 3.133,
-            tire_radius: 334 * units.mm, // 255/35ZR19
-            rolling_resistance: 500 * units.N
-        );
-}
-
 // for IS F, RC F & IS500
 // also known as Aisin TL-80SN
 public node toyota_aa80e_transmission {
@@ -498,25 +459,6 @@ public node toyota_aa80e_transmission {
         .add_gear(1.000)
         .add_gear(0.824)
         .add_gear(0.685);
-}
-
-// for LC500
-// also known as Aisin AWR10L65
-public node toyota_aga0e_transmission {
-    alias output __out:
-        transmission(
-            max_clutch_torque: 900 * units.lb_ft
-        )
-        .add_gear(4.923)
-        .add_gear(3.153)
-        .add_gear(2.349)
-        .add_gear(1.879)
-        .add_gear(1.462)
-        .add_gear(1.193)
-        .add_gear(1.000)
-        .add_gear(0.792)
-        .add_gear(0.640)
-        .add_gear(0.598);
 }
 
 public node main {
