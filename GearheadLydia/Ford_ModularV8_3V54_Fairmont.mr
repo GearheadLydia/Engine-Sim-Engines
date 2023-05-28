@@ -12,7 +12,7 @@ label cycle(2 * 360 * units.deg)
 public node ford_modular_3v54_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6250 * units.rpm;
+    input rev_limit: 5750 * units.rpm;
 	input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -195,7 +195,7 @@ public node ford_modular_v8_3v54_engine {
         name: "Ford Modular 3V ''Barra''",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
-        redline: 6000 * units.rpm,
+        redline: 5500 * units.rpm,
         throttle_gamma: 1.0
 		//jitter: 0.3,
 		//hf_gain: 0.005
