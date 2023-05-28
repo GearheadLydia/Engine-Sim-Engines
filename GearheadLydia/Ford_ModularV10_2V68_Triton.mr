@@ -208,7 +208,7 @@ public node ford_modular_v10_triton68_head {
 }
 
 
-public node ford_modularv10_2v68_triton {
+public node ford_modular_v10_2v68_engine {
     alias output __out: engine;
 
     wires wires()
@@ -507,7 +507,7 @@ public node ford_4r44e_transmission {
 }
 
 public node main {
-    set_engine(ford_modularv10_2v68_triton())
+    set_engine(ford_modular_v10_2v68_engine())
     set_vehicle(ford_f250_super_duty_crew_cab_vehicle())
     set_transmission(ford_4r44e_transmission())
 }
