@@ -175,8 +175,8 @@ public node ford_modular_voodoo_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 5 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -274,7 +274,7 @@ public node ModCoyote {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(650),
+        intake_flow_rate: k_carb(700),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9965,
         throttle_gamma: 1.0,
@@ -288,8 +288,8 @@ public node ModCoyote {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(800.0),
         primary_tube_length: 12.0 * units.inch,
-        primary_flow_rate: k_carb(200.0),
-        velocity_decay: 0.5, //0.5
+        primary_flow_rate: k_carb(650.0),
+        velocity_decay: 0.2, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
 		length: 2500 * units.mm,
 		volume: 2500 * units.mm * circle_area(exhaust_radius) * 2
@@ -414,16 +414,16 @@ public node ModCoyote {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 35 * units.deg)
-        .add_sample(1000 * units.rpm, 45 * units.deg)
-        .add_sample(2000 * units.rpm, 50 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 50 * units.deg)
-        .add_sample(5000 * units.rpm, 50 * units.deg)
-        .add_sample(6000 * units.rpm, 50 * units.deg)
-		.add_sample(7000 * units.rpm, 50 * units.deg)
-		.add_sample(8000 * units.rpm, 50 * units.deg)
-		.add_sample(9000 * units.rpm, 50 * units.deg)
+        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(1000 * units.rpm, 42 * units.deg)
+        .add_sample(2000 * units.rpm, 47 * units.deg)
+        .add_sample(3000 * units.rpm, 47 * units.deg)
+        .add_sample(4000 * units.rpm, 47 * units.deg)
+        .add_sample(5000 * units.rpm, 47 * units.deg)
+        .add_sample(6000 * units.rpm, 47 * units.deg)
+		.add_sample(7000 * units.rpm, 47 * units.deg)
+		.add_sample(8000 * units.rpm, 47 * units.deg)
+		.add_sample(9000 * units.rpm, 47 * units.deg)
 
     engine.add_ignition_module(
         ford_modular_voodoo_distributor(
