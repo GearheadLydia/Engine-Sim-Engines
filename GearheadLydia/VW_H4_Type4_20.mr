@@ -286,7 +286,7 @@ public node vw_boxer_type4_20_engine {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0 * units.inch
+			primary_length: 16 * units.inch
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -295,7 +295,7 @@ public node vw_boxer_type4_20_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 4 * units.inch
+			primary_length: 12 * units.inch
         )
 
     cylinder_bank b1(bank_params, angle: 90.0 * units.deg) // L (second)
@@ -307,7 +307,7 @@ public node vw_boxer_type4_20_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 12 * units.inch
+			primary_length: 4 * units.inch
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -316,7 +316,7 @@ public node vw_boxer_type4_20_engine {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 16 * units.inch
+			primary_length: 0 * units.inch
         )
 
     engine
