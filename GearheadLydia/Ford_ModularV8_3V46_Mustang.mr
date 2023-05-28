@@ -186,7 +186,7 @@ public node ford_modular_3v46_head {
 }
 
 
-public node Mod3V46 {
+public node ford_modular_v8_3v46_engine {
     alias output __out: engine;
 
     wires wires()
@@ -463,7 +463,7 @@ public node tremec_tr3650_transmission {
 }
 
 public node main {
-    set_engine(Mod3V46())
+    set_engine(ford_modular_v8_3v46_engine())
     set_vehicle(ford_mustang_gt_s197_vehicle())
     set_transmission(tremec_tr3650_transmission())
 }
