@@ -8,10 +8,10 @@ label cycle(2 * 360 * units.deg)
 
 // firing order: 18436572
 
-public node toyota_1uzfe_distributor {
+public node toyota_3uzfe_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6800 * units.rpm;
+    input rev_limit: 6350 * units.rpm;
 	input limiter_duration: 0.10;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -36,35 +36,35 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-// more sources, not used:
-// https://www.lextreme.com/forums/threads/what-is-the-standard-cam-specs.5193/
-public node toyota_1uzfe_lobe_profile_int {
+// technically 1UZ VVTi cams:
+// https://www.epartrade.com/uploads/contents/82d37f0f-640b-11e8-be4b-560001755c9c/2019/05/1UZ-3UZVVTISpringCamshaftDataSheet.pdf
+public node toyota_3uzfe_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 212 * units.deg, // 232 advertised
+            duration_at_50_thou: 220 * units.deg, // 240 advertised
             gamma: 1.0,
-            lift: 7.6 * units.mm,
+            lift: 8.38 * units.mm,
             steps: 100
         );
 }
 
-public node toyota_1uzfe_lobe_profile_exh {
+public node toyota_3uzfe_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 209 * units.deg, //229 advertised
+            duration_at_50_thou: 213 * units.deg, //230 advertised
             gamma: 1.0,
-            lift: 7.6 * units.mm,
+            lift: 8.33 * units.mm,
             steps: 100
         );
 }
 
-public node toyota_1uzfe_camshaft_builder {
-    input in_lobe_profile: toyota_1uzfe_lobe_profile_int();
-	input ex_lobe_profile: toyota_1uzfe_lobe_profile_exh();
+public node toyota_3uzfe_camshaft_builder {
+    input in_lobe_profile: toyota_3uzfe_lobe_profile_int();
+	input ex_lobe_profile: toyota_3uzfe_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input intake_lobe_center: 110.0 * units.deg;
-    input exhaust_lobe_center: 111.5 * units.deg;
+    input intake_lobe_center: 102.0 * units.deg; // average
+    input exhaust_lobe_center: 110.0 * units.deg; // actual
     input advance: 0.0 * units.deg; // zeroed out
     input base_radius: 15 * units.mm;
 
@@ -126,7 +126,7 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node toyota_1uzfe_head {
+public node toyota_3uzfe_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 43.0 * units.cc;
@@ -185,16 +185,16 @@ public node toyota_1uzfe_head {
 }
 
 
-public node toyota_1uzfe_engine {
+public node toyota_3uzfe_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Toyota 1UZ-FE",
+        name: "Toyota 3UZ-FE",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1000 * units.rpm,
-        redline: 6500 * units.rpm,
+        redline: 6000 * units.rpm, // 6300-ish
         throttle_gamma: 1.0
 		//jitter: 0.3,
 		//hf_gain: 0.005
@@ -203,16 +203,16 @@ public node toyota_1uzfe_engine {
 	// Sources:
 	// https://www.v-eight.com/multimedia/xls/UZ_Engine_Specifications.xls
 	// https://www.lextreme.com/forums/threads/deck-height-between-1uz-and-2uz-the-same.3840/
-	// https://www.lextreme.com/lexus-1uzfe-compression-ratio-with-different-gaskets/
-    label bore(87.5 * units.mm)
-	label bore_spacing(105.41 * units.mm)
+	// https://www.lextreme.com/lexus-3uzfe-compression-ratio-with-different-gaskets/
+    label bore(91.0 * units.mm)
+	label bore_spacing(82.5 * units.mm)
     label stroke(82.5 * units.mm)
     label rod_length(146.0 * units.mm)
-    label rod_mass(628 * units.g)
-    label compression_height(34.00 * units.mm) // not sure about this measurement; some sources say 34.29
+    label rod_mass(581 * units.g)
+    label compression_height(34.0 * units.mm) // not 100% sure about this measurement
 	label piston_mass(420 * units.g) // guess
 	label piston_dome(3.5 * units.cc) // calculated for 10.0:1 compression ratio, assuming every other number is correct
-	label deck_height((222.5 + 1.3) * units.mm)
+	label deck_height((222.5 + 1.3) * units.mm) // gasket calculated for 10.0:1 compression is 0mm
     label crank_mass(56 * units.lb)
     label flywheel_mass(20 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -289,13 +289,13 @@ public node toyota_1uzfe_engine {
 	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(550.0),
+        outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 12.0 * units.inch,
         primary_flow_rate: k_carb(150.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2400 * units.mm,
-		volume: (400 * units.mm * circle_area(exhaust_radius)) + (2000 * units.mm * circle_area(exhaust_radius) * 2)
+		length: 2800 * units.mm,
+		volume: (400 * units.mm * circle_area(exhaust_radius)) + (2400 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
@@ -350,7 +350,7 @@ public node toyota_1uzfe_engine {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 3.5
+			primary_length: bore_spacing * 3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -359,7 +359,7 @@ public node toyota_1uzfe_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 3 // intentional
+			primary_length: bore_spacing * 2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -386,20 +386,20 @@ public node toyota_1uzfe_engine {
 
     engine.add_crankshaft(c0)
 
-    toyota_1uzfe_camshaft_builder camshaft(
-	    in_lobe_profile: toyota_1uzfe_lobe_profile_int(),
-		ex_lobe_profile: toyota_1uzfe_lobe_profile_exh()
+    toyota_3uzfe_camshaft_builder camshaft(
+	    in_lobe_profile: toyota_3uzfe_lobe_profile_int(),
+		ex_lobe_profile: toyota_3uzfe_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        toyota_1uzfe_head(
+        toyota_3uzfe_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: false
         )
     )
     b1.set_cylinder_head (
-        toyota_1uzfe_head(
+        toyota_3uzfe_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: true
@@ -408,51 +408,53 @@ public node toyota_1uzfe_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 28 * units.deg)
-        .add_sample(1000 * units.rpm, 38 * units.deg)
-        .add_sample(2000 * units.rpm, 38 * units.deg)
-        .add_sample(3000 * units.rpm, 38 * units.deg)
-        .add_sample(4000 * units.rpm, 38 * units.deg)
-        .add_sample(5000 * units.rpm, 38 * units.deg)
-        .add_sample(6000 * units.rpm, 38 * units.deg)
-		.add_sample(7000 * units.rpm, 38 * units.deg)
+        .add_sample(0000 * units.rpm, 40 * units.deg)
+        .add_sample(1000 * units.rpm, 50 * units.deg)
+        .add_sample(2000 * units.rpm, 53 * units.deg)
+        .add_sample(3000 * units.rpm, 51 * units.deg)
+        .add_sample(4000 * units.rpm, 48 * units.deg)
+        .add_sample(5000 * units.rpm, 45 * units.deg)
+        .add_sample(6000 * units.rpm, 42 * units.deg)
+		.add_sample(7000 * units.rpm, 41 * units.deg)
 
     engine.add_ignition_module(
-        toyota_1uzfe_distributor(
+        toyota_3uzfe_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
     )
 }
 
-// 1995 Lexus SC400 (UZZ30)
-public node lexus_sc400_uzz30_vehicle {
+// 2006 Lexus SC430 (UZZ40)
+public node lexus_sc430_uzz40_vehicle {
     alias output __out:
         vehicle(
-            mass: 1640 * units.kg,
+            mass: 1742 * units.kg,
             drag_coefficient: 0.31,
             cross_sectional_area: 1.98 * (units.m * units.m),
-            diff_ratio: 3.92,
+            diff_ratio: 3.769,
             tire_radius: 326.5 * units.mm, // 225/55VR16
             rolling_resistance: 500 * units.N
         );
 }
 
-public node toyota_a341e_transmission {
+public node toyota_a761e_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 500 * units.lb_ft
+            max_clutch_torque: 700 * units.lb_ft
         )
-        .add_gear(2.804)
-        .add_gear(1.532)
+        .add_gear(3.296)
+        .add_gear(1.958)
+        .add_gear(1.346)
         .add_gear(1.000)
-        .add_gear(0.705);
+        .add_gear(0.726)
+        .add_gear(0.582);
 }
 
 public node main {
-    set_engine(toyota_1uzfe_engine())
-    set_vehicle(lexus_sc400_uzz30_vehicle())
-    set_transmission(toyota_a341e_transmission())
+    set_engine(toyota_3uzfe_engine())
+    set_vehicle(lexus_sc430_uzz40_vehicle())
+    set_transmission(toyota_a761e_transmission())
 }
 
 main()
