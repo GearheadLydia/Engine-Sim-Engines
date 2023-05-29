@@ -187,8 +187,8 @@ public node ford_modular_2v54_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.1 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 5 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -302,7 +302,7 @@ public node ford_modular_v8_2v54_engine {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
         primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(300.0),
+        primary_flow_rate: k_carb(130.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
 		length: 3000 * units.mm,
