@@ -125,20 +125,20 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node nissan_vk45_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 57.0 * units.cc;
+    input chamber_volume: 57.0 * units.cc; // not sure where I got this
     input flip_display: false;
 	
 	input flow_attenuation: 1.1;
-    input lift_scale: 50.0;
+    input lift_scale: 1.15;
     alias output __out: head;
 
-    function intake_flow(1.1 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -154,7 +154,7 @@ public node nissan_vk45_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.1 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -173,8 +173,8 @@ public node nissan_vk45_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.3 * units.inch) * 2 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.3 * units.inch),
+        intake_runner_volume: circle_area(1.4 * units.inch) * 2 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.4 * units.inch),
         exhaust_runner_volume: circle_area(0.7 * units.inch) * 2 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
@@ -194,26 +194,22 @@ public node vk45 {
 
     engine engine(
         name: "Nissan VK45DE",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
-        redline: 6600 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
+        redline: 6500 * units.rpm, // 6600
+        throttle_gamma: 1.0
     )
 
     label bore(93.0 * units.mm)
     label stroke(82.7 * units.mm)
     label rod_length(147.0 * units.mm)
-    label rod_mass(434.0 * units.g)
+    label rod_mass(600 * units.g)
 	label piston_mass(400 * units.g)
-    label compression_height(32.0 * units.mm) // guess/carryover
-	label deck_height((220.0 + 0) * units.mm)
-	label piston_dome(-10.0 * units.cc)
+    label compression_height(31.63 * units.mm) // not sure on this
+	label deck_height((220.0 + 0.9) * units.mm)
+	label piston_dome(7.2 * units.cc) // for 11.0:1 compression ratio
     label crank_mass(80 * units.lb)
-    label flywheel_mass(29 * 2 * units.lb)
+    label flywheel_mass(55 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -230,16 +226,16 @@ public node vk45 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
         tdc: 45.0 * units.deg // -45 degrees
     )
 
-    rod_journal rj0(angle: 0.0)
+    rod_journal rj0(angle:   0.0 * units.deg)
     rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle: 90.0 * units.deg)
+    rod_journal rj2(angle:  90.0 * units.deg)
     rod_journal rj3(angle: 180.0 * units.deg)
 
     c0
@@ -277,9 +273,9 @@ public node vk45 {
 		plenum_cross_section_area: 100.0 * units.cm2,
 		intake_flow_rate: k_carb(600.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.996,
-		throttle_gamma: 2.0,
-		runner_flow_rate: k_carb(500.0),
+		idle_throttle_plate_position: 0.997,
+		throttle_gamma: 1.0,
+		runner_flow_rate: k_carb(400.0),
 		runner_length: 15.0 * units.inch,
 		velocity_decay: 0.1
 	)
@@ -287,16 +283,16 @@ public node vk45 {
 	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(900.0),
+        outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(180.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 700 * units.mm,
-		volume: (500 * units.mm * circle_area(exhaust_radius)) + (200 * units.mm * circle_area(exhaust_radius) * 2)
+		length: 2700 * units.mm,
+		volume: (1800 * units.mm * circle_area(exhaust_radius)) + (900 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.04, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(7.0 * units.inch)
 	label pipe_length_2(4.5 * units.inch)
@@ -411,22 +407,20 @@ public node vk45 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 65 * units.deg)
-		.add_sample(7000 * units.rpm, 70 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
-		.add_sample(9000 * units.rpm, 75 * units.deg)
+        .add_sample(0000 * units.rpm, 65 * units.deg)
+        .add_sample(1000 * units.rpm, 73 * units.deg)
+        .add_sample(2000 * units.rpm, 75 * units.deg)
+        .add_sample(3000 * units.rpm, 75 * units.deg)
+        .add_sample(4000 * units.rpm, 73 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
+        .add_sample(6000 * units.rpm, 68 * units.deg)
+		.add_sample(7000 * units.rpm, 66 * units.deg)
+		.add_sample(8000 * units.rpm, 66 * units.deg)
 
     engine.add_ignition_module(
         nissan_vk45_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7050 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
