@@ -68,7 +68,7 @@ public node holden_v8_304_camshaft_builder {
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
     input advance: 0.0 * units.deg;
-    input base_radius: 1.50 / 2 * units.inch;
+    input base_radius: 1.10 / 2 * units.inch;
 
     output intake_cam_0: _intake_cam_0;
     output exhaust_cam_0: _exhaust_cam_0;
