@@ -9,10 +9,10 @@ label cycle(2 * 360 * units.deg)
 // firing order: 15486372
 // in standard:   18436572
 
-public node bmw_s62b50_distributor {
+public node bmw_m62b44_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7250 * units.rpm;
+    input rev_limit: 6250 * units.rpm;
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -37,30 +37,31 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-// http://mywikimotors.com/bmw-s62/
-public node bmw_s62b50_lobe_profile_int {
+// https://www.bimmerforums.com/forum/showthread.php?2313579-Camshaft-m62b46tu-in-to-m62b44tu
+// http://www.catcams.co.uk/acatalog/1303702.pdf
+public node bmw_m62b44_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 242 * units.deg, // adv. 252
+            duration_at_50_thou: 236 * units.deg,
             gamma: 1.0,
-            lift: 10.3 * units.mm,
+            lift: 9.0 * units.mm,
             steps: 100
         );
 }
 
-public node bmw_s62b50_lobe_profile_exh {
+public node bmw_m62b44_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 238 * units.deg, // adv. 248
+            duration_at_50_thou: 228 * units.deg,
             gamma: 1.0,
-            lift: 10.2 * units.mm,
+            lift: 9.0 * units.mm,
             steps: 100
         );
 }
 
-public node bmw_s62b50_camshaft_builder {
-    input in_lobe_profile: bmw_s62b50_lobe_profile_int();
-	input ex_lobe_profile: bmw_s62b50_lobe_profile_exh();
+public node bmw_m62b44_camshaft_builder {
+    input in_lobe_profile: bmw_m62b44_lobe_profile_int();
+	input ex_lobe_profile: bmw_m62b44_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 110.0 * units.deg;
@@ -126,10 +127,10 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node bmw_s62b50_head {
+public node bmw_m62b44_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 49.5 * units.cc; // had "46.0" before, not sure where that came from
+    input chamber_volume: 49.5 * units.cc;
     input flip_display: false;
 	
 	input flow_attenuation: 0.95;
@@ -185,30 +186,31 @@ public node bmw_s62b50_head {
 }
 
 
-public node S62B50 {
+public node bmw_m62b44_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "BMW S62B50",
+        name: "BMW M62TUB44",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
-        redline: 7000 * units.rpm,
+        redline: 6000 * units.rpm, // 6100
         throttle_gamma: 1.0
     )
 
-    label bore(94.0 * units.mm)
-    label stroke(89.0 * units.mm)
-    label rod_length(141.5 * units.mm)
-    label rod_mass(525 * units.g)
-    label compression_height(29.51 * units.mm)
-	label piston_mass(350 * units.g)
-	label piston_dome(-3.0 * units.cc) // for 11.0:1 compression
-	label deck_height((215.1 + 1.74) * units.mm)
-    label crank_mass(55 * units.lb)
-    label flywheel_mass(37 * units.lb)
-    label flywheel_radius(6 * units.inch)
+    label bore(92.0 * units.mm)
+	label bore_spacing(98.0 * units.mm)
+    label stroke(82.7 * units.mm)
+    label rod_length(143.0 * units.mm)
+    label rod_mass(550 * units.g)
+    label compression_height(31.00 * units.mm)
+	label piston_mass(400 * units.g)
+	label piston_dome(-1.5 * units.cc) // for 10.0:1 compression ratio
+	label deck_height((215.1 + 1.74) * units.mm) // weird gasket thickness but apparently correct
+    label crank_mass(45 * units.lb)
+    label flywheel_mass(33 * units.lb)
+    label flywheel_radius(7 * units.inch) // dual mass flywheel?? idk how that affects it
 
     label crank_moment(
         disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
@@ -270,9 +272,9 @@ public node S62B50 {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(600),
+        intake_flow_rate: k_carb(500),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(300.0),
         runner_length: 12.0 * units.inch,
@@ -282,9 +284,9 @@ public node S62B50 {
 	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(800.0),
+        outlet_flow_rate: k_carb(450.0),
         primary_tube_length: 12.0 * units.inch,
-        primary_flow_rate: k_carb(150.0),
+        primary_flow_rate: k_carb(130.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
 		length: 2800 * units.mm,
@@ -389,20 +391,20 @@ public node S62B50 {
 
     engine.add_crankshaft(c0)
 
-    bmw_s62b50_camshaft_builder camshaft(
-	    in_lobe_profile: bmw_s62b50_lobe_profile_int(),
-		ex_lobe_profile: bmw_s62b50_lobe_profile_exh()
+    bmw_m62b44_camshaft_builder camshaft(
+	    in_lobe_profile: bmw_m62b44_lobe_profile_int(),
+		ex_lobe_profile: bmw_m62b44_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        bmw_s62b50_head(
+        bmw_m62b44_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: true
         )
     )
     b1.set_cylinder_head (
-        bmw_s62b50_head(
+        bmw_m62b44_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: false
@@ -411,34 +413,33 @@ public node S62B50 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 45 * units.deg)
-        .add_sample(1000 * units.rpm, 50 * units.deg)
-        .add_sample(2000 * units.rpm, 52 * units.deg)
-        .add_sample(3000 * units.rpm, 54 * units.deg)
-        .add_sample(4000 * units.rpm, 56 * units.deg)
-        .add_sample(5000 * units.rpm, 58 * units.deg)
-        .add_sample(6000 * units.rpm, 60 * units.deg)
-		.add_sample(7000 * units.rpm, 60 * units.deg)
-		.add_sample(8000 * units.rpm, 60 * units.deg)
+        .add_sample(0000 * units.rpm, 55 * units.deg)
+        .add_sample(1000 * units.rpm, 62 * units.deg)
+        .add_sample(2000 * units.rpm, 62 * units.deg)
+        .add_sample(3000 * units.rpm, 62 * units.deg)
+        .add_sample(4000 * units.rpm, 62 * units.deg)
+        .add_sample(5000 * units.rpm, 62 * units.deg)
+        .add_sample(6000 * units.rpm, 62 * units.deg)
+		.add_sample(7000 * units.rpm, 62 * units.deg)
 
     engine.add_ignition_module(
-        bmw_s62b50_distributor(
+        bmw_m62b44_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
     )
 }
 
-// 2000 BMW M5 (E39)
-public node bmw_m5_e39_vehicle {
+// 2000 BMW 540i (E39)
+public node bmw_540i_e39_vehicle {
     alias output __out:
         vehicle(
-            mass: 3792 * units.lb,
-            drag_coefficient: 0.29,
+            mass: 1700 * units.kg,
+            drag_coefficient: 0.3,
             cross_sectional_area: 2.14 * (units.m * units.m),
-            diff_ratio: 3.15,
-            tire_radius: 325.12 * units.mm, // 275/35ZR18
-            rolling_resistance: 500 * units.N
+            diff_ratio: 2.81,
+            tire_radius: 326.5 * units.mm, // 225/55R16
+            rolling_resistance: 420 * units.N
         );
 }
 
@@ -456,8 +457,8 @@ public node getrag_420g_transmission {
 }
 
 public node main {
-    set_engine(S62B50())
-    set_vehicle(bmw_m5_e39_vehicle())
+    set_engine(bmw_m62b44_engine())
+    set_vehicle(bmw_540i_e39_vehicle())
     set_transmission(getrag_420g_transmission())
 }
 
