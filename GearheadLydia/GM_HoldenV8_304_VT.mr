@@ -293,7 +293,7 @@ public node holden_v8_304 {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(320.0),
         primary_tube_length: 12.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
 		length: 2800 * units.mm,
@@ -302,12 +302,12 @@ public node holden_v8_304 {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(2.4 * bore_spacing)
-	label pipe_length_2(1.6 * bore_spacing)
-	label pipe_length_3(0.8 * bore_spacing)
-	label pipe_length_4(0.0 * bore_spacing)
+	label pipe_length_1(1.6 * bore_spacing)
+	label pipe_length_2(0.6 * bore_spacing)
+	label pipe_length_3(0.0 * bore_spacing)
+	label pipe_length_4(0.4 * bore_spacing)
 	
-	label exhaust_stagger(1.0 * units.inch)
+	label exhaust_stagger(0.4 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
