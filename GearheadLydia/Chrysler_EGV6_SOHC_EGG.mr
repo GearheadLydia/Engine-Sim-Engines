@@ -273,7 +273,7 @@ public node chrysler_egv6_sohc_egg_engine {
         plenum_cross_section_area: circle_area(60 * units.mm),
         intake_flow_rate: k_carb(600),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(250.0),
         runner_length: 6.0 * units.inch,
@@ -394,14 +394,14 @@ public node chrysler_egv6_sohc_egg_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 45 * units.deg)
-        .add_sample(1000 * units.rpm, 55 * units.deg)
-        .add_sample(2000 * units.rpm, 55 * units.deg)
-        .add_sample(3000 * units.rpm, 55 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 55 * units.deg)
-        .add_sample(6000 * units.rpm, 55 * units.deg)
-		.add_sample(7000 * units.rpm, 55 * units.deg)
+        .add_sample(0000 * units.rpm, 40 * units.deg)
+        .add_sample(1000 * units.rpm, 50 * units.deg)
+        .add_sample(2000 * units.rpm, 50 * units.deg)
+        .add_sample(3000 * units.rpm, 50 * units.deg)
+        .add_sample(4000 * units.rpm, 50 * units.deg)
+        .add_sample(5000 * units.rpm, 50 * units.deg)
+        .add_sample(6000 * units.rpm, 50 * units.deg)
+		.add_sample(7000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         chrysler_egv6_sohc_egg_distributor(
