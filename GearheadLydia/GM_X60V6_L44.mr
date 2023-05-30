@@ -409,7 +409,7 @@ public node gm_x60v6_l44 {
     )
 }
 
-// 2003 Chevrolet S-10 Blazer Extreme
+// 1988 Pontiac Fiero GT
 public node pontiac_fiero_gt_vehicle {
     alias output __out:
         vehicle(
