@@ -303,7 +303,7 @@ public node chrysler_egv6_sohc_egg_engine {
     cylinder_bank b0(bank_params, angle: 30 * units.deg) // L (first)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.6)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             ignition_wire: wires.wire1,
@@ -313,7 +313,7 @@ public node chrysler_egv6_sohc_egg_engine {
 			sound_attenuation: 0.5 * 0.8
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
@@ -323,7 +323,7 @@ public node chrysler_egv6_sohc_egg_engine {
 			sound_attenuation: 1.0 * 0.8
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.6)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire5,
@@ -336,7 +336,7 @@ public node chrysler_egv6_sohc_egg_engine {
     cylinder_bank b1(bank_params, angle: -30 * units.deg) // R (second)
     b1
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.6)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
@@ -346,7 +346,7 @@ public node chrysler_egv6_sohc_egg_engine {
 			sound_attenuation: 0.5
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire4,
@@ -356,7 +356,7 @@ public node chrysler_egv6_sohc_egg_engine {
 			sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.6)),
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire6,
@@ -411,6 +411,19 @@ public node chrysler_egv6_sohc_egg_engine {
     )
 }
 
+// 1998 Plymouth Prowler
+public node plymouth_prowler_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 2833 * units.lb,
+            drag_coefficient: 0.5,
+            cross_sectional_area: 2.07 * (units.m) * (units.m),
+            diff_ratio: 3.89,
+            tire_radius: 387.5 * units.mm, // 295/45R20
+            rolling_resistance: 500 * units.N
+        );
+}
+
 // 2002 Dodge Intrepid R/T (LH)
 public node dodge_intrepid_rt_lh_vehicle {
     alias output __out:
@@ -424,6 +437,20 @@ public node dodge_intrepid_rt_lh_vehicle {
         );
 }
 
+// 2009 Dodge Challenger SE (LC)
+public node dodge_challenger_se_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3721 * units.lb,
+            drag_coefficient: 0.35,
+            cross_sectional_area: 2.35 * (units.m) * (units.m),
+            diff_ratio: 3.64,
+            tire_radius: 355.5 * units.mm, // 215/65VR17
+            rolling_resistance: 420 * units.N
+        );
+}
+
+// 42LE and 42RLE (RWD for LX platform cars) have the same ratios
 public node chrysler_42le_transmission {
     alias output __out:
         transmission(
@@ -437,7 +464,7 @@ public node chrysler_42le_transmission {
 
 public node main {
     set_engine(chrysler_egv6_sohc_egg_engine())
-    set_vehicle(dodge_intrepid_rt_lh_vehicle())
+    set_vehicle(plymouth_prowler_vehicle())
     set_transmission(chrysler_42le_transmission())
 }
 
