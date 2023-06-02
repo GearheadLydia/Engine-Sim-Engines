@@ -267,7 +267,7 @@ public node audi_ea855_engine {
         velocity_decay: 0.1
     )
 	
-	label exhaust_radius((2.5 * units.inch)/2)
+	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(500.0),
