@@ -212,7 +212,7 @@ public node falconer_v12_head {
 }
 
 
-public node falconer_v12 {
+public node falconer_v12_engine {
     alias output __out: engine;
 
     wires wires()
@@ -222,19 +222,12 @@ public node falconer_v12 {
         starter_torque: 300 * units.lb_ft,
 		starter_speed: 1000 * units.rpm,
         redline: 6500 * units.rpm,
-        throttle_gamma: 2.0,
-		simulation_frequency: 6000,
-		// jitter: 0.7,
-		// hf_gain: 0.15
-		jitter: 0.6,
-		hf_gain: 0.1
-		// jitter: 0.1,
-		// hf_gain: 0.1
+        throttle_gamma: 1.0,
+		simulation_frequency: 6000
     )
 
-
-	// source: https://help.summitracing.com/app/answers/detail/a_id/4882/~/chevy-ls7-engine-specs
     label bore(4.125 * units.inch)
+	label bore_spacing(4.4 * units.inch)
     label stroke(3.750 * units.inch)
     label rod_length(5.565 * units.inch)
     label rod_mass(464 * units.g)
@@ -310,9 +303,9 @@ public node falconer_v12 {
     intake intake(
         plenum_volume: 0.3 * units.L,
         plenum_cross_section_area: circle_area(45 * units.mm),
-        intake_flow_rate: k_carb(850),
+        intake_flow_rate: k_carb(1200),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.994,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(550.0),
         runner_length: 12.0 * units.inch,
@@ -322,27 +315,16 @@ public node falconer_v12 {
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 20.0 * units.inch,
+        outlet_flow_rate: k_carb(1200.0),
+        primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(550.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 700 * units.mm,
-		volume: 700 * units.mm * circle_area(exhaust_radius)
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 2400 * units.mm,
+		volume: 2400 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaustL(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
-    exhaust_system exhaustR(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
-
-	label bore_spacing(4.4 * units.inch)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(5 * 0.95 * bore_spacing)
 	label pipe_length_2(4 * 0.95 * bore_spacing)
@@ -361,7 +343,7 @@ public node falconer_v12 {
             rod_journal: rj0,
             ignition_wire: wires.wire01,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
@@ -370,7 +352,7 @@ public node falconer_v12 {
             rod_journal: rj1,
             ignition_wire: wires.wire03,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
@@ -379,7 +361,7 @@ public node falconer_v12 {
             rod_journal: rj2,
             ignition_wire: wires.wire05,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
@@ -388,7 +370,7 @@ public node falconer_v12 {
             rod_journal: rj3,
             ignition_wire: wires.wire07,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_4 + exhaust_stagger
         )
         .add_cylinder(
@@ -397,7 +379,7 @@ public node falconer_v12 {
             rod_journal: rj4,
             ignition_wire: wires.wire09,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_5 + exhaust_stagger
         )
         .add_cylinder(
@@ -406,7 +388,7 @@ public node falconer_v12 {
             rod_journal: rj5,
             ignition_wire: wires.wire11,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_6 + exhaust_stagger
         )
 
@@ -418,7 +400,7 @@ public node falconer_v12 {
             rod_journal: rj0,
             ignition_wire: wires.wire02,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_1
         )
         .add_cylinder(
@@ -427,7 +409,7 @@ public node falconer_v12 {
             rod_journal: rj1,
             ignition_wire: wires.wire04,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_2
         )
         .add_cylinder(
@@ -436,7 +418,7 @@ public node falconer_v12 {
             rod_journal: rj2,
             ignition_wire: wires.wire06,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_3
         )
         .add_cylinder(
@@ -445,7 +427,7 @@ public node falconer_v12 {
             rod_journal: rj3,
             ignition_wire: wires.wire08,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_4
         )
         .add_cylinder(
@@ -454,7 +436,7 @@ public node falconer_v12 {
             rod_journal: rj4,
             ignition_wire: wires.wire10,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_5
         )
         .add_cylinder(
@@ -463,7 +445,7 @@ public node falconer_v12 {
             rod_journal: rj5,
             ignition_wire: wires.wire12,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
 			primary_length: pipe_length_6
         )
 
@@ -495,21 +477,20 @@ public node falconer_v12 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 25 * units.deg)
-        .add_sample(2000 * units.rpm, 29 * units.deg)
-        .add_sample(3000 * units.rpm, 33 * units.deg)
-        .add_sample(4000 * units.rpm, 38 * units.deg)
-        .add_sample(5000 * units.rpm, 45 * units.deg)
-        .add_sample(6000 * units.rpm, 55 * units.deg)
-		.add_sample(7000 * units.rpm, 68 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
+        .add_sample(0000 * units.rpm, 35 * units.deg)
+        .add_sample(1000 * units.rpm, 40 * units.deg)
+        .add_sample(2000 * units.rpm, 40 * units.deg)
+        .add_sample(3000 * units.rpm, 40 * units.deg)
+        .add_sample(4000 * units.rpm, 40 * units.deg)
+        .add_sample(5000 * units.rpm, 40 * units.deg)
+        .add_sample(6000 * units.rpm, 40 * units.deg)
+		.add_sample(7000 * units.rpm, 40 * units.deg)
+		.add_sample(8000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
         falconer_v12_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6750 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -541,7 +522,7 @@ public node tremec_t56_transmission {
 }
 
 public node main {
-    set_engine(falconer_v12())
+    set_engine(falconer_v12_engine())
     set_vehicle(chevrolet_corvette_falconer_zr12_c4_vehicle())
     set_transmission(tremec_t56_transmission())
 }
