@@ -183,7 +183,7 @@ public node hyundai_lambda_g6dk_engine {
         name: "Hyundai Lambda G6DK",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
-        redline: 6500 * units.rpm, // very high rev limit for this redline??
+        redline: 6750 * units.rpm, // actual
         throttle_gamma: 1.0
     )
 
