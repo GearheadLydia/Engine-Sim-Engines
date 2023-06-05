@@ -207,7 +207,7 @@ public node chrysler_m120_60_me412_engine {
     wires wires()
 
     engine engine(
-        name: "Mercedes M120 V12",
+        name: "Chrysler M120 V12",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 6000 * units.rpm,

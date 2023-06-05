@@ -208,7 +208,7 @@ public node m120_73 {
     wires wires()
 
     engine engine(
-        name: "Mercedes M120 V12",
+        name: "Pagani AMG M120 V12",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
