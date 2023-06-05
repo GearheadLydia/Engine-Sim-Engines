@@ -9,11 +9,11 @@ label cycle(2 * 360 * units.deg)
 // firing order: 15374826
 // in standard:  27638145
 
-public node ferrari_f131_distributor {
+public node ferrari_f129_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 8800 * units.rpm;
-	input limiter_duration: 0.07;
+	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -37,7 +37,7 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-public node ferrari_f131_lobe_profile_int {
+public node ferrari_f129_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 235 * units.deg,
@@ -47,7 +47,7 @@ public node ferrari_f131_lobe_profile_int {
         );
 }
 
-public node ferrari_f131_lobe_profile_exh {
+public node ferrari_f129_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 235 * units.deg,
@@ -57,9 +57,9 @@ public node ferrari_f131_lobe_profile_exh {
         );
 }
 
-public node ferrari_f131_camshaft_builder {
-    input in_lobe_profile: ferrari_f131_lobe_profile_int();
-	input ex_lobe_profile: ferrari_f131_lobe_profile_exh();
+public node ferrari_f129_camshaft_builder {
+    input in_lobe_profile: ferrari_f129_lobe_profile_int();
+	input ex_lobe_profile: ferrari_f129_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 115.0 * units.deg;
@@ -119,7 +119,7 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node ferrari_f131_head {
+public node ferrari_f129_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 30.0 * units.cc; // guess
@@ -181,13 +181,13 @@ public node ferrari_f131_head {
     )
 }
 
-public node ferrari_f131_engine {
+public node ferrari_f129_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Ferrari F131",
+        name: "Ferrari F129",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 8500 * units.rpm, // 8700
@@ -195,11 +195,11 @@ public node ferrari_f131_engine {
     )
 
     label bore(85.0 * units.mm)
-    label stroke(79.0 * units.mm)
+    label stroke(77.0 * units.mm)
     label rod_length(137.0 * units.mm)
     label rod_mass(621.5 * units.g)
 	label piston_mass(400 * units.g)
-    label compression_height(27.00 * units.mm)
+    label compression_height(29.00 * units.mm)
 	label piston_dome(-1.2 * units.cc) // for 11.2:1 compression
 	label deck_height((204.2 + 1.5) * units.mm) // real, apparently
     label crank_mass(41 * units.lb)
@@ -299,13 +299,13 @@ public node ferrari_f131_engine {
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1( 0 * units.mm)
-	label pipe_length_2(15 * units.mm)
-	label pipe_length_3(30 * units.mm)
-	label pipe_length_4(45 * units.mm)
+	label pipe_length_2(11 * units.mm)
+	label pipe_length_3(22 * units.mm)
+	label pipe_length_4(33 * units.mm)
 	
-	label exhaust_stagger(40 * units.mm)
+	label exhaust_stagger(25 * units.mm)
 	
-	label exh_vol_L(1.0)
+	label exh_vol_L(0.9)
 	label exh_vol_R(1.0)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
@@ -400,20 +400,20 @@ public node ferrari_f131_engine {
 
     engine.add_crankshaft(c0)
 
-    ferrari_f131_camshaft_builder camshaft(
-	    in_lobe_profile: ferrari_f131_lobe_profile_int(),
-		ex_lobe_profile: ferrari_f131_lobe_profile_exh()
+    ferrari_f129_camshaft_builder camshaft(
+	    in_lobe_profile: ferrari_f129_lobe_profile_int(),
+		ex_lobe_profile: ferrari_f129_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        ferrari_f131_head(
+        ferrari_f129_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: true
         )
     )
     b1.set_cylinder_head (
-        ferrari_f131_head(
+        ferrari_f129_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: false
@@ -430,47 +430,47 @@ public node ferrari_f131_engine {
         .add_sample(5000 * units.rpm, 47 * units.deg)
         .add_sample(6000 * units.rpm, 46 * units.deg)
 		.add_sample(7000 * units.rpm, 44 * units.deg)
-		.add_sample(8000 * units.rpm, 43 * units.deg)
-		.add_sample(9000 * units.rpm, 43 * units.deg)
+		.add_sample(8000 * units.rpm, 42 * units.deg)
+		.add_sample(9000 * units.rpm, 42 * units.deg)
 
     engine.add_ignition_module(
-        ferrari_f131_distributor(
+        ferrari_f129_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
     )
 }
 
-// 2000 Ferrari 360 Modena (Type F131)
-public node ferrari_360_vehicle {
+// 1995 Ferrari F355 Berlinetta (Type F129)
+public node ferrari_f355_vehicle {
     alias output __out:
         vehicle(
-            mass: 1450 * units.kg,
+            mass: 1448 * units.kg,
             drag_coefficient: 0.33,
-            cross_sectional_area: 1.94 * (units.m * units.m),
-            diff_ratio: 4.44,
-            tire_radius: 341.5 * units.mm, // 295/35ZR20
-            rolling_resistance: 550 * units.N
+            cross_sectional_area: 1.85 * (units.m * units.m),
+            diff_ratio: 4.34,
+            tire_radius: 334 * units.mm, // 265/40ZR18
+            rolling_resistance: 520 * units.N
         );
 }
 
-public node ferrari_360_transmission {
+public node ferrari_f355_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 1000 * units.lb_ft
         )
-        .add_gear(3.286)
+        .add_gear(3.07)
         .add_gear(2.158)
         .add_gear(1.609)
         .add_gear(1.269)
         .add_gear(1.034)
-        .add_gear(0.848);
+        .add_gear(0.838);
 }
 
 public node main {
-    set_engine(ferrari_f131_engine())
-    set_vehicle(ferrari_360_vehicle())
-    set_transmission(ferrari_360_transmission())
+    set_engine(ferrari_f129_engine())
+    set_vehicle(ferrari_f355_vehicle())
+    set_transmission(ferrari_f355_transmission())
 }
 
 main()
