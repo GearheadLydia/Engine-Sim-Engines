@@ -205,7 +205,7 @@ public node ford_modular_v8_2v54_engine {
     wires wires()
 
     engine engine(
-        name: "Ford Modular 2V",
+        name: "Ford Triton 2V",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 5000 * units.rpm,

@@ -214,7 +214,7 @@ public node ModCobra54 {
     wires wires()
 
     engine engine(
-        name: "Ford Triton 4V",
+        name: "Ford SVT Cobra R 4V",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 6000 * units.rpm, // 6200
