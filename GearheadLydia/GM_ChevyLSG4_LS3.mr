@@ -198,8 +198,8 @@ public node chevrolet_ls3 {
 
     engine engine(
         name: "Chevrolet LS3",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1000 * units.rpm,
         redline: 6500 * units.rpm,
         throttle_gamma: 2.0,
 		// jitter: 0.7,
@@ -213,6 +213,7 @@ public node chevrolet_ls3 {
 
 	// source: https://help.summitracing.com/app/answers/detail/a_id/4874/~/chevy-ls3-engine-specs
     label bore(4.065 * units.inch)
+	label bore_spacing(4.4 * units.inch)
     label stroke(3.622 * units.inch)
     label rod_length(6.098 * units.inch)
     label rod_mass(464 * units.g)
@@ -284,9 +285,9 @@ public node chevrolet_ls3 {
     intake intake(
         plenum_volume: 0.3 * units.L,
         plenum_cross_section_area: circle_area(45 * units.mm),
-        intake_flow_rate: k_carb(550),
+        intake_flow_rate: k_carb(850),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.994,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(450.0),
         runner_length: 12.0 * units.inch,
@@ -296,27 +297,17 @@ public node chevrolet_ls3 {
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: 20.0 * units.inch,
+        outlet_flow_rate: k_carb(425.0),
+        primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 700 * units.mm,
-		volume: 700 * units.mm * circle_area(exhaust_radius)
+		length: 2600 * units.mm,
+		volume: 2600 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustL(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
-    exhaust_system exhaustR(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
-
-	label bore_spacing(4.4 * units.inch)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
 	// lower grade LS headers //
 	label pipe_length_1(bore_spacing * 2.2)
@@ -464,21 +455,19 @@ public node chevrolet_ls3 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 25 * units.deg)
-        .add_sample(2000 * units.rpm, 29 * units.deg)
-        .add_sample(3000 * units.rpm, 33 * units.deg)
-        .add_sample(4000 * units.rpm, 38 * units.deg)
-        .add_sample(5000 * units.rpm, 45 * units.deg)
-        .add_sample(6000 * units.rpm, 55 * units.deg)
-		.add_sample(7000 * units.rpm, 68 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
+        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(1000 * units.rpm, 34 * units.deg)
+        .add_sample(2000 * units.rpm, 37 * units.deg)
+        .add_sample(3000 * units.rpm, 40 * units.deg)
+        .add_sample(4000 * units.rpm, 43 * units.deg)
+        .add_sample(5000 * units.rpm, 46 * units.deg)
+        .add_sample(6000 * units.rpm, 47 * units.deg)
+		.add_sample(7000 * units.rpm, 48 * units.deg)
 
     engine.add_ignition_module(
         chevrolet_ls3_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6600 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }

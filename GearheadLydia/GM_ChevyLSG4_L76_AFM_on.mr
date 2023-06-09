@@ -15,14 +15,15 @@ public node chevrolet_l76_distributor {
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
-            .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
-            .connect_wire(wires.wire8, (1.0 / 8.0) * cycle)
-            .connect_wire(wires.wire7, (2.0 / 8.0) * cycle)
-            .connect_wire(wires.wire2, (3.0 / 8.0) * cycle)
-            .connect_wire(wires.wire6, (4.0 / 8.0) * cycle)
-            .connect_wire(wires.wire5, (5.0 / 8.0) * cycle)
-            .connect_wire(wires.wire4, (6.0 / 8.0) * cycle)
-            .connect_wire(wires.wire3, (7.0 / 8.0) * cycle);
+            .connect_wire(wires.wire8, (6.0 / 8.0) * cycle)
+            .connect_wire(wires.wire2, (0.0 / 8.0) * cycle)
+            .connect_wire(wires.wire5, (2.0 / 8.0) * cycle)
+            .connect_wire(wires.wire3, (4.0 / 8.0) * cycle);
+			
+            //.connect_wire(wires.wire1, (5.0 / 8.0) * cycle)
+            //.connect_wire(wires.wire7, (7.0 / 8.0) * cycle)
+            //.connect_wire(wires.wire6, (1.0 / 8.0) * cycle)
+            //.connect_wire(wires.wire4, (3.0 / 8.0) * cycle)
 }
 
 private node wires {
@@ -95,28 +96,28 @@ public node chevrolet_l76_camshaft_builder {
     label rot360(360 * units.deg)
 
     _intake_cam_0
-        .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
+        .add_lobe(rot360 + rot180 + 5 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
+        .add_lobe(rot360 + rot180 + 7 * rot90)
 
     _intake_cam_1
-        .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
+        .add_lobe(rot360 + rot180 + 3 * rot90)
+        .add_lobe(rot360 + rot180 + 1 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
 
     _exhaust_cam_0
-        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
+        .add_lobe(rot360 + rot180 + 5 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
+        .add_lobe(rot360 + rot180 + 7 * rot90)
 
     _exhaust_cam_1
-        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
+        .add_lobe(rot360 + rot180 + 3 * rot90)
+        .add_lobe(rot360 + rot180 + 1 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
 }
 
 private node add_flow_sample {
@@ -197,11 +198,11 @@ public node chevrolet_l76 {
     wires wires()
 
     engine engine(
-        name: "Chevrolet L76 (AFM off)",
+        name: "Chevrolet L76 (AFM on)",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 6000 * units.rpm,
-        throttle_gamma: 2.0,
+        throttle_gamma: 1.0,
 		// jitter: 0.7,
 		// hf_gain: 0.15
 		jitter: 0.6,
@@ -213,6 +214,7 @@ public node chevrolet_l76 {
 
 	// source: https://www.onallcylinders.com/2018/02/02/l76-engine-specs-performance-bore-stroke-cylinder-heads-cam-specs/
     label bore(4.000 * units.inch)
+	label bore_spacing(4.4 * units.inch)
     label stroke(3.622 * units.inch)
     label rod_length(6.098 * units.inch)
     label rod_mass(464 * units.g)
@@ -243,7 +245,7 @@ public node chevrolet_l76 {
             crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: 45.0 * units.deg // 45 degrees back from right side
+        tdc: 135.0 * units.deg // +45 degrees from vertical
     )
 
     rod_journal rj0(angle: 0.0)
@@ -286,9 +288,21 @@ public node chevrolet_l76 {
         plenum_cross_section_area: circle_area(45 * units.mm),
         intake_flow_rate: k_carb(550),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.994,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(420.0),
+        runner_length: 12.0 * units.inch,
+        velocity_decay: 0.1
+    )
+
+    intake intake_closed(
+        plenum_volume: 0.3 * units.L,
+        plenum_cross_section_area: circle_area(45 * units.mm),
+        intake_flow_rate: k_carb(0.001),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.0,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(0.001),
         runner_length: 12.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -301,22 +315,23 @@ public node chevrolet_l76 {
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 700 * units.mm,
-		volume: 700 * units.mm * circle_area(exhaust_radius)
+		length: 2900 * units.mm,
+		volume: 2900 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustL(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
-    exhaust_system exhaustR(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
+    exhaust_system_parameters es_params_closed(
+        outlet_flow_rate: k_carb(0.001),
+        primary_tube_length: 20.0 * units.inch,
+        primary_flow_rate: k_carb(0.001),
+        velocity_decay: 1.0, //0.5
+		collector_cross_section_area: circle_area(exhaust_radius),
+		length: 2900 * units.mm,
+		volume: 2900 * units.mm * circle_area(exhaust_radius)
+    )
 
-	label bore_spacing(4.4 * units.inch)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust_closed(es_params_closed, audio_volume: 0.0 * 0.05, impulse_response: ir_lib.default_0)
 	
 	// lower grade LS headers //
 	label pipe_length_1(bore_spacing * 2.2)
@@ -357,8 +372,8 @@ public node chevrolet_l76 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             ignition_wire: wires.wire1,
-            intake: intake,
-            exhaust_system: exhaustR,
+            intake: intake_closed,
+            exhaust_system: exhaust_closed,
 			primary_length: pipe_length_1 + exhaust_stagger,
 			sound_attenuation: pipe_volume_1
         )
@@ -387,8 +402,8 @@ public node chevrolet_l76 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire7,
-            intake: intake,
-            exhaust_system: exhaustR,
+            intake: intake_closed,
+            exhaust_system: exhaust_closed,
 			primary_length: pipe_length_4 + exhaust_stagger,
 			sound_attenuation: pipe_volume_4
         )
@@ -410,8 +425,8 @@ public node chevrolet_l76 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire4,
-            intake: intake,
-            exhaust_system: exhaustL,
+            intake: intake_closed,
+            exhaust_system: exhaust_closed,
 			primary_length: pipe_length_2,
 			sound_attenuation: pipe_volume_2
         )
@@ -420,8 +435,8 @@ public node chevrolet_l76 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire6,
-            intake: intake,
-            exhaust_system: exhaustL,
+            intake: intake_closed,
+            exhaust_system: exhaust_closed,
 			primary_length: pipe_length_3,
 			sound_attenuation: pipe_volume_3
         )
@@ -437,8 +452,8 @@ public node chevrolet_l76 {
         )
 
     engine
-        .add_cylinder_bank(b0)
         .add_cylinder_bank(b1)
+        .add_cylinder_bank(b0)
 
     engine.add_crankshaft(c0)
 

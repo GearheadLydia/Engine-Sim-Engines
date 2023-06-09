@@ -233,10 +233,10 @@ public node cadillac_ls_v16 {
 
     engine engine(
         name: "Cadillac Sixteen",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 300 * units.lb_ft, // actually needs this torque
+		starter_speed: 1000 * units.rpm,
         redline: 6000 * units.rpm, // 6250?
-        throttle_gamma: 2.0,
+        throttle_gamma: 1.0,
 		simulation_frequency: 4000,
 		jitter: 0.7,
 		hf_gain: 0.15
@@ -530,10 +530,10 @@ public node cadillac_ls_v16 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 25 * units.deg)
-        .add_sample(2000 * units.rpm, 29 * units.deg)
-        .add_sample(3000 * units.rpm, 33 * units.deg)
+        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(1000 * units.rpm, 38 * units.deg)
+        .add_sample(2000 * units.rpm, 38 * units.deg)
+        .add_sample(3000 * units.rpm, 38 * units.deg)
         .add_sample(4000 * units.rpm, 38 * units.deg)
         .add_sample(5000 * units.rpm, 38 * units.deg)
         .add_sample(6000 * units.rpm, 38 * units.deg)
@@ -570,6 +570,20 @@ public node gm_4l85e_transmission {
         .add_gear(1.482)
         .add_gear(1.000)
         .add_gear(0.750);
+}
+
+// this isn't correct for the vehicle, but is a good testing upgrade
+public node gm_6l90_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 1300 * units.lb_ft
+        )
+        .add_gear(4.027)
+        .add_gear(2.364)
+        .add_gear(1.522)
+        .add_gear(1.152)
+        .add_gear(0.852)
+        .add_gear(0.667);
 }
 
 public node main {

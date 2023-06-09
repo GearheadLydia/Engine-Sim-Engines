@@ -177,10 +177,10 @@ public node chevrolet_ls7_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.45 * units.inch) * 8 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.45 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        intake_runner_volume: circle_area(1.2 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.2 * units.inch),
+        exhaust_runner_volume: circle_area(0.85 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.85 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -198,10 +198,10 @@ public node chevrolet_ls7 {
 
     engine engine(
         name: "Chevrolet LS7",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1000 * units.rpm,
         redline: 6500 * units.rpm,
-        throttle_gamma: 2.0,
+        throttle_gamma: 1.0,
 		// jitter: 0.7,
 		// hf_gain: 0.15
 		jitter: 0.6,
@@ -213,6 +213,7 @@ public node chevrolet_ls7 {
 
 	// source: https://help.summitracing.com/app/answers/detail/a_id/4882/~/chevy-ls7-engine-specs
     label bore(4.125 * units.inch)
+	label bore_spacing(4.4 * units.inch)
     label stroke(4.000 * units.inch)
     label rod_length(6.067 * units.inch)
     label rod_mass(464 * units.g)
@@ -284,39 +285,29 @@ public node chevrolet_ls7 {
     intake intake(
         plenum_volume: 0.3 * units.L,
         plenum_cross_section_area: circle_area(45 * units.mm),
-        intake_flow_rate: k_carb(550),
+        intake_flow_rate: k_carb(850),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.994,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(450.0),
-        runner_length: 12.0 * units.inch,
+        runner_flow_rate: k_carb(500.0),
+        runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
     )
 	
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: 20.0 * units.inch,
+        outlet_flow_rate: k_carb(425.0),
+        primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 700 * units.mm,
-		volume: 700 * units.mm * circle_area(exhaust_radius)
+		length: 2600 * units.mm,
+		volume: 2600 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustL(
-		es_params,
-		audio_volume: 1.0 * 0.001,
-		impulse_response: ir_lib.default_0
-	)
-    exhaust_system exhaustR(
-		es_params,
-		audio_volume: 1.0 * 0.001,
-		impulse_response: ir_lib.default_0
-	)
-
-	label bore_spacing(4.4 * units.inch)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 0.8 * 0.005, impulse_response: ir_lib.default_0)
 	
 	// lower grade LS headers //
 	// label pipe_length_1(bore_spacing * 2.2)
@@ -329,14 +320,14 @@ public node chevrolet_ls7 {
 	// label pipe_volume_4(1.0)
 	
 	// stock Z06 headers //
-	label pipe_length_1(bore_spacing * 1.2)
-	label pipe_length_2(bore_spacing * 0.8)
-	label pipe_length_3(bore_spacing * 0.75)
-	label pipe_length_4(bore_spacing * 1.15)
-	label pipe_volume_1(0.8)
+	label pipe_length_1(bore_spacing * 0.9)
+	label pipe_length_2(bore_spacing * 0.2)
+	label pipe_length_3(bore_spacing * 0.0)
+	label pipe_length_4(bore_spacing * 0.7)
+	label pipe_volume_1(0.9)
 	label pipe_volume_2(1.0)
 	label pipe_volume_3(1.0)
-	label pipe_volume_4(0.8)
+	label pipe_volume_4(0.9)
 	
 	// Kooks headers
 	// label pipe_length_1(bore_spacing * 1.0)
@@ -370,7 +361,7 @@ public node chevrolet_ls7 {
             intake: intake,
             exhaust_system: exhaustR,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: pipe_volume_2
+			sound_attenuation: pipe_volume_2 * 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -390,7 +381,7 @@ public node chevrolet_ls7 {
             intake: intake,
             exhaust_system: exhaustR,
 			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: pipe_volume_4
+			sound_attenuation: pipe_volume_4 * 0.6
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -403,7 +394,7 @@ public node chevrolet_ls7 {
             intake: intake,
             exhaust_system: exhaustL,
 			primary_length: pipe_length_1,
-			sound_attenuation: pipe_volume_1
+			sound_attenuation: pipe_volume_1 * 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -413,7 +404,7 @@ public node chevrolet_ls7 {
             intake: intake,
             exhaust_system: exhaustL,
 			primary_length: pipe_length_2,
-			sound_attenuation: pipe_volume_2
+			sound_attenuation: pipe_volume_2 * 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -464,21 +455,19 @@ public node chevrolet_ls7 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 25 * units.deg)
-        .add_sample(2000 * units.rpm, 29 * units.deg)
-        .add_sample(3000 * units.rpm, 33 * units.deg)
-        .add_sample(4000 * units.rpm, 38 * units.deg)
-        .add_sample(5000 * units.rpm, 45 * units.deg)
-        .add_sample(6000 * units.rpm, 55 * units.deg)
-		.add_sample(7000 * units.rpm, 68 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
+        .add_sample(0000 * units.rpm, 20 * units.deg)
+        .add_sample(1000 * units.rpm, 30 * units.deg)
+        .add_sample(2000 * units.rpm, 30 * units.deg)
+        .add_sample(3000 * units.rpm, 30 * units.deg)
+        .add_sample(4000 * units.rpm, 30 * units.deg)
+        .add_sample(5000 * units.rpm, 30 * units.deg)
+        .add_sample(6000 * units.rpm, 30 * units.deg)
+		.add_sample(7000 * units.rpm, 30 * units.deg)
 
     engine.add_ignition_module(
         chevrolet_ls7_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6750 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
