@@ -40,9 +40,9 @@ private node wires {
 public node jaguar_aj34_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 263 * units.deg,
-            gamma: 1.5,
-            lift: 13.0 * units.mm,
+            duration_at_50_thou: 235 * units.deg,
+            gamma: 1.0,
+            lift: 10.0 * units.mm,
             steps: 100
         );
 }
@@ -50,9 +50,9 @@ public node jaguar_aj34_lobe_profile_int {
 public node jaguar_aj34_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 263 * units.deg,
-            gamma: 1.5,
-            lift: 13.0 * units.mm,
+            duration_at_50_thou: 235 * units.deg,
+            gamma: 1.0,
+            lift: 10.0 * units.mm,
             steps: 100
         );
 }
@@ -62,9 +62,8 @@ public node jaguar_aj34_camshaft_builder {
 	input ex_lobe_profile: jaguar_aj34_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 110.0 * units.deg;
-    input intake_lobe_center: lobe_separation;
-    input exhaust_lobe_center: 105.0 * units.deg;
+    input intake_lobe_center: 110.0 * units.deg;
+    input exhaust_lobe_center: 110.0 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
@@ -178,7 +177,7 @@ public node jaguar_aj34_head {
     )
 }
 
-public node AJ34 {
+public node jaguar_aj34_engine {
     alias output __out: engine;
 
     wires wires()
@@ -186,12 +185,8 @@ public node AJ34 {
     engine engine(
         name: "Jaguar AJ34",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 800 * units.rpm,
+		starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
         throttle_gamma: 1.0
     )
 
@@ -272,7 +267,7 @@ public node AJ34 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(600),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9955,
+        idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(350.0),
         runner_length: 6.5 * units.inch,
@@ -280,7 +275,7 @@ public node AJ34 {
     )
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(600.0),
+        outlet_flow_rate: k_carb(570.0),
         primary_tube_length: 50 * units.mm,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
@@ -289,11 +284,7 @@ public node AJ34 {
 		volume: (400 * units.mm * circle_area(exhaust_radius)) + (2000 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.1,
-		impulse_response: ir_lib.default_0
-	)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 
 	label pipe_length_1(3.0 * bore_spacing)
 	label pipe_length_2(2.0 * bore_spacing)
@@ -302,7 +293,7 @@ public node AJ34 {
 	
 	label exhaust_stagger(40 * units.mm)
 
-    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (second)
+    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -311,7 +302,7 @@ public node AJ34 {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
+			primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -320,7 +311,7 @@ public node AJ34 {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -329,7 +320,7 @@ public node AJ34 {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -338,10 +329,10 @@ public node AJ34 {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4
+			primary_length: pipe_length_4 + exhaust_stagger
         )
 
-    cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (first)
+    cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (second)
     b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -350,7 +341,7 @@ public node AJ34 {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
+			primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -359,7 +350,7 @@ public node AJ34 {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+			primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -368,7 +359,7 @@ public node AJ34 {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+			primary_length: pipe_length_3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -377,7 +368,7 @@ public node AJ34 {
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger
+			primary_length: pipe_length_4
         )
 
     engine
@@ -408,22 +399,21 @@ public node AJ34 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 45 * units.deg)
-        .add_sample(2000 * units.rpm, 50 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 50 * units.deg)
-        .add_sample(5000 * units.rpm, 50 * units.deg)
-        .add_sample(6000 * units.rpm, 50 * units.deg)
-		.add_sample(7000 * units.rpm, 50 * units.deg)
-		.add_sample(8000 * units.rpm, 50 * units.deg)
-		.add_sample(9000 * units.rpm, 50 * units.deg)
+        .add_sample(0000 * units.rpm, 47 * units.deg)
+        .add_sample(1000 * units.rpm, 52 * units.deg)
+        .add_sample(2000 * units.rpm, 52 * units.deg)
+        .add_sample(3000 * units.rpm, 52 * units.deg)
+        .add_sample(4000 * units.rpm, 52 * units.deg)
+        .add_sample(5000 * units.rpm, 52 * units.deg)
+        .add_sample(6000 * units.rpm, 52 * units.deg)
+		.add_sample(7000 * units.rpm, 52 * units.deg)
+		.add_sample(8000 * units.rpm, 52 * units.deg)
+		.add_sample(9000 * units.rpm, 52 * units.deg)
 
     engine.add_ignition_module(
         jaguar_aj34_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7300 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -468,7 +458,7 @@ public node zf_6hp26_transmission {
 }
 
 public node main {
-    set_engine(AJ34())
+    set_engine(jaguar_aj34_engine())
     set_vehicle(jaguar_xk8_x100_vehicle())
     set_transmission(zf_6hp26_transmission())
 }
