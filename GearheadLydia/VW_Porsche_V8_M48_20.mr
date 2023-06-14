@@ -12,7 +12,7 @@ label cycle(2 * 360 * units.deg)
 public node porsche_m48_20_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7050 * units.rpm;
+    input rev_limit: 6850 * units.rpm; // not actually sure where the limiter is
 	input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -40,9 +40,9 @@ private node wires {
 public node porsche_m48_20_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 230 * units.deg,
-            gamma: 1.5,
-            lift: 12.5 * units.mm,
+            duration_at_50_thou: 220 * units.deg,
+            gamma: 1.0,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -50,9 +50,9 @@ public node porsche_m48_20_lobe_profile_int {
 public node porsche_m48_20_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 230 * units.deg,
-            gamma: 1.5,
-            lift: 12.5 * units.mm,
+            duration_at_50_thou: 220 * units.deg,
+            gamma: 1.0,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -123,17 +123,18 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
+// https://rennlist.com/forums/cayenne-955-957-2003-2010/886091-2007-cayenne-4-5l-v8-cyl-head.html
 public node porsche_m48_20_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 46.0 * units.cc;
+    input chamber_volume: 42 * units.cc; // informed guesstimate based on valve specs & probable recess depth of 8.8mm
     input flip_display: false;
 	
-	input flow_attenuation: 1.1;
-    input lift_scale: 50.0;
+	input flow_attenuation: 1.0;
+    input lift_scale: 1.0;
     alias output __out: head;
 
     function intake_flow(1 * units.mm)
@@ -171,8 +172,10 @@ public node porsche_m48_20_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 100.0 * units.cc,
-        intake_runner_cross_section_area: 2 * 12.4087 * units.cm2,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -183,33 +186,30 @@ public node porsche_m48_20_head {
 }
 
 
-public node v8_bns {
+public node porsche_m48_20_engine {
     alias output __out: engine;
 
     wires wires()
 
     label bore(96.0 * units.mm)
+	label bore_spacing(108 * units.mm) // not sure where I got this?
     label stroke(83.0 * units.mm)
     label rod_length(155.0 * units.mm)
-    label rod_mass(434 * units.g)
-	label piston_mass(400 * units.g)
-    label compression_height(29.87 * units.mm) // JE aftermarket
-	label piston_dome(-5.5 * units.cc) // JE aftermarket
-	label deck_clearance(0.5 * units.mm)
+    label rod_mass(600 * units.g)
+	label piston_mass(450 * units.g)
+    label compression_height(31.0 * units.mm) // informed guess; JE aftermarket: 29.87 (CR 10.5)
+	label piston_dome(-1.5 * units.cc) // informed guess; JE aftermarket: -5.5 (CR 10.5)
+	label deck_height((228.0 + 0.7) * units.mm) // deck height is an informed guess; calculated for 12.5:1 compression ratio; compression ratio comes out to 10.5:1 with JE -5.5cc pistons
     label crank_mass(85 * units.lb)
     label flywheel_mass(30 * units.lb)
     label flywheel_radius(6.5 * units.inch)
 
     engine engine(
         name: "Porsche M48.20",
-        starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
-        redline: 6800 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+        starter_torque: 150 * units.lb_ft,
+		starter_speed: 1200 * units.rpm,
+        redline: 6500 * units.rpm, // 6600
+        throttle_gamma: 1.0
     )
 
     label crank_moment(
@@ -265,41 +265,41 @@ public node v8_bns {
 
     cylinder_bank_parameters bank_params(
         bore: bore,
-        deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
+        deck_height: deck_height
     )
 
-    performer_rpm_intake intake(
-        carburetor_cfm: 650.0,
-        idle_flow_rate_cfm: 0.001,
-        idle_throttle_plate_position: 0.996
+    intake intake(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(500),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.9955,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(270.0),
+        runner_length: 6.5 * units.inch,
+        velocity_decay: 0.1
     )
+	
+	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 50.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
-        velocity_decay: 0.4, //0.5
-        volume: 50.0 * units.L
+        outlet_flow_rate: k_carb(500.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(270.0),
+        velocity_decay: 1.0, //0.5
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 2800 * units.mm,
+		volume: (400 * units.mm * circle_area(exhaust_radius)) + (2400 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaustL(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 450 * units.mm
-	)
-    exhaust_system exhaustR(
-		es_params,
-		audio_volume: 0.5 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 400 * units.mm
-	)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
 	
-	label bore_spacing(106 * units.mm)
-	label pipe_length_1(3.6 * bore_spacing)
-	label pipe_length_2(3.3 * bore_spacing)
-	label pipe_length_3(2.9 * bore_spacing)
-	label pipe_length_4(1.8 * bore_spacing)
+	label pipe_length_1(2.2 * bore_spacing)
+	label pipe_length_2(1.6 * bore_spacing)
+	label pipe_length_3(0.8 * bore_spacing)
+	label pipe_length_4(0.0 * bore_spacing)
+	
+	label exhaust_stagger(0.3 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -308,36 +308,40 @@ public node v8_bns {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
             ignition_wire: wires.wire1,
-			primary_length: pipe_length_1
+			primary_length: pipe_length_1 + exhaust_stagger,
+			sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
             ignition_wire: wires.wire2,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2 + exhaust_stagger,
+			sound_attenuation: 0.85
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
             ignition_wire: wires.wire3,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3 + exhaust_stagger,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
             ignition_wire: wires.wire4,
-			primary_length: pipe_length_4
+			primary_length: pipe_length_4 + exhaust_stagger,
+			sound_attenuation: 0.55
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -347,36 +351,40 @@ public node v8_bns {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
             ignition_wire: wires.wire5,
-			primary_length: pipe_length_1
+			primary_length: pipe_length_1,
+			sound_attenuation: 1.0 * 0.95
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
             ignition_wire: wires.wire6,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2,
+			sound_attenuation: 0.85 * 0.95
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
             ignition_wire: wires.wire7,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3,
+			sound_attenuation: 0.7 * 0.95
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaust,
             ignition_wire: wires.wire8,
-			primary_length: pipe_length_4
+			primary_length: pipe_length_4,
+			sound_attenuation: 0.55 * 0.95
         )
 
     engine
@@ -407,56 +415,54 @@ public node v8_bns {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 20 * units.deg)
-        .add_sample(2000 * units.rpm, 25 * units.deg)
-        .add_sample(3000 * units.rpm, 30 * units.deg)
-        .add_sample(4000 * units.rpm, 35 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 45 * units.deg)
-		.add_sample(7000 * units.rpm, 50 * units.deg)
-		.add_sample(8000 * units.rpm, 55 * units.deg)
-		.add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(0000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 57 * units.deg)
+        .add_sample(2000 * units.rpm, 57 * units.deg)
+        .add_sample(3000 * units.rpm, 57 * units.deg)
+        .add_sample(4000 * units.rpm, 57 * units.deg)
+        .add_sample(5000 * units.rpm, 57 * units.deg)
+        .add_sample(6000 * units.rpm, 57 * units.deg)
+		.add_sample(7000 * units.rpm, 57 * units.deg)
+		.add_sample(8000 * units.rpm, 57 * units.deg)
 
     engine.add_ignition_module(
         porsche_m48_20_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7050 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
 
-// 2008 Audi RS4 (B7)
-public node audi_rs4_b7_vehicle {
+// 2009 Porsche Panamera S (970)
+public node porsche_panamera_s_970_vehicle {
     alias output __out:
         vehicle(
-            mass: 3638 * units.lb,
-            drag_coefficient: 0.31,
-            cross_sectional_area: 2.17 * (units.m * units.m),
-            diff_ratio: 3.333,
-            tire_radius: 330 * units.mm, // 255/35ZR19
+            mass: 1770 * units.kg,
+            drag_coefficient: 0.29,
+            cross_sectional_area: 2.33 * (units.m * units.m),
+            diff_ratio: 3.42,
+            tire_radius: 352 * units.mm, // 275/45ZR18
             rolling_resistance: 500 * units.N
         );
 }
 
-public node audi_rs4_b7_transmission {
+public node porsche_panamera_s_970_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 700 * units.lb_ft
         )
-        .add_gear(3.667)
-        .add_gear(2.211)
-        .add_gear(1.520)
-        .add_gear(1.133)
-        .add_gear(0.919)
-        .add_gear(0.778);
+        .add_gear(4.68)
+        .add_gear(2.53)
+        .add_gear(1.69)
+        .add_gear(1.22)
+        .add_gear(1.00)
+        .add_gear(0.84);
 }
 
 public node main {
-    set_engine(v8_bns())
-    set_vehicle(audi_rs4_b7_vehicle())
-    set_transmission(audi_rs4_b7_transmission())
+    set_engine(porsche_m48_20_engine())
+    set_vehicle(porsche_panamera_s_970_vehicle())
+    set_transmission(porsche_panamera_s_970_transmission())
 }
 
 main()
