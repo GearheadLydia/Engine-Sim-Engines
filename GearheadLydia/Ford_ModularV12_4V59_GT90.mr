@@ -49,9 +49,9 @@ private node wires {
 public node ford_modular_v12_gt90_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 256 * units.deg,
-            gamma: 1.0,
-            lift: 9.95 * units.mm,
+            duration_at_50_thou: 224 * units.deg,
+            gamma: 1.3,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -59,9 +59,9 @@ public node ford_modular_v12_gt90_lobe_profile_int {
 public node ford_modular_v12_gt90_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 250 * units.deg,
-            gamma: 1.0,
-            lift: 9.9 * units.mm,
+            duration_at_50_thou: 220 * units.deg,
+            gamma: 1.3,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -71,10 +71,9 @@ public node ford_modular_v12_gt90_camshaft_builder {
 	input ex_lobe_profile: ford_modular_v12_gt90_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 139.0 * units.deg;
-    input intake_lobe_center: 139.0 * units.deg;
-    input exhaust_lobe_center: 121.0 * units.deg;
-    input advance: 0.0 * units.deg;
+    input intake_lobe_center: 115.0 * units.deg;
+    input exhaust_lobe_center: 115.0 * units.deg;
+    input advance: 15.0 * units.deg;
     input base_radius: 15 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -141,7 +140,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node ford_modular_v12_gt90_head {
@@ -151,10 +150,10 @@ public node ford_modular_v12_gt90_head {
     input flip_display: false;
 	
 	input flow_attenuation: 1.0;
-    input lift_scale: 50.0;
+    input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(1.1 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -170,7 +169,7 @@ public node ford_modular_v12_gt90_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.1 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -189,9 +188,9 @@ public node ford_modular_v12_gt90_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.05 * units.inch) * 5 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 12 * units.inch,
+        intake_runner_volume: circle_area(1.15 * units.inch) * 5 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.15 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 5 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -203,7 +202,7 @@ public node ford_modular_v12_gt90_head {
 }
 
 
-public node ModCobra46 {
+public node ford_modular_v12_engine {
     alias output __out: engine;
 
     wires wires()
@@ -213,14 +212,11 @@ public node ModCobra46 {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
+        fuel: fuel(max_burning_efficiency: 1.15),
         throttle_gamma: 1.0,
-		simulation_frequency: 6000
-		//jitter: 0.3,
-		//hf_gain: 0.005
+		simulation_frequency: 6000,
+		jitter: 0.75,
+		hf_gain: 0.05
     )
 
 	// https://fordauthority.com/fmc/ford-motor-company-engines/ford-modular-family/ford-4-6l-engine/
@@ -233,8 +229,8 @@ public node ModCobra46 {
 	label piston_mass(361 * units.g)
 	label piston_dome(4.451 * units.cc)
 	label deck_height((227.0 + 0.2) * units.mm)
-    label crank_mass(54.3 * units.lb)
-    label flywheel_mass(29 * 2 * units.lb)
+    label crank_mass(70 * units.lb)
+    label flywheel_mass(45 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -299,51 +295,51 @@ public node ModCobra46 {
     )
 
     intake intakeL(
-        plenum_volume: 2.0 * units.L,
-        plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(1500),
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 50.0 * units.cm2,
+        intake_flow_rate: k_carb(400),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9985,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(550.0),
-        runner_length: 6.5 * units.inch,
+        runner_flow_rate: k_carb(400.0),
+        runner_length: 8.5 * units.inch,
         velocity_decay: 0.1
     )
 
     intake intakeR(
-        plenum_volume: 2.0 * units.L,
-        plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(1500),
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 50.0 * units.cm2,
+        intake_flow_rate: k_carb(400),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9985,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(550.0),
-        runner_length: 6.5 * units.inch,
+        runner_flow_rate: k_carb(400.0),
+        runner_length: 8.5 * units.inch,
         velocity_decay: 0.1
     )
 
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(2500.0),
+        outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(500.0),
+        primary_flow_rate: k_carb(450.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 4,
 		length: 480 * units.mm,
 		volume: 480 * units.mm * circle_area(exhaust_radius) * 4
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.001, impulse_response: ir_lib.default_0)
 
-	label pipe_length_1(4.8 * bore_spacing)
-	label pipe_length_2(4.0 * bore_spacing)
-	label pipe_length_3(5.6 * bore_spacing)
+	label pipe_length_1(2.3 * bore_spacing)
+	label pipe_length_2(1.5 * bore_spacing)
+	label pipe_length_3(2.7 * bore_spacing)
 	label pipe_length_4(0.8 * bore_spacing)
 	label pipe_length_5(0.0 * bore_spacing)
-	label pipe_length_6(1.6 * bore_spacing)
+	label pipe_length_6(1.2 * bore_spacing)
 	
-	label exhaust_offset_LR(00 * units.mm)
+	label exhaust_offset_LR(0.75 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -487,7 +483,7 @@ public node ModCobra46 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
+        .add_sample(0000 * units.rpm, 45 * units.deg)
         .add_sample(1000 * units.rpm, 60 * units.deg)
         .add_sample(2000 * units.rpm, 65 * units.deg)
         .add_sample(3000 * units.rpm, 65 * units.deg)
@@ -500,8 +496,7 @@ public node ModCobra46 {
     engine.add_ignition_module(
         ford_modular_v12_gt90_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7050 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -522,7 +517,7 @@ public node ford_gt90_concept_vehicle {
 public node ffd_ricardo_5spd_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 800 * units.lb_ft
+            max_clutch_torque: 1200 * units.lb_ft
         )
         .add_gear(3.00)
         .add_gear(1.95)
@@ -532,7 +527,7 @@ public node ffd_ricardo_5spd_transmission {
 }
 
 public node main {
-    set_engine(ModCobra46())
+    set_engine(ford_modular_v12_engine())
     set_vehicle(ford_gt90_concept_vehicle())
     set_transmission(ffd_ricardo_5spd_transmission())
 }
