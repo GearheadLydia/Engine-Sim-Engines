@@ -465,8 +465,7 @@ public node aston_martin_virage_vehicle {
         );
 }
 
-// unknown ZF gearbox
-public node aston_martin_virage_transmission {
+public node zf_s5_24_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 500 * units.lb_ft
@@ -481,7 +480,7 @@ public node aston_martin_virage_transmission {
 public node main {
     set_engine(aston_martin_v8_engine())
     set_vehicle(aston_martin_virage_vehicle())
-    set_transmission(aston_martin_virage_transmission())
+    set_transmission(zf_s5_24_transmission())
 }
 
 main()
