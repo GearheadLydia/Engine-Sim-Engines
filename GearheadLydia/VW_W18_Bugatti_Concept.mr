@@ -253,7 +253,7 @@ public node bugatti_w18 {
 	
     label bore(76.5 * units.mm)
     label stroke(75.6 * units.mm)
-    label rod_length(150.0 * units.mm)
+    label rod_length(135.0 * units.mm)
     label rod_mass(434 * units.g)
 	label piston_mass(290 * units.g)
     label compression_height(20.0 * units.mm)
