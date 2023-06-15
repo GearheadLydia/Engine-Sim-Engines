@@ -32,14 +32,12 @@ private node wires {
     output wire6: ignition_wire();
 }
 
-// cams copied from VR6 R32
-
 public node w6_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 272 * units.deg,
-            gamma: 1.5,
-            lift: 9.85 * units.mm,
+            duration_at_50_thou: 230 * units.deg,
+            gamma: 1.0,
+            lift: 10.0 * units.mm,
             steps: 100
         );
 }
@@ -47,9 +45,9 @@ public node w6_lobe_profile_int {
 public node w6_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 258 * units.deg,
-            gamma: 1.5,
-            lift: 9.90 * units.mm,
+            duration_at_50_thou: 230 * units.deg,
+            gamma: 1.0,
+            lift: 10.0 * units.mm,
             steps: 100
         );
 }
@@ -125,7 +123,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node w6_head {
@@ -136,7 +134,7 @@ public node w6_head {
 	
 	input flow_attenuation_in: 1.0;
 	input flow_attenuation_ex: 1.0;
-    input lift_scale: 50.0;
+    input lift_scale: 1.0;
     alias output __out: head;
 
     function intake_flow(1.0 * units.mm)
@@ -178,9 +176,9 @@ public node w6_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.0 * units.inch) * 9 * units.inch,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 12 * units.inch,
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 5 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -192,7 +190,7 @@ public node w6_head {
 }
 
 
-public node w6 {
+public node hypothetical_w6_engine {
     alias output __out: engine;
 
     wires wires()
@@ -217,12 +215,8 @@ public node w6 {
     engine engine(
         name: "Hypothetical W6",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
+		starter_speed: 1000 * units.rpm,
         redline: 7500 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
         throttle_gamma: 1.0
     )
 
@@ -240,7 +234,7 @@ public node w6 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: position_x,
         position_y: 0.0,
@@ -280,11 +274,11 @@ public node w6 {
 	intake intakeL(
 		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: 150.0 * units.cm2,
-		intake_flow_rate: k_carb(700.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.998,
+		intake_flow_rate: k_carb(240.0),
+		idle_flow_rate: k_carb(0.001),
+		idle_throttle_plate_position: 0.9984,
 		throttle_gamma: 3.0,
-		runner_flow_rate: k_carb(600.0),
+		runner_flow_rate: k_carb(400.0),
 		runner_length: 6.0 * units.inch,
 		velocity_decay: 0.1
 	)
@@ -292,11 +286,11 @@ public node w6 {
 	intake intakeC(
 		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: 150.0 * units.cm2,
-		intake_flow_rate: k_carb(700.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.998,
+		intake_flow_rate: k_carb(240.0),
+		idle_flow_rate: k_carb(0.001),
+		idle_throttle_plate_position: 0.9984,
 		throttle_gamma: 3.0,
-		runner_flow_rate: k_carb(600.0),
+		runner_flow_rate: k_carb(400.0),
 		runner_length: 6.0 * units.inch,
 		velocity_decay: 0.1
 	)
@@ -304,22 +298,22 @@ public node w6 {
 	intake intakeR(
 		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: 150.0 * units.cm2,
-		intake_flow_rate: k_carb(700.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.998,
+		intake_flow_rate: k_carb(240.0),
+		idle_flow_rate: k_carb(0.001),
+		idle_throttle_plate_position: 0.9984,
 		throttle_gamma: 3.0,
-		runner_flow_rate: k_carb(600.0),
+		runner_flow_rate: k_carb(400.0),
 		runner_length: 6.0 * units.inch,
 		velocity_decay: 0.1
 	)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1200.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
+        outlet_flow_rate: k_carb(700.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
         length: 500 * units.mm,
-        volume: 10.0 * units.L
+        volume: 1.0 * units.L
     )
 
     exhaust_system exhaust(
@@ -435,55 +429,53 @@ public node w6 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000  * units.rpm, 15 * units.deg)
-        .add_sample(1000  * units.rpm, 38 * units.deg)
-        .add_sample(2000  * units.rpm, 40 * units.deg)
-        .add_sample(3000  * units.rpm, 40 * units.deg)
-        .add_sample(4000  * units.rpm, 40 * units.deg)
-        .add_sample(5000  * units.rpm, 40 * units.deg)
-        .add_sample(6000  * units.rpm, 40 * units.deg)
-		.add_sample(7000  * units.rpm, 40 * units.deg)
-		.add_sample(8000  * units.rpm, 40 * units.deg)
+        .add_sample(0000  * units.rpm, 45 * units.deg)
+        .add_sample(1000  * units.rpm, 45 * units.deg)
+        .add_sample(2000  * units.rpm, 45 * units.deg)
+        .add_sample(3000  * units.rpm, 45 * units.deg)
+        .add_sample(4000  * units.rpm, 45 * units.deg)
+        .add_sample(5000  * units.rpm, 45 * units.deg)
+        .add_sample(6000  * units.rpm, 45 * units.deg)
+		.add_sample(7000  * units.rpm, 45 * units.deg)
+		.add_sample(8000  * units.rpm, 45 * units.deg)
 
     engine.add_ignition_module(
         w6_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 8000 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
 
-// 2008 Lamborghini Murcielago LP640
-public node lamborghini_murcielago_vehicle {
+// 1992 Nissan 300ZX (Z32)
+public node nissan_300zx_z32_vehicle {
     alias output __out:
         vehicle(
-            mass: 3671 * units.lb,
-            drag_coefficient: 0.33,
-            cross_sectional_area: 2.01 * (units.m * units.m),
-            diff_ratio: 3.141,
-            tire_radius: 328.93 * units.mm, // 335/30ZR18
-            rolling_resistance: 600 * units.N
+            mass: 3186 * units.lb,
+            drag_coefficient: 0.32,
+            cross_sectional_area: 1.89 * (units.m * units.m),
+            diff_ratio: 4.083,
+            tire_radius: 316 * units.mm, // 225/50VR16
+            rolling_resistance: 500 * units.N
         );
 }
 
-public node lamborghini_murcielago_transmission {
+public node nissan_fs5r30a_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1000 * units.lb_ft
+            max_clutch_torque: 500 * units.lb_ft
         )
-        .add_gear(3.091)
-        .add_gear(2.105)
-        .add_gear(1.565)
-        .add_gear(1.241)
-        .add_gear(1.065)
-        .add_gear(0.939);
+        .add_gear(3.214)
+        .add_gear(1.925)
+        .add_gear(1.302)
+        .add_gear(1.000)
+        .add_gear(0.752);
 }
 
 public node main {
-    set_engine(w6())
-    set_vehicle(lamborghini_murcielago_vehicle())
-    set_transmission(lamborghini_murcielago_transmission())
+    set_engine(hypothetical_w6_engine())
+    set_vehicle(nissan_300zx_z32_vehicle())
+    set_transmission(nissan_fs5r30a_transmission())
 }
 
 main()
