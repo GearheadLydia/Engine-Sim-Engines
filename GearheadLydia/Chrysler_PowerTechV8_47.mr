@@ -174,9 +174,9 @@ public node chrysler_powertech_v8_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 2 * units.inch,
         intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 2 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -197,7 +197,7 @@ public node chrysler_powertech_v8_47_engine {
     engine engine(
         name: "Chrysler PowerTech V8",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
+		starter_speed: 1000 * units.rpm,
         redline: 5800 * units.rpm,
         throttle_gamma: 1.0
     )
@@ -274,11 +274,11 @@ public node chrysler_powertech_v8_47_engine {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(400.0),
+        intake_flow_rate: k_carb(320.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
+        idle_throttle_plate_position: 0.995,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(450.0),
+        runner_flow_rate: k_carb(180.0),
         runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -286,9 +286,9 @@ public node chrysler_powertech_v8_47_engine {
 	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(300.0),
+        outlet_flow_rate: k_carb(320.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(150.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
 		length: 2900 * units.mm,
@@ -410,14 +410,14 @@ public node chrysler_powertech_v8_47_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 25 * units.deg)
-        .add_sample(1000 * units.rpm, 52 * units.deg)
-        .add_sample(2000 * units.rpm, 57 * units.deg)
-        .add_sample(3000 * units.rpm, 55 * units.deg)
-        .add_sample(4000 * units.rpm, 47 * units.deg)
-        .add_sample(5000 * units.rpm, 41 * units.deg)
-        .add_sample(6000 * units.rpm, 37 * units.deg)
-        .add_sample(7000 * units.rpm, 37 * units.deg)
+        .add_sample(0000 * units.rpm, 70 * units.deg)
+        .add_sample(1000 * units.rpm, 80 * units.deg)
+        .add_sample(2000 * units.rpm, 80 * units.deg)
+        .add_sample(3000 * units.rpm, 80 * units.deg)
+        .add_sample(4000 * units.rpm, 80 * units.deg)
+        .add_sample(5000 * units.rpm, 80 * units.deg)
+        .add_sample(6000 * units.rpm, 80 * units.deg)
+        .add_sample(7000 * units.rpm, 80 * units.deg)
 
     engine.add_ignition_module(
         chrysler_powertech_v8_distributor(
