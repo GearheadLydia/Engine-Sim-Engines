@@ -162,8 +162,8 @@ public node toyota_2grfse_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 2 * units.inch,
         intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.9 * units.inch) * 2 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 2 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -265,7 +265,7 @@ public node toyota_2grfse_engine {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(350),
+        intake_flow_rate: k_carb(330),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.994,
         throttle_gamma: 1.0,
@@ -278,8 +278,8 @@ public node toyota_2grfse_engine {
 	
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(250.0),
-        primary_tube_length: 4.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
+        primary_tube_length: 8.0 * units.inch,
+        primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
 		length: 2500 * units.mm,
@@ -288,11 +288,11 @@ public node toyota_2grfse_engine {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(3.0 * units.inch)
-	label pipe_length_2(1.5 * units.inch)
+	label pipe_length_1(2.6 * units.inch)
+	label pipe_length_2(1.3 * units.inch)
 	label pipe_length_3(0.0 * units.inch)
 	
-	label exhaust_stagger(1.0 * units.inch)
+	label exhaust_stagger(0.5 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 30.0 * units.deg) // L (first)
     b0
