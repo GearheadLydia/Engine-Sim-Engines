@@ -24,7 +24,7 @@ public node aston_martin_v8_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 5650 * units.rpm;
-	input limiter_duration: 0.15;
+	input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
