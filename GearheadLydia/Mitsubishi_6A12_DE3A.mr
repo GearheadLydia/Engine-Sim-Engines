@@ -120,10 +120,11 @@ private node add_flow_sample {
     this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
+// https://www.ozvr4.com/threads/high-compression-ratio-turbo.14514/page-2
 public node mitsubishi_6a12_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 30.0 * units.cc; // guess
+    input chamber_volume: 33.0 * units.cc;
     input flip_display: false;
 	
 	input flow_attenuation: 1.1;
@@ -195,13 +196,13 @@ public node mitsubishi_6a12 {
     label bore(78.4 * units.mm)
     label stroke(69.0 * units.mm)
     label rod_length(125.5 * units.mm) // real
-    label rod_mass(434.0 * units.g) // guess
+    label rod_mass(500.0 * units.g) // guess
 	label piston_mass(400 * units.g) // guess
-    label compression_height(25.0 * units.mm) // guess
-	label deck_clearance(0 * units.mm) // guess
-	label piston_dome(0.0 * units.cc) // guess
+    label compression_height(30.0 * units.mm) // 4G92
+	label deck_clearance(1.1 * units.mm) // head gasket only
+	label piston_dome(1.3 * units.cc) // for 10.0:1 CR
     label crank_mass(50 * units.lb)
-    label flywheel_mass(20 * 2 * units.lb)
+    label flywheel_mass(30 * units.lb)
     label flywheel_radius(5 * units.inch)
 
     label crank_moment(
@@ -218,7 +219,7 @@ public node mitsubishi_6a12 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -265,14 +266,14 @@ public node mitsubishi_6a12 {
     )
 
 	intake intake (
-		plenum_volume: 5.0 * units.L,
-		plenum_cross_section_area: 100.0 * units.cm2,
+		plenum_volume: 1.0 * units.L,
+		plenum_cross_section_area: 50.0 * units.cm2,
 		intake_flow_rate: k_carb(400.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.994,
+		idle_throttle_plate_position: 0.997,
 		throttle_gamma: 1.0,
 		runner_flow_rate: k_carb(300.0),
-		runner_length: 15.0 * units.inch,
+		runner_length: 12.0 * units.inch,
 		velocity_decay: 0.1
 	)
 	
@@ -280,8 +281,8 @@ public node mitsubishi_6a12 {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: 15.0 * units.inch,
-        primary_flow_rate: k_carb(250.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(220.0),
         velocity_decay: 0.8, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
 		length: 1800 * units.mm,
