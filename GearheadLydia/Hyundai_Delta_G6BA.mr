@@ -187,7 +187,7 @@ public node hyundai_delta_g6ba {
     engine engine(
         name: "Hyundai Delta G6BA",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1400 * units.rpm,
+		starter_speed: 1000 * units.rpm,
         redline: 6500 * units.rpm,
         throttle_gamma: 1.0
     )
@@ -218,7 +218,7 @@ public node hyundai_delta_g6ba {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -267,9 +267,9 @@ public node hyundai_delta_g6ba {
 	intake intake (
 		plenum_volume: 5.0 * units.L,
 		plenum_cross_section_area: 100.0 * units.cm2,
-		intake_flow_rate: k_carb(300.0),
+		intake_flow_rate: k_carb(320.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.993,
+		idle_throttle_plate_position: 0.995,
 		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(200.0),
 		runner_length: 7.0 * units.inch,
@@ -279,8 +279,8 @@ public node hyundai_delta_g6ba {
 	label exhaust_radius((2.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(300.0),
-        primary_tube_length: 10.0 * units.inch,
+        outlet_flow_rate: k_carb(320.0),
+        primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
@@ -316,7 +316,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -326,7 +326,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.9
         )
 
     cylinder_bank b1(bank_params, angle: -30.0 * units.deg) // R (first, front)
@@ -339,7 +339,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 1.0
+			sound_attenuation: 1.0 * 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -349,7 +349,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.7 * 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -359,7 +359,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.9 * 0.7
         )
 
     engine
@@ -390,14 +390,14 @@ public node hyundai_delta_g6ba {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 25 * units.deg)
-        .add_sample(1000 * units.rpm, 57 * units.deg)
-        .add_sample(2000 * units.rpm, 56 * units.deg)
-        .add_sample(3000 * units.rpm, 55 * units.deg)
-        .add_sample(4000 * units.rpm, 54 * units.deg)
-        .add_sample(5000 * units.rpm, 53 * units.deg)
-        .add_sample(6000 * units.rpm, 52 * units.deg)
-		.add_sample(7000 * units.rpm, 52 * units.deg)
+        .add_sample(0000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 55 * units.deg)
+        .add_sample(2000 * units.rpm, 55 * units.deg)
+        .add_sample(3000 * units.rpm, 54 * units.deg)
+        .add_sample(4000 * units.rpm, 53 * units.deg)
+        .add_sample(5000 * units.rpm, 52 * units.deg)
+        .add_sample(6000 * units.rpm, 51 * units.deg)
+		.add_sample(7000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         hyundai_delta_distributor(
