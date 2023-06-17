@@ -264,27 +264,15 @@ public node subaru_ez30d_engine {
         deck_height: deck_height
     )
 
-    intake intakeL(
+    intake intake(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(200.0),
+        intake_flow_rate: k_carb(400.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9955,
-        throttle_gamma: 2.0,
+        throttle_gamma: 1.0,
         runner_flow_rate: k_carb(300.0),
         runner_length: 7.0 * units.inch,
-        velocity_decay: 0.1
-    )
-
-    intake intakeR(
-        plenum_volume: 1.0 * units.L,
-        plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(200.0),
-        idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9955,
-        throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(300.0),
-        runner_length: 7.5 * units.inch,
         velocity_decay: 0.1
     )
 	
@@ -295,18 +283,18 @@ public node subaru_ez30d_engine {
         primary_tube_length: 8.0 * units.inch,
         primary_flow_rate: k_carb(230.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
 		length: 2700 * units.mm,
 		volume: (2000 * units.mm * circle_area(exhaust_radius) * 2) + (700 * units.mm * circle_area(exhaust_radius))
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.003, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1( 6.0 * units.inch)
-	label pipe_length_2( 3.0 * units.inch)
+	label pipe_length_1( 8.0 * units.inch)
+	label pipe_length_2( 4.0 * units.inch)
 	label pipe_length_3( 0.0 * units.inch)
 	
-	label exhaust_stagger( 1.5 * units.inch)
+	label exhaust_stagger( 2.0 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 90.0 * units.deg) // L (first)
     b0
@@ -315,7 +303,7 @@ public node subaru_ez30d_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             ignition_wire: wires.wire1,
-            intake: intakeL,
+            intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger
         )
@@ -324,7 +312,7 @@ public node subaru_ez30d_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
-            intake: intakeL,
+            intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger
         )
@@ -333,7 +321,7 @@ public node subaru_ez30d_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire5,
-            intake: intakeL,
+            intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger
         )
@@ -345,27 +333,30 @@ public node subaru_ez30d_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
-            intake: intakeR,
+            intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
+			primary_length: pipe_length_1,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire4,
-            intake: intakeR,
+            intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire6,
-            intake: intakeR,
+            intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3,
+			sound_attenuation: 0.7
         )
 
     engine
@@ -420,7 +411,7 @@ public node subaru_legacy_30r_bl_vehicle {
             cross_sectional_area: 2.09 * (units.m * units.m),
             diff_ratio: 3.9,
             tire_radius: 312.5 * units.mm, // 215/45R17V
-            rolling_resistance: 430 * units.N
+            rolling_resistance: 1495 * units.kg * 9.81 * (215.0/275.0) * 0.01
         );
 }
 

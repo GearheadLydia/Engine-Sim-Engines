@@ -124,7 +124,7 @@ public node porsche_m96_20_head {
 	
 	input flow_attenuation_in: 1.0;
 	input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.15; // purely for sound purposes
+    input lift_scale: 1.1; // purely for sound purposes
     alias output __out: head;
 
     function intake_flow(1.0 * units.mm)
@@ -180,7 +180,7 @@ public node porsche_m96_20_head {
 }
 
 
-public node m96_20 {
+public node porsche_m96_20_engine {
     alias output __out: engine;
 
     wires wires()
@@ -219,7 +219,7 @@ public node m96_20 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -268,7 +268,7 @@ public node m96_20 {
     intake intake(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(600.0),
+        intake_flow_rate: k_carb(400.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
@@ -284,14 +284,18 @@ public node m96_20 {
         primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
 		length: 600 * units.mm,
-		volume: 600 * units.mm * circle_area(exhaust_radius)
+		volume: 600 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.0015, impulse_response: ir_lib.default_0)
 	
-	label exhaust_stagger(30 * units.mm)
+	label pipe_length_1( 5.0 * units.inch)
+	label pipe_length_2( 2.5 * units.inch)
+	label pipe_length_3( 0.0 * units.inch)
+	
+	label exhaust_stagger( 1.5 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 90.0 * units.deg) // L (first)
     b0
@@ -302,7 +306,7 @@ public node m96_20 {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 4 * units.inch,
+			primary_length: pipe_length_1,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -312,7 +316,7 @@ public node m96_20 {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 2 * units.inch,
+			primary_length: pipe_length_2,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -322,7 +326,7 @@ public node m96_20 {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0 * units.inch,
+			primary_length: pipe_length_3,
 			sound_attenuation: 1.0
         )
 
@@ -335,7 +339,7 @@ public node m96_20 {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 4 * units.inch + exhaust_stagger,
+			primary_length: pipe_length_1 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -345,7 +349,7 @@ public node m96_20 {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 2 * units.inch + exhaust_stagger,
+			primary_length: pipe_length_2 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
@@ -355,7 +359,7 @@ public node m96_20 {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0 * units.inch + exhaust_stagger,
+			primary_length: pipe_length_3 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
 
@@ -406,12 +410,12 @@ public node m96_20 {
 public node porsche_boxster_986_vehicle {
     alias output __out:
         vehicle(
-            mass: 2822 * units.lb,
+            mass: 1280 * units.kg,
             drag_coefficient: 0.31,
             cross_sectional_area: 1.91 * (units.m * units.m),
             diff_ratio: 3.89,
             tire_radius: 338 * units.mm, // 225/50ZR16
-            rolling_resistance: 450 * units.N
+            rolling_resistance: 1280 * units.kg * 9.81 * (225.0/275.0) * 0.01
         );
 }
 
@@ -428,7 +432,7 @@ public node porsche_boxster_986_transmission {
 }
 
 public node main {
-    set_engine(m96_20())
+    set_engine(porsche_m96_20_engine())
     set_vehicle(porsche_boxster_986_vehicle())
     set_transmission(porsche_boxster_986_transmission())
 }
