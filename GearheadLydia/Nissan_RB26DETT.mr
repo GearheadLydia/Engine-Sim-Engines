@@ -158,8 +158,8 @@ public node nissan_rb26_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.4 * units.inch) * 2 * units.inch,
         intake_runner_cross_section_area: circle_area(1.4 * units.inch),
-        exhaust_runner_volume: circle_area(1.2 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(1.2 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -199,14 +199,16 @@ public node nissan_rb26dett {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 8000 * units.rpm,
-        fuel: fuel(max_burning_efficiency: 1.90 // free power to simulate unavailable turbo
-        ),
-        throttle_gamma: 1.0
+        fuel: fuel(max_burning_efficiency: 1.90), // free power to simulate unavailable turbo
+        throttle_gamma: 1.0,
+		hf_gain: 0.005,
+		jitter: 0.5
     )
 	
 	label lean_angle(-10 * units.deg)
 
     label bore(86.0 * units.mm)
+	label bore_spacing(96.5 * units.mm)
     label stroke(73.7 * units.mm)
     label rod_length(121.49 * units.mm)
     label rod_mass(300 * units.g)
@@ -303,24 +305,20 @@ public node nissan_rb26dett {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 4.0 * units.inch,
-        primary_flow_rate: k_carb(400.0),
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
 		length: 2500 * units.mm,
 		volume: 2500 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.1,
-		impulse_response: ir_lib.default_0
-	)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(1.2 * units.inch)
-	label pipe_length_2(0.0 * units.inch)
-	label pipe_length_3(0.9 * units.inch)
+	label pipe_length_1(0.7 * bore_spacing)
+	label pipe_length_2(0.0 * bore_spacing)
+	label pipe_length_3(0.6 * bore_spacing)
 	
-	label exhaust_stagger(180 * units.mm)
+	label exhaust_stagger(2 * bore_spacing)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -332,7 +330,7 @@ public node nissan_rb26dett {
             intake: intake1,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.8
+			sound_attenuation: 1.0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -342,7 +340,7 @@ public node nissan_rb26dett {
             intake: intake2,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.9
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -352,7 +350,7 @@ public node nissan_rb26dett {
             intake: intake3,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.8
+			sound_attenuation: 1.0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -362,7 +360,7 @@ public node nissan_rb26dett {
             intake: intake4,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
-			sound_attenuation: 1.0
+			sound_attenuation: 1.0 * 0.8
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -372,7 +370,7 @@ public node nissan_rb26dett {
             intake: intake5,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
-			sound_attenuation: 0.8
+			sound_attenuation: 0.9 * 0.8
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -382,7 +380,7 @@ public node nissan_rb26dett {
             intake: intake6,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
-			sound_attenuation: 1.0
+			sound_attenuation: 1.0 * 0.8
         )
 
     engine
