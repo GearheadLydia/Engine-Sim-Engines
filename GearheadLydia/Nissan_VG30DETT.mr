@@ -190,6 +190,7 @@ public node nissan_vg30dett_engine {
     )
 
     label bore(87.0 * units.mm)
+	label bore_spacing(108.0 * units.mm)
     label stroke(83.0 * units.mm)
     label rod_length(154.0 * units.mm)
     label rod_mass(600 * units.g)
@@ -289,7 +290,7 @@ public node nissan_vg30dett_engine {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 20.0 * units.inch,
+        primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
@@ -299,9 +300,9 @@ public node nissan_vg30dett_engine {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(4.8 * units.inch)
-	label pipe_length_2(2.2 * units.inch)
-	label pipe_length_3(0.0 * units.inch)
+	label pipe_length_1(1.0 * bore_spacing)
+	label pipe_length_2(0.5 * bore_spacing)
+	label pipe_length_3(0.0 * bore_spacing)
 	
 	label exhaust_stagger(90 * units.mm)
 
@@ -315,7 +316,7 @@ public node nissan_vg30dett_engine {
             intake: intake_L,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.4
+			sound_attenuation: 1.0 * 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -325,7 +326,7 @@ public node nissan_vg30dett_engine {
             intake: intake_L,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 0.7
+			sound_attenuation: 0.7 * 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -335,7 +336,7 @@ public node nissan_vg30dett_engine {
             intake: intake_L,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 1.0
+			sound_attenuation: 0.4 * 1.0
         )
 
     cylinder_bank b1(bank_params, angle: -30.0 * units.deg) // R (second)
@@ -348,7 +349,7 @@ public node nissan_vg30dett_engine {
             intake: intake_R,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
-			sound_attenuation: 1.0
+			sound_attenuation: 1.0 * 0.9 * 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -358,7 +359,7 @@ public node nissan_vg30dett_engine {
             intake: intake_R,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
-			sound_attenuation: 0.4
+			sound_attenuation: 0.7 * 0.9 * 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -368,7 +369,7 @@ public node nissan_vg30dett_engine {
             intake: intake_R,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
-			sound_attenuation: 0.7
+			sound_attenuation: 0.4 * 0.9 * 0.6
         )
 
     engine
@@ -421,12 +422,12 @@ public node nissan_vg30dett_engine {
 public node nissan_300zx_tt_z32_vehicle {
     alias output __out:
         vehicle(
-            mass: 3474 * units.lb,
+            mass: 1576 * units.kg,
             drag_coefficient: 0.32,
             cross_sectional_area: 1.89 * (units.m * units.m),
             diff_ratio: 3.692,
-            tire_radius: 316 * units.mm, // 225/50VR16
-            rolling_resistance: 500 * units.N
+            tire_radius: 313.5 * units.mm, // 245/45VR16
+            rolling_resistance: 1576 * units.kg * 9.81 * (245.0/275.0) * 0.01
         );
 }
 
