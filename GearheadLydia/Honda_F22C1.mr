@@ -6,10 +6,10 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-public node honda_f20c_distributor {
+public node honda_f22c1_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 9050 * units.rpm;
+    input rev_limit: 8200 * units.rpm;
 	input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -37,8 +37,8 @@ private node add_sym_sample {
 }
 
 // cam specs are approximate
-// http://autotrasformazionigozzoli.it/files/I-4cyl-2.0L-16v-DOHC-F20C.pdf
-public node honda_f20c_lobe_profile_int_lo {
+
+public node honda_f22c1_lobe_profile_int_lo {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 240.0 * units.deg,
@@ -48,7 +48,7 @@ public node honda_f20c_lobe_profile_int_lo {
         );
 }
 
-public node honda_f20c_lobe_profile_exh_lo {
+public node honda_f22c1_lobe_profile_exh_lo {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 235.0 * units.deg,
@@ -58,34 +58,33 @@ public node honda_f20c_lobe_profile_exh_lo {
         );
 }
 
-public node honda_f20c_lobe_profile_int_hi {
+public node honda_f22c1_lobe_profile_int_hi {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 267.0 * units.deg,
+            duration_at_50_thou: 266.0 * units.deg,
             gamma: 1.0,
-            lift: 12.15 * units.mm,
+            lift: 12.37 * units.mm,
             steps: 100
         );
 }
 
-public node honda_f20c_lobe_profile_exh_hi {
+public node honda_f22c1_lobe_profile_exh_hi {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 263.0 * units.deg,
+            duration_at_50_thou: 266.0 * units.deg,
             gamma: 1.0,
-            lift: 11.1 * units.mm,
+            lift: 12.06 * units.mm,
             steps: 100
         );
 }
 
-public node honda_f20c_camshaft_builder {
-    input in_lobe_profile_lo: honda_f20c_lobe_profile_int_lo();
-	input ex_lobe_profile_lo: honda_f20c_lobe_profile_exh_lo();
-    input in_lobe_profile_hi: honda_f20c_lobe_profile_int_hi();
-    input ex_lobe_profile_hi: honda_f20c_lobe_profile_exh_hi();
-    input lobe_separation: 99.0 * units.deg;
-    input intake_lobe_center_lo: 113.0 * units.deg;  // guess
-    input exhaust_lobe_center_lo: 115.0 * units.deg; // guess
+public node honda_f22c1_camshaft_builder {
+    input in_lobe_profile_lo: honda_f22c1_lobe_profile_int_lo();
+	input ex_lobe_profile_lo: honda_f22c1_lobe_profile_exh_lo();
+    input in_lobe_profile_hi: honda_f22c1_lobe_profile_int_hi();
+    input ex_lobe_profile_hi: honda_f22c1_lobe_profile_exh_hi();
+    input intake_lobe_center_lo: 113.0 * units.deg;
+    input exhaust_lobe_center_lo: 115.0 * units.deg;
     input intake_lobe_center_hi: 98.0 * units.deg;
     input exhaust_lobe_center_hi: 100.0 * units.deg;
     input advance_in_lo: 0.0 * units.deg;
@@ -152,7 +151,7 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node honda_f20c_head {
+public node honda_f22c1_head {
     input cam_in_lo;
 	input cam_ex_lo;
     input cam_in_hi;
@@ -216,33 +215,34 @@ public node honda_f20c_head {
             vtec_exhaust_camshaft: cam_ex_hi,
             intake_camshaft: cam_in_lo,
             exhaust_camshaft: cam_ex_lo,
-            min_rpm: 5800 * units.rpm
+            min_rpm: 6000 * units.rpm
 		),
         flip_display: flip_display
     )
 }
 
-public node honda_f20c_engine {
+// https://s2000.club/OM/Honda%20F22C%20engine.pdf
+public node honda_f22c1_engine {
     alias output __out: engine;
 
     engine engine(
-        name: "Honda F20C",
+        name: "Honda F22C1",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
-        redline: 9000 * units.rpm,
+        redline: 8000 * units.rpm,
         throttle_gamma: 1.0
     )
 	
 	label lean_angle(7 * units.deg)
 
     label bore(87.0 * units.mm)
-    label stroke(84.0 * units.mm)
-    label rod_length(153.0 * units.mm)
+    label stroke(90.7 * units.mm)
+    label rod_length(149.65 * units.mm)
     label rod_mass(636 * units.g)
 	label piston_mass((355+109) * units.g)
-    label compression_height(30.00 * units.mm)
+    label compression_height(29.00 * units.mm)
 	label deck_height((224.0 + 0.85) * units.mm)
-	label piston_dome(3.0 * units.cc) // for 11.0:1 CR
+	label piston_dome(5.5 * units.cc) // for 11.1 CR
     label crank_mass(3.0 * units.kg)
     label flywheel_mass(4.5 * units.kg)
     label flywheel_radius(5.0 * units.inch)
@@ -385,10 +385,10 @@ public node honda_f20c_engine {
 
     engine.add_crankshaft(c0)
 
-    honda_f20c_camshaft_builder camshaft()
+    honda_f22c1_camshaft_builder camshaft()
 
     b0.set_cylinder_head (
-        honda_f20c_head(
+        honda_f22c1_head(
             cam_in_lo: camshaft.intake_cam_0_lo,
 			cam_in_hi: camshaft.intake_cam_0_hi,
             cam_ex_lo: camshaft.exhaust_cam_0_lo,
@@ -399,39 +399,39 @@ public node honda_f20c_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample( 0000 * units.rpm, 40 * units.deg)
-        .add_sample( 1000 * units.rpm, 50 * units.deg)
-        .add_sample( 2000 * units.rpm, 50 * units.deg)
-        .add_sample( 3000 * units.rpm, 48 * units.deg)
-        .add_sample( 4000 * units.rpm, 46 * units.deg)
-        .add_sample( 5000 * units.rpm, 45 * units.deg)
-        .add_sample( 6000 * units.rpm, 44 * units.deg)
-        .add_sample( 7000 * units.rpm, 43 * units.deg)
-        .add_sample( 8000 * units.rpm, 42 * units.deg)
-        .add_sample( 9000 * units.rpm, 41 * units.deg)
-        .add_sample(10000 * units.rpm, 40 * units.deg)
+        .add_sample( 0000 * units.rpm, 35 * units.deg)
+        .add_sample( 1000 * units.rpm, 45 * units.deg)
+        .add_sample( 2000 * units.rpm, 45 * units.deg)
+        .add_sample( 3000 * units.rpm, 43 * units.deg)
+        .add_sample( 4000 * units.rpm, 41 * units.deg)
+        .add_sample( 5000 * units.rpm, 40 * units.deg)
+        .add_sample( 6000 * units.rpm, 39 * units.deg)
+        .add_sample( 7000 * units.rpm, 38 * units.deg)
+        .add_sample( 8000 * units.rpm, 37 * units.deg)
+        .add_sample( 9000 * units.rpm, 36 * units.deg)
+        .add_sample(10000 * units.rpm, 35 * units.deg)
 
     engine.add_ignition_module(
-        honda_f20c_distributor(
+        honda_f22c1_distributor(
             wires: wires,
             timing_curve: timing_curve
         ))
 }
 
-// 2001 Honda S2000 (AP1)
-public node honda_s2000_ap1_vehicle {
+// 2008 Honda S2000 (AP2)
+public node honda_s2000_ap2_vehicle {
     alias output __out:
         vehicle(
-            mass: 1245 * units.kg,
+            mass: 1271 * units.kg,
             drag_coefficient: 0.37,
             cross_sectional_area: 1.87 * (units.m * units.m),
-            diff_ratio: 4.756,
+            diff_ratio: 4.953,
             tire_radius: 313.5 * units.mm, // 245/40R17
-            rolling_resistance: 1245 * units.kg * 9.81 * (245.0/275.0) * 0.01
+            rolling_resistance: 1271 * units.kg * 9.81 * (245.0/275.0) * 0.01
         );
 }
 
-public node honda_s2000_ap1_transmission {
+public node honda_s2000_ap2_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 500 * units.lb_ft
@@ -445,9 +445,9 @@ public node honda_s2000_ap1_transmission {
 }
 
 public node main {
-	set_engine(honda_f20c_engine())
-    set_vehicle(honda_s2000_ap1_vehicle())
-    set_transmission(honda_s2000_ap1_transmission())
+	set_engine(honda_f22c1_engine())
+    set_vehicle(honda_s2000_ap2_vehicle())
+    set_transmission(honda_s2000_ap2_transmission())
 }
 
 main()
