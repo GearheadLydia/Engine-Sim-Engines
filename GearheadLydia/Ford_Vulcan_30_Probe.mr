@@ -6,11 +6,11 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-public node yamaha_sho_v6_distributor {
+public node ford_vulcan_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7800 * units.rpm;
-	input limiter_duration: 0.08;
+    input rev_limit: 5550 * units.rpm;
+	input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/6.0) * cycle)
@@ -40,35 +40,37 @@ private node add_sym_sample {
     this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
-// cam specs are guesses
-public node yamaha_sho_v6_lobe_profile_int {
+// using Taurus cam specs here
+// https://www.therangerstation.com/forums/index.php?threads/3-0-cams-specs-ranger-vs-taurus-differences.171313/
+public node ford_vulcan_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 230 * units.deg,
+            duration_at_50_thou: 200 * units.deg, // Ranger: 181
             gamma: 1.0,
-            lift: 9.0 * units.mm,
+            lift: 260 * units.thou, // Ranger: 252
             steps: 100
         );
 }
 
-public node yamaha_sho_v6_lobe_profile_exh {
+public node ford_vulcan_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 230 * units.deg,
+            duration_at_50_thou: 200 * units.deg,
             gamma: 1.0,
-            lift: 9.0 * units.mm,
+            lift: 260 * units.thou,
             steps: 100
         );
 }
 
-public node yamaha_sho_v6_camshaft_builder {
-    input in_lobe_profile: yamaha_sho_v6_lobe_profile_int();
-	input ex_lobe_profile: yamaha_sho_v6_lobe_profile_exh();
+public node ford_vulcan_camshaft_builder {
+    input in_lobe_profile: ford_vulcan_lobe_profile_int();
+	input ex_lobe_profile: ford_vulcan_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input intake_lobe_center: 125.0 * units.deg;
-    input exhaust_lobe_center: 125.0 * units.deg;
-    input advance: 0.0 * units.deg;
+	input lobe_separation: 114.5 * units.deg; // Ranger: 117.0
+    input intake_lobe_center: lobe_separation;
+    input exhaust_lobe_center: lobe_separation;
+    input advance: 4.5 * units.deg; // Ranger: 3.0
     input base_radius: 15.0 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -124,14 +126,14 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node yamaha_sho_v6_head {
+public node ford_vulcan_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 49.0 * units.cc; // guess - same as Vulcan
+    input chamber_volume: 49.0 * units.cc; // accurate
     input flip_display: false;
 	
-	input flow_attenuation: 1.0;
-    input lift_scale: 1.0;
+	input flow_attenuation: 0.9;
+    input lift_scale: (1.0 / 1.5);
     alias output __out: head;
 
     function intake_flow(1.0 * units.mm)
@@ -171,8 +173,8 @@ public node yamaha_sho_v6_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 5 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        exhaust_runner_volume: circle_area(0.65 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.65 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -182,27 +184,27 @@ public node yamaha_sho_v6_head {
     )
 }
 
-public node yamaha_sho_v6_30_engine {
+public node ford_vulcan_engine {
     alias output __out: engine;
 
     label bore(89.0 * units.mm)
 	label bore_spacing(110.0 * units.mm)
     label stroke(80.0 * units.mm)
-    label rod_length(146.8 * units.mm)
-    label rod_mass(400 * units.g)
-	label piston_mass(400 * units.g)
-    label compression_height(33.2 * units.mm)
-	label piston_dome(-1.2 * units.cc) // for 9.8:1 CR
+    label rod_length(140.5 * units.mm)
+    label rod_mass(650 * units.g)
+	label piston_mass(500 * units.g)
+    label compression_height(39.0 * units.mm)
+	label piston_dome(1.1 * units.cc) // for 9.7:1 CR; use 0 for 9.5:1 CR
 	label deck_height((220.0 + 1.0) * units.mm)
     label crank_mass(5.5 * units.kg)
-    label flywheel_mass(12.0 * units.kg)
+    label flywheel_mass(30 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     engine engine(
-        name: "Ford/Yamaha SHO V6",
+        name: "Ford Vulcan V6",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1000 * units.rpm,
-        redline: 7500 * units.rpm,
+        redline: 5500 * units.rpm,
         throttle_gamma: 1.0
     )
 
@@ -270,25 +272,25 @@ public node yamaha_sho_v6_30_engine {
 	intake intake (
 		plenum_volume: 5.0 * units.L,
 		plenum_cross_section_area: 100.0 * units.cm2,
-		intake_flow_rate: k_carb(300.0),
+		intake_flow_rate: k_carb(350.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.994,
+		idle_throttle_plate_position: 0.996,
 		throttle_gamma: 1.0,
-		runner_flow_rate: k_carb(250.0),
-		runner_length: 5.0 * units.inch,
+		runner_flow_rate: k_carb(200.0),
+		runner_length: 9.0 * units.inch,
 		velocity_decay: 0.1
 	)
 	
 	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(280.0),
-        primary_tube_length: 13.0 * units.inch,
-        primary_flow_rate: k_carb(220.0),
+        outlet_flow_rate: k_carb(350.0),
+        primary_tube_length: 7.0 * units.inch,
+        primary_flow_rate: k_carb(100.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2700 * units.mm,
-		volume: (2200 * units.mm * circle_area(exhaust_radius)) + (500 * units.mm * circle_area(exhaust_radius) * 2)
+		length: 2300 * units.mm,
+		volume: (1950 * units.mm * circle_area(exhaust_radius)) + (350 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
@@ -371,13 +373,13 @@ public node yamaha_sho_v6_30_engine {
 
     engine.add_crankshaft(c0)
 
-    yamaha_sho_v6_camshaft_builder camshaft(
-	    in_lobe_profile: yamaha_sho_v6_lobe_profile_int(),
-		ex_lobe_profile: yamaha_sho_v6_lobe_profile_exh()
+    ford_vulcan_camshaft_builder camshaft(
+	    in_lobe_profile: ford_vulcan_lobe_profile_int(),
+		ex_lobe_profile: ford_vulcan_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        yamaha_sho_v6_head(
+        ford_vulcan_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: true
@@ -385,7 +387,7 @@ public node yamaha_sho_v6_30_engine {
     )
 
     b1.set_cylinder_head (
-        yamaha_sho_v6_head(
+        ford_vulcan_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
 			flip_display: false
@@ -394,52 +396,50 @@ public node yamaha_sho_v6_30_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 52 * units.deg)
-        .add_sample(1000 * units.rpm, 62 * units.deg)
-        .add_sample(2000 * units.rpm, 62 * units.deg)
-        .add_sample(3000 * units.rpm, 62 * units.deg)
-        .add_sample(4000 * units.rpm, 62 * units.deg)
-        .add_sample(5000 * units.rpm, 62 * units.deg)
-        .add_sample(6000 * units.rpm, 62 * units.deg)
-		.add_sample(7000 * units.rpm, 62 * units.deg)
-		.add_sample(8000 * units.rpm, 62 * units.deg)
+        .add_sample(0000 * units.rpm, 34 * units.deg)
+        .add_sample(1000 * units.rpm, 39 * units.deg)
+        .add_sample(2000 * units.rpm, 39 * units.deg)
+        .add_sample(3000 * units.rpm, 39 * units.deg)
+        .add_sample(4000 * units.rpm, 39 * units.deg)
+        .add_sample(5000 * units.rpm, 39 * units.deg)
+        .add_sample(6000 * units.rpm, 39 * units.deg)
 
     engine.add_ignition_module(
-        yamaha_sho_v6_distributor(
+        ford_vulcan_distributor(
             wires: wires,
             timing_curve: timing_curve
         ))
 }
 
-// 1994 Ford Taurus SHO 3.0 Manual
-public node ford_taurus_sho_vehicle {
+// 1991 Ford Probe LX V6 (GD)
+public node ford_probe_lx_gd_vehicle {
     alias output __out:
         vehicle(
-            mass: 1540 * units.kg,
-            drag_coefficient: 0.32,
-            cross_sectional_area: 2.05 * (units.m * units.m),
-            diff_ratio: 3.74,
-            tire_radius: 332.5 * units.mm, // 205/60VR16
-            rolling_resistance: 1540 * units.kg * 9.81 * (205.0/275.0) * 0.01
+            mass: 1361 * units.kg,
+            drag_coefficient: 0.304,
+            cross_sectional_area: 1.9 * (units.m * units.m),
+            diff_ratio: 3.85,
+            tire_radius: 313.5 * units.mm, // 205/60HR15
+            rolling_resistance: 1361 * units.kg * 9.81 * (205.0/275.0) * 0.01
         );
 }
 
-public node ford_mtx_iv_sho_transmission {
+public node mazda_m5_probe_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 350 * units.lb_ft
         )
-        .add_gear(3.21)
-        .add_gear(2.09)
-        .add_gear(1.38)
-        .add_gear(1.02)
-        .add_gear(0.75);
+        .add_gear(3.250)
+        .add_gear(1.904)
+        .add_gear(1.323)
+        .add_gear(0.975)
+        .add_gear(0.711);
 }
 
 public node main {
-    set_engine(yamaha_sho_v6_30_engine())
-    set_vehicle(ford_taurus_sho_vehicle())
-    set_transmission(ford_mtx_iv_sho_transmission())
+    set_engine(ford_vulcan_engine())
+    set_vehicle(ford_probe_lx_gd_vehicle())
+    set_transmission(mazda_m5_probe_transmission())
 }
 
 main()
