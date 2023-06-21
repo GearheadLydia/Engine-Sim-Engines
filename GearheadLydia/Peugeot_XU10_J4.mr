@@ -1,0 +1,398 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+public node peugeot_xu10_j4_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 7400 * units.rpm;
+	input limiter_duration: 0.08;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire1, (0.0/4.0) * cycle)
+            .connect_wire(wires.wire3, (1.0/4.0) * cycle)
+			.connect_wire(wires.wire4, (2.0/4.0) * cycle)
+			.connect_wire(wires.wire2, (3.0/4.0) * cycle);
+}
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+    output wire3: ignition_wire();
+    output wire4: ignition_wire();
+}
+
+private node add_sym_sample {
+    input angle;
+    input lift;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(angle * units.deg, lift * units.thou)
+    this.add_sample(-angle * units.deg, lift * units.thou)
+}
+
+// mildest aftermarket cam I could find:
+// https://www.gt2i.com/en/camshaft-competition/46445-camshaft-cat-cams-peugeot-306-s16-bv6-u10j4rs-rz-267-259-degree-3661768220962.html
+public node peugeot_xu10_j4_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 228 * units.deg,
+            gamma: 1.0,
+            lift: 10.95 * units.mm,
+            steps: 100
+        );
+}
+
+public node peugeot_xu10_j4_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 223 * units.deg,
+            gamma: 1.0,
+            lift: 10.4 * units.mm,
+            steps: 100
+        );
+}
+
+public node peugeot_xu10_j4_camshaft_builder {
+    input lobe_profile: peugeot_xu10_j4_lobe_profile_int();
+	input ex_lobe_profile: peugeot_xu10_j4_lobe_profile_exh();
+    input intake_lobe_profile: lobe_profile;
+    input exhaust_lobe_profile: ex_lobe_profile;
+    input intake_lobe_center: 115 * units.deg; // guess
+    input exhaust_lobe_center: 115 * units.deg; // guess
+    input advance: 0 * units.deg;
+    input base_radius: 16.0 * units.mm; // guess
+
+    output intake_cam_0: _intake_cam_0;
+    output exhaust_cam_0: _exhaust_cam_0;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+
+
+    label rot60(60 * units.deg)
+    label rot90(90 * units.deg)
+    label rot120(120 * units.deg)
+    label rot180(180 * units.deg)
+    label rot360(360 * units.deg)
+
+    _intake_cam_0
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot180)
+		.add_lobe(rot360 + intake_lobe_center + 3 * rot180)
+		.add_lobe(rot360 + intake_lobe_center + 1 * rot180)
+		.add_lobe(rot360 + intake_lobe_center + 2 * rot180)
+
+	_exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot180)
+		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
+		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
+}
+
+private node add_flow_sample {
+    input lift;
+    input flow;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
+}
+
+public node peugeot_xu10_j4_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 37.2 * units.cc; // not sure if this or 40.something; saw two values
+    input flip_display: false;
+	
+	input flow_attenuation_in: 1.0;
+	input flow_attenuation_ex: 1.0;
+    input lift_scale: 1.0;
+    alias output __out: head;
+
+    function intake_flow(1.0 * units.mm)
+    intake_flow
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
+        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
+        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
+        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
+        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
+        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
+        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
+        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
+        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
+        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
+        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
+        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+
+    function exhaust_flow(1.0 * units.mm)
+    exhaust_flow
+        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
+        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
+        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
+        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
+        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
+        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
+        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
+        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
+        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
+        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
+        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
+        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
+        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+
+		
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.55 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.55 * units.inch),
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+// surprisingly easy to find dimensions
+// http://www.306gti6.com/forum/showthread.php?id=152388
+public node peugeot_xu10_j4_engine {
+    alias output __out: engine;
+
+    engine engine(
+        name: "Peugeot XU10 J4",
+        starter_torque: 150 * units.lb_ft,
+        starter_speed: 1200 * units.rpm,
+        redline: 7000 * units.rpm, // 6200
+        throttle_gamma: 1.0
+    )
+	
+	label lean_angle(-8 * units.deg)
+
+    label bore(86.0 * units.mm)
+    label bore_spacing(93.0 * units.mm) // definitely correct
+    label stroke(86.0 * units.mm)
+    label rod_length(158.0 * units.mm)
+    label rod_mass(500 * units.g)
+	label piston_mass(400 * units.g)
+    label compression_height(34.0 * units.mm)
+	label deck_height((235.0 + 1.2) * units.mm)
+	label piston_dome(-6.4 * units.cc) // for 10.8:1 CR
+    label crank_mass(40 * units.lb)
+    label flywheel_mass(30 * units.lb)
+    label flywheel_radius(5.0 * units.inch)
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 15 * units.kg, radius: 8.0 * units.cm)
+    )
+
+    wires wires()
+
+    crankshaft c0(
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 5.0 * units.lb_ft,
+        moment_of_inertia: crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 90.0 * units.deg + lean_angle
+    )
+
+    rod_journal rj0(angle:  0  * units.deg)
+    rod_journal rj1(angle: 180 * units.deg)
+    rod_journal rj2(angle: 180 * units.deg)
+    rod_journal rj3(angle:  0  * units.deg)
+	
+    c0
+        .add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+
+    piston_parameters piston_params(
+        mass: piston_mass,
+        //blowby: k_28inH2O(0.1),
+        compression_height: compression_height,
+        wrist_pin_position: 0.0,
+        displacement: piston_dome
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
+        center_of_mass: 0.0,
+        length: rod_length
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: bore,
+        deck_height: deck_height
+    )
+
+    intake intake(
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 50.0 * units.cm2,
+        intake_flow_rate: k_carb(220.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.996,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(200.0),
+        runner_length: 5.0 * units.inch,
+        velocity_decay: 0.1
+    )
+	
+	label exhaust_radius((3.5 * units.inch)/2)
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(220.0),
+        primary_tube_length: 16.0 * units.inch,
+        primary_flow_rate: k_carb(180.0),
+        velocity_decay: 1.0, //0.5
+		collector_cross_section_area: circle_area(exhaust_radius),
+		length: 2000 * units.mm,
+		volume: 2000 * units.mm * circle_area(exhaust_radius)
+    )
+	
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+
+	// this car has a nearly equal length, really long header
+    cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire1,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: 0.0 * units.inch,
+			sound_attenuation: 1.0
+        )
+		.add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire2,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: 2.0 * units.inch,
+			sound_attenuation: 1.0
+        )
+		.add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: 1.0 * units.inch,
+			sound_attenuation: 1.0
+        )
+		.add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: 3.0 * units.inch,
+			sound_attenuation: 1.0
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+
+    engine.add_crankshaft(c0)
+
+    peugeot_xu10_j4_camshaft_builder camshaft(
+	    lobe_profile: peugeot_xu10_j4_lobe_profile_int(),
+		ex_lobe_profile: peugeot_xu10_j4_lobe_profile_exh()
+	)
+
+    b0.set_cylinder_head (
+        peugeot_xu10_j4_head(
+            intake_camshaft: camshaft.intake_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0,
+			flip_display: false
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 40 * units.deg)
+        .add_sample(1000 * units.rpm, 50 * units.deg)
+        .add_sample(2000 * units.rpm, 50 * units.deg)
+        .add_sample(3000 * units.rpm, 50 * units.deg)
+        .add_sample(4000 * units.rpm, 50 * units.deg)
+        .add_sample(5000 * units.rpm, 50 * units.deg)
+        .add_sample(6000 * units.rpm, 50 * units.deg)
+        .add_sample(7000 * units.rpm, 50 * units.deg)
+        .add_sample(8000 * units.rpm, 50 * units.deg)
+
+    engine.add_ignition_module(
+        peugeot_xu10_j4_distributor(
+            wires: wires,
+            timing_curve: timing_curve
+        ))
+}
+
+// 1998 Peugeot 306 S16
+public node peugeot_306_s16_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1215 * units.kg,
+            drag_coefficient: 0.33,
+            cross_sectional_area: 1.89 * (units.m * units.m),
+            diff_ratio: 4.05,
+            tire_radius: 297 * units.mm, // 195/55R15V
+            rolling_resistance: 1215 * units.kg * 9.81 * (195.0/275.0) * 0.01
+        );
+}
+
+public node peugeot_306_s16_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 300 * units.lb_ft
+        )
+        .add_gear(2.92)
+        .add_gear(1.87)
+        .add_gear(1.41)
+        .add_gear(1.15)
+        .add_gear(0.95)
+        .add_gear(0.80);
+}
+
+public node main {
+	set_engine(peugeot_xu10_j4_engine())
+    set_vehicle(peugeot_306_s16_vehicle())
+    set_transmission(peugeot_306_s16_transmission())
+}
+
+main()
