@@ -246,12 +246,8 @@ public node w12 {
     engine engine(
         name: "VW WR10",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 850 * units.rpm,
+		starter_speed: 1000 * units.rpm,
         redline: 6800 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 8.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
         throttle_gamma: 1.0,
 		simulation_frequency: 6400
     )
@@ -270,7 +266,7 @@ public node w12 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -317,9 +313,9 @@ public node w12 {
     intake intake_L(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(800.0),
+        intake_flow_rate: k_carb(500.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.9968,
         throttle_gamma: 2.0,
         runner_flow_rate: k_carb(800.0),
         runner_length: 4.0 * units.inch,
@@ -329,9 +325,9 @@ public node w12 {
     intake intake_R(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(800.0),
+        intake_flow_rate: k_carb(500.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.9968,
         throttle_gamma: 2.0,
         runner_flow_rate: k_carb(800.0),
         runner_length: 4.0 * units.inch,
@@ -359,9 +355,9 @@ public node w12 {
 	label position_xI_offset(deck_height * -0.11062649203286471411984294644969)  // sin(28.5)-sin(36)
 	label position_yI_offset(deck_height * 0.06980011828701795002770172650171) // (1-cos(28.5))-(1-cos(36))
 	
-	label exhaust_length_stagger_IO(1.5 * units.inch)
-	label exhaust_length_stagger_LR(1.5 * units.inch)
-	label exhaust_bore_spacing(35 * units.mm)
+	label exhaust_length_stagger_IO(2.0 * units.inch)
+	label exhaust_length_stagger_LR(1.0 * units.inch)
+	label exhaust_bore_spacing(45 * units.mm)
 	
 	label sound_attenuation_penalty(0.02)
 
@@ -443,8 +439,8 @@ public node w12 {
             ignition_wire: wires.wire02,
             intake: intake_L,
             exhaust_system: exhaustL,
-			primary_length: (exhaust_bore_spacing * 5) + exhaust_length_stagger_IO,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 5))
+			primary_length: (exhaust_bore_spacing * 3) + exhaust_length_stagger_IO,
+			sound_attenuation: (1.0 - (sound_attenuation_penalty * 3))
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -453,8 +449,8 @@ public node w12 {
             ignition_wire: wires.wire04,
             intake: intake_L,
             exhaust_system: exhaustL,
-			primary_length: (exhaust_bore_spacing * 3) + exhaust_length_stagger_IO,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 3))
+			primary_length: (exhaust_bore_spacing * 1) + exhaust_length_stagger_IO,
+			sound_attenuation: (1.0 - (sound_attenuation_penalty * 1))
         )
 
     cylinder_bank bRO(bank_params, angle: -43.5 * units.deg) // RO (fourth)
@@ -467,8 +463,8 @@ public node w12 {
             ignition_wire: wires.wire07,
             intake: intake_R,
             exhaust_system: exhaustR,
-			primary_length: exhaust_bore_spacing * 5 + exhaust_length_stagger_LR,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 5))
+			primary_length: exhaust_bore_spacing * 3 + exhaust_length_stagger_LR,
+			sound_attenuation: (1.0 - (sound_attenuation_penalty * 3))
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -477,8 +473,8 @@ public node w12 {
             ignition_wire: wires.wire09,
             intake: intake_R,
             exhaust_system: exhaustR,
-			primary_length: exhaust_bore_spacing * 3 + exhaust_length_stagger_LR,
-			sound_attenuation: (1.0 - (sound_attenuation_penalty * 3))
+			primary_length: exhaust_bore_spacing * 1 + exhaust_length_stagger_LR,
+			sound_attenuation: (1.0 - (sound_attenuation_penalty * 1))
         )
 
     engine
@@ -498,7 +494,7 @@ public node w12 {
 	label exhaust_runner_radius(0.85 * units.inch)
 	
 	label runner_length_shrt(2.0 * units.inch)
-	label runner_length_long(3.5 * units.inch)
+	label runner_length_long(5.0 * units.inch)
 
     bLO.set_cylinder_head (
         audi_w12_head(
@@ -547,7 +543,7 @@ public node w12 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 20 * units.deg)
+        .add_sample(0000 * units.rpm, 50 * units.deg)
         .add_sample(1000 * units.rpm, 60 * units.deg)
         .add_sample(2000 * units.rpm, 60 * units.deg)
         .add_sample(3000 * units.rpm, 60 * units.deg)
@@ -561,8 +557,7 @@ public node w12 {
     engine.add_ignition_module(
         audi_w12_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7200 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
