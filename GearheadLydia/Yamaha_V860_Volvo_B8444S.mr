@@ -35,12 +35,13 @@ private node wires {
     output wire8: ignition_wire();
 }
 
+// cam specs are all guesses
 public node volvo_b8444s_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 245 * units.deg,
-            gamma: 1.3,
-            lift: 9.0 * units.mm,
+            duration_at_50_thou: 230 * units.deg,
+            gamma: 1.0,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -48,9 +49,9 @@ public node volvo_b8444s_lobe_profile_int {
 public node volvo_b8444s_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 240 * units.deg,
-            gamma: 1.3,
-            lift: 9.0 * units.mm,
+            duration_at_50_thou: 230 * units.deg,
+            gamma: 1.0,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -60,10 +61,9 @@ public node volvo_b8444s_camshaft_builder {
 	input ex_lobe_profile: volvo_b8444s_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 110.0 * units.deg;
-    input intake_lobe_center: lobe_separation;
-    input exhaust_lobe_center: 105.0 * units.deg;
-    input advance: -10.0 * units.deg;
+    input intake_lobe_center: 120.0 * units.deg;
+    input exhaust_lobe_center: 120.0 * units.deg;
+    input advance: 5.0 * units.deg;
     input base_radius: 15 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -121,7 +121,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node volvo_b8444s_head {
@@ -130,11 +130,11 @@ public node volvo_b8444s_head {
     input chamber_volume: 71.0 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation: 1.1;
-    input lift_scale: 50.0;
+	input flow_attenuation: 1.0;
+    input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(1.2 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -150,7 +150,7 @@ public node volvo_b8444s_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.2 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -169,10 +169,10 @@ public node volvo_b8444s_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 80.0 * units.cc,
-        intake_runner_cross_section_area: 25 * units.cm2,
-        exhaust_runner_volume: 50.0 * units.cc,
-        exhaust_runner_cross_section_area: 20 * units.cm2,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 2 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 2 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -183,12 +183,13 @@ public node volvo_b8444s_head {
 }
 
 
-public node b8444s {
+public node volvo_b8444s_engine {
     alias output __out: engine;
 
     wires wires()
 
     label bore(94.0 * units.mm)
+	label bore_spacing(102.0 * units.mm)
     label stroke(79.5 * units.mm)
     label rod_length(138.1 * units.mm)
     label rod_mass(350 * units.g)
@@ -205,11 +206,7 @@ public node b8444s {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 7500 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
     )
 
     label crank_moment(
@@ -226,7 +223,7 @@ public node b8444s {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -279,34 +276,37 @@ public node b8444s {
 	intake intake (
 		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: 100.0 * units.cm2,
-		intake_flow_rate: k_carb(350.0),
+		intake_flow_rate: k_carb(500.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.992,
-		throttle_gamma: 1.5,
-		runner_flow_rate: k_carb(400.0),
-		runner_length: 15.0 * units.inch,
+		idle_throttle_plate_position: 0.996,
+		throttle_gamma: 1.0,
+		runner_flow_rate: k_carb(220.0),
+		runner_length: 7.0 * units.inch,
 		velocity_decay: 0.1
 	)
+	
+	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(800.0),
-        primary_tube_length: 50.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        outlet_flow_rate: k_carb(430.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
-        volume: 50.0 * units.L,
-		length: 500 * units.mm
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 2700 * units.mm,
+		volume: 2700 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
 
-	label pipe_scaling(4 * units.inch)
-	label pipe_length_1(1.0 * pipe_scaling)
-	label pipe_length_2(0.3 * pipe_scaling)
-	label pipe_length_3(0.7 * pipe_scaling)
-	label pipe_length_4(1.7 * pipe_scaling)
-	label exhaust_stagger(pipe_scaling * 1.5)
+	label pipe_length_1(1.0 * bore_spacing)
+	label pipe_length_2(0.0 * bore_spacing)
+	label pipe_length_3(0.7 * bore_spacing)
+	label pipe_length_4(1.7 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: -30.0 * units.deg) // R (first)
+	label exhaust_stagger(2.5 * bore_spacing)
+
+    cylinder_bank b0(bank_params, angle: -30.0 * units.deg) // R (first, front)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -345,7 +345,7 @@ public node b8444s {
 			primary_length: pipe_length_1 + exhaust_stagger
         )
 
-    cylinder_bank b1(bank_params, angle: 30.0 * units.deg) // L (second)
+    cylinder_bank b1(bank_params, angle: 30.0 * units.deg) // L (second, rear)
     b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -411,22 +411,20 @@ public node b8444s {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 65 * units.deg)
-		.add_sample(7000 * units.rpm, 70 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
-		.add_sample(9000 * units.rpm, 75 * units.deg)
+        .add_sample(0000 * units.rpm, 80 * units.deg)
+        .add_sample(1000 * units.rpm, 84 * units.deg)
+        .add_sample(2000 * units.rpm, 84 * units.deg)
+        .add_sample(3000 * units.rpm, 84 * units.deg)
+        .add_sample(4000 * units.rpm, 80 * units.deg)
+        .add_sample(5000 * units.rpm, 76 * units.deg)
+        .add_sample(6000 * units.rpm, 71 * units.deg)
+		.add_sample(7000 * units.rpm, 68 * units.deg)
+		.add_sample(8000 * units.rpm, 68 * units.deg)
 
     engine.add_ignition_module(
         volvo_b8444s_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7750 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -435,12 +433,12 @@ public node b8444s {
 public node volvo_s80_v8_vehicle {
     alias output __out:
         vehicle(
-            mass: 4100 * units.lb,
+            mass: 1860 * units.kg,
             drag_coefficient: 0.28,
             cross_sectional_area: 2.25 * (units.m * units.m),
             diff_ratio: 3.33,
-            tire_radius: 326.39 * units.mm, // P245/40R18
-            rolling_resistance: 500 * units.N
+            tire_radius: 326.5 * units.mm, // P245/40R18
+            rolling_resistance: 1860 * units.kg * 9.81 * (245.0/275.0) * 0.01
         );
 }
 
@@ -458,7 +456,7 @@ public node volvo_s80_v8_transmission {
 }
 
 public node main {
-    set_engine(b8444s())
+    set_engine(volvo_b8444s_engine())
     set_vehicle(volvo_s80_v8_vehicle())
     set_transmission(volvo_s80_v8_transmission())
 }
