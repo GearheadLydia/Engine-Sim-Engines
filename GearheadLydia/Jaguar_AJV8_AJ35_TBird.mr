@@ -425,7 +425,7 @@ public node ford_thunderbird_m205_vehicle {
             cross_sectional_area: 2.01 * (units.m * units.m),
             diff_ratio: 3.58,
             tire_radius: 334 * units.mm, // 235/50VR17
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1712 * units.kg * 9.81 * (235.0/275.0) * 0.01
         );
 }
 
