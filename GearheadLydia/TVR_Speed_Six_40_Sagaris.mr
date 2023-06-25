@@ -310,7 +310,7 @@ public node speedsix {
 		volume: (1800 * units.mm * circle_area(exhaust_radius)) + (200 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.04, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(70 * units.mm)
 	label pipe_length_2(15 * units.mm)
