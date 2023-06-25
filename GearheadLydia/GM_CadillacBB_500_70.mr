@@ -12,7 +12,7 @@ public node cadillac_bigblock_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 4600 * units.rpm;
-	input limiter_duration: 0.09;
+	input limiter_duration: 0.12;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -273,7 +273,7 @@ public node cadillac_bigblock_500_engine {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(750), // actual spec: 850cfm
+        intake_flow_rate: k_carb(750),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9955,
         throttle_gamma: 1.0,
