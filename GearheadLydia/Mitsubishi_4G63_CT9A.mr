@@ -119,7 +119,7 @@ public node mitsubishi_4g63_head {
     input chamber_volume: 43.0 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation_in: 1.0;
+	input flow_attenuation_in: 0.8;
 	input flow_attenuation_ex: 1.0;
     input lift_scale: 1.0;
     alias output __out: head;
@@ -139,8 +139,6 @@ public node mitsubishi_4g63_head {
         .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
     function exhaust_flow(1.0 * units.mm)
     exhaust_flow
@@ -157,8 +155,6 @@ public node mitsubishi_4g63_head {
         .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
 		
     cylinder_head head(
@@ -176,15 +172,16 @@ public node mitsubishi_4g63_head {
     )
 }
 
-public node mitsubishi_4g63t {
+public node mitsubishi_4g63t_engine {
     alias output __out: engine;
 
     engine engine(
         name: "Mitsubishi 4G63T",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
+        fuel: fuel(max_burning_efficiency: 1.3), // free power to simulate unavailable turbo
         redline: 7500 * units.rpm,
-        throttle_gamma: 2.0
+        throttle_gamma: 1.0
     )
 	
 	label lean_angle(0 * units.deg)
@@ -217,7 +214,7 @@ public node mitsubishi_4g63t {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -261,32 +258,28 @@ public node mitsubishi_4g63t {
     intake intake(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(500.0),
+        intake_flow_rate: k_carb(400.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(450.0),
-        runner_length: 3.0 * units.inch,
+        runner_flow_rate: k_carb(350.0),
+        runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
 	
 	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500.0),
-        primary_tube_length: 2.0 * units.inch,
+        outlet_flow_rate: k_carb(900.0),
+        primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(450.0),
-        velocity_decay: 1.0, //0.5
+        velocity_decay: 0.6, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 750 * units.mm,
-		volume: 750 * units.mm * circle_area(exhaust_radius)
+		length: 2400 * units.mm,
+		volume: 2400 * units.mm * circle_area(exhaust_radius)
     )
 	
-    exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -351,16 +344,15 @@ public node mitsubishi_4g63t {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 50 * units.deg)
-        .add_sample(3000 * units.rpm, 60 * units.deg)
-        .add_sample(4000 * units.rpm, 60 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 60 * units.deg)
-        .add_sample(7000 * units.rpm, 60 * units.deg)
-        .add_sample(8000 * units.rpm, 60 * units.deg)
-        .add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(0000 * units.rpm, 75 * units.deg)
+        .add_sample(1000 * units.rpm, 90 * units.deg)
+        .add_sample(2000 * units.rpm, 90 * units.deg)
+        .add_sample(3000 * units.rpm, 87 * units.deg)
+        .add_sample(4000 * units.rpm, 80 * units.deg)
+        .add_sample(5000 * units.rpm, 73 * units.deg)
+        .add_sample(6000 * units.rpm, 66 * units.deg)
+        .add_sample(7000 * units.rpm, 59 * units.deg)
+        .add_sample(8000 * units.rpm, 59 * units.deg)
 
     engine.add_ignition_module(
         mitsubishi_4g63_distributor(
@@ -369,35 +361,36 @@ public node mitsubishi_4g63t {
         ))
 }
 
-// 1999 Mitsubishi Eclipse GS-T (D32A)
-public node mitsubishi_eclipse_d32a_vehicle {
+// 2004 Mitsubishi Lancer Evolution VIII (CT9A)
+public node mitsubishi_lancer_evolution_ct9a_vehicle {
     alias output __out:
         vehicle(
-            mass: 1325 * units.kg,
-            drag_coefficient: 0.29,
-            cross_sectional_area: 1.85 * (units.m * units.m),
-            diff_ratio: 4.153,
-            tire_radius: 316 * units.mm, // 205/55HR16
+            mass: 1490 * units.kg,
+            drag_coefficient: 0.34,
+            cross_sectional_area: 2.13 * (units.m * units.m),
+            diff_ratio: 4.583,
+            tire_radius: 321.5 * units.mm, // 235/45R17W
             rolling_resistance: 460 * units.N
         );
 }
 
-public node mitsubishi_eclipse_d32a_transmission {
+public node mitsubishi_lancer_evolution_ct9a_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 500 * units.lb_ft
+            max_clutch_torque: 800 * units.lb_ft
         )
-        .add_gear(3.090)
-        .add_gear(1.833)
-        .add_gear(1.217)
-        .add_gear(0.888)
-        .add_gear(0.741);
+        .add_gear(2.909)
+        .add_gear(1.944)
+        .add_gear(1.434)
+        .add_gear(1.100)
+        .add_gear(0.868)
+        .add_gear(0.693);
 }
 
 public node main {
-	set_engine(mitsubishi_4g63t())
-    set_vehicle(mitsubishi_eclipse_d32a_vehicle())
-    set_transmission(mitsubishi_eclipse_d32a_transmission())
+	set_engine(mitsubishi_4g63t_engine())
+    set_vehicle(mitsubishi_lancer_evolution_ct9a_vehicle())
+    set_transmission(mitsubishi_lancer_evolution_ct9a_transmission())
 }
 
 main()
