@@ -30,12 +30,14 @@ private node wires {
     output wire6: ignition_wire();
 }
 
+// https://www.maxrpm.de/Schrick-camshaft-for-Porsche-911-Typ-997-GT3-36L-24V-6-Zyl-288-Outlet-camshaft-Schrick-0490A1881-LR0
+// https://rennlist.com/forums/997-gt2-gt3-forum/409469-gt3-cam-specification.html
 public node porsche_m97_77_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 230 * units.deg,
-            gamma: 1.5,
-            lift: 10.5 * units.mm,
+            duration_at_50_thou: 220 * units.deg,
+            gamma: 1.0,
+            lift: 12.7 * units.mm,
             steps: 100
         );
 }
@@ -43,9 +45,9 @@ public node porsche_m97_77_lobe_profile_int {
 public node porsche_m97_77_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 230 * units.deg,
-            gamma: 1.5,
-            lift: 10.5 * units.mm,
+            duration_at_50_thou: 220 * units.deg,
+            gamma: 1.0,
+            lift: 12.7 * units.mm,
             steps: 100
         );
 }
@@ -53,9 +55,8 @@ public node porsche_m97_77_lobe_profile_exh {
 public node porsche_m97_77_camshaft_builder {
     input in_lobe_profile: porsche_m97_77_lobe_profile_int();
 	input ex_lobe_profile: porsche_m97_77_lobe_profile_exh();
-    input lobe_separation: 110.0 * units.deg;
-    input intake_lobe_center: 110.0 * units.deg;
-    input exhaust_lobe_center: 110.0 * units.deg;
+    input intake_lobe_center: 115.0 * units.deg;
+    input exhaust_lobe_center: 115.0 * units.deg;
     input advance_in: 0.0 * units.deg;
     input advance_ex: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
@@ -111,7 +112,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node porsche_m97_77_head {
@@ -120,12 +121,12 @@ public node porsche_m97_77_head {
     input chamber_volume: 42.0 * units.cc;
     input flip_display: false;
 	
-	input flow_attenuation_in: 1.1;
-	input flow_attenuation_ex: 1.1;
-    input lift_scale: 50.0;
+	input flow_attenuation_in: 1.0;
+	input flow_attenuation_ex: 1.0;
+    input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(1.1 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
@@ -140,10 +141,8 @@ public node porsche_m97_77_head {
         .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
-    function exhaust_flow(1.1 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
@@ -158,16 +157,14 @@ public node porsche_m97_77_head {
         .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 30.0 * units.cc,
-        intake_runner_cross_section_area: 15 * units.cm2,
-        exhaust_runner_volume: 30.0 * units.cc,
-        exhaust_runner_cross_section_area: 15 * units.cm2,
+        intake_runner_volume: circle_area(0.95 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.95 * units.inch),
+        exhaust_runner_volume: circle_area(0.75 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -177,8 +174,8 @@ public node porsche_m97_77_head {
     )
 }
 
-
-public node m97_77 {
+// http://performancedevelopments.com/gt3-engine-displacement/
+public node porsche_m97_77_engine {
     alias output __out: engine;
 
     wires wires()
@@ -186,12 +183,12 @@ public node m97_77 {
     label bore(102.7 * units.mm)
     label stroke(76.4 * units.mm)
     label rod_length(127 * units.mm)
-    label rod_mass(350 * units.g)
-	label piston_mass(423 * units.g)
+    label rod_mass(500 * units.g)
+	label piston_mass(400 * units.g)
     label compression_height(32.95 * units.mm)
 	label piston_dome(-13.2 * units.cc)
-	label deck_height(201.5 * units.mm)
-    label crank_mass(45 * units.lb)
+	label deck_height((200.0 + 1.0) * units.mm) // updated measurement
+    label crank_mass(85 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(5 * units.inch)
 
@@ -200,11 +197,7 @@ public node m97_77 {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 8500 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 1.5
+        throttle_gamma: 1.0
     )
 
     label crank_moment(
@@ -221,7 +214,7 @@ public node m97_77 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -268,38 +261,32 @@ public node m97_77 {
     )
 
     intake intake(
-        plenum_volume: 0.5 * units.L,
+        plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(700.0),
+        intake_flow_rate: k_carb(900.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.997,
-        throttle_gamma: 1.5,
-        runner_flow_rate: k_carb(500.0),
-        runner_length: 2.5 * units.inch,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(200.0),
+        runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
     )
+	
+	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(650.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(500.0),
+        outlet_flow_rate: k_carb(425.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(180.0),
         velocity_decay: 1.0, //0.5
-        volume: 10.0 * units.L
+		collector_cross_section_area: circle_area(exhaust_radius),
+		length: 600 * units.mm,
+		volume: 600 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustL(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 250 * units.mm
-	)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.001, impulse_response: ir_lib.default_0)
 	
-    exhaust_system exhaustR(
-		es_params,
-		audio_volume: 0.6 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 250 * units.mm
-	)
+    exhaust_system exhaustR(es_params, audio_volume: 0.6 * 0.001,impulse_response: ir_lib.default_0)
 
     cylinder_bank b0(bank_params, angle: 90.0 * units.deg) // L (first)
     b0
@@ -392,22 +379,21 @@ public node m97_77 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 65 * units.deg)
-		.add_sample(7000 * units.rpm, 65 * units.deg)
+        .add_sample(0000 * units.rpm, 60 * units.deg)
+        .add_sample(1000 * units.rpm, 70 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 70 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
+        .add_sample(6000 * units.rpm, 70 * units.deg)
+		.add_sample(7000 * units.rpm, 70 * units.deg)
 		.add_sample(8000 * units.rpm, 70 * units.deg)
 		.add_sample(9000 * units.rpm, 70 * units.deg)
 
     engine.add_ignition_module(
         porsche_m97_77_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 8750 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -416,12 +402,12 @@ public node m97_77 {
 public node porsche_997_gt3_vehicle {
     alias output __out:
         vehicle(
-            mass: 3015 * units.lb,
+            mass: 1368 * units.kg,
             drag_coefficient: 0.32,
             cross_sectional_area: 1.78 * (units.m * units.m),
             diff_ratio: 4.062,
             tire_radius: 314 * units.mm, // 245/40ZR17
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1368 * units.kg * 9.81 * (245.0/275.0) * 0.01
         );
 }
 
@@ -439,7 +425,7 @@ public node porsche_997_gt3_transmission {
 }
 
 public node main {
-    set_engine(m97_77())
+    set_engine(porsche_m97_77_engine())
     set_vehicle(porsche_997_gt3_vehicle())
     set_transmission(porsche_997_gt3_transmission())
 }
