@@ -282,7 +282,7 @@ public node cadillac_bigblock_500_engine {
         velocity_decay: 0.1
     )
 	
-	label exhaust_radius((4.0 * units.inch)/2)
+	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(700.0),
