@@ -297,7 +297,7 @@ public node jaguar_v12_70lister {
 		plenum_cross_section_area: 90.0 * units.cm2,
 		intake_flow_rate: k_carb(1000.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.9957,
+		idle_throttle_plate_position: 0.9958,
 		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(650.0),
 		runner_length: 9.0 * units.inch,
@@ -309,7 +309,7 @@ public node jaguar_v12_70lister {
 		plenum_cross_section_area: 90.0 * units.cm2,
 		intake_flow_rate: k_carb(1000.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.9957,
+		idle_throttle_plate_position: 0.9958,
 		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(650.0),
 		runner_length: 9.0 * units.inch,
@@ -534,7 +534,7 @@ public node lister_storm_v12_vehicle {
             cross_sectional_area: 1.981 * 1.32 * 0.9 * (units.m * units.m), // estimated
             diff_ratio: (3.400 * 0.777), // from GTR2
             tire_radius: 355 * units.mm, // 335/35ZR18
-            rolling_resistance: 800 * units.N
+            rolling_resistance: 3668 * units.lb * 9.81 * (335.0/275.0) * 0.01
         );
 }
 
@@ -547,7 +547,7 @@ public node lister_storm_gt_vehicle {
             cross_sectional_area: 1.981 * 1.32 * 0.9 * (units.m * units.m), // estimated
             diff_ratio: (3.400 * 0.777), // from GTR2
             tire_radius: 345.5 * units.mm, // from GTR2
-            rolling_resistance: 600 * units.N
+            rolling_resistance: 2425 * units.lb * 9.81 * (335.0/275.0) * 0.015
         );
 }
 
