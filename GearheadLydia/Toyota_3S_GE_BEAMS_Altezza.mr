@@ -192,7 +192,7 @@ public node toyota_3sge_beams {
     label rod_mass(350 * units.g)
 	label piston_mass(347 * units.g)
     label compression_height(33.80 * units.mm)
-	label deck_height((224.0 + 0) * units.mm)
+	label deck_height((224.0 + 0.8) * units.mm)
 	label piston_dome(0.0 * units.cc)
     label crank_mass(4.0 * units.kg)
     label flywheel_mass(5.0 * units.kg)
