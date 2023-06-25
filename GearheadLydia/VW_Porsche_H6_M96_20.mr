@@ -188,12 +188,12 @@ public node porsche_m96_20_engine {
     label bore(85.5 * units.mm)
     label stroke(72.0 * units.mm)
     label rod_length(145 * units.mm)
-    label rod_mass(350 * units.g)
-	label piston_mass(423 * units.g)
+    label rod_mass(500 * units.g)
+	label piston_mass(400 * units.g)
     label compression_height(20.5 * units.mm) // very, very borked
 	label piston_dome(-13.2 * units.cc)
 	label deck_height(201.5 * units.mm)
-    label crank_mass(45 * units.lb)
+    label crank_mass(85 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(5 * units.inch)
 
