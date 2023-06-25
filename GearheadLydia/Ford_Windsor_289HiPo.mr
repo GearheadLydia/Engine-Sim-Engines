@@ -6,8 +6,8 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 15486372
-// in standard:  21873654
+// firing order: 15426378
+// in GM layout: 21843657
 
 public node ford_windsor_289_kcode_distributor {
     input wires;
@@ -19,11 +19,11 @@ public node ford_windsor_289_kcode_distributor {
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
             .connect_wire(wires.wire5, (1.0 / 8.0) * cycle)
             .connect_wire(wires.wire4, (2.0 / 8.0) * cycle)
-            .connect_wire(wires.wire8, (3.0 / 8.0) * cycle)
+            .connect_wire(wires.wire2, (3.0 / 8.0) * cycle)
             .connect_wire(wires.wire6, (4.0 / 8.0) * cycle)
             .connect_wire(wires.wire3, (5.0 / 8.0) * cycle)
             .connect_wire(wires.wire7, (6.0 / 8.0) * cycle)
-            .connect_wire(wires.wire2, (7.0 / 8.0) * cycle);
+            .connect_wire(wires.wire8, (7.0 / 8.0) * cycle);
 }
 
 private node wires {
@@ -96,7 +96,7 @@ public node ford_windsor_289_kcode_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
 
@@ -104,11 +104,11 @@ public node ford_windsor_289_kcode_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
 
     _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
 
@@ -116,7 +116,7 @@ public node ford_windsor_289_kcode_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
 }
 
 private node add_flow_sample {
@@ -437,8 +437,8 @@ public node ford_mustang_fastback_1965_vehicle {
             drag_coefficient: 0.5,
             cross_sectional_area: 1.87 * (units.m * units.m),
             diff_ratio: 3.00,
-            tire_radius: 326.5 * units.mm, // 245/45R17
-            rolling_resistance: 500 * units.N
+            tire_radius: 316 * units.mm, // 185/75R14
+            rolling_resistance: 2943 * units.lb * 9.81 * (185.0/275.0) * 0.01
         );
 }
 
