@@ -117,7 +117,7 @@ public node rover_v8_50_camshaft_builder {
 }
 
 public node rover_v8_50_head {
-    input chamber_volume: 33.0 * units.cc;
+    input chamber_volume: 28.0 * units.cc; // presumably late model heads
     input intake_camshaft;
     input exhaust_camshaft;
     input flip_display: false;
@@ -185,10 +185,10 @@ public node rover_v8_50_tvr_engine {
 	label bore_spacing(4.240 * units.inch)
     label stroke(3.54 * units.inch)
     label rod_length(5.66 * units.inch)
-    label rod_mass(600 * units.g)
-    label compression_height(1.5 * units.inch) // had "1.56", don't know where I got that
-	label piston_mass(550 * units.g)
-	label piston_dome(-26.0 * units.cc) // for 10.0:1 compression ratio; probably very incorrect
+    label rod_mass(500 * units.g)
+    label compression_height(1.5 * units.inch)
+	label piston_mass(450 * units.g)
+	label piston_dome(-31.0 * units.cc) // for 10.0:1 compression ratio; probably very incorrect
 	label deck_height((8.960 * units.inch) + (27 * units.thou))
     label crank_mass(50 * units.lb)
     label flywheel_mass(57 * units.lb)
