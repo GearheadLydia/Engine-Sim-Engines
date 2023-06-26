@@ -492,7 +492,7 @@ public node w16 {
 			primary_length: pipe_length_2 + exhaust_stagger_IO + exhaust_stagger_LR
         )
 	
-    cylinder_bank bLI(bank_params, angle: 37.5 * units.deg, display_depth: bore * 0.5) // LI (third)
+    cylinder_bank bLI(bank_params, angle: 37.5 * units.deg) // LI (third)
 	//cylinder_bank bLI(bank_params, angle: 45 * units.deg, position_x: -position_xI_offset, position_y: position_yI_offset) // LI (third)
     bLI
         .add_cylinder(
@@ -532,7 +532,7 @@ public node w16 {
 			primary_length: pipe_length_1 + exhaust_stagger_IO + exhaust_stagger_LR
         )
 
-    cylinder_bank bRO(bank_params, angle: -52.5 * units.deg, display_depth: bore * 0.5) // RO (fourth)
+    cylinder_bank bRO(bank_params, angle: -52.5 * units.deg) // RO (fourth)
 	//cylinder_bank bRO(bank_params, angle: -45 * units.deg, position_x: position_xO_offset, position_y: position_yO_offset) // LO (first)
     bRO
         .add_cylinder(
@@ -652,8 +652,7 @@ public node w16 {
     engine.add_ignition_module(
         bugatti_w16_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7200 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -662,12 +661,12 @@ public node w16 {
 public node bugatti_veyron_16_4_vehicle {
     alias output __out:
         vehicle(
-            mass: 4044 * units.lb,
+            mass: 1832 * units.kg,
             drag_coefficient: 0.41,
             cross_sectional_area: 2.07 * (units.m * units.m),
             diff_ratio: 3.643,
             tire_radius: 355.5 * units.mm, // P355/25R21
-            rolling_resistance: 800 * units.N
+            rolling_resistance: 1832 * units.kg * 9.81 * (355.0/275.0) * 0.01
         );
 }
 
