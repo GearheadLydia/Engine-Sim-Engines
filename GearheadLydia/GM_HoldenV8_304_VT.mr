@@ -189,7 +189,7 @@ public node holden_v8_304_head {
 }
 
 
-public node holden_v8_304 {
+public node holden_v8_304_engine {
     alias output __out: engine;
 
     wires wires()
@@ -205,7 +205,6 @@ public node holden_v8_304 {
     )
 
 
-	// source: https://www.onallcylinders.com/2021/04/26/2005-10-mopar-gen-iii-6-1l-hemi-engine-guide-bore-stroke-cylinder-heads-cam-specs-more/
     label bore(4.0 * units.inch)
 	label bore_spacing(4.40 * units.inch)
     label stroke(3.02 * units.inch)
@@ -440,7 +439,7 @@ public node holden_commodore_ss_vt_vehicle {
             cross_sectional_area: 2.22 * (units.m) * (units.m),
             diff_ratio: 3.08,
             tire_radius: 321.5 * units.mm, // 235/45R17
-            rolling_resistance: 450 * units.N
+            rolling_resistance: 1675 * units.kg * 9.81 * (235.0/275.0) * 0.01
         );
 }
 
@@ -457,7 +456,7 @@ public node getrag_290_transmission {
 }
 
 public node main {
-    set_engine(holden_v8_304())
+    set_engine(holden_v8_304_engine())
     set_vehicle(holden_commodore_ss_vt_vehicle())
     set_transmission(getrag_290_transmission())
 }
