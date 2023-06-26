@@ -198,9 +198,7 @@ public node oldsmobile_v8_455_w30_engine {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 800 * units.rpm,
         redline: 5500 * units.rpm,
-        throttle_gamma: 1.0,
-		jitter: 0.5,
-		hf_gain: 0.03
+        throttle_gamma: 1.0
     )
 
 
