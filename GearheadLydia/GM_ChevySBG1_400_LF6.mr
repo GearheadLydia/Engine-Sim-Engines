@@ -6,14 +6,13 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// just the Falconer V12 cut back down to a V8; I don't have the actual cam or vehicle specs on the real SBC 400
 // firing order: 18436572
 
 public node chevrolet_sbc_400_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6200 * units.rpm;
-	input limiter_duration: 0.09;
+    input rev_limit: 4600 * units.rpm;
+	input limiter_duration: 0.11;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -37,13 +36,13 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-
+// https://www.chevytalk.org/fusionbb/showtopic.php?tid/225326
 public node chevrolet_sbc_400_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 210 * units.deg,
+            duration_at_50_thou: 195 * units.deg,
             gamma: 1.0,
-            lift: 593 * units.thou,
+            lift: 390 * units.thou,
             steps: 100
         );
 }
@@ -51,9 +50,9 @@ public node chevrolet_sbc_400_lobe_profile_int {
 public node chevrolet_sbc_400_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 230 * units.deg,
+            duration_at_50_thou: 202 * units.deg,
             gamma: 1.0,
-            lift: 589 * units.thou,
+            lift: 410 * units.thou,
             steps: 100
         );
 }
@@ -63,10 +62,10 @@ public node chevrolet_sbc_400_camshaft_builder {
 	input ex_lobe_profile: chevrolet_sbc_400_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 120.0 * units.deg;
+    input lobe_separation: 112.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-    input advance: -3.0 * units.deg;
+    input advance: 5.0 * units.deg; // guess
     input base_radius: 1.462 / 2 * units.inch;
 
     output intake_cam_0: _intake_cam_0;
@@ -189,16 +188,16 @@ public node chevrolet_sbc_400_head {
 }
 
 
-public node chevrolet_sbc_400_engine {
+public node chevrolet_sbc_400_lf6_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Chevrolet Small Block",
+        name: "Chevrolet Small Block LF6",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1000 * units.rpm,
-        redline: 6000 * units.rpm,
+		starter_speed: 700 * units.rpm,
+        redline: 4500 * units.rpm,
         throttle_gamma: 1.0
     )
 
@@ -206,11 +205,11 @@ public node chevrolet_sbc_400_engine {
 	label bore_spacing(4.4 * units.inch)
     label stroke(3.750 * units.inch)
     label rod_length(5.565 * units.inch)
-    label rod_mass(464 * units.g)
+    label rod_mass(550 * units.g)
     label compression_height(1.560 * units.inch)
-	label piston_mass(482 * units.g)
-	label piston_dome(6.00 * units.cc)
-	label deck_height(9.025 * units.inch)
+	label piston_mass(500 * units.g)
+	label piston_dome(-19.5 * units.cc) // for 8.5:1 CR
+	label deck_height((9.025 * units.inch) + (39 * units.thou))
     label crank_mass(57 * units.lb)
     label flywheel_mass(57 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -275,25 +274,25 @@ public node chevrolet_sbc_400_engine {
     intake intake(
         plenum_volume: 0.3 * units.L,
         plenum_cross_section_area: circle_area(45 * units.mm),
-        intake_flow_rate: k_carb(1200),
+        intake_flow_rate: k_carb(700),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(550.0),
-        runner_length: 12.0 * units.inch,
+        runner_flow_rate: k_carb(300.0),
+        runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
 	
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1200.0),
+        outlet_flow_rate: k_carb(700.0),
         primary_tube_length: 5.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
+        primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2400 * units.mm,
-		volume: 2400 * units.mm * circle_area(exhaust_radius) * 2
+		length: 2600 * units.mm,
+		volume: 2600 * units.mm * circle_area(exhaust_radius) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
@@ -411,15 +410,12 @@ public node chevrolet_sbc_400_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 35 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 40 * units.deg)
-        .add_sample(3000 * units.rpm, 40 * units.deg)
-        .add_sample(4000 * units.rpm, 40 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 40 * units.deg)
-		.add_sample(7000 * units.rpm, 40 * units.deg)
-		.add_sample(8000 * units.rpm, 40 * units.deg)
+        .add_sample(0000 * units.rpm, 10 * units.deg)
+        .add_sample(1000 * units.rpm, 24 * units.deg)
+        .add_sample(2000 * units.rpm, 30 * units.deg)
+        .add_sample(3000 * units.rpm, 36 * units.deg)
+        .add_sample(4000 * units.rpm, 39 * units.deg)
+        .add_sample(5000 * units.rpm, 39 * units.deg)
 
     engine.add_ignition_module(
         chevrolet_sbc_400_distributor(
@@ -429,36 +425,35 @@ public node chevrolet_sbc_400_engine {
     )
 }
 
-// 1994 Chevrolet Corvette Falconer ZR12 Concept (C4)
-public node chevrolet_corvette_falconer_zr12_c4_vehicle {
+// 1970 Chevrolet Monte Carlo 400 Turbo-Fire
+// specs are an aggregate of 350 Turbo-Fire and 400 Turbo-Jet
+public node chevrolet_monte_carlo_400_turbo_fire_vehicle {
     alias output __out:
         vehicle(
-            mass: 3400 * units.lb,
-            drag_coefficient: 0.33,
-            cross_sectional_area: 1.75 * (units.m) * (units.m),
-            diff_ratio: 3.45,
-            tire_radius: 330 * units.mm, // 315/35ZR17 (plus a little)
-            rolling_resistance: 550 * units.N
+            mass: 3680 * units.lb, // SBC350: 3580 / BBC400: 3801 / BBC454 automatic: 3845
+            drag_coefficient: 0.45,
+            cross_sectional_area: 2.14 * (units.m) * (units.m),
+            diff_ratio: 3.31,
+            tire_radius: 355.5 * units.mm, // based on G78-15
+            rolling_resistance: 3680 * units.lb * 9.81 * (213.3/275.0) * 0.01
         );
 }
 
-public node tremec_t56_transmission {
+public node saginaw_m21_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1500 * units.lb_ft
+            max_clutch_torque: 800 * units.lb_ft
         )
         .add_gear(2.54)
-        .add_gear(1.78)
-        .add_gear(1.30)
-        .add_gear(1.00)
-        .add_gear(0.74)
-        .add_gear(0.49);
+        .add_gear(1.80)
+        .add_gear(1.44)
+        .add_gear(1.00);
 }
 
 public node main {
-    set_engine(chevrolet_sbc_400_engine())
-    set_vehicle(chevrolet_corvette_falconer_zr12_c4_vehicle())
-    set_transmission(tremec_t56_transmission())
+    set_engine(chevrolet_sbc_400_lf6_engine())
+    set_vehicle(chevrolet_monte_carlo_400_turbo_fire_vehicle())
+    set_transmission(saginaw_m21_transmission())
 }
 
 main()
