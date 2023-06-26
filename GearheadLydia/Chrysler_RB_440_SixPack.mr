@@ -303,8 +303,8 @@ public node chrysler_rb_440_6pack_engine {
 	// exhaust headers: http://www.brewersperformance.com/proddetail.php?prod=EXH70BB-PR
 	
 	label pipe_length_1(bore_spacing * 3.0)
-	label pipe_length_2(bore_spacing * 1.1)
-	label pipe_length_3(bore_spacing * 0.9)
+	label pipe_length_2(bore_spacing * 1.6)
+	label pipe_length_3(bore_spacing * 1.4)
 	label pipe_length_4(bore_spacing * 0.0)
 	label pipe_volume_1(1.0)
 	label pipe_volume_2(1.0)

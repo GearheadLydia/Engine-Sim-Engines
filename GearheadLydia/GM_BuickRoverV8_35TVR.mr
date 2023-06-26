@@ -284,10 +284,10 @@ public node rover_v8_35_tvr_engine {
     exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
     exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(3 * bore_spacing)
-	label pipe_length_2(2 * bore_spacing)
-	label pipe_length_3(1 * bore_spacing)
-	label pipe_length_4(0 * bore_spacing)
+	label pipe_length_1(3.0 * bore_spacing)
+	label pipe_length_2(2.4 * bore_spacing)
+	label pipe_length_3(0.6 * bore_spacing)
+	label pipe_length_4(0.0 * bore_spacing)
 	
 	label exhaust_stagger(50 * units.mm)
 

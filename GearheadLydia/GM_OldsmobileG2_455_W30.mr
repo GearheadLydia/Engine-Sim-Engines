@@ -300,8 +300,8 @@ public node oldsmobile_v8_455_w30_engine {
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(3.0 * bore_spacing)
-	label pipe_length_2(1.1 * bore_spacing)
-	label pipe_length_3(0.8 * bore_spacing)
+	label pipe_length_2(1.7 * bore_spacing)
+	label pipe_length_3(1.3 * bore_spacing)
 	label pipe_length_4(0.0 * bore_spacing)
 	
 	label exhaust_stagger(0.6 * bore_spacing)

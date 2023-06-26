@@ -300,8 +300,8 @@ public node pontiac_v8_400_engine {
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(3.00 * bore_spacing)
-	label pipe_length_2(1.05 * bore_spacing)
-	label pipe_length_3(0.95 * bore_spacing)
+	label pipe_length_2(1.55 * bore_spacing)
+	label pipe_length_3(1.45 * bore_spacing)
 	label pipe_length_4(0.00 * bore_spacing)
 	
 	label exhaust_stagger(0.4 * bore_spacing)
