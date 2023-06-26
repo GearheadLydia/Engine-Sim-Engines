@@ -64,7 +64,7 @@ V6
 
 90 degree V8 crossplane (ALL REORDERED TO GM LS CYLINDER NUMBERING - ALL CLOCKWISE)
 13654872 (L) - FR adj - not used anywhere;           cylinder transposition of 15436872, CCW mirror image of 18736542, hypothetical 3/8 swap on S65
-15436872 (D) - RL adj - Ferrari F136 crossplane; Cadillac Blackwing LTA
+15436872 (D) - RL adj - Ferrari F136 crossplane (probably also Lancia 8.32); Cadillac Blackwing LTA
 18436572 (D) - RR adj - Mopar; AMC; GM most (SBC/BBC/Buick/Pontiac/Olds/Cadillac/Northstar); Ford 60s (FE, 385, early Windsor), 4.4TD, and SHO; Ford / Jaguar AJ-V8; Volvo B8444S and B32; Toyota UZ/VD; most Mercedes-Benz (M113, M156/M157/M152/M278) (4/7 swap on M119); Rover/MG/Triumph V8; Hudson V8; Alfa Romeo Montreal; Aston Martin Tadek Marek V8; Daimler V8
 18654372 (L) - RL adj - not used anywhere;           cylinder transposition and CCW mirror image of 18436572, hypothetical 6/7 swap on S65
 18724365 (L) - FL adj - not used anywhere;           cylinder transposition and CCW mirror image of 18726543, hypothetical 2/5 swap on S65
