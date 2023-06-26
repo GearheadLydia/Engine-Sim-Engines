@@ -424,7 +424,7 @@ public node tvr_tasmin_350i_vehicle {
             cross_sectional_area: 1.73 * (units.m * units.m), // A-C
             diff_ratio: 3.54,
             tire_radius: 326.5 * units.mm, // 205/60VR16
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1021 * units.kg * 9.81 * (205.0/275.0) * 0.01
         );
 }
 

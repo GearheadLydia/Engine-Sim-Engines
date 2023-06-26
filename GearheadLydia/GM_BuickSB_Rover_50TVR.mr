@@ -438,7 +438,7 @@ public node tvr_griffith_500_vehicle {
             cross_sectional_area: 2.17 * (units.m * units.m), // guesstimate
             diff_ratio: 3.45, // borrowed from the Cerbera
             tire_radius: 313.5 * units.mm, // 245/45R16
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1060 * units.kg * 9.81 * (245.0/275.0) * 0.01
         );
 }
 
