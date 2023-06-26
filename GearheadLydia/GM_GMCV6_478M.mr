@@ -191,7 +191,9 @@ public node gmc_v6_478m_engine {
         starter_torque: 250 * units.lb_ft,
 		starter_speed: 500 * units.rpm,
         redline: 3500 * units.rpm,
-        throttle_gamma: 1.0
+        throttle_gamma: 1.0,
+		hf_gain: 0.05,
+		jitter: 0.5
     )
 
 	// https://bobistheoilguy.com/forums/threads/oil-recommend-1961-gmc-305d-v6.165855/page-2
@@ -294,13 +296,14 @@ public node gmc_v6_478m_engine {
 		volume: (2500 * units.mm * circle_area(exhaust_radius)) + (500 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(bore_spacing * 2)
 	label pipe_length_2(bore_spacing * 1)
 	label pipe_length_3(bore_spacing * 0)
 	
 	label exhaust_stagger(bore_spacing * 0.5)
+	label exhaust_wobble(bore_spacing * 0.4)
 
     cylinder_bank b1(bank_params, angle: 30 * units.deg) // L (first)
     b1
@@ -320,7 +323,7 @@ public node gmc_v6_478m_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+			primary_length: pipe_length_2 + exhaust_stagger + exhaust_wobble
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.6)),
@@ -350,7 +353,7 @@ public node gmc_v6_478m_engine {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2 - exhaust_wobble
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.6)),
@@ -404,36 +407,49 @@ public node gmc_v6_478m_engine {
     )
 }
 
+// 1966 GMC 2500 truck
+// most specs very estimated
 // https://www.xr793.com/wp-content/uploads/2021/08/1966-Chevrolet-50-to-80-Truck.pdf
-// 1966 GMC 6500 truck
-// all specs very estimated
-public node gmc_6066_truck_6500_vehicle {
+// http://www.6066gmcguy.com/GMCID1.html
+// http://www.6066gmcguy.com/DriveAxle.html
+public node gmc_2500_pickup_vehicle {
     alias output __out:
         vehicle(
-            mass: 8000 * units.lb,
+            mass: (3925+560) * units.lb,
             drag_coefficient: 0.6,
             cross_sectional_area: 4.3 * (units.m) * (units.m),
-            diff_ratio: 3.5,
+            diff_ratio: 4.57,
             tire_radius: 400 * units.mm, // guess
-            rolling_resistance: 8000 * units.lb * 9.81 * (225.0/275.0) * 0.01
+            rolling_resistance: (3925+560) * units.lb * 9.81 * (200.0/275.0) * 0.01
         );
 }
 
-public node gmc_6066_truck_6500_transmission {
+public node muncie_sm420_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 600 * units.lb_ft
         )
-        .add_gear(3.5)
-        .add_gear(2.0)
-        .add_gear(1.5)
-        .add_gear(1.0);
+        .add_gear(7.06)
+        .add_gear(3.58)
+        .add_gear(1.71)
+        .add_gear(1.00);
+}
+
+public node muncie_sm465_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 600 * units.lb_ft
+        )
+        .add_gear(6.54)
+        .add_gear(3.57)
+        .add_gear(1.70)
+        .add_gear(1.00);
 }
 
 public node main {
     set_engine(gmc_v6_478m_engine())
-    set_vehicle(gmc_6066_truck_6500_vehicle())
-    set_transmission(gmc_6066_truck_6500_transmission())
+    set_vehicle(gmc_2500_pickup_vehicle())
+    set_transmission(muncie_sm420_transmission())
 }
 
 main()
