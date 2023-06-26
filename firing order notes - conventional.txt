@@ -65,11 +65,11 @@ V6
 90 degree V8 crossplane (ALL REORDERED TO GM LS CYLINDER NUMBERING - ALL CLOCKWISE)
 13654872 (L) - FR adj - not used anywhere;           cylinder transposition of 15436872, CCW mirror image of 18736542, hypothetical 3/8 swap on S65
 15436872 (D) - RL adj - Ferrari F136 crossplane; Cadillac Blackwing LTA
-18436572 (D) - RR adj - Mopar; AMC; GM most (SBC/BBC/Buick/Pontiac/Olds/Cadillac/Northstar); Ford 1960s (FE / 385 / early Windsor) and SHO; Ford / Jaguar AJ-V8; Volvo B8444S and B32; Toyota UZ/VD; most Mercedes-Benz (M113, M156/M157/M152/M278) (4/7 swap on M119); Rover/MG/Triumph V8; Hudson V8; Alfa Romeo Montreal; Aston Martin Tadek Marek V8; Daimler V8
+18436572 (D) - RR adj - Mopar; AMC; GM most (SBC/BBC/Buick/Pontiac/Olds/Cadillac/Northstar); Ford 60s (FE, 385, early Windsor), 4.4TD, and SHO; Ford / Jaguar AJ-V8; Volvo B8444S and B32; Toyota UZ/VD; most Mercedes-Benz (M113, M156/M157/M152/M278) (4/7 swap on M119); Rover/MG/Triumph V8; Hudson V8; Alfa Romeo Montreal; Aston Martin Tadek Marek V8; Daimler V8
 18654372 (L) - RL adj - not used anywhere;           cylinder transposition and CCW mirror image of 18436572, hypothetical 6/7 swap on S65
 18724365 (L) - FL adj - not used anywhere;           cylinder transposition and CCW mirror image of 18726543, hypothetical 2/5 swap on S65
-18726543 (D) - FR adj - GM LS and L8T; Ford Cleveland, late Windsor, and early Modular; RR/Bentley L late; Volvo Penta; Cadillac BB pre-1963; Porsche M28/M48
-18736542 (D) - FL adj - Ford most (Nailhead, Y-block, 4.4TD, Coyote/Miami, Godzilla); some GM (Holden, Buick Nailhead, Cadillac Flathead); most BMW (M60, M62/S62); Toyota UR; Nissan VH/VK; Audi 4.2; MB M116/M117/M119; Hyundai Omega/Tau; RR/Bentley L early
+18726543 (D) - FR adj - GM LS and L8T; Ford 80s-00s (Cleveland, late Windsor, early Modular); RR/Bentley L late; Volvo Penta; Cadillac BB pre-1963; Porsche M28/M48
+18736542 (D) - FL adj - Ford earliest & latest (Nailhead, Y-block, Coyote/Miami, Godzilla); some GM (Holden, Buick Nailhead, Cadillac Flathead); most BMW (M60, M62/S62); Toyota UR; Nissan VH/VK; Audi 4.2; MB M116/M117/M119; Hyundai Omega/Tau; RR/Bentley L early
 18754362 (L) - RR adj - BMW S65; Lamborghini Urraco; cylinder transposition of 18736542, CCW mirror image of 15436872
 
 W8 VW - firing angles
