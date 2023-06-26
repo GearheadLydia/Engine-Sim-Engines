@@ -12,7 +12,7 @@ label cycle(2 * 360 * units.deg)
 public node ford_fe_v8_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6200 * units.rpm;
+    input rev_limit: 5700 * units.rpm;
 	input limiter_duration: 0.11;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -37,39 +37,37 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-// https://www.fordfe.com/factory-spec-s-for-the-427-r-code-camshaft-t62981.html
-// https://www.mercurystuff.com/fe-camshaft-specs.html
-// http://www.clubcobra.com/forums/fe-talk/73793-427-so-cam-specs.html
-// https://fepower.net/simplemachinesforum/index.php?topic=6936.0
-public node ford_fe_v8_427_cobra_lobe_profile_int {
+// https://www.fordfe.com/428-cj-camshaft-050-specifications-t22520.html
+// https://www.428cobrajet.org/id-cam
+public node ford_fe_v8_428_cobra_jet_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 228 * units.deg,
+            duration_at_50_thou: 210 * units.deg,
             gamma: 1.0,
-            lift: 600 * units.thou,
+            lift: 475 * units.thou,
             steps: 100
         );
 }
 
-public node ford_fe_v8_427_cobra_lobe_profile_exh {
+public node ford_fe_v8_428_cobra_jet_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 228 * units.deg,
+            duration_at_50_thou: 220 * units.deg,
             gamma: 1.0,
-            lift: 600 * units.thou,
+            lift: 485 * units.thou,
             steps: 100
         );
 }
 
 public node ford_fe_v8_camshaft_builder {
-    input in_lobe_profile: ford_fe_v8_427_cobra_lobe_profile_int();
-	input ex_lobe_profile: ford_fe_v8_427_cobra_lobe_profile_exh();
+    input in_lobe_profile: ford_fe_v8_428_cobra_jet_lobe_profile_int();
+	input ex_lobe_profile: ford_fe_v8_428_cobra_jet_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 114.5 * units.deg;
+    input lobe_separation: 117.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-    input advance: 5.0 * units.deg;
+    input advance: 0.0 * units.deg;
     input base_radius: 1.5 / 2 * units.inch; // guess
 
     output intake_cam_0: _intake_cam_0;
@@ -131,7 +129,7 @@ private node add_flow_sample {
 }
 
 // https://www.erareplicas.com/427man/engine/fe_specs.htm
-public node ford_fe_v8_427_cobra_head {
+public node ford_fe_v8_428_cobra_jet_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 74.3 * units.cc; // specs vary a lot
@@ -192,29 +190,29 @@ public node ford_fe_v8_427_cobra_head {
 }
 
 
-public node ford_fe_v8_427_cobra_engine {
+public node ford_fe_v8_428_cobra_jet_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Ford FE V8 Shelby Cobra",
+        name: "Ford FE V8 Cobra Jet",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 800 * units.rpm,
-        redline: 6000 * units.rpm,
+        redline: 5500 * units.rpm,
         throttle_gamma: 1.0
     )
 
 
-    label bore(4.2328 * units.inch)
+    label bore(4.130 * units.inch)
 	label bore_spacing(4.630 * units.inch)
-    label stroke(3.784 * units.inch)
+    label stroke(3.984 * units.inch)
     label rod_length(6.489 * units.inch)
     label rod_mass(650 * units.g)
-    label compression_height(1.752 * units.inch)
+    label compression_height(1.674 * units.inch)
 	label piston_mass(500 * units.g)
-	label piston_dome(16.5 * units.cc) // for 12.5:1 CR
-	label deck_height((10.170 * units.inch) + (41 * units.thou))
+	label piston_dome(-4.5 * units.cc) // for 10.6:1 CR
+	label deck_height((10.170 * units.inch) + (40 * units.thou))
     label crank_mass(75 * units.lb)
     label flywheel_mass(40 * units.lb)
     label flywheel_radius(7 * units.inch)
@@ -279,11 +277,11 @@ public node ford_fe_v8_427_cobra_engine {
     intake intake(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(750), // actual spec: 750cfm
+        intake_flow_rate: k_carb(735), // actual spec: 735cfm
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9965,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(280.0),
+        runner_flow_rate: k_carb(250.0),
         runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -291,21 +289,21 @@ public node ford_fe_v8_427_cobra_engine {
 	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
+        outlet_flow_rate: k_carb(550.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2200 * units.mm,
-		volume: 2200 * units.mm * circle_area(exhaust_radius) * 2
+		length: 2700 * units.mm,
+		volume: 2700 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(1.6 * bore_spacing)
-	label pipe_length_2(0.8 * bore_spacing)
-	label pipe_length_3(0.0 * bore_spacing)
-	label pipe_length_4(0.8 * bore_spacing)
+	label pipe_length_1(3.0 * bore_spacing)
+	label pipe_length_2(2.2 * bore_spacing)
+	label pipe_length_3(0.8 * bore_spacing)
+	label pipe_length_4(0.0 * bore_spacing)
 	
 	label exhaust_stagger(0.3 * bore_spacing)
 
@@ -394,19 +392,19 @@ public node ford_fe_v8_427_cobra_engine {
     engine.add_crankshaft(c0)
 
     ford_fe_v8_camshaft_builder camshaft(
-	    in_lobe_profile: ford_fe_v8_427_cobra_lobe_profile_int(),
-		ex_lobe_profile: ford_fe_v8_427_cobra_lobe_profile_exh()
+	    in_lobe_profile: ford_fe_v8_428_cobra_jet_lobe_profile_int(),
+		ex_lobe_profile: ford_fe_v8_428_cobra_jet_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        ford_fe_v8_427_cobra_head(
+        ford_fe_v8_428_cobra_jet_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: true
         )
     )
     b1.set_cylinder_head (
-        ford_fe_v8_427_cobra_head(
+        ford_fe_v8_428_cobra_jet_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: false
@@ -415,13 +413,13 @@ public node ford_fe_v8_427_cobra_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 25 * units.deg)
-        .add_sample(1000 * units.rpm, 30 * units.deg)
-        .add_sample(2000 * units.rpm, 30 * units.deg)
-        .add_sample(3000 * units.rpm, 30 * units.deg)
-        .add_sample(4000 * units.rpm, 30 * units.deg)
-        .add_sample(5000 * units.rpm, 30 * units.deg)
-        .add_sample(6000 * units.rpm, 30 * units.deg)
+        .add_sample(0000 * units.rpm, 22 * units.deg)
+        .add_sample(1000 * units.rpm, 27 * units.deg)
+        .add_sample(2000 * units.rpm, 27 * units.deg)
+        .add_sample(3000 * units.rpm, 27 * units.deg)
+        .add_sample(4000 * units.rpm, 27 * units.deg)
+        .add_sample(5000 * units.rpm, 27 * units.deg)
+        .add_sample(6000 * units.rpm, 27 * units.deg)
 
     engine.add_ignition_module(
         ford_fe_v8_distributor(
@@ -431,34 +429,34 @@ public node ford_fe_v8_427_cobra_engine {
     )
 }
 
-// 1965 Shelby Cobra 427 (MkII)
-public node shelby_cobra_427_mkii_vehicle {
+// 1969 Ford Mustang Mach I 428 Cobra Jet
+public node ford_mustang_cobra_jet_vehicle {
     alias output __out:
         vehicle(
-            mass: 2359 * units.lb,
+            mass: 3521 * units.lb,
             drag_coefficient: 0.5,
             cross_sectional_area: 1.78 * (units.m) * (units.m),
-            diff_ratio: 3.54,
-            tire_radius: 331.5 * units.mm, // 8.15-15
-            rolling_resistance: 2359 * units.lb * 9.81 * (210.0/275.0) * 0.01
+            diff_ratio: 3.5,
+            tire_radius: 336 * units.mm, // F70-14
+            rolling_resistance: 3521 * units.lb * 9.81 * (223.0/275.0) * 0.01
         );
 }
 
-public node muncie_m21_transmission {
+public node ford_toploader_close_ratio_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 800 * units.lb_ft // uprated probably
+            max_clutch_torque: 800 * units.lb_ft
         )
-        .add_gear(2.20)
-        .add_gear(1.64)
-        .add_gear(1.28)
+        .add_gear(2.32)
+        .add_gear(1.69)
+        .add_gear(1.29)
         .add_gear(1.00);
 }
 
 public node main {
-    set_engine(ford_fe_v8_427_cobra_engine())
-    set_vehicle(shelby_cobra_427_mkii_vehicle())
-    set_transmission(muncie_m21_transmission())
+    set_engine(ford_fe_v8_428_cobra_jet_engine())
+    set_vehicle(ford_mustang_cobra_jet_vehicle())
+    set_transmission(ford_toploader_close_ratio_transmission())
 }
 
 main()
