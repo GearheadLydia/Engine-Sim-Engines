@@ -206,7 +206,7 @@ public node mitsubishi_6g75_dk4a_head {
 }
 
 
-public node mitsubishi_6g75_dk4a {
+public node mitsubishi_6g75_dk4a_engine {
     alias output __out: engine;
 
     wires wires()
@@ -223,12 +223,12 @@ public node mitsubishi_6g75_dk4a {
     label stroke(90.0 * units.mm)
     label rod_length(153.42 * units.mm) // real, may be improperly converted
     label rod_mass(550 * units.g) // aftermarket
-	label piston_mass(400 * units.g) // guess
+	label piston_mass(450 * units.g) // guess
     label compression_height(29.15 * units.mm) // real
 	label deck_height((228.0 + 1.5) * units.mm) // real
 	label piston_dome(0.25 * units.cc) // real, aftermarket?
-    label crank_mass(60 * units.lb)
-    label flywheel_mass(25 * 2 * units.lb)
+    label crank_mass(70 * units.lb)
+    label flywheel_mass(35 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -431,35 +431,36 @@ public node mitsubishi_6g75_dk4a {
     )
 }
 
-// 2001 Mitsubishi Eclipse GT (D53A)
-public node mitsubishi_eclipse_d53a_vehicle {
+// 2001 Mitsubishi Eclipse GT (dk4a)
+public node mitsubishi_eclipse_dk4a_vehicle {
     alias output __out:
         vehicle(
-            mass: 3053 * units.lb,
-            drag_coefficient: 0.34,
-            cross_sectional_area: 1.9 * (units.m * units.m),
-            diff_ratio: 3.74,
-            tire_radius: 324 * units.mm, // 215/50R17
-            rolling_resistance: 500 * units.N
+            mass: 1575 * units.kg,
+            drag_coefficient: 0.35,
+            cross_sectional_area: 2.07 * (units.m * units.m),
+            diff_ratio: 3.777,
+            tire_radius: 329 * units.mm, // 225/50R17
+            rolling_resistance: 1575 * units.kg * 9.81 * (225.0/275.0) * 0.01
         );
 }
 
-public node mitsubishi_eclipse_d53a_transmission {
+public node mitsubishi_eclipse_dk4a_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 500 * units.lb_ft
         )
-        .add_gear(3.33)
-        .add_gear(2.11)
-        .add_gear(1.41)
-        .add_gear(1.03)
-        .add_gear(0.76);
+        .add_gear(3.214)
+        .add_gear(2.238)
+        .add_gear(1.535)
+        .add_gear(1.171)
+        .add_gear(0.956)
+        .add_gear(0.696);
 }
 
 public node main {
-    set_engine(mitsubishi_6g75_dk4a())
-    set_vehicle(mitsubishi_eclipse_d53a_vehicle())
-    set_transmission(mitsubishi_eclipse_d53a_transmission())
+    set_engine(mitsubishi_6g75_dk4a_engine())
+    set_vehicle(mitsubishi_eclipse_dk4a_vehicle())
+    set_transmission(mitsubishi_eclipse_dk4a_transmission())
 }
 
 main()
