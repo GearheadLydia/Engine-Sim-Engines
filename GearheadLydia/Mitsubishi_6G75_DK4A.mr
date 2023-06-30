@@ -315,7 +315,7 @@ public node mitsubishi_6g75_dk4a_engine {
 		volume: (2200 * units.mm * circle_area(exhaust_radius)) + (300 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.5, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.15, impulse_response: ir_lib.default_0)
 
 	label pipe_length_1(0.0 * units.inch)
 	label pipe_length_2(0.3 * units.inch)
