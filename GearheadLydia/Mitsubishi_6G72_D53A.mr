@@ -440,7 +440,7 @@ public node mitsubishi_eclipse_d53a_vehicle {
             cross_sectional_area: 1.9 * (units.m * units.m),
             diff_ratio: 3.74,
             tire_radius: 324 * units.mm, // 215/50R17
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1725 * units.kg * 9.81 * (215.0/275.0) * 0.01
         );
 }
 
