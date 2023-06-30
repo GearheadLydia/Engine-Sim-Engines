@@ -288,13 +288,13 @@ public node hyundai_delta_g6ba {
 		volume: 2400 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.015, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(3.0 * units.inch)
+	label pipe_length_1(2.0 * units.inch)
 	label pipe_length_2(0.0 * units.inch)
-	label pipe_length_3(5.0 * units.inch)
+	label pipe_length_3(3.5 * units.inch)
 	
-	label exhaust_stagger(7.0 * units.inch)
+	label exhaust_stagger(1.3 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 30.0 * units.deg) // L (second, rear)
     b0
@@ -306,7 +306,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
-			sound_attenuation: 1.0
+			sound_attenuation: 1.0 * 0.85
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -316,7 +316,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
-			sound_attenuation: 0.7
+			sound_attenuation: 0.9 * 0.85
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -326,7 +326,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
-			sound_attenuation: 0.9
+			sound_attenuation: 0.95 * 0.85
         )
 
     cylinder_bank b1(bank_params, angle: -30.0 * units.deg) // R (first, front)
@@ -339,7 +339,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 1.0 * 0.7
+			sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -349,7 +349,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 0.7 * 0.7
+			sound_attenuation: 0.9
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -359,7 +359,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.9 * 0.7
+			sound_attenuation: 0.95
         )
 
     engine
@@ -391,13 +391,13 @@ public node hyundai_delta_g6ba {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 45 * units.deg)
-        .add_sample(1000 * units.rpm, 55 * units.deg)
-        .add_sample(2000 * units.rpm, 55 * units.deg)
-        .add_sample(3000 * units.rpm, 54 * units.deg)
-        .add_sample(4000 * units.rpm, 53 * units.deg)
-        .add_sample(5000 * units.rpm, 52 * units.deg)
-        .add_sample(6000 * units.rpm, 51 * units.deg)
-		.add_sample(7000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 50 * units.deg)
+        .add_sample(2000 * units.rpm, 50 * units.deg)
+        .add_sample(3000 * units.rpm, 49 * units.deg)
+        .add_sample(4000 * units.rpm, 49 * units.deg)
+        .add_sample(5000 * units.rpm, 48 * units.deg)
+        .add_sample(6000 * units.rpm, 47 * units.deg)
+		.add_sample(7000 * units.rpm, 47 * units.deg)
 
     engine.add_ignition_module(
         hyundai_delta_distributor(
@@ -416,7 +416,7 @@ public node hyundai_tiburon_gk_vehicle {
             cross_sectional_area: 1.95 * (units.m * units.m),
             diff_ratio: 4.428,
             tire_radius: 312.5 * units.mm, // 215/45ZR17
-            rolling_resistance: 420 * units.N
+            rolling_resistance: 3016 * units.lb * 9.81 * (215.0/275.0) * 0.01
         );
 }
 
