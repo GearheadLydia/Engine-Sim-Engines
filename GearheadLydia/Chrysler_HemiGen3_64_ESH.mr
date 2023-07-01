@@ -6,6 +6,9 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
+// ESG = has variable displacement
+// ESH = no variable displacement (manual transmission)
+
 // firing order: 18436572
 
 public node chrysler_hemi_64_distributor {
