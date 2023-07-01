@@ -261,7 +261,7 @@ public node honda_jnc1_engine {
 	label piston_mass(400 * units.g)
     label compression_height(34.3 * units.mm)
 	label deck_clearance(1.5 * units.mm) // guess
-	label piston_dome(-0.9 * units.cc)
+	label piston_dome(-5.0 * units.cc) // for 10.0:1 CR
     label crank_mass(80 * units.lb)
     label flywheel_mass(45 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -326,26 +326,14 @@ public node honda_jnc1_engine {
         deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
-	intake intakeL (
+	intake intake (
 		plenum_volume: 2.0 * units.L,
 		plenum_cross_section_area: 100.0 * units.cm2,
-		intake_flow_rate: k_carb(800.0),
+		intake_flow_rate: k_carb(1750.0),
 		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.9985,
+		idle_throttle_plate_position: 0.999,
 		throttle_gamma: 2.0,
-		runner_flow_rate: k_carb(400.0),
-		runner_length: 8.0 * units.inch,
-		velocity_decay: 0.1
-	)
-
-	intake intakeR (
-		plenum_volume: 2.0 * units.L,
-		plenum_cross_section_area: 100.0 * units.cm2,
-		intake_flow_rate: k_carb(800.0),
-		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.9985,
-		throttle_gamma: 2.0,
-		runner_flow_rate: k_carb(400.0),
+		runner_flow_rate: k_carb(380.0),
 		runner_length: 8.0 * units.inch,
 		velocity_decay: 0.1
 	)
@@ -353,7 +341,7 @@ public node honda_jnc1_engine {
 	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1600.0),
+        outlet_flow_rate: k_carb(1750.0),
         primary_tube_length: 9.0 * units.inch,
         primary_flow_rate: k_carb(300.0),
         velocity_decay: 0.05, //0.5
@@ -377,7 +365,7 @@ public node honda_jnc1_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             ignition_wire: wires.wire1,
-            intake: intakeL,
+            intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
 			sound_attenuation: 1.0
@@ -387,7 +375,7 @@ public node honda_jnc1_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
-            intake: intakeL,
+            intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
 			sound_attenuation: 1.0
@@ -397,7 +385,7 @@ public node honda_jnc1_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire5,
-            intake: intakeL,
+            intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
 			sound_attenuation: 1.0
@@ -410,7 +398,7 @@ public node honda_jnc1_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
-            intake: intakeR,
+            intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
 			sound_attenuation: 0.8
@@ -420,7 +408,7 @@ public node honda_jnc1_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire4,
-            intake: intakeR,
+            intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
 			sound_attenuation: 0.8
@@ -430,7 +418,7 @@ public node honda_jnc1_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire6,
-            intake: intakeR,
+            intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
 			sound_attenuation: 0.8
@@ -465,16 +453,15 @@ public node honda_jnc1_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 75 * units.deg)
-        .add_sample(2000 * units.rpm, 79 * units.deg)
-        .add_sample(3000 * units.rpm, 79 * units.deg)
-        .add_sample(4000 * units.rpm, 78 * units.deg)
-        .add_sample(5000 * units.rpm, 76 * units.deg)
-        .add_sample(6000 * units.rpm, 75 * units.deg)
-		.add_sample(7000 * units.rpm, 75 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
-		.add_sample(9000 * units.rpm, 75 * units.deg)
+        .add_sample(0000 * units.rpm, 60 * units.deg)
+        .add_sample(1000 * units.rpm, 70 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 70 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
+        .add_sample(6000 * units.rpm, 70 * units.deg)
+		.add_sample(7000 * units.rpm, 70 * units.deg)
+		.add_sample(8000 * units.rpm, 70 * units.deg)
 
     engine.add_ignition_module(
         honda_jnc1_distributor(
