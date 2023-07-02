@@ -115,7 +115,7 @@ public node porsche_boxer_587_1_head {
     input lift_scale: 1.0;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm) // 1.34 rocker
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
@@ -131,7 +131,7 @@ public node porsche_boxer_587_1_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
 
-    function exhaust_flow(1.0 * units.mm) // 1.29 rocker
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
