@@ -131,8 +131,6 @@ public node vw_boxer_head {
         .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
     function exhaust_flow(1.0 * units.mm) // 1.29 rocker
     exhaust_flow
@@ -149,8 +147,6 @@ public node vw_boxer_head {
         .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
 		
     cylinder_head head(
@@ -190,7 +186,7 @@ public node vw_boxer_type4_20_engine {
     label rod_mass(600 * units.g)
 	label piston_mass(450 * units.g)
     label compression_height(34.6 * units.mm)
-	label deck_height((202.1 + 0.9) * units.mm) // deck height is fake (these engines seem to be measured in deck clearance), gasket thickness is not certain
+	label deck_clearance((1.0 + 0.9) * units.mm) // VW / Porsche boxers measured with deck clearance instead
 	label piston_dome(7.0 * units.cc) // calculated for 8.0:1 compression
     label crank_mass(3.0 * units.kg)
     label flywheel_mass(30 * units.lb)
@@ -250,7 +246,7 @@ public node vw_boxer_type4_20_engine {
 
     cylinder_bank_parameters bank_params(
         bore: bore,
-        deck_height: deck_height
+        deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
     intake intake(
