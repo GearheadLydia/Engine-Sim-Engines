@@ -6,10 +6,10 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-public node vw_boxer_distributor {
+public node porsche_boxer_587_1_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 5600 * units.rpm;
+    input rev_limit: 6200 * units.rpm;
 	input limiter_duration: 0.13;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -26,37 +26,36 @@ private node wires {
     output wire4: ignition_wire();
 }
 
-// https://shoptalkforums.com/viewtopic.php?t=2771
-public node vw_boxer_lobe_profile_int {
+// cam specs are guesses
+public node porsche_boxer_587_1_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 234 * units.deg,
-            gamma: 2.5,
-            lift: 393 * units.thou,
+            duration_at_50_thou: 210 * units.deg,
+            gamma: 1.0,
+            lift: 400 * units.thou,
             steps: 100
         );
 }
 
-public node vw_boxer_lobe_profile_exh {
+public node porsche_boxer_587_1_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 226.5 * units.deg,
-            gamma: 2.5,
-            lift: 368 * units.thou,
+            duration_at_50_thou: 210 * units.deg,
+            gamma: 1.0,
+            lift: 360 * units.thou,
             steps: 100
         );
 }
 
-public node vw_boxer_camshaft_builder {
-    input lobe_profile: vw_boxer_lobe_profile_int();
-	input ex_lobe_profile: vw_boxer_lobe_profile_exh();
+public node porsche_boxer_587_1_camshaft_builder {
+    input lobe_profile: porsche_boxer_587_1_lobe_profile_int();
+	input ex_lobe_profile: porsche_boxer_587_1_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-	input lobe_separation: 107.25 * units.deg;
-    input intake_lobe_center: lobe_separation;
-    input exhaust_lobe_center: lobe_separation;
-    input advance: 2.25 * units.deg;
-    input base_radius: (1.0 * units.inch) / 2;
+    input intake_lobe_center: 110 * units.deg;
+    input exhaust_lobe_center: 110 * units.deg;
+    input advance: 0.0 * units.deg;
+    input base_radius: (1.25 * units.inch) / 2; // guess
 
     output intake_cam_0: _intake_cam_0;
     output exhaust_cam_0: _exhaust_cam_0;
@@ -105,10 +104,10 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node vw_boxer_head {
+public node porsche_boxer_587_1_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 64.0 * units.cc;
+    input chamber_volume: 60.0 * units.cc; // guess
     input flip_display: false;
 	
 	input flow_attenuation_in: 0.9;
@@ -151,9 +150,9 @@ public node vw_boxer_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(0.8 * units.inch) * 6 * units.inch,
-        intake_runner_cross_section_area: circle_area(0.8 * units.inch),
-        exhaust_runner_volume: circle_area(0.6 * units.inch) * 6 * units.inch,
+        intake_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 4 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -164,28 +163,26 @@ public node vw_boxer_head {
     )
 }
 
-// https://shoptalkforums.com/viewtopic.php?t=141693
-// VW and Porsche aircooled engines seem to be measured in deck clearance, not true deck height
-// https://www.thesamba.com/vw/forum/archive/index.php/o-t--t-643150--.html
-public node vw_boxer_type4_20_engine {
+// https://www.pelicanparts.com/356/technical_specs/356_engine_stats.htm
+public node porsche_boxer_587_1_engine {
     alias output __out: engine;
 
     engine engine(
-        name: "Volkswagen Type 4",
-        starter_torque: 50 * units.lb_ft,
+        name: "Porsche 587/1",
+        starter_torque: 100 * units.lb_ft,
         starter_speed: 800 * units.rpm,
-        redline: 5500 * units.rpm,
+        redline: 6000 * units.rpm,
         throttle_gamma: 1.0
     )
 
-    label bore(94.0 * units.mm)
-    label stroke(71.0 * units.mm)
-    label rod_length(131.0 * units.mm)
+    label bore(92.0 * units.mm)
+    label stroke(74.0 * units.mm)
+    label rod_length(135.94 * units.mm)
     label rod_mass(600 * units.g)
 	label piston_mass(450 * units.g)
     label compression_height(34.6 * units.mm)
-	label deck_clearance((1.0 + 0.9) * units.mm) // VW / Porsche boxers measured with deck clearance instead
-	label piston_dome(7.0 * units.cc) // calculated for 8.0:1 compression
+	label deck_clearance((0.5 + 0.9) * units.mm)
+	label piston_dome(13.5 * units.cc) // for 9.8:1 CR
     label crank_mass(3.0 * units.kg)
     label flywheel_mass(30 * units.lb)
     label flywheel_radius(6.0 * units.inch)
@@ -247,26 +244,38 @@ public node vw_boxer_type4_20_engine {
         deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
-    intake intake(
+    intake intakeL(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(230.0),
+        intake_flow_rate: k_carb(180.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.996,
-        throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(150.0),
-        runner_length: 8.0 * units.inch,
+        idle_throttle_plate_position: 0.997,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(200.0),
+        runner_length: 10.0 * units.inch,
+        velocity_decay: 0.1
+    )
+
+    intake intakeR(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(180.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.997,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(200.0),
+        runner_length: 10.0 * units.inch,
         velocity_decay: 0.1
     )
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(230.0),
-        primary_tube_length: 6.0 * units.inch,
+        outlet_flow_rate: k_carb(300.0),
+        primary_tube_length: 4.0 * units.inch,
         primary_flow_rate: k_carb(150.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area((2.5 * units.inch) / 2),
-		length: 600 * units.mm,
-		volume: 600 * units.mm * circle_area((2.5 * units.inch) / 2)
+		collector_cross_section_area: circle_area((1.5 * units.inch) / 2) * 4,
+		length: 300 * units.mm,
+		volume: 300 * units.mm * circle_area((1.5 * units.inch) / 2) * 4
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
@@ -278,18 +287,18 @@ public node vw_boxer_type4_20_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             ignition_wire: wires.wire2,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: 16 * units.inch
+			primary_length: 0 * units.inch
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire1,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: 12 * units.inch
+			primary_length: 5 * units.inch
         )
 
     cylinder_bank b1(bank_params, angle: 90.0 * units.deg) // L (second)
@@ -299,18 +308,18 @@ public node vw_boxer_type4_20_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire4,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: 4 * units.inch
+			primary_length: 3 * units.inch
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: 0 * units.inch
+			primary_length: 8 * units.inch
         )
 
     engine
@@ -319,10 +328,10 @@ public node vw_boxer_type4_20_engine {
 
     engine.add_crankshaft(c0)
 
-    vw_boxer_camshaft_builder camshaft()
+    porsche_boxer_587_1_camshaft_builder camshaft()
 
     b0.set_cylinder_head (
-        vw_boxer_head(
+        porsche_boxer_587_1_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
 			flip_display: false
@@ -330,7 +339,7 @@ public node vw_boxer_type4_20_engine {
     )
 
     b1.set_cylinder_head (
-        vw_boxer_head(
+        porsche_boxer_587_1_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
 			flip_display: true
@@ -339,50 +348,50 @@ public node vw_boxer_type4_20_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample( 0000 * units.rpm, 25 * units.deg)
-        .add_sample( 1000 * units.rpm, 33 * units.deg)
-        .add_sample( 2000 * units.rpm, 35 * units.deg)
-        .add_sample( 3000 * units.rpm, 35 * units.deg)
-        .add_sample( 4000 * units.rpm, 35 * units.deg)
-        .add_sample( 5000 * units.rpm, 35 * units.deg)
-        .add_sample( 6000 * units.rpm, 35 * units.deg)
+        .add_sample( 0000 * units.rpm, 48 * units.deg)
+        .add_sample( 1000 * units.rpm, 53 * units.deg)
+        .add_sample( 2000 * units.rpm, 53 * units.deg)
+        .add_sample( 3000 * units.rpm, 53 * units.deg)
+        .add_sample( 4000 * units.rpm, 53 * units.deg)
+        .add_sample( 5000 * units.rpm, 53 * units.deg)
+        .add_sample( 6000 * units.rpm, 53 * units.deg)
+        .add_sample( 7000 * units.rpm, 53 * units.deg)
 
     engine.add_ignition_module(
-        vw_boxer_distributor(
+        porsche_boxer_587_1_distributor(
             wires: wires,
             timing_curve: timing_curve
         ))
 }
 
-// 1973 Porsche 914 2.0
-public node porsche_914_20_vehicle {
+// 1963 Porsche 356 B / 2000 GS Carrera 2
+public node porsche_356_b_2000_gs_vehicle {
     alias output __out:
         vehicle(
-            mass: 970 * units.kg,
-            drag_coefficient: 0.36,
-            cross_sectional_area: 1.68 * (units.m * units.m),
+            mass: 1010 * units.kg,
+            drag_coefficient: 0.34,
+            cross_sectional_area: 1.84 * (units.m * units.m),
             diff_ratio: 4.429,
-            tire_radius: 323.5 * units.mm, // 165HR15
-            rolling_resistance: 970 * units.kg * 9.81 * (171.0/275.0) * 0.01
+            tire_radius: 322.5 * units.mm, // 165-15
+            rolling_resistance: 1010 * units.kg * 9.81 * (165.0/275.0) * 0.01
         );
 }
 
-public node porsche_914_20_transmission {
+public node porsche_356_b_2000_gs_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 400 * units.lb_ft
         )
         .add_gear(3.091)
-        .add_gear(1.889)
-        .add_gear(1.261)
-        .add_gear(0.926)
-        .add_gear(0.710);
+        .add_gear(1.765)
+        .add_gear(1.130)
+        .add_gear(0.852);
 }
 
 public node main {
-	set_engine(vw_boxer_type4_20_engine())
-    set_vehicle(porsche_914_20_vehicle())
-    set_transmission(porsche_914_20_transmission())
+	set_engine(porsche_boxer_587_1_engine())
+    set_vehicle(porsche_356_b_2000_gs_vehicle())
+    set_transmission(porsche_356_b_2000_gs_transmission())
 }
 
 main()
