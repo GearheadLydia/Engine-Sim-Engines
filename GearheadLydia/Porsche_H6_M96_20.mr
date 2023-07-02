@@ -116,10 +116,11 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
+// https://newsite.hamheads.com/2016/12/01/m96-m97-porsche-cylinder-head-specifications-and-general-info/
 public node porsche_m96_20_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 42.0 * units.cc;
+    input chamber_volume: 28.5 * units.cc;
     input flip_display: false;
 	
 	input flow_attenuation_in: 1.0;
@@ -142,8 +143,6 @@ public node porsche_m96_20_head {
         .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
     function exhaust_flow(1.0 * units.mm)
     exhaust_flow
@@ -160,14 +159,12 @@ public node porsche_m96_20_head {
         .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
-        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+        intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
         exhaust_runner_volume: circle_area(0.7 * units.inch) * 3 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
@@ -179,7 +176,7 @@ public node porsche_m96_20_head {
     )
 }
 
-
+// https://www.us.mahle.com/media/usa/motorsports/2023-porsche-ap-guide-rfs.pdf
 public node porsche_m96_20_engine {
     alias output __out: engine;
 
@@ -188,12 +185,12 @@ public node porsche_m96_20_engine {
     label bore(85.5 * units.mm)
     label stroke(72.0 * units.mm)
     label rod_length(145 * units.mm)
-    label rod_mass(500 * units.g)
-	label piston_mass(400 * units.g)
-    label compression_height(20.5 * units.mm) // very, very borked
-	label piston_dome(-13.2 * units.cc)
-	label deck_height(201.5 * units.mm)
-    label crank_mass(85 * units.lb)
+    label rod_mass(550 * units.g)
+	label piston_mass(500 * units.g)
+    label compression_height(35.2 * units.mm)
+	label piston_dome(0.0 * units.cc)    // for 10.0:1 CR in combination with deck clearance
+	label deck_clearance(2.0 * units.mm) // aggravatingly, this is actually how Porsche engines are measured
+    label crank_mass(95 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(5 * units.inch)
 
@@ -223,7 +220,7 @@ public node porsche_m96_20_engine {
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: 180.0 * units.deg
+        tdc: 0.0 * units.deg
     )
 
     rod_journal rj0(angle:  0  * units.deg)
@@ -262,15 +259,15 @@ public node porsche_m96_20_engine {
 
     cylinder_bank_parameters bank_params(
         bore: bore,
-        deck_height: deck_height
+        deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
     intake intake(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(400.0),
+        intake_flow_rate: k_carb(300.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
+        idle_throttle_plate_position: 0.9965,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(220.0),
         runner_length: 6.5 * units.inch,
@@ -285,58 +282,25 @@ public node porsche_m96_20_engine {
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 600 * units.mm,
-		volume: 600 * units.mm * circle_area(exhaust_radius) * 2
+		length: 300 * units.mm,
+		volume: 300 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.0015, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.001, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1( 5.0 * units.inch)
+	label pipe_length_1( 0.0 * units.inch)
 	label pipe_length_2( 2.5 * units.inch)
-	label pipe_length_3( 0.0 * units.inch)
+	label pipe_length_3( 5.0 * units.inch)
 	
 	label exhaust_stagger( 1.5 * units.inch)
 
-    cylinder_bank b0(bank_params, angle: 90.0 * units.deg) // L (first)
+    cylinder_bank b0(bank_params, angle: 90.0 * units.deg) // L (second)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
-            ignition_wire: wires.wire1,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 1.0
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 1.0
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
-            ignition_wire: wires.wire3,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 1.0
-        )
-
-    cylinder_bank b1(bank_params, angle: -90.0 * units.deg) // R (second)
-    b1
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
-            ignition_wire: wires.wire4,
+            ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
@@ -346,7 +310,7 @@ public node porsche_m96_20_engine {
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            ignition_wire: wires.wire5,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
@@ -356,10 +320,43 @@ public node porsche_m96_20_engine {
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
-            ignition_wire: wires.wire6,
+            ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
+			sound_attenuation: 1.0
+        )
+
+    cylinder_bank b1(bank_params, angle: -90.0 * units.deg) // R (first)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1,
+			sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2,
+			sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire6,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3,
 			sound_attenuation: 1.0
         )
 
@@ -388,15 +385,15 @@ public node porsche_m96_20_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 25 * units.deg)
-        .add_sample(1000 * units.rpm, 60 * units.deg)
-        .add_sample(2000 * units.rpm, 70 * units.deg)
-        .add_sample(3000 * units.rpm, 68 * units.deg)
-        .add_sample(4000 * units.rpm, 66 * units.deg)
-        .add_sample(5000 * units.rpm, 64 * units.deg)
-        .add_sample(6000 * units.rpm, 62 * units.deg)
-		.add_sample(7000 * units.rpm, 60 * units.deg)
-		.add_sample(8000 * units.rpm, 58 * units.deg)
+        .add_sample(0000 * units.rpm, 55 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 65 * units.deg)
+        .add_sample(3000 * units.rpm, 65 * units.deg)
+        .add_sample(4000 * units.rpm, 65 * units.deg)
+        .add_sample(5000 * units.rpm, 65 * units.deg)
+        .add_sample(6000 * units.rpm, 65 * units.deg)
+		.add_sample(7000 * units.rpm, 65 * units.deg)
+		.add_sample(8000 * units.rpm, 65 * units.deg)
 
     engine.add_ignition_module(
         porsche_m96_20_distributor(

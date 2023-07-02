@@ -1,8 +1,5 @@
 import "engine_sim.mr"
 
-// Honda m64_21 replica by GearheadLydia
-// 2022-09-18 | revision 1
-
 units units()
 constants constants()
 impulse_response_library ir_lib()
@@ -114,18 +111,20 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
+// https://lnengineering.com/porsche-911-36l-to-39l-964-993-1989-1998-machine-in-mahle-cylinder-and-piston-set.html
+// https://www.us.mahle.com/media/usa/motorsports/2023-porsche-ap-guide-rfs.pdf
 public node porsche_m64_21_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 42.0 * units.cc;
+    input chamber_volume: 81.5 * units.cc; // derived from Mahle 11.4:1 CR piston specs
     input flip_display: false;
 	
 	input flow_attenuation_in: 0.8;
 	input flow_attenuation_ex: 0.8;
-    input lift_scale: 50.0;
+    input lift_scale: 1.1;
     alias output __out: head;
 
     function intake_flow(1.0 * units.mm)
@@ -143,8 +142,6 @@ public node porsche_m64_21_head {
         .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
     function exhaust_flow(1.0 * units.mm)
     exhaust_flow
@@ -161,16 +158,14 @@ public node porsche_m64_21_head {
         .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(0.9 * units.inch) * 7 * units.inch,
-        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 7 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -180,20 +175,21 @@ public node porsche_m64_21_head {
     )
 }
 
-
-public node m64_21 {
+// https://www.forgedpistonparts.com/porsche-993-3-6-or-3-8-ltr-1994-98/
+public node porsche_m64_21_engine {
     alias output __out: engine;
 
     wires wires()
 
     label bore(100.0 * units.mm)
+	label bore_spacing(118.0 * units.mm)
     label stroke(76.4 * units.mm)
     label rod_length(127 * units.mm)
-    label rod_mass(350 * units.g)
-	label piston_mass(476 * units.g)
-    label compression_height(31.50 * units.mm)
-	label piston_dome(-10.0 * units.cc) // guesstimate
-	label deck_clearance(1 * units.mm)
+    label rod_mass(550 * units.g)
+	label piston_mass(500 * units.g)
+    label compression_height(31.5 * units.mm)
+	label piston_dome(34.0 * units.cc)   // for 10.5:1 CR
+	label deck_clearance(2.0 * units.mm) // aggravatingly, this is actually how Porsche engines are measured
     label crank_mass(45 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(5 * units.inch)
@@ -203,11 +199,7 @@ public node m64_21 {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 900 * units.rpm,
         redline: 6500 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 1.5
+        throttle_gamma: 1.0
     )
 
     label crank_moment(
@@ -224,11 +216,11 @@ public node m64_21 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: 180.0 * units.deg
+        tdc: 0.0 * units.deg
     )
 
     rod_journal rj0(angle:  0  * units.deg)
@@ -271,98 +263,101 @@ public node m64_21 {
     )
 
     intake intake(
-        plenum_volume: 1.5 * units.L,
-        plenum_cross_section_area: 150.0 * units.cm2,
-        intake_flow_rate: k_carb(700.0),
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 50.0 * units.cm2,
+        intake_flow_rate: k_carb(550.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.996,
-        throttle_gamma: 1.5,
-        runner_flow_rate: k_carb(280.0),
+        idle_throttle_plate_position: 0.997,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(300.0),
         runner_length: 7 * units.inch,
         velocity_decay: 0.1
     )
+	
+	label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(650.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(280.0),
+        outlet_flow_rate: k_carb(550.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-        volume: 3.0 * units.L,
-		length: 250 * units.mm
+		collector_cross_section_area: circle_area(exhaust_radius) * 2,
+		length: 300 * units.mm,
+		volume: 300 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.001, impulse_response: ir_lib.default_0)
 
-	label exhaust_stagger(30 * units.mm)
+	label pipe_length_1(0.0 * bore_spacing)
+	label pipe_length_2(0.2 * bore_spacing)
+	label pipe_length_3(0.8 * bore_spacing)
+	
+	label exhaust_stagger(0.3 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: 90.0 * units.deg) // L (first)
+    cylinder_bank b0(bank_params, angle: 90.0 * units.deg) // L (second)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1 * units.inch,
+			primary_length: pipe_length_1 + exhaust_stagger,
 			sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0 * units.inch,
+			primary_length: pipe_length_2 + exhaust_stagger,
 			sound_attenuation: 0.9
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 6 * units.inch,
+			primary_length: pipe_length_3 + exhaust_stagger,
 			sound_attenuation: 0.8
         )
 
-    cylinder_bank b1(bank_params, angle: -90.0 * units.deg) // R (second)
+    cylinder_bank b1(bank_params, angle: -90.0 * units.deg) // R (first)
     b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj0,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1 * units.inch + exhaust_stagger,
-			sound_attenuation: 0.5
+			primary_length: pipe_length_1,
+			sound_attenuation: 1.0 * 0.5
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj2,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0 * units.inch + exhaust_stagger,
-			sound_attenuation: 0.45
+			primary_length: pipe_length_2,
+			sound_attenuation: 0.9 * 0.5
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
+            rod_journal: rj4,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 6 * units.inch + exhaust_stagger,
-			sound_attenuation: 0.4
+			primary_length: pipe_length_3,
+			sound_attenuation: 0.8 * 0.5
         )
 
     engine
@@ -390,20 +385,19 @@ public node m64_21 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 85 * units.deg)
-        .add_sample(2000 * units.rpm, 78 * units.deg)
-        .add_sample(3000 * units.rpm, 72 * units.deg)
-        .add_sample(4000 * units.rpm, 68 * units.deg)
-        .add_sample(5000 * units.rpm, 63 * units.deg)
+        .add_sample(0000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 60 * units.deg)
+        .add_sample(2000 * units.rpm, 60 * units.deg)
+        .add_sample(3000 * units.rpm, 60 * units.deg)
+        .add_sample(4000 * units.rpm, 60 * units.deg)
+        .add_sample(5000 * units.rpm, 60 * units.deg)
         .add_sample(6000 * units.rpm, 60 * units.deg)
 		.add_sample(7000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
         porsche_m64_21_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6800 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -435,7 +429,7 @@ public node porsche_993_carrera_s_transmission {
 }
 
 public node main {
-    set_engine(m64_21())
+    set_engine(porsche_m64_21_engine())
     set_vehicle(porsche_993_carrera_s_vehicle())
     set_transmission(porsche_993_carrera_s_transmission())
 }
