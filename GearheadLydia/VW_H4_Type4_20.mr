@@ -177,8 +177,6 @@ public node vw_boxer_type4_20_engine {
         redline: 5500 * units.rpm,
         throttle_gamma: 1.0
     )
-	
-	label lean_angle(18 * units.deg)
 
     label bore(94.0 * units.mm)
     label stroke(71.0 * units.mm)
