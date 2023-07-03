@@ -296,8 +296,8 @@ public node chevrolet_sbc_350_l31_engine {
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(3.0 * bore_spacing)
-	label pipe_length_2(2.0 * bore_spacing)
-	label pipe_length_3(1.0 * bore_spacing)
+	label pipe_length_2(1.6 * bore_spacing)
+	label pipe_length_3(1.4 * bore_spacing)
 	label pipe_length_4(0.0 * bore_spacing)
 	
 	label exhaust_stagger(7 * units.inch)
