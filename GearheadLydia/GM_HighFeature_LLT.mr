@@ -416,7 +416,7 @@ public node chevrolet_camaro_lt_rs_5g_vehicle {
             cross_sectional_area: 2.19 * (units.m * units.m),
             diff_ratio: 3.895,
             tire_radius: 364.5 * units.mm, // 275/40ZR20
-            rolling_resistance: 550 * units.N
+            rolling_resistance: 3728 * units.lb * 9.81 * (275.0/275.0) * 0.01
         );
 }
 

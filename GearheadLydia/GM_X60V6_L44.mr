@@ -416,7 +416,7 @@ public node pontiac_fiero_gt_vehicle {
             cross_sectional_area: 1.73 * (units.m) * (units.m),
             diff_ratio: 3.61,
             tire_radius: 320 * units.mm, // 215/60R15
-            rolling_resistance: 420 * units.N
+            rolling_resistance: 2791 * units.lb * 9.81 * (215.0/275.0) * 0.01
         );
 }
 

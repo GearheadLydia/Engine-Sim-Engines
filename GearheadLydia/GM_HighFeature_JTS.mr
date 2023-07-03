@@ -412,16 +412,16 @@ public node gm_highfeature_32ar {
 public node alfa_romeo_brera_939_vehicle {
     alias output __out:
         vehicle(
-            mass: 3593 * units.lb,
+            mass: 1627 * units.kg,
             drag_coefficient: 0.34,
             cross_sectional_area: 2.04 * (units.m * units.m),
             diff_ratio: 3.895,
             tire_radius: 329 * units.mm, // 225/50R17
-            rolling_resistance: 480 * units.N
+            rolling_resistance: 1627 * units.kg * 9.81 * (225.0/275.0) * 0.01
         );
 }
 
-public node gm_f40cr_transmission {
+public node gm_f40cr_mk6_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 500 * units.lb_ft
@@ -437,7 +437,7 @@ public node gm_f40cr_transmission {
 public node main {
     set_engine(gm_highfeature_32ar())
     set_vehicle(alfa_romeo_brera_939_vehicle())
-    set_transmission(gm_f40cr_transmission())
+    set_transmission(gm_f40cr_mk6_transmission())
 }
 
 main()
