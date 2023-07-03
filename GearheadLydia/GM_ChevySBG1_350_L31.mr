@@ -206,8 +206,8 @@ public node chevrolet_sbc_350_l31_engine {
     label rod_mass(550 * units.g)
     label compression_height(1.560 * units.inch) // 1.565"?
 	label piston_mass(500 * units.g)
-	label piston_dome(-12.5 * units.cc) // for 9.2:1 CR
-	label deck_height(9.025 * units.inch)
+	label piston_dome(-10.5 * units.cc) // for 9.4:1 CR
+	label deck_height((9.025 * units.inch) + (28 * units.thou))
     label crank_mass(85 * units.lb)
     label flywheel_mass(30 * units.lb)
     label flywheel_radius(6 * units.inch)
