@@ -6,12 +6,12 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 18436572
+// firing order: 165432
 
 public node chevrolet_lu3_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 5750 * units.rpm;
+    input rev_limit: 5600 * units.rpm;
 	input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -32,12 +32,14 @@ private node wires {
     output wire6: ignition_wire();
 }
 
+// https://www.hotrodders.com/threads/4-3-liter-cam-question.216138/
+// https://www.pirate4x4.com/threads/4-3-cam-specs.1009360/
 public node chevrolet_lu3_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 204 * units.deg,
+            duration_at_50_thou: 202 * units.deg,
             gamma: 1.0,
-            lift: 555 * units.thou,
+            lift: 425 * units.thou,
             steps: 100
         );
 }
@@ -45,9 +47,9 @@ public node chevrolet_lu3_lobe_profile_int {
 public node chevrolet_lu3_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 218 * units.deg,
+            duration_at_50_thou: 202 * units.deg,
             gamma: 1.0,
-            lift: 551 * units.thou,
+            lift: 425 * units.thou,
             steps: 100
         );
 }
@@ -57,10 +59,10 @@ public node chevrolet_lu3_camshaft_builder {
 	input ex_lobe_profile: chevrolet_lu3_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 117.5 * units.deg;
+    input lobe_separation: 112.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-    input advance: -1.0 * units.deg;
+    input advance: 0.0 * units.deg;
     input base_radius: 1.462 / 2 * units.inch;
 
     output intake_cam_0: _intake_cam_0;
@@ -120,7 +122,7 @@ private node add_flow_sample {
 public node chevrolet_lu3_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 58.0 * units.cc;
+    input chamber_volume: 64.0 * units.cc;
     input flip_display: false;
 	
 	input flow_attenuation_in: 0.8;
@@ -143,8 +145,6 @@ public node chevrolet_lu3_head {
         .add_flow_sample(10 * lift_scale, 294 * flow_attenuation_in)
         .add_flow_sample(11 * lift_scale, 300 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 314 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 314 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 314 * flow_attenuation_in)
 
     function exhaust_flow(50 * units.thou)
     exhaust_flow
@@ -161,15 +161,13 @@ public node chevrolet_lu3_head {
         .add_flow_sample(10 * lift_scale, 207 * flow_attenuation_ex)
         .add_flow_sample(11 * lift_scale, 214 * flow_attenuation_ex)
         .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.5 * units.inch) * 6 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.5 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        intake_runner_volume: circle_area(1.2 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.2 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -180,7 +178,7 @@ public node chevrolet_lu3_head {
 }
 
 
-public node chevrolet_lu3 {
+public node chevrolet_lu3_v6_engine {
     alias output __out: engine;
 
     wires wires()
@@ -193,19 +191,17 @@ public node chevrolet_lu3 {
         throttle_gamma: 1.0
     )
 
-
-	// source: 
     label bore(4.000 * units.inch)
 	label bore_spacing(4.4 * units.inch)
     label stroke(3.48 * units.inch)
     label rod_length(5.700 * units.inch)
-    label rod_mass(464 * units.g)
+    label rod_mass(550 * units.g)
     label compression_height(1.560 * units.inch) // 1.565"?
-	label piston_mass(482 * units.g)
-	label piston_dome(6.00 * units.cc)
+	label piston_mass(500 * units.g)
+	label piston_dome(-12.5 * units.cc) // for 9.2:1 CR
 	label deck_height(9.025 * units.inch)
-    label crank_mass(57 * units.lb)
-    label flywheel_mass(57 * units.lb)
+    label crank_mass(75 * units.lb)
+    label flywheel_mass(30 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -272,32 +268,31 @@ public node chevrolet_lu3 {
     intake intake(
         plenum_volume: 1.5 * units.L,
         plenum_cross_section_area: circle_area(60 * units.mm),
-        intake_flow_rate: k_carb(450),
+        intake_flow_rate: k_carb(600),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.993,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(400.0),
-        runner_length: 10.0 * units.inch,
+        runner_flow_rate: k_carb(450.0),
+        runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
 
 	label exhaust_radius((2.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 20.0 * units.inch,
+        outlet_flow_rate: k_carb(450.0),
+        primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 500 * units.mm,
-		volume: (400 * units.mm * circle_area(exhaust_radius)) + (100 * units.mm * circle_area(exhaust_radius) * 2)
+		length: 2800 * units.mm,
+		volume: (2400 * units.mm * circle_area(exhaust_radius)) + (400 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 	
-	// lower grade LS headers //
-	label pipe_length_1(bore_spacing * 1.6)
-	label pipe_length_2(bore_spacing * 0.8)
+	label pipe_length_1(bore_spacing * 2.0)
+	label pipe_length_2(bore_spacing * 1.0)
 	label pipe_length_3(bore_spacing * 0.0)
 	
 	label exhaust_stagger(7 * units.inch)
@@ -390,21 +385,18 @@ public node chevrolet_lu3 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 25 * units.deg)
-        .add_sample(2000 * units.rpm, 29 * units.deg)
-        .add_sample(3000 * units.rpm, 33 * units.deg)
-        .add_sample(4000 * units.rpm, 38 * units.deg)
-        .add_sample(5000 * units.rpm, 45 * units.deg)
-        .add_sample(6000 * units.rpm, 55 * units.deg)
-		.add_sample(7000 * units.rpm, 60 * units.deg)
-		.add_sample(8000 * units.rpm, 60 * units.deg)
+        .add_sample(0000 * units.rpm, 05 * units.deg)
+        .add_sample(1000 * units.rpm, 15 * units.deg)
+        .add_sample(2000 * units.rpm, 25 * units.deg)
+        .add_sample(3000 * units.rpm, 35 * units.deg)
+        .add_sample(4000 * units.rpm, 45 * units.deg)
+        .add_sample(5000 * units.rpm, 55 * units.deg)
+        .add_sample(6000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
         chevrolet_lu3_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 5750 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -418,7 +410,7 @@ public node chevrolet_s10_vehicle {
             cross_sectional_area: 2.37 * (units.m) * (units.m),
             diff_ratio: 3.73,
             tire_radius: 344 * units.mm, // 235/60R16
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 3591 * units.lb * 9.81 * (235.0/275.0) * 0.01
         );
 }
 
@@ -435,7 +427,7 @@ public node borgwarner_t5_transmission {
 }
 
 public node main {
-    set_engine(chevrolet_lu3())
+    set_engine(chevrolet_lu3_v6_engine())
     set_vehicle(chevrolet_s10_vehicle())
     set_transmission(borgwarner_t5_transmission())
 }
