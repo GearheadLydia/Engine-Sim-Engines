@@ -10,7 +10,7 @@ public node ferrari_690t_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7000 * units.rpm;
-	input limiter_duration: 0.12;
+	input limiter_duration: 0.04;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 6.0) * cycle)
@@ -85,24 +85,24 @@ public node ferrari_690t_camshaft_builder {
     label rot360(360 * units.deg)
 
     _intake_cam_0
+        .add_lobe(rot360 + intake_lobe_center + (0 * rot120))
+		.add_lobe(rot360 + intake_lobe_center + (4 * rot120))
+		.add_lobe(rot360 + intake_lobe_center + (2 * rot120))
+
+    _intake_cam_1
         .add_lobe(rot360 + intake_lobe_center + (1 * rot120) - rot30)
 		.add_lobe(rot360 + intake_lobe_center + (5 * rot120) - rot30)
 		.add_lobe(rot360 + intake_lobe_center + (3 * rot120) - rot30)
 
 	_exhaust_cam_0
-        .add_lobe(rot360 - exhaust_lobe_center + (1 * rot120) - rot30)
-		.add_lobe(rot360 - exhaust_lobe_center + (5 * rot120) - rot30)
-		.add_lobe(rot360 - exhaust_lobe_center + (3 * rot120) - rot30)
-
-    _intake_cam_1
-        .add_lobe(rot360 + intake_lobe_center + (0 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (4 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (2 * rot120))
-
-	_exhaust_cam_1
         .add_lobe(rot360 - exhaust_lobe_center + (0 * rot120))
 		.add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
 		.add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
+
+	_exhaust_cam_1
+        .add_lobe(rot360 - exhaust_lobe_center + (1 * rot120) - rot30)
+		.add_lobe(rot360 - exhaust_lobe_center + (5 * rot120) - rot30)
+		.add_lobe(rot360 - exhaust_lobe_center + (3 * rot120) - rot30)
 }
 
 private node add_flow_sample {
@@ -111,18 +111,18 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node ferrari_690t_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 51.0 * units.cc;
+    input chamber_volume: 50.0 * units.cc; // guess
     input flip_display: false;
 	
-	input flow_attenuation_in: 1.5;
-	input flow_attenuation_ex: 1.5;
-    input lift_scale: 50.0;
+	input flow_attenuation_in: 1.1;
+	input flow_attenuation_ex: 1.1;
+    input lift_scale: 1.1;
     alias output __out: head;
 
     function intake_flow(1.0 * units.mm)
@@ -164,10 +164,10 @@ public node ferrari_690t_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.1 * units.inch) * 4 * units.inch,
+        intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch,
         intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 6 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+        exhaust_runner_volume: circle_area(0.77 * units.inch) * 2 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.77 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -190,7 +190,7 @@ public node F690T {
 	label piston_mass(400 * units.g)
     label compression_height(1.184 * units.inch)
 	label piston_dome(0.0 * units.cc)
-	label deck_clearance(1.5 * units.mm)
+	label deck_clearance(1.35 * units.mm) // for 9.3:1 CR
     label crank_mass(45 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(5 * units.inch)
@@ -200,7 +200,7 @@ public node F690T {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 6500 * units.rpm,
-        fuel: fuel(max_burning_efficiency: 0.99), // free power to compensate for not having turbos
+        fuel: fuel(max_burning_efficiency: 1.12), // free power to compensate for not having turbos
         throttle_gamma: 1.0
     )
 
@@ -218,11 +218,11 @@ public node F690T {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: 135.0 * units.deg
+        tdc: 135.0 * units.deg // 45 degrees CCW from vertical
     )
 
     rod_journal rj0(angle: 0 * units.deg)
@@ -261,21 +261,21 @@ public node F690T {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(1600.0),
+        intake_flow_rate: k_carb(800.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9987,
+        idle_throttle_plate_position: 0.998,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(900.0),
+        runner_flow_rate: k_carb(400.0),
         runner_length: 8.5 * units.inch,
         velocity_decay: 0.1
     )
 	
-	label exhaust_radius((4.5 * units.inch)/2)
+	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1500.0),
-        primary_tube_length: 8.0 * units.inch,
-        primary_flow_rate: k_carb(600.0),
+        outlet_flow_rate: k_carb(800.0),
+        primary_tube_length: 6.0 * units.inch,
+        primary_flow_rate: k_carb(550.0),
         velocity_decay: 1.0, //0.5
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
 		length: 2800 * units.mm,
@@ -284,47 +284,14 @@ public node F690T {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(4 * units.inch)
-	label pipe_length_2(0 * units.inch)
-	label pipe_length_3(3 * units.inch)
+	label pipe_length_1(6 * units.inch)
+	label pipe_length_2(2 * units.inch)
+	label pipe_length_3(0 * units.inch)
 	
-	label exhaust_stagger(4 * units.inch)
+	label exhaust_stagger(7 * units.inch)
 
-    cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
+    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
-            ignition_wire: wires.wire6,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.8
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire5,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 1.0
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
-            ignition_wire: wires.wire4,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.8
-        )
-
-    cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
-    b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
@@ -332,8 +299,8 @@ public node F690T {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 0.8
+			primary_length: pipe_length_1 + exhaust_stagger,
+			sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -342,8 +309,8 @@ public node F690T {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 1.0
+			primary_length: pipe_length_2 + exhaust_stagger,
+			sound_attenuation: 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -352,13 +319,46 @@ public node F690T {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
+			primary_length: pipe_length_3 + exhaust_stagger,
+			sound_attenuation: 1.0
+        )
+
+    cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire6,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_1,
+			sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_2,
 			sound_attenuation: 0.8
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust,
+			primary_length: pipe_length_3,
+			sound_attenuation: 1.0
         )
 
     engine
-        .add_cylinder_bank(b1)
         .add_cylinder_bank(b0)
+        .add_cylinder_bank(b1)
 
     engine.add_crankshaft(c0)
 
@@ -368,33 +368,32 @@ public node F690T {
         ferrari_690t_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-            flip_display: false
+            flip_display: true
         )
     )
     b1.set_cylinder_head (
         ferrari_690t_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
-            flip_display: true
+            flip_display: false
         )
     )
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 75 * units.deg)
-        .add_sample(2000 * units.rpm, 80 * units.deg)
-        .add_sample(3000 * units.rpm, 80 * units.deg)
-        .add_sample(4000 * units.rpm, 80 * units.deg)
+        .add_sample(0000 * units.rpm, 80 * units.deg)
+        .add_sample(1000 * units.rpm, 85 * units.deg)
+        .add_sample(2000 * units.rpm, 87 * units.deg)
+        .add_sample(3000 * units.rpm, 87 * units.deg)
+        .add_sample(4000 * units.rpm, 85 * units.deg)
         .add_sample(5000 * units.rpm, 80 * units.deg)
-        .add_sample(6000 * units.rpm, 80 * units.deg)
-		.add_sample(7000 * units.rpm, 75 * units.deg)
+        .add_sample(6000 * units.rpm, 77 * units.deg)
+		.add_sample(7000 * units.rpm, 77 * units.deg)
 
     engine.add_ignition_module(
         ferrari_690t_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7000 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
