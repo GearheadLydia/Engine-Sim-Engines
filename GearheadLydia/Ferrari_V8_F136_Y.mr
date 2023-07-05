@@ -456,12 +456,12 @@ public node maserati_granturismo_transmission {
 public node alfa_romeo_8c_competizione_vehicle {
     alias output __out:
         vehicle(
-            mass: 3329 * units.lb,
+            mass: 1508 * units.kg,
             drag_coefficient: 0.39,
             cross_sectional_area: 2.1 * (units.m * units.m), // estimated
             diff_ratio: 3.29,
             tire_radius: 354.4 * units.mm, // 285/35ZR20
-            rolling_resistance: 550 * units.N
+            rolling_resistance: 1508 * units.kg * 9.81 * (285.0/275.0) * 0.01
         );
 }
 
