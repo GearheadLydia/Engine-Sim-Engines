@@ -187,7 +187,7 @@ public node daewoo_xk6_25_engine {
         throttle_gamma: 1.0
     )
 	
-	label lean_angle(5 * units.deg)
+	label lean_angle(-5 * units.deg)
 
     label bore(77.0 * units.mm)
     label bore_spacing(83.0 * units.mm)
@@ -372,7 +372,7 @@ public node daewoo_xk6_25_engine {
         daewoo_xk6_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+			flip_display: false
         )
     )
 
