@@ -108,7 +108,7 @@ private node add_flow_sample {
 public node jaguar_xk6_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 40.0 * units.cc;
+    input chamber_volume: 99.0 * units.cc;
     input flip_display: false;
 	
 	input flow_attenuation_in: 0.6;
@@ -208,7 +208,7 @@ public node jaguar_xk6_42_engine {
     label rod_mass(650 * units.g)
 	label piston_mass(500 * units.g)
     label compression_height(41.50 * units.mm)
-	label piston_dome(25.0 * units.cc) // guess, makes compression come out right
+	label piston_dome(15.0 * units.cc) // for 9.0:1 CR
 	label deck_height((11.480 * units.inch) + (60 * units.thou))
     label crank_mass(90 * units.lb)
     label flywheel_mass(35 * units.lb)
@@ -383,14 +383,14 @@ public node jaguar_xk6_42_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 25 * units.deg)
-        .add_sample(2000 * units.rpm, 25 * units.deg)
-        .add_sample(3000 * units.rpm, 25 * units.deg)
-        .add_sample(4000 * units.rpm, 25 * units.deg)
-        .add_sample(5000 * units.rpm, 25 * units.deg)
-        .add_sample(6000 * units.rpm, 25 * units.deg)
-        .add_sample(7000 * units.rpm, 25 * units.deg)
+        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(1000 * units.rpm, 40 * units.deg)
+        .add_sample(2000 * units.rpm, 40 * units.deg)
+        .add_sample(3000 * units.rpm, 40 * units.deg)
+        .add_sample(4000 * units.rpm, 40 * units.deg)
+        .add_sample(5000 * units.rpm, 40 * units.deg)
+        .add_sample(6000 * units.rpm, 40 * units.deg)
+        .add_sample(7000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
         jaguar_xk6_distributor(
