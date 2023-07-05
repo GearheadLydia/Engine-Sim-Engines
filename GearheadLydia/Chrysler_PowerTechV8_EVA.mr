@@ -151,8 +151,6 @@ public node chrysler_powertech_v8_head {
         .add_flow_sample(10 * lift_scale, 294 * flow_attenuation_in)
         .add_flow_sample(11 * lift_scale, 300 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 314 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 314 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 314 * flow_attenuation_in)
 
     function exhaust_flow(1.0 * units.mm)
     exhaust_flow
@@ -169,8 +167,6 @@ public node chrysler_powertech_v8_head {
         .add_flow_sample(10 * lift_scale, 207 * flow_attenuation_ex)
         .add_flow_sample(11 * lift_scale, 214 * flow_attenuation_ex)
         .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
@@ -436,7 +432,7 @@ public node dodge_dakota_slt_nd_vehicle {
             cross_sectional_area: 2.81 * (units.m * units.m), // 
             diff_ratio: 3.21,
             tire_radius: 388.5 * units.mm, // 265/65R17 -- guess
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 4296 * units.lb * 9.81 * (265.0/275.0) * 0.01
         );
 }
 
