@@ -30,7 +30,7 @@ private node wires {
     output wire6: ignition_wire();
 }
 
-// http://aj6engineering.co.uk/camshafts/
+// https://forums.jag-lovers.com/t/xk-engine-re-racing-4-2-xk-cam-specs/242478/2
 public node jaguar_xk6_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
