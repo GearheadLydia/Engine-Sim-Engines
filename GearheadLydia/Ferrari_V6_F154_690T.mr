@@ -407,7 +407,7 @@ public node alfa_giulia_qv_952_vehicle {
             cross_sectional_area: 24.693 * (units.foot * units.foot),
             diff_ratio: 3.09,
             tire_radius: 326.39 * units.mm, // P285/30R19
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1675 * units.kg * 9.81 * (285.0/275.0) * 0.01
         );
 }
 

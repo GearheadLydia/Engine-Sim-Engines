@@ -408,7 +408,7 @@ public node dmc_delorean_vehicle {
             cross_sectional_area: 1.88 * (units.m * units.m),
             diff_ratio: 3.44,
             tire_radius: 331.5 * units.mm, // 235/60HR15
-            rolling_resistance: 430 * units.N
+            rolling_resistance: 1233 * units.kg * 9.81 * (235.0/275.0) * 0.01
         );
 }
 
