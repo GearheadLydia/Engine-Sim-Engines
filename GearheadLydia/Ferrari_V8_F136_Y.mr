@@ -40,7 +40,7 @@ private node wires {
 public node ferrari_f136_y_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 261 * units.deg,
+            duration_at_50_thou: 250 * units.deg,
             gamma: 1.0,
             lift: 10.0 * units.mm,
             steps: 100
@@ -50,7 +50,7 @@ public node ferrari_f136_y_lobe_profile_int {
 public node ferrari_f136_y_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 221 * units.deg,
+            duration_at_50_thou: 245 * units.deg,
             gamma: 1.0,
             lift: 10.0 * units.mm,
             steps: 100
@@ -123,12 +123,12 @@ private node add_flow_sample {
 public node ferrari_f136_y_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 51.0 * units.cc;
+    input chamber_volume: 30.0 * units.cc;
     input flip_display: false;
 	
 	input flow_attenuation_in: 1.0;
 	input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.0;
+    input lift_scale: 1.1;
     alias output __out: head;
 
     function intake_flow(1.0 * units.mm)
@@ -169,9 +169,9 @@ public node ferrari_f136_y_head {
 
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.1 * units.inch) * 6 * units.inch,
+        intake_runner_volume: circle_area(1.1 * units.inch) * 4 * units.inch,
         intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 6 * units.inch,
+        exhaust_runner_volume: circle_area(0.75 * units.inch) * 4 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -198,13 +198,13 @@ public node F136_Y {
     label bore(94.0 * units.mm)
     label stroke(84.5 * units.mm)
     label rod_length(140.98 * units.mm) // correct rod length is listed as 140.98mm for this engine
-    label rod_mass(621.5 * units.g)
+    label rod_mass(550 * units.g)
 	label piston_mass(400 * units.g)
     label compression_height(26.27 * units.mm) // totally inaccurate, just makes rod length correct
-	label piston_dome(5.00 * units.cc)
-	label deck_height(211.25 * units.mm)
-    label crank_mass(41 * units.lb)
-    label flywheel_mass(12 * 2 * units.lb)
+	label piston_dome(-6.0 * units.cc) // for 11.3:1 CR
+	label deck_height((211.25 + 1.25) * units.mm)
+    label crank_mass(85 * units.lb)
+    label flywheel_mass(25 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -267,19 +267,19 @@ public node F136_Y {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(650),
+        intake_flow_rate: k_carb(900),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
+        idle_throttle_plate_position: 0.9983,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(650.0),
-        runner_length: 6.5 * units.inch,
+        runner_flow_rate: k_carb(400.0),
+        runner_length: 9.0 * units.inch,
         velocity_decay: 0.1
     )
 	
 	label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(650.0),
+        outlet_flow_rate: k_carb(900.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(450.0),
         velocity_decay: 1.0, //0.5
@@ -407,16 +407,16 @@ public node F136_Y {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 45 * units.deg)
+        .add_sample(0000 * units.rpm, 47 * units.deg)
+        .add_sample(1000 * units.rpm, 57 * units.deg)
         .add_sample(2000 * units.rpm, 57 * units.deg)
-        .add_sample(3000 * units.rpm, 62 * units.deg)
-        .add_sample(4000 * units.rpm, 65 * units.deg)
-        .add_sample(5000 * units.rpm, 64 * units.deg)
-        .add_sample(6000 * units.rpm, 58 * units.deg)
-		.add_sample(7000 * units.rpm, 52 * units.deg)
-		.add_sample(8000 * units.rpm, 48 * units.deg)
-		.add_sample(9000 * units.rpm, 48 * units.deg)
+        .add_sample(3000 * units.rpm, 57 * units.deg)
+        .add_sample(4000 * units.rpm, 57 * units.deg)
+        .add_sample(5000 * units.rpm, 57 * units.deg)
+        .add_sample(6000 * units.rpm, 57 * units.deg)
+		.add_sample(7000 * units.rpm, 57 * units.deg)
+		.add_sample(8000 * units.rpm, 57 * units.deg)
+		.add_sample(9000 * units.rpm, 57 * units.deg)
 
     engine.add_ignition_module(
         ferrari_f136_y_distributor(
@@ -430,12 +430,12 @@ public node F136_Y {
 public node maserati_granturismo_vehicle {
     alias output __out:
         vehicle(
-            mass: 4310 * units.lb,
+            mass: 1952 * units.kg,
             drag_coefficient: 0.33,
             cross_sectional_area: 2.2 * (units.m * units.m), // estimated
             diff_ratio: 3.29,
             tire_radius: 354.4 * units.mm, // 285/35ZR20
-            rolling_resistance: 550 * units.N
+            rolling_resistance: 1952 * units.kg * 9.81 * (285.0/275.0) * 0.01
         );
 }
 
