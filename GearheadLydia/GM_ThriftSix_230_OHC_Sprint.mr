@@ -185,14 +185,14 @@ public node pontiac_straight_six_230_ohc_engine {
 	label bore_spacing(4.400 * units.inch)
     label stroke(3.25 * units.inch)
     label rod_length(5.700 * units.inch)
-    label rod_mass(250 * units.g)
-	label piston_mass(347 * units.g)
+    label rod_mass(550 * units.g)
+	label piston_mass(500 * units.g)
     label compression_height(1.795 * units.inch)
 	label deck_height((9.150 * units.inch) + (45 * units.thou)) // assumption: same gasket thickness as Chevy 230
 	label piston_dome(-1.4 * units.cc) // for 10.5:1 CR
-    label crank_mass(4.0 * units.kg)
-    label flywheel_mass(8.5 * units.kg)
-    label flywheel_radius(5.5 * units.inch)
+    label crank_mass(90 * units.lb)
+    label flywheel_mass(30 * units.lb)
+    label flywheel_radius(6 * units.inch)
 
     label crank_moment(
         disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
