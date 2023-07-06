@@ -392,6 +392,7 @@ public node jaguar_xk6_42_engine {
         .add_sample(6000 * units.rpm, 40 * units.deg)
         .add_sample(7000 * units.rpm, 40 * units.deg)
 
+	// https://en.wikipedia.org/w/index.php?title=Jaguar_XK_engine&oldid=1147042267#4.2-litre
 	// (168/246) * 265 = 181
     function timing_curve_net(1000 * units.rpm)
     timing_curve_net
