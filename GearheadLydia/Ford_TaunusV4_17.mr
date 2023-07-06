@@ -377,10 +377,10 @@ public node saab_96_v4_vehicle {
         vehicle(
             mass: 920 * units.kg,
             drag_coefficient: 0.37,
-            cross_sectional_area: 0.716 * (units.m * units.m), // wow!
+            cross_sectional_area: 1.93 * (units.m * units.m),
             diff_ratio: 4.875,
             tire_radius: 315 * units.mm, // "155 - 15"
-            rolling_resistance: 400 * units.N
+            rolling_resistance: 920 * units.kg * 9.81 * (155.0/275.0) * 0.01
         );
 }
 
