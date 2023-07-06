@@ -375,7 +375,7 @@ public node ford_sierra_rs_cosworth_vehicle {
             cross_sectional_area: 1.97 * (units.m * units.m),
             diff_ratio: 3.64,
             tire_radius: 293.5 * units.mm, // 205/50VR15
-            rolling_resistance: 400 * units.N
+            rolling_resistance: 1237 * units.kg * 9.81 * (205.0/275.0) * 0.01
         );
 }
 

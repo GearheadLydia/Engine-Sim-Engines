@@ -375,7 +375,7 @@ public node ford_mustang_svo_vehicle {
             cross_sectional_area: 1.93 * (units.m * units.m),
             diff_ratio: 3.73,
             tire_radius: 338 * units.mm, // 225/60VR16
-            rolling_resistance: 450 * units.N
+            rolling_resistance: 1474 * units.kg * 9.81 * (225.0/275.0) * 0.01
         );
 }
 
