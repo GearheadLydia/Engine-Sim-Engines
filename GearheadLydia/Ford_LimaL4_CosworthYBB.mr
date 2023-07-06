@@ -66,7 +66,7 @@ public node ford_cosworth_yb_camshaft_builder {
     input intake_lobe_center: 112.0 * units.deg;
     input exhaust_lobe_center: 112.0 * units.deg;
     input advance: 0.0 * units.deg;
-    input base_radius: 0.75 * units.inch; // guess
+    input base_radius: 15 * units.mm; // guess
 
     output intake_cam_0: _intake_cam_0;
     output exhaust_cam_0: _exhaust_cam_0;
@@ -177,8 +177,9 @@ public node ford_cosworth_ybb {
     engine engine(
         name: "Ford Cosworth YBB",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 1200 * units.rpm,
+        starter_speed: 1000 * units.rpm,
         redline: 6500 * units.rpm,
+        fuel: fuel(max_burning_efficiency: 1.00), // free power to simulate unavailable turbo
         throttle_gamma: 1.0
     )
 	
@@ -213,7 +214,7 @@ public node ford_cosworth_ybb {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -259,7 +260,7 @@ public node ford_cosworth_ybb {
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(500.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9965,
+        idle_throttle_plate_position: 0.9975,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(350.0),
         runner_length: 6.0 * units.inch,
@@ -269,7 +270,7 @@ public node ford_cosworth_ybb {
 	label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(450.0),
+        outlet_flow_rate: k_carb(500.0),
         primary_tube_length: bore_spacing * 1.5,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
@@ -349,22 +350,19 @@ public node ford_cosworth_ybb {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 40 * units.deg)
-        .add_sample(1000 * units.rpm, 90 * units.deg)
-        .add_sample(2000 * units.rpm, 95 * units.deg)
-        .add_sample(3000 * units.rpm, 95 * units.deg)
-        .add_sample(4000 * units.rpm, 93 * units.deg)
-        .add_sample(5000 * units.rpm, 91 * units.deg)
-        .add_sample(6000 * units.rpm, 90 * units.deg)
-        .add_sample(7000 * units.rpm, 90 * units.deg)
-        .add_sample(8000 * units.rpm, 90 * units.deg)
-        .add_sample(9000 * units.rpm, 90 * units.deg)
+        .add_sample(0000 * units.rpm, 80 * units.deg)
+        .add_sample(1000 * units.rpm, 95 * units.deg)
+        .add_sample(2000 * units.rpm, 92 * units.deg)
+        .add_sample(3000 * units.rpm, 85 * units.deg)
+        .add_sample(4000 * units.rpm, 77 * units.deg)
+        .add_sample(5000 * units.rpm, 67 * units.deg)
+        .add_sample(6000 * units.rpm, 56 * units.deg)
+        .add_sample(7000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         ford_cosworth_yb_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6550 * units.rpm
+            timing_curve: timing_curve
         ))
 }
 
