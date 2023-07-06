@@ -412,8 +412,8 @@ public node buick_bigblock_v8_455_engine {
         )
     )
 
-    function timing_curve(1000 * units.rpm)
-    timing_curve
+    function timing_curve_gross(1000 * units.rpm)
+    timing_curve_gross
         .add_sample(0000 * units.rpm, 30 * units.deg)
         .add_sample(1000 * units.rpm, 36 * units.deg)
         .add_sample(2000 * units.rpm, 36 * units.deg)
@@ -422,10 +422,21 @@ public node buick_bigblock_v8_455_engine {
         .add_sample(5000 * units.rpm, 36 * units.deg)
         .add_sample(6000 * units.rpm, 36 * units.deg)
 
+	// (275/345) * 360 = 287 hp
+    function timing_curve_net(1000 * units.rpm)
+    timing_curve_net
+        .add_sample(0000 * units.rpm, 19.8 * units.deg)
+        .add_sample(1000 * units.rpm, 24.8 * units.deg)
+        .add_sample(2000 * units.rpm, 24.8 * units.deg)
+        .add_sample(3000 * units.rpm, 24.8 * units.deg)
+        .add_sample(4000 * units.rpm, 24.8 * units.deg)
+        .add_sample(5000 * units.rpm, 24.8 * units.deg)
+        .add_sample(6000 * units.rpm, 24.8 * units.deg)
+
     engine.add_ignition_module(
         buick_bigblock_v8_455_distributor(
             wires: wires,
-            timing_curve: timing_curve
+            timing_curve: timing_curve_net
         )
     )
 }

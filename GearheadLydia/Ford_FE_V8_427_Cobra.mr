@@ -413,8 +413,8 @@ public node ford_fe_v8_427_cobra_engine {
         )
     )
 
-    function timing_curve(1000 * units.rpm)
-    timing_curve
+    function timing_curve_gross(1000 * units.rpm)
+    timing_curve_gross
         .add_sample(0000 * units.rpm, 25 * units.deg)
         .add_sample(1000 * units.rpm, 30 * units.deg)
         .add_sample(2000 * units.rpm, 30 * units.deg)
@@ -423,10 +423,21 @@ public node ford_fe_v8_427_cobra_engine {
         .add_sample(5000 * units.rpm, 30 * units.deg)
         .add_sample(6000 * units.rpm, 30 * units.deg)
 
+	// guess; approximately 15% reduction in horsepower
+    function timing_curve_net(1000 * units.rpm)
+    timing_curve_net
+        .add_sample(0000 * units.rpm, 17.8 * units.deg)
+        .add_sample(1000 * units.rpm, 22.8 * units.deg)
+        .add_sample(2000 * units.rpm, 22.8 * units.deg)
+        .add_sample(3000 * units.rpm, 22.8 * units.deg)
+        .add_sample(4000 * units.rpm, 22.8 * units.deg)
+        .add_sample(5000 * units.rpm, 22.8 * units.deg)
+        .add_sample(6000 * units.rpm, 22.8 * units.deg)
+
     engine.add_ignition_module(
         ford_fe_v8_distributor(
             wires: wires,
-            timing_curve: timing_curve
+            timing_curve: timing_curve_net
         )
     )
 }

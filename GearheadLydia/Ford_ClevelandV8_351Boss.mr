@@ -411,8 +411,8 @@ public node ford_cleveland_v8_351_boss_engine {
         )
     )
 
-    function timing_curve(1000 * units.rpm)
-    timing_curve
+    function timing_curve_gross(1000 * units.rpm)
+    timing_curve_gross
         .add_sample(0000 * units.rpm, 29.5 * units.deg)
         .add_sample(1000 * units.rpm, 34.5 * units.deg)
         .add_sample(2000 * units.rpm, 34.5 * units.deg)
@@ -421,10 +421,20 @@ public node ford_cleveland_v8_351_boss_engine {
         .add_sample(5000 * units.rpm, 34.5 * units.deg)
         .add_sample(6000 * units.rpm, 34.5 * units.deg)
 
+    function timing_curve_net(1000 * units.rpm)
+    timing_curve_net
+        .add_sample(0000 * units.rpm, 21.5 * units.deg)
+        .add_sample(1000 * units.rpm, 26.5 * units.deg)
+        .add_sample(2000 * units.rpm, 26.5 * units.deg)
+        .add_sample(3000 * units.rpm, 26.5 * units.deg)
+        .add_sample(4000 * units.rpm, 26.5 * units.deg)
+        .add_sample(5000 * units.rpm, 26.5 * units.deg)
+        .add_sample(6000 * units.rpm, 26.5 * units.deg)
+
     engine.add_ignition_module(
         ford_cleveland_v8_distributor(
             wires: wires,
-            timing_curve: timing_curve
+            timing_curve: timing_curve_net
         )
     )
 }

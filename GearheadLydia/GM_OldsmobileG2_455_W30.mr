@@ -410,8 +410,8 @@ public node oldsmobile_v8_455_w30_engine {
         )
     )
 
-    function timing_curve(1000 * units.rpm)
-    timing_curve
+    function timing_curve_gross(1000 * units.rpm)
+    timing_curve_gross
         .add_sample(0000 * units.rpm, 33 * units.deg)
         .add_sample(1000 * units.rpm, 38 * units.deg)
         .add_sample(2000 * units.rpm, 38 * units.deg)
@@ -420,10 +420,21 @@ public node oldsmobile_v8_455_w30_engine {
         .add_sample(5000 * units.rpm, 38 * units.deg)
         .add_sample(6000 * units.rpm, 38 * units.deg)
 
+	// (300/350) * 400 = 343 hp
+    function timing_curve_net(1000 * units.rpm)
+    timing_curve_net
+        .add_sample(0000 * units.rpm, 24.5 * units.deg)
+        .add_sample(1000 * units.rpm, 29.5 * units.deg)
+        .add_sample(2000 * units.rpm, 29.5 * units.deg)
+        .add_sample(3000 * units.rpm, 29.5 * units.deg)
+        .add_sample(4000 * units.rpm, 29.5 * units.deg)
+        .add_sample(5000 * units.rpm, 29.5 * units.deg)
+        .add_sample(6000 * units.rpm, 29.5 * units.deg)
+
     engine.add_ignition_module(
         oldsmobile_v8_455_distributor(
             wires: wires,
-            timing_curve: timing_curve
+            timing_curve: timing_curve_net
         )
     )
 }

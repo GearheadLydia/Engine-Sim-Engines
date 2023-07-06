@@ -391,8 +391,9 @@ public node gmc_v6_478m_engine {
         )
     )
 
-    function timing_curve(1000 * units.rpm)
-    timing_curve
+	// only power figures I found were net anyway
+    function timing_curve_net(1000 * units.rpm)
+    timing_curve_net
         .add_sample(0000 * units.rpm, 48 * units.deg)
         .add_sample(1000 * units.rpm, 53 * units.deg)
         .add_sample(2000 * units.rpm, 53 * units.deg)
@@ -402,7 +403,7 @@ public node gmc_v6_478m_engine {
     engine.add_ignition_module(
         gmc_v6_478m_distributor(
             wires: wires,
-            timing_curve: timing_curve
+            timing_curve: timing_curve_net
         )
     )
 }

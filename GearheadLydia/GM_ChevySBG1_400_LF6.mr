@@ -408,8 +408,8 @@ public node chevrolet_sbc_400_lf6_engine {
         )
     )
 
-    function timing_curve(1000 * units.rpm)
-    timing_curve
+    function timing_curve_gross(1000 * units.rpm)
+    timing_curve_gross
         .add_sample(0000 * units.rpm, 10 * units.deg)
         .add_sample(1000 * units.rpm, 24 * units.deg)
         .add_sample(2000 * units.rpm, 30 * units.deg)
@@ -417,10 +417,19 @@ public node chevrolet_sbc_400_lf6_engine {
         .add_sample(4000 * units.rpm, 39 * units.deg)
         .add_sample(5000 * units.rpm, 39 * units.deg)
 
+    function timing_curve_net(1000 * units.rpm)
+    timing_curve_net
+        .add_sample(0000 * units.rpm, -5 * units.deg)
+        .add_sample(1000 * units.rpm, 09 * units.deg)
+        .add_sample(2000 * units.rpm, 15 * units.deg)
+        .add_sample(3000 * units.rpm, 21 * units.deg)
+        .add_sample(4000 * units.rpm, 24 * units.deg)
+        .add_sample(5000 * units.rpm, 24 * units.deg)
+
     engine.add_ignition_module(
         chevrolet_sbc_400_distributor(
             wires: wires,
-            timing_curve: timing_curve
+            timing_curve: timing_curve_net
         )
     )
 }

@@ -411,8 +411,8 @@ public node ford_fe_v8_428_cobra_jet_engine {
         )
     )
 
-    function timing_curve(1000 * units.rpm)
-    timing_curve
+    function timing_curve_gross(1000 * units.rpm)
+    timing_curve_gross
         .add_sample(0000 * units.rpm, 22 * units.deg)
         .add_sample(1000 * units.rpm, 27 * units.deg)
         .add_sample(2000 * units.rpm, 27 * units.deg)
@@ -421,10 +421,22 @@ public node ford_fe_v8_428_cobra_jet_engine {
         .add_sample(5000 * units.rpm, 27 * units.deg)
         .add_sample(6000 * units.rpm, 27 * units.deg)
 
+	// actually makes more net!!
+	// https://www.motortrend.com/how-to/testing-4-2-8how-much-horsepower-ford-428-cobra-jet-really-make/
+    function timing_curve_net(1000 * units.rpm)
+    timing_curve_net
+        .add_sample(0000 * units.rpm, 25 * units.deg)
+        .add_sample(1000 * units.rpm, 31 * units.deg)
+        .add_sample(2000 * units.rpm, 31 * units.deg)
+        .add_sample(3000 * units.rpm, 31 * units.deg)
+        .add_sample(4000 * units.rpm, 31 * units.deg)
+        .add_sample(5000 * units.rpm, 31 * units.deg)
+        .add_sample(6000 * units.rpm, 31 * units.deg)
+		
     engine.add_ignition_module(
         ford_fe_v8_distributor(
             wires: wires,
-            timing_curve: timing_curve
+            timing_curve: timing_curve_net
         )
     )
 }
