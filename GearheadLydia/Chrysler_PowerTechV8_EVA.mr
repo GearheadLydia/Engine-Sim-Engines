@@ -291,7 +291,7 @@ public node chrysler_powertech_v8_47_engine {
 		volume: (2300 * units.mm * circle_area(exhaust_radius)) + (600 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.2, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 	
 	label pipe_length_1(180 * units.mm)
 	label pipe_length_2(120 * units.mm)
