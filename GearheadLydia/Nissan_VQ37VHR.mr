@@ -189,6 +189,7 @@ public node nissan_vq37vhr_engine {
     )
 
     label bore(95.5 * units.mm)
+	label bore_spacing(108.0 * units.mm)
     label stroke(86.0 * units.mm)
     label rod_length(149.5 * units.mm)
     label rod_mass(560.0 * units.g)
@@ -414,7 +415,7 @@ public node nissan_370z_z34_vehicle {
             cross_sectional_area: 2.02 * (units.m * units.m),
             diff_ratio: 3.692,
             tire_radius: 339 * units.mm, // 245/45R18W
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1487 * units.kg * 9.81 * (245.0/275.0) * 0.01
         );
 }
 

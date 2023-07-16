@@ -190,6 +190,7 @@ public node nissan_vq35de_engine {
     )
 
     label bore(95.5 * units.mm)
+	label bore_spacing(108.0 * units.mm)
     label stroke(81.4 * units.mm)
     label rod_length(144.25 * units.mm)
     label rod_mass(520.0 * units.g)
@@ -414,7 +415,7 @@ public node nissan_350z_z33_vehicle {
             cross_sectional_area: 1.99 * (units.m * units.m),
             diff_ratio: 3.538,
             tire_radius: 339 * units.mm, // 245/45R18W
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1446 * units.kg * 9.81 * (245.0/275.0) * 0.01
         );
 }
 

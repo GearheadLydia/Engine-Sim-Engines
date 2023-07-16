@@ -191,6 +191,7 @@ public node nissan_vr38dett_engine {
     )
 
     label bore(95.5 * units.mm)
+	label bore_spacing(108.0 * units.mm)
     label stroke(88.4 * units.mm)
     label rod_length(165.0 * units.mm)
     label rod_mass(434.0 * units.g)
@@ -414,8 +415,7 @@ public node nissan_vr38dett_engine {
     engine.add_ignition_module(
         nissan_vr38_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7200 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -429,7 +429,7 @@ public node nissan_gtr_r35_vehicle {
             cross_sectional_area: 2.17 * (units.m * units.m),
             diff_ratio: 3.700,
             tire_radius: 354.5 * units.mm, // 285/35ZRF20
-            rolling_resistance: 580 * units.N
+            rolling_resistance: 3829 * units.lb * 9.81 * (285.0/275.0) * 0.01
         );
 }
 
