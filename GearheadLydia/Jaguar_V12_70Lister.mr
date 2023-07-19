@@ -340,19 +340,19 @@ public node jaguar_v12_70lister {
 		impulse_response: ir_lib.default_0
 	)
 	
-	label exh_vol_L(0.9)
-	label exh_vol_R(1.0)
+	label exh_vol_L(1.0)
+	label exh_vol_R(0.9)
 	
 	label exh_vol_warble(-0.1)
 	
-	label pipe_length_1(30 * units.mm)
-	label pipe_length_2(20 * units.mm)
-	label pipe_length_3(10 * units.mm)
+	label pipe_length_1(39 * units.mm)
+	label pipe_length_2(26 * units.mm)
+	label pipe_length_3(13 * units.mm)
 	label pipe_length_4(00 * units.mm)
-	label pipe_length_5(10 * units.mm)
-	label pipe_length_6(20 * units.mm)
+	label pipe_length_5(13 * units.mm)
+	label pipe_length_6(26 * units.mm)
 	
-	label exhaust_stagger(22 * units.mm)
+	label exhaust_stagger(28 * units.mm)
 		
     cylinder_bank b0(bank_params, angle: 30 * units.deg) // L (first)
     b0
@@ -584,8 +584,8 @@ public node hewland_tgt_a_transmission {
 
 public node main {
     set_engine(jaguar_v12_70lister())
-    set_vehicle(lister_storm_gt_vehicle())
-    set_transmission(hewland_tgt_a_transmission())
+    set_vehicle(lister_storm_v12_vehicle())
+    set_transmission(getrag_560g_transmission())
 }
 
 main()
