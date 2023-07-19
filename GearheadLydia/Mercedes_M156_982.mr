@@ -7,7 +7,7 @@ impulse_response_library ir_lib()
 label cycle(2 * 360 * units.deg)
 
 // firing order: 15426378
-// in standard:   18436572
+// in GM layout:  18436572
 
 public node mercedes_m156_63_distributor {
     input wires;
@@ -294,10 +294,11 @@ public node mercedes_amg_m156_982_engine {
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
 
 	label pipe_length_1(3.8 * bore_spacing)
-	label pipe_length_2(2.8 * bore_spacing)
+	label pipe_length_2(2.7 * bore_spacing)
 	label pipe_length_3(1.3 * bore_spacing)
 	label pipe_length_4(0.0 * bore_spacing)
-	label exhaust_stagger(20 * units.mm)
+	
+	label exhaust_stagger(50 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -308,7 +309,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
+			primary_length: pipe_length_1 + exhaust_stagger,
+			sound_attenuation: 0.7 * 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -335,7 +337,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger
+			primary_length: pipe_length_4 + exhaust_stagger,
+			sound_attenuation: 0.7 * 0.7
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -347,7 +350,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
+			primary_length: pipe_length_1,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -356,7 +360,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -365,7 +370,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3,
+			sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -374,7 +380,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4
+			primary_length: pipe_length_4,
+			sound_attenuation: 0.7
         )
 
     engine
@@ -419,22 +426,21 @@ public node mercedes_amg_m156_982_engine {
     engine.add_ignition_module(
         mercedes_m156_63_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7250 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
 
-// CLK63 AMG 2008
-public node mercedes_clk_63_amg_vehicle {
+// 2008 Mercedes-Benz CLK63 AMG (C209)
+public node mercedes_clk_63_amg_c209_vehicle {
     alias output __out:
         vehicle(
-            mass: 3715 * units.lb,
+            mass: 1683 * units.kg,
             drag_coefficient: 0.29,
             cross_sectional_area: 2.08 * (units.m * units.m),
             diff_ratio: 2.62,
             tire_radius: 326.5 * units.mm, // 285/30ZR19
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1683 * units.kg * 9.81 * (285.0/275.0) * 0.01
         );
 }
 
@@ -454,7 +460,7 @@ public node mercedes_7g_tronic_transmission {
 
 public node main {
     set_engine(mercedes_amg_m156_982_engine())
-    set_vehicle(mercedes_clk_63_amg_vehicle())
+    set_vehicle(mercedes_clk_63_amg_c209_vehicle())
     set_transmission(mercedes_7g_tronic_transmission())
 }
 

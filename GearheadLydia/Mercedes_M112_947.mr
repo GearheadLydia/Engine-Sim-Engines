@@ -6,8 +6,7 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 15426378
-// in standard:   18436572
+// firing order: 123456
 
 public node mercedes_m112_32_distributor {
     input wires;
@@ -279,7 +278,7 @@ public node mercedes_benz_m112_947_engine {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(450.0),
         primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(250.0),
+        primary_flow_rate: k_carb(350.0),
 		collector_cross_section_area: circle_area(exhaust_radius) * 2,
 		length: 2000 * units.mm,
 		volume: (1750 * units.mm * circle_area(exhaust_radius)) + (250 * units.mm * circle_area(exhaust_radius) * 2)
@@ -287,11 +286,11 @@ public node mercedes_benz_m112_947_engine {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.03, impulse_response: ir_lib.default_0)
 	
-	label pipe_length_1(0.8 * bore_spacing)
-	label pipe_length_2(0.4 * bore_spacing)
+	label pipe_length_1(2.6 * bore_spacing)
+	label pipe_length_2(1.3 * bore_spacing)
 	label pipe_length_3(0.0 * bore_spacing)
 
-	label exhaust_stagger(35 * units.mm)
+	label exhaust_stagger(20 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -408,19 +407,19 @@ public node mercedes_benz_m112_947_engine {
 public node mercedes_slk_320_vehicle {
     alias output __out:
         vehicle(
-            mass: 2932 * units.lb,
+            mass: 1328 * units.kg,
             drag_coefficient: 0.35,
             cross_sectional_area: 1.8 * (units.m * units.m),
             diff_ratio: 3.27,
             tire_radius: 316 * units.mm, // 225/50R16
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1328 * units.kg * 9.81 * (225.0/275.0) * 0.01
         );
 }
 
 public node daimler_nsg370_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1200 * units.lb_ft
+            max_clutch_torque: 500 * units.lb_ft
         )
         .add_gear(4.459)
         .add_gear(2.614)
@@ -428,6 +427,18 @@ public node daimler_nsg370_transmission {
         .add_gear(1.245)
         .add_gear(1.000)
         .add_gear(0.838);
+}
+
+public node mercedes_5g_tronic_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 700 * units.lb_ft
+        )
+        .add_gear(3.588)
+        .add_gear(2.186)
+        .add_gear(1.405)
+        .add_gear(1.000)
+        .add_gear(0.831);
 }
 
 public node main {
