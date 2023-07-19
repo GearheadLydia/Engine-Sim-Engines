@@ -171,11 +171,11 @@ public node mercedes_m102_cosworth_head {
     )
 }
 
-public node mercedes_m102_cosworth {
+public node mercedes_m102_983_cosworth_engine {
     alias output __out: engine;
 
     engine engine(
-        name: "Mercedes M102 Cosworth",
+        name: "Mercedes / Cosworth M102.983",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
@@ -391,7 +391,7 @@ public node mercedes_benz_190e_w201_transmission {
 }
 
 public node main {
-	set_engine(mercedes_m102_cosworth())
+	set_engine(mercedes_m102_983_cosworth_engine())
     set_vehicle(mercedes_benz_190e_w201_vehicle())
     set_transmission(mercedes_benz_190e_w201_transmission())
 }

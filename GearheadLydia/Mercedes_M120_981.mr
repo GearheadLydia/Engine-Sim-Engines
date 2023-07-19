@@ -11,8 +11,8 @@ label cycle(2 * 360 * units.deg)
 public node mercedes_m120_60_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6050 * units.rpm;
-	input limiter_duration: 0.05;
+    input rev_limit: 6050 * units.rpm; // stock: 6050; Pagani: 6050?; Isdera: must be about 6300
+	input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, (0.0/12.0) * cycle)
@@ -49,7 +49,7 @@ public node mercedes_m120_60_lobe_profile_int {
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
             gamma: 1.0,
-            lift: 11.0 * units.mm,
+            lift: 9.0 * units.mm,
             steps: 100
         );
 }
@@ -59,7 +59,7 @@ public node mercedes_m120_60_lobe_profile_exh {
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
             gamma: 1.0,
-            lift: 11.0 * units.mm,
+            lift: 9.0 * units.mm,
             steps: 100
         );
 }
@@ -69,8 +69,9 @@ public node mercedes_m120_60_camshaft_builder {
 	input ex_lobe_profile: mercedes_m120_60_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input intake_lobe_center: 100.0 * units.deg;
-    input exhaust_lobe_center: 120.0 * units.deg;
+    input lobe_separation: 110.0 * units.deg;
+    input intake_lobe_center: lobe_separation;
+    input exhaust_lobe_center: 105.0 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
@@ -101,36 +102,36 @@ public node mercedes_m120_60_camshaft_builder {
 	//firing order: 1 12 5 8 3 10 6 7 2 11 4 9
 	
     _intake_cam_0
-		.add_lobe(rot360 + intake_lobe_center + 0 * rot60) // #1
-		.add_lobe(rot360 + intake_lobe_center + 8 * rot60) // #2
-		.add_lobe(rot360 + intake_lobe_center + 4 * rot60) // #3
+		.add_lobe(rot360 + intake_lobe_center + 0 * rot60)  // #1
+		.add_lobe(rot360 + intake_lobe_center + 8 * rot60)  // #2
+		.add_lobe(rot360 + intake_lobe_center + 4 * rot60)  // #3
 		.add_lobe(rot360 + intake_lobe_center + 10 * rot60) // #4
-		.add_lobe(rot360 + intake_lobe_center + 2 * rot60) // #5
-        .add_lobe(rot360 + intake_lobe_center + 6 * rot60) // #6
+		.add_lobe(rot360 + intake_lobe_center + 2 * rot60)  // #5
+        .add_lobe(rot360 + intake_lobe_center + 6 * rot60)  // #6
 
     _intake_cam_1
-		.add_lobe(rot360 + intake_lobe_center + 7 * rot60) // #7
-		.add_lobe(rot360 + intake_lobe_center + 3 * rot60) // #8
+		.add_lobe(rot360 + intake_lobe_center + 7 * rot60)  // #7
+		.add_lobe(rot360 + intake_lobe_center + 3 * rot60)  // #8
 		.add_lobe(rot360 + intake_lobe_center + 11 * rot60) // #9
-		.add_lobe(rot360 + intake_lobe_center + 5 * rot60) // #10
-		.add_lobe(rot360 + intake_lobe_center + 9 * rot60) // #11
-        .add_lobe(rot360 + intake_lobe_center + 1 * rot60) // #12
+		.add_lobe(rot360 + intake_lobe_center + 5 * rot60)  // #10
+		.add_lobe(rot360 + intake_lobe_center + 9 * rot60)  // #11
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot60)  // #12
 
 	_exhaust_cam_0
-		.add_lobe(rot360 - exhaust_lobe_center + 0 * rot60) // #1
-		.add_lobe(rot360 - exhaust_lobe_center + 8 * rot60) // #2
-		.add_lobe(rot360 - exhaust_lobe_center + 4 * rot60) // #3
+		.add_lobe(rot360 - exhaust_lobe_center + 0 * rot60)  // #1
+		.add_lobe(rot360 - exhaust_lobe_center + 8 * rot60)  // #2
+		.add_lobe(rot360 - exhaust_lobe_center + 4 * rot60)  // #3
 		.add_lobe(rot360 - exhaust_lobe_center + 10 * rot60) // $4
-        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot60) // #5
-        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot60) // #6
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot60)  // #5
+        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot60)  // #6
 
 	_exhaust_cam_1
-		.add_lobe(rot360 - exhaust_lobe_center + 7 * rot60) // #7
-		.add_lobe(rot360 - exhaust_lobe_center + 3 * rot60) // #8
+		.add_lobe(rot360 - exhaust_lobe_center + 7 * rot60)  // #7
+		.add_lobe(rot360 - exhaust_lobe_center + 3 * rot60)  // #8
 		.add_lobe(rot360 - exhaust_lobe_center + 11 * rot60) // #9
-		.add_lobe(rot360 - exhaust_lobe_center + 5 * rot60) // #10
-        .add_lobe(rot360 - exhaust_lobe_center + 9 * rot60) // #11
-        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot60) // #12
+		.add_lobe(rot360 - exhaust_lobe_center + 5 * rot60)  // #10
+        .add_lobe(rot360 - exhaust_lobe_center + 9 * rot60)  // #11
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot60)  // #12
 }
 
 private node add_flow_sample {
@@ -189,7 +190,7 @@ public node mercedes_m120_60_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 6 * units.inch,
         intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 12 * units.inch,
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 8 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -201,17 +202,16 @@ public node mercedes_m120_60_head {
 }
 
 
-public node chrysler_m120_60_me412_engine {
+public node mercedes_m120_981_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Chrysler M120 V12",
+        name: "Mercedes M120.981",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
         redline: 6000 * units.rpm,
-        fuel: fuel(max_burning_efficiency: 1.0), // free power to compensate for nonavailability of turbos
         throttle_gamma: 1.0,
 		simulation_frequency: 6000
     )
@@ -219,13 +219,13 @@ public node chrysler_m120_60_me412_engine {
     label bore(89.0 * units.mm)
     label stroke(80.2 * units.mm)
     label rod_length(144.0 * units.mm)
-    label rod_mass(400 * units.g)
+    label rod_mass(600 * units.g)
 	label piston_mass(400 * units.g)
     label compression_height(33.00 * units.mm)
 	label piston_dome(0.0 * units.cc)
 	label deck_clearance(1.0 * units.mm)
-    label crank_mass(55 * units.lb)
-    label flywheel_mass(35 * units.lb)
+    label crank_mass(75 * units.lb)
+    label flywheel_mass(70 * units.lb) // for heavy torque converter; use 35lb for the supercars
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -242,7 +242,7 @@ public node chrysler_m120_60_me412_engine {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 5.0 * units.lb_ft,
+        friction_torque: 10.0 * units.lb_ft,
         moment_of_inertia:
             crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
@@ -292,9 +292,9 @@ public node chrysler_m120_60_me412_engine {
 	intake intakeL(
 		plenum_volume: 3.0 * units.L,
 		plenum_cross_section_area: 150.0 * units.cm2,
-		intake_flow_rate: k_carb(900.0),
-		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.998,
+		intake_flow_rate: k_carb(400.0),
+		idle_flow_rate: k_carb(0.1),
+		idle_throttle_plate_position: 0.993,
 		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(750.0),
 		runner_length: 12.0 * units.inch,
@@ -304,36 +304,36 @@ public node chrysler_m120_60_me412_engine {
 	intake intakeR(
 		plenum_volume: 3.0 * units.L,
 		plenum_cross_section_area: 150.0 * units.cm2,
-		intake_flow_rate: k_carb(900.0),
-		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.998,
+		intake_flow_rate: k_carb(400.0),
+		idle_flow_rate: k_carb(0.1),
+		idle_throttle_plate_position: 0.993,
 		throttle_gamma: 2.0,
-		runner_flow_rate: k_carb(950.0),
+		runner_flow_rate: k_carb(750.0),
 		runner_length: 12.0 * units.inch,
 		velocity_decay: 0.1
 	)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1800.0),
-        primary_tube_length: 12.0 * units.inch,
+        outlet_flow_rate: k_carb(1200.0),
+        primary_tube_length: 50.0 * units.inch,
         primary_flow_rate: k_carb(850.0),
         velocity_decay: 1.0, //0.5
-        volume: 5.0 * units.L,
-		length: 700 * units.mm
+        volume: 30.0 * units.L,
+		length: 500 * units.mm
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
 	
-	label exh_vol_warble(-0.05)
+	label exh_vol_warble(-0.1)
 	
-	label pipe_length_1(20 * units.mm)
-	label pipe_length_2(15 * units.mm)
-	label pipe_length_3(20 * units.mm)
-	label pipe_length_4(5 * units.mm)
-	label pipe_length_5(0 * units.mm)
-	label pipe_length_6(5 * units.mm)
+	label pipe_length_1(50 * units.mm)
+	label pipe_length_2(40 * units.mm)
+	label pipe_length_3(30 * units.mm)
+	label pipe_length_4(20 * units.mm)
+	label pipe_length_5(10 * units.mm)
+	label pipe_length_6(00 * units.mm)
 	
-	label exhaust_stagger(5 * units.mm)
+	label exhaust_stagger(20 * units.mm)
 	
 	label exh_vol_L0(1.0)
 	label exh_vol_R0(1.0)
@@ -492,14 +492,14 @@ public node chrysler_m120_60_me412_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 35 * units.deg)
-        .add_sample(1000 * units.rpm, 100 * units.deg)
-        .add_sample(2000 * units.rpm, 110 * units.deg)
-        .add_sample(3000 * units.rpm, 100 * units.deg)
-        .add_sample(4000 * units.rpm, 85 * units.deg)
-        .add_sample(5000 * units.rpm, 70 * units.deg)
-        .add_sample(6000 * units.rpm, 62 * units.deg)
-		.add_sample(7000 * units.rpm, 62 * units.deg)
+        .add_sample(0000 * units.rpm, 25 * units.deg)
+        .add_sample(1000 * units.rpm, 45 * units.deg)
+        .add_sample(2000 * units.rpm, 50 * units.deg)
+        .add_sample(3000 * units.rpm, 50 * units.deg)
+        .add_sample(4000 * units.rpm, 45 * units.deg)
+        .add_sample(5000 * units.rpm, 42 * units.deg)
+        .add_sample(6000 * units.rpm, 42 * units.deg)
+		.add_sample(7000 * units.rpm, 42 * units.deg)
 
     engine.add_ignition_module(
         mercedes_m120_60_distributor(
@@ -509,41 +509,89 @@ public node chrysler_m120_60_me412_engine {
     )
 }
 
-// 2004 Chrysler ME Four-Twelve Concept
-public node chrysler_me412_concept_vehicle {
+// 1995 Mercedes-Benz SL600 (R129)
+public node mercedes_benz_sl600_r129_vehicle {
     alias output __out:
         vehicle(
-            mass: 1310 * units.kg,
-            drag_coefficient: 0.358,
-            cross_sectional_area: 1.89 * (units.m * units.m), // AC's estimate; I would have given a much higher one (~2.1)
-            diff_ratio: 2.9,
-            tire_radius: 354.33 * units.mm, // 335/30ZR20
-            rolling_resistance: 600 * units.N
+            mass: 1980 * units.kg,
+            drag_coefficient: 0.34, // estimated
+            cross_sectional_area: 1.95 * (units.m * units.m), // estimated
+            diff_ratio: 2.65,
+            tire_radius: 326.5 * units.mm, // 225/55R16
+            rolling_resistance: 440 * units.N
         );
 }
 
-// gears borrowed from McLaren 12C for lack of information
-// it's a "Ricardo 7-speed dual clutch", so maybe right?
-// can't rip data from TDU because TDUMT throws an error >_<
-// this also gives the correct top speed with the same first and second gear as TDU
-public node chrysler_me412_concept_transmission {
+public node daimler_benz_5g_tronic_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 1500 * units.lb_ft
         )
-        .add_gear(3.98)
-        .add_gear(2.61)
-        .add_gear(1.90)
-        .add_gear(1.48)
-        .add_gear(1.16)
-        .add_gear(0.91)
-        .add_gear(0.69);
+        .add_gear(3.588)
+        .add_gear(2.186)
+        .add_gear(1.405)
+        .add_gear(1.000)
+        .add_gear(0.831);
+}
+
+// 1993 Isdera Commendatore 112i
+public node isdera_commendatore_112i_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1480 * units.kg,
+            drag_coefficient: 0.306, // exact
+            cross_sectional_area: 1.8 * (units.m * units.m), // my estimate
+            diff_ratio: 3.33, // can't quite hit the 341km/h target without a rev limiter increase
+            tire_radius: 344 * units.mm, // 295/35ZR19
+            rolling_resistance: 600 * units.N
+        );
+}
+
+// literally a RUF CTR transmission, it seems
+public node isdera_commendatore_112i_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 900 * units.lb_ft
+        )
+        .add_gear(3.50)
+        .add_gear(2.06)
+        .add_gear(1.40)
+        .add_gear(1.07)
+        .add_gear(0.86)
+        .add_gear(0.72);
+}
+
+// 1999 Pagani Zonda C12
+public node pagani_zonda_c12_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1250 * units.kg,
+            drag_coefficient: 0.30, // estimated
+            cross_sectional_area: 2.0 * (units.m * units.m), // estimated
+            diff_ratio: 3.15,
+            tire_radius: 349.5 * units.mm, // 345/35ZR18
+            rolling_resistance: 600 * units.N
+        );
+}
+
+// gears from TDU & NFSC
+public node pagani_zonda_c12_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 1200 * units.lb_ft
+        )
+        .add_gear(2.880)
+        .add_gear(1.773)
+        .add_gear(1.267)
+        .add_gear(1.000)
+        .add_gear(0.833)
+        .add_gear(0.710);
 }
 
 public node main {
-    set_engine(chrysler_m120_60_me412_engine())
-    set_vehicle(chrysler_me412_concept_vehicle())
-    set_transmission(chrysler_me412_concept_transmission())
+    set_engine(mercedes_m120_981_engine())
+    set_vehicle(mercedes_benz_sl600_r129_vehicle())
+    set_transmission(daimler_benz_5g_tronic_transmission())
 }
 
 main()

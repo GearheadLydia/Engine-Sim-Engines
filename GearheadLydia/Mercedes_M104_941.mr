@@ -174,7 +174,7 @@ public node mercedes_m104_36_head {
     )
 }
 
-public node mercedes_m104_36 {
+public node mercedes_amg_m104_941_engine {
     alias output __out: engine;
 
     engine engine(
@@ -419,7 +419,7 @@ public node mercedes_c36_amg_w202_transmission {
 }
 
 public node main {
-    set_engine(mercedes_m104_36())
+    set_engine(mercedes_amg_m104_941_engine())
     set_vehicle(mercedes_c36_amg_w202_vehicle())
     set_transmission(mercedes_c36_amg_w202_transmission())
 }

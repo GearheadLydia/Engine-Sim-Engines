@@ -170,11 +170,11 @@ public node mercedes_m111_23sc_head {
     )
 }
 
-public node mercedes_m111_23sc {
+public node mercedes_m111_983_engine {
     alias output __out: engine;
 
     engine engine(
-        name: "Mercedes M111.975",
+        name: "Mercedes-Benz M111.983",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 6000 * units.rpm,
@@ -390,7 +390,7 @@ public node daimler_nsg370_transmission {
 }
 
 public node main {
-	set_engine(mercedes_m111_23sc())
+	set_engine(mercedes_m111_983_engine())
     set_vehicle(mercedes_slk_230_vehicle())
     set_transmission(daimler_nsg370_transmission())
 }

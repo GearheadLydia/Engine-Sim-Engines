@@ -8,10 +8,10 @@ label cycle(2 * 360 * units.deg)
 
 //firing order: 1 12 5 8 3 10 6 7 2 11 4 9
 
-public node mercedes_m275_65_distributor {
+public node mercedes_m120_73_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6050 * units.rpm; // actually 5950 but I like to see it cross the redline
+    input rev_limit: 7250 * units.rpm;
 	input limiter_duration: 0.05;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -44,34 +44,35 @@ private node wires {
     output wire12: ignition_wire();
 }
 
-public node mercedes_m275_65_lobe_profile_int {
+public node mercedes_m120_73_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
-            gamma: 1.0,
+            gamma: 1.2,
             lift: 9.0 * units.mm,
             steps: 100
         );
 }
 
-public node mercedes_m275_65_lobe_profile_exh {
+public node mercedes_m120_73_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
-            gamma: 1.0,
+            gamma: 1.2,
             lift: 9.0 * units.mm,
             steps: 100
         );
 }
 
-public node mercedes_m275_65_camshaft_builder {
-    input in_lobe_profile: mercedes_m275_65_lobe_profile_int();
-	input ex_lobe_profile: mercedes_m275_65_lobe_profile_exh();
+public node mercedes_m120_73_camshaft_builder {
+    input in_lobe_profile: mercedes_m120_73_lobe_profile_int();
+	input ex_lobe_profile: mercedes_m120_73_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input intake_lobe_center: 105.0 * units.deg;
+    input lobe_separation: 110.0 * units.deg;
+    input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: 105.0 * units.deg;
-    input advance: 20.0 * units.deg;
+    input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -101,36 +102,36 @@ public node mercedes_m275_65_camshaft_builder {
 	//firing order: 1 12 5 8 3 10 6 7 2 11 4 9
 	
     _intake_cam_0
-		.add_lobe(rot360 + intake_lobe_center +  0 * rot60) // #1
-		.add_lobe(rot360 + intake_lobe_center +  8 * rot60) // #2
-		.add_lobe(rot360 + intake_lobe_center +  4 * rot60) // #3
+		.add_lobe(rot360 + intake_lobe_center + 0 * rot60) // #1
+		.add_lobe(rot360 + intake_lobe_center + 8 * rot60) // #2
+		.add_lobe(rot360 + intake_lobe_center + 4 * rot60) // #3
 		.add_lobe(rot360 + intake_lobe_center + 10 * rot60) // #4
-		.add_lobe(rot360 + intake_lobe_center +  2 * rot60) // #5
-        .add_lobe(rot360 + intake_lobe_center +  6 * rot60) // #6
+		.add_lobe(rot360 + intake_lobe_center + 2 * rot60) // #5
+        .add_lobe(rot360 + intake_lobe_center + 6 * rot60) // #6
 
     _intake_cam_1
-		.add_lobe(rot360 + intake_lobe_center +  7 * rot60) // #7
-		.add_lobe(rot360 + intake_lobe_center +  3 * rot60) // #8
+		.add_lobe(rot360 + intake_lobe_center + 7 * rot60) // #7
+		.add_lobe(rot360 + intake_lobe_center + 3 * rot60) // #8
 		.add_lobe(rot360 + intake_lobe_center + 11 * rot60) // #9
-		.add_lobe(rot360 + intake_lobe_center +  5 * rot60) // #10
-		.add_lobe(rot360 + intake_lobe_center +  9 * rot60) // #11
-        .add_lobe(rot360 + intake_lobe_center +  1 * rot60) // #12
+		.add_lobe(rot360 + intake_lobe_center + 5 * rot60) // #10
+		.add_lobe(rot360 + intake_lobe_center + 9 * rot60) // #11
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot60) // #12
 
 	_exhaust_cam_0
-		.add_lobe(rot360 - exhaust_lobe_center +  0 * rot60) // #1
-		.add_lobe(rot360 - exhaust_lobe_center +  8 * rot60) // #2
-		.add_lobe(rot360 - exhaust_lobe_center +  4 * rot60) // #3
-		.add_lobe(rot360 - exhaust_lobe_center + 10 * rot60) // #4
-        .add_lobe(rot360 - exhaust_lobe_center +  2 * rot60) // #5
-        .add_lobe(rot360 - exhaust_lobe_center +  6 * rot60) // #6
+		.add_lobe(rot360 - exhaust_lobe_center + 0 * rot60) // #1
+		.add_lobe(rot360 - exhaust_lobe_center + 8 * rot60) // #2
+		.add_lobe(rot360 - exhaust_lobe_center + 4 * rot60) // #3
+		.add_lobe(rot360 - exhaust_lobe_center + 10 * rot60) // $4
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot60) // #5
+        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot60) // #6
 
 	_exhaust_cam_1
-		.add_lobe(rot360 - exhaust_lobe_center +  7 * rot60) // #7
-		.add_lobe(rot360 - exhaust_lobe_center +  3 * rot60) // #8
+		.add_lobe(rot360 - exhaust_lobe_center + 7 * rot60) // #7
+		.add_lobe(rot360 - exhaust_lobe_center + 3 * rot60) // #8
 		.add_lobe(rot360 - exhaust_lobe_center + 11 * rot60) // #9
-		.add_lobe(rot360 - exhaust_lobe_center +  5 * rot60) // #10
-        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot60) // #11
-        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot60) // #12
+		.add_lobe(rot360 - exhaust_lobe_center + 5 * rot60) // #10
+        .add_lobe(rot360 - exhaust_lobe_center + 9 * rot60) // #11
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot60) // #12
 }
 
 private node add_flow_sample {
@@ -139,20 +140,20 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
-public node mercedes_m275_65_head {
+public node mercedes_m120_73_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 46.0 * units.cc;
     input flip_display: false;
 	
 	input flow_attenuation: 0.9;
-    input lift_scale: 1.0;
+    input lift_scale: 50.0;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(1.2 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -168,7 +169,7 @@ public node mercedes_m275_65_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(1.2 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -187,10 +188,10 @@ public node mercedes_m275_65_head {
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.0 * units.inch) * 9 * units.inch,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 6 * units.inch,
         intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.65 * units.inch) * 8 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.65 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 8 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -201,28 +202,28 @@ public node mercedes_m275_65_head {
 }
 
 
-public node mercedes_benz_m275_65 {
+public node mercedes_amg_m120_990_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Mercedes M275 V12",
+        name: "Pagani AMG M120.990 V12",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
-        redline: 6000 * units.rpm,
-        fuel: fuel(max_burning_efficiency: 0.95), // free power to simulate unavailable turbo
-        throttle_gamma: 1.0,
-		simulation_frequency: 6000
+        redline: 7000 * units.rpm,
+        throttle_gamma: 0.8,
+		simulation_frequency: 6000,
+		hf_gain: 0.1
     )
 
-    label bore(82.6 * units.mm)
-    label stroke(93.0 * units.mm)
-    label rod_length(144.5 * units.mm)
+    label bore(91.5 * units.mm)
+    label stroke(92.4 * units.mm)
+    label rod_length(144.0 * units.mm)
     label rod_mass(400 * units.g)
 	label piston_mass(400 * units.g)
-    label compression_height(28.43 * units.mm)
-	label piston_dome(-12.5 * units.cc)
+    label compression_height(31.75 * units.mm)
+	label piston_dome(0.0 * units.cc)
 	label deck_clearance(1.0 * units.mm)
     label crank_mass(55 * units.lb)
     label flywheel_mass(15 * 2 * units.lb)
@@ -289,42 +290,51 @@ public node mercedes_benz_m275_65 {
         deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
-	intake intake(
-		plenum_volume: 2.0 * units.L,
-		plenum_cross_section_area: 100.0 * units.cm2,
-		intake_flow_rate: k_carb(1400.0),
+	intake intakeL(
+		plenum_volume: 3.0 * units.L,
+		plenum_cross_section_area: 150.0 * units.cm2,
+		intake_flow_rate: k_carb(400.0),
 		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.998,
-		throttle_gamma: 1.0,
+		idle_throttle_plate_position: 0.993,
+		throttle_gamma: 2.0,
 		runner_flow_rate: k_carb(750.0),
-		runner_length: 7.0 * units.inch,
+		runner_length: 12.0 * units.inch,
 		velocity_decay: 0.1
 	)
 
-	label exhaust_radius((4.5 * units.inch)/2)
+	intake intakeR(
+		plenum_volume: 3.0 * units.L,
+		plenum_cross_section_area: 150.0 * units.cm2,
+		intake_flow_rate: k_carb(400.0),
+		idle_flow_rate: k_carb(0.1),
+		idle_throttle_plate_position: 0.993,
+		throttle_gamma: 2.0,
+		runner_flow_rate: k_carb(750.0),
+		runner_length: 12.0 * units.inch,
+		velocity_decay: 0.1
+	)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1800.0),
-        primary_tube_length: 20.0 * units.inch,
-        primary_flow_rate: k_carb(650.0),
-        velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2800 * units.mm,
-		volume: 2800 * units.mm * circle_area(exhaust_radius) * 2
+        outlet_flow_rate: k_carb(1200.0),
+        primary_tube_length: 16.0 * units.inch,
+        primary_flow_rate: k_carb(550.0),
+        velocity_decay: 0.3, //0.5
+        volume: 3.0 * units.L,
+		length: 500 * units.mm
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.2, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.0005, impulse_response: ir_lib.default_0)
 	
-	label exh_vol_warble(-0.1)
+	label exh_vol_warble(-0.2)
 	
-	label pipe_length_1(120 * units.mm)
-	label pipe_length_2(80 * units.mm)
-	label pipe_length_3(40 * units.mm)
+	label pipe_length_1(21 * units.mm)
+	label pipe_length_2(15 * units.mm)
+	label pipe_length_3(3 * units.mm)
 	label pipe_length_4(0 * units.mm)
-	label pipe_length_5(40 * units.mm)
-	label pipe_length_6(80 * units.mm)
+	label pipe_length_5(12 * units.mm)
+	label pipe_length_6(18 * units.mm)
 	
-	label exhaust_stagger(20 * units.mm)
+	label exhaust_stagger(12 * units.mm)
 	
 	label exh_vol_L0(1.0)
 	label exh_vol_R0(1.0)
@@ -336,27 +346,27 @@ public node mercedes_benz_m275_65 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             ignition_wire: wires.wire01,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: exh_vol_L0
+			sound_attenuation: exh_vol_L0 + exh_vol_warble
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire02,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: exh_vol_L0 + exh_vol_warble
+			sound_attenuation: exh_vol_L0 + (exh_vol_warble * 2)
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire03,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3 + exhaust_stagger,
 			sound_attenuation: exh_vol_L0
@@ -366,17 +376,17 @@ public node mercedes_benz_m275_65 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire04,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: exh_vol_L0 + exh_vol_warble
+			sound_attenuation: exh_vol_L0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire05,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_5 + exhaust_stagger,
 			sound_attenuation: exh_vol_L0
@@ -386,7 +396,7 @@ public node mercedes_benz_m275_65 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire06,
-            intake: intake,
+            intake: intakeL,
             exhaust_system: exhaust,
 			primary_length: pipe_length_6 + exhaust_stagger,
 			sound_attenuation: exh_vol_L0 + exh_vol_warble
@@ -399,7 +409,7 @@ public node mercedes_benz_m275_65 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj0,
             ignition_wire: wires.wire07,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_1,
 			sound_attenuation: exh_vol_R0 + exh_vol_warble
@@ -409,7 +419,7 @@ public node mercedes_benz_m275_65 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire08,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_2,
 			sound_attenuation: exh_vol_R0
@@ -419,17 +429,17 @@ public node mercedes_benz_m275_65 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire09,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_3,
-			sound_attenuation: exh_vol_R0 + exh_vol_warble
+			sound_attenuation: exh_vol_R0
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire10,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_4,
 			sound_attenuation: exh_vol_R0
@@ -439,20 +449,20 @@ public node mercedes_benz_m275_65 {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire11,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_5,
-			sound_attenuation: exh_vol_R0 + exh_vol_warble
+			sound_attenuation: exh_vol_R0 + (exh_vol_warble * 2)
         )
 		.add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire12,
-            intake: intake,
+            intake: intakeR,
             exhaust_system: exhaust,
 			primary_length: pipe_length_6,
-			sound_attenuation: exh_vol_R0
+			sound_attenuation: exh_vol_R0 + exh_vol_warble
         )
 
     engine
@@ -461,74 +471,116 @@ public node mercedes_benz_m275_65 {
 
     engine.add_crankshaft(c0)
 
-    mercedes_m275_65_camshaft_builder camshaft(
-	    in_lobe_profile: mercedes_m275_65_lobe_profile_int(),
-		ex_lobe_profile: mercedes_m275_65_lobe_profile_exh()
+    mercedes_m120_73_camshaft_builder camshaft(
+	    in_lobe_profile: mercedes_m120_73_lobe_profile_int(),
+		ex_lobe_profile: mercedes_m120_73_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        mercedes_m275_65_head(
+        mercedes_m120_73_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
             flip_display: true
         )
     )
     b1.set_cylinder_head (
-        mercedes_m275_65_head(
+        mercedes_m120_73_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: false
         )
     )
 
-    function timing_curve(1000 * units.rpm)
-    timing_curve
-        .add_sample(0000 * units.rpm, 35 * units.deg)
-        .add_sample(1000 * units.rpm, 70 * units.deg)
-        .add_sample(2000 * units.rpm, 85 * units.deg)
-        .add_sample(3000 * units.rpm, 65 * units.deg)
-        .add_sample(4000 * units.rpm, 50 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 30 * units.deg)
-		.add_sample(7000 * units.rpm, 25 * units.deg)
+    function timing_curve_s73(1000 * units.rpm)
+    timing_curve_s73
+        .add_sample(0000 * units.rpm, 15 * units.deg)
+        .add_sample(1000 * units.rpm, 32 * units.deg)
+        .add_sample(2000 * units.rpm, 35 * units.deg)
+        .add_sample(3000 * units.rpm, 38 * units.deg)
+        .add_sample(4000 * units.rpm, 40 * units.deg)
+        .add_sample(5000 * units.rpm, 43 * units.deg)
+        .add_sample(6000 * units.rpm, 47 * units.deg)
+		.add_sample(7000 * units.rpm, 50 * units.deg)
+		.add_sample(8000 * units.rpm, 50 * units.deg)
+
+    function timing_curve_f(1000 * units.rpm)
+    timing_curve_f
+        .add_sample(0000 * units.rpm, 15 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 37 * units.deg)
+        .add_sample(3000 * units.rpm, 39 * units.deg)
+        .add_sample(4000 * units.rpm, 41 * units.deg)
+        .add_sample(5000 * units.rpm, 46 * units.deg)
+        .add_sample(6000 * units.rpm, 53 * units.deg)
+		.add_sample(7000 * units.rpm, 53 * units.deg)
+		.add_sample(8000 * units.rpm, 53 * units.deg)
 
     engine.add_ignition_module(
-        mercedes_m275_65_distributor(
+        mercedes_m120_73_distributor(
             wires: wires,
-            timing_curve: timing_curve
+            timing_curve: timing_curve_f
         )
     )
 }
 
-// 2005 Mercedes-Benz SL65 AMG (R230)
-public node mercedes_benz_sl65_amg_r230_vehicle {
+// 2005 Pagani Zonda S 7.3
+public node pagani_zonda_s_73_vehicle {
     alias output __out:
         vehicle(
-            mass: 2035 * units.kg,
-            drag_coefficient: 0.3,
-            cross_sectional_area: 1.97 * (units.m * units.m),
-            diff_ratio: 2.65,
-            tire_radius: 326.5 * units.mm, // 285/30ZR19
-            rolling_resistance: 550 * units.N
+            mass: 1280 * units.kg,
+            drag_coefficient: 0.30, // estimated
+            cross_sectional_area: 1.95 * (units.m * units.m), // A-C's estimate
+            diff_ratio: 3.36,
+            tire_radius: 349.5 * units.mm, // 345/35ZR18
+            rolling_resistance: 600 * units.N
         );
 }
 
-public node daimler_benz_5g_tronic_transmission {
+// gears from TDU & NFSC
+public node pagani_zonda_s_73_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1500 * units.lb_ft
+            max_clutch_torque: 1200 * units.lb_ft
         )
-        .add_gear(3.588)
-        .add_gear(2.186)
-        .add_gear(1.405)
+        .add_gear(2.880)
+        .add_gear(1.773)
+        .add_gear(1.267)
         .add_gear(1.000)
-        .add_gear(0.831);
+        .add_gear(0.833)
+        .add_gear(0.710);
+}
+
+// 2006 Pagani Zonda F
+public node pagani_zonda_f_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1300 * units.kg,
+            drag_coefficient: 0.30, // estimated
+            cross_sectional_area: 1.95 * (units.m * units.m), // A-C's estimate
+            diff_ratio: 3.36,
+            tire_radius: 354.33 * units.mm, // 335/30ZR20
+            rolling_resistance: 600 * units.N
+        );
+}
+
+// gears from NFSC
+public node pagani_zonda_f_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 1200 * units.lb_ft
+        )
+        .add_gear(2.750)
+        .add_gear(1.773)
+        .add_gear(1.267)
+        .add_gear(1.000)
+        .add_gear(0.833)
+        .add_gear(0.710);
 }
 
 public node main {
-    set_engine(mercedes_benz_m275_65())
-    set_vehicle(mercedes_benz_sl65_amg_r230_vehicle())
-    set_transmission(daimler_benz_5g_tronic_transmission())
+    set_engine(mercedes_amg_m120_990_engine())
+    set_vehicle(pagani_zonda_f_vehicle())
+    set_transmission(pagani_zonda_f_transmission())
 }
 
 main()
