@@ -446,14 +446,14 @@ public node dodge_charger_rt_lx_vehicle {
             cross_sectional_area: 2.32 * (units.m) * (units.m),
             diff_ratio: 2.82,
             tire_radius: 363 * units.mm, // 225/60R18H
-            rolling_resistance: 450 * units.N
+            rolling_resistance: 4101 * units.lb * 9.81 * (225.0/275.0) * 0.01
         );
 }
 
 public node mercedes_5g_tronic_w5a580_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1200 * units.lb_ft
+            max_clutch_torque: 700 * units.lb_ft
         )
         .add_gear(3.595)
         .add_gear(2.186)

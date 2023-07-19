@@ -415,14 +415,14 @@ public node dodge_challenger_sxt_vehicle {
             cross_sectional_area: 2.37 * (units.m) * (units.m),
             diff_ratio: 3.06,
             tire_radius: 358 * units.mm, // 235/55R18
-            rolling_resistance: 550 * units.N
+            rolling_resistance: 3825 * units.lb * 9.81 * (235.0/275.0) * 0.01
         );
 }
 
 public node mercedes_5g_tronic_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1200 * units.lb_ft
+            max_clutch_torque: 700 * units.lb_ft
         )
         .add_gear(3.588)
         .add_gear(2.186)
