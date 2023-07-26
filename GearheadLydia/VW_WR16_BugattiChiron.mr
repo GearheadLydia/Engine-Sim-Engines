@@ -660,7 +660,7 @@ public node bugatti_chiron_vehicle {
 public node bugatti_chiron_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 2000 * units.lb_ft
+            max_clutch_torque: 1600 * units.lb_ft
         )
         .add_gear(2.25)
         .add_gear(1.61)
