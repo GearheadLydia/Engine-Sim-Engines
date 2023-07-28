@@ -435,12 +435,12 @@ public node mitsubishi_6g72_d53a {
 public node mitsubishi_eclipse_d53a_vehicle {
     alias output __out:
         vehicle(
-            mass: 3053 * units.lb,
+            mass: 1385 * units.kg,
             drag_coefficient: 0.34,
             cross_sectional_area: 1.9 * (units.m * units.m),
             diff_ratio: 3.74,
             tire_radius: 324 * units.mm, // 215/50R17
-            rolling_resistance: 1725 * units.kg * 9.81 * (215.0/275.0) * 0.01
+            rolling_resistance: 1385 * units.kg * 9.81 * (215.0/275.0) * 0.01
         );
 }
 
