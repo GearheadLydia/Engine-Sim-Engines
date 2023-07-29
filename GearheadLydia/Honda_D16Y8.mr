@@ -10,13 +10,13 @@ public node honda_d16y8_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7200 * units.rpm;
-	input limiter_duration: 0.1;
+    input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
             .connect_wire(wires.wire3, (1.0/4.0) * cycle)
-			.connect_wire(wires.wire4, (2.0/4.0) * cycle)
-			.connect_wire(wires.wire2, (3.0/4.0) * cycle);
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (3.0/4.0) * cycle);
 }
 
 private node wires {
@@ -72,7 +72,7 @@ public node honda_d16y8_lobe_profile_exh {
 public node honda_d16y8_camshaft_builder {
     input in_lobe_profile_lo: honda_d16y8_lobe_profile_int_lo();
     input in_lobe_profile_hi: honda_d16y8_lobe_profile_int_hi();
-	input ex_lobe_profile: honda_d16y8_lobe_profile_exh();
+    input ex_lobe_profile: honda_d16y8_lobe_profile_exh();
     input lobe_separation: 110.0 * units.deg;
     input intake_lobe_center_lo: lobe_separation;
     input intake_lobe_center_hi: lobe_separation;
@@ -102,21 +102,21 @@ public node honda_d16y8_camshaft_builder {
 
     _intake_cam_0_lo
         .add_lobe(rot360 - intake_lobe_center_lo - 0 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_lo - 3 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_lo - 1 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_lo - 2 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_lo - 3 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_lo - 1 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_lo - 2 * rot180)
 
     _intake_cam_0_hi
         .add_lobe(rot360 - intake_lobe_center_hi - 0 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_hi - 3 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_hi - 1 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_hi - 2 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_hi - 3 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_hi - 1 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_hi - 2 * rot180)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 + exhaust_lobe_center - 0 * rot180)
         .add_lobe(rot360 + exhaust_lobe_center - 3 * rot180)
-		.add_lobe(rot360 + exhaust_lobe_center - 1 * rot180)
-		.add_lobe(rot360 + exhaust_lobe_center - 2 * rot180)
+        .add_lobe(rot360 + exhaust_lobe_center - 1 * rot180)
+        .add_lobe(rot360 + exhaust_lobe_center - 2 * rot180)
 }
 
 private node add_flow_sample {
@@ -131,12 +131,12 @@ private node add_flow_sample {
 public node honda_d16y8_head {
     input cam_in_lo;
     input cam_in_hi;
-	input cam_ex;
+    input cam_ex;
     input chamber_volume: 32.80 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 0.85;
-	input flow_attenuation_ex: 0.85;
+    
+    input flow_attenuation_in: 0.85;
+    input flow_attenuation_ex: 0.85;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -176,7 +176,7 @@ public node honda_d16y8_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     generic_cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(0.8 * units.inch) * 2 * units.inch,
@@ -186,19 +186,19 @@ public node honda_d16y8_head {
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
-		valvetrain: vtec_valvetrain(
+        valvetrain: vtec_valvetrain(
             vtec_intake_camshaft: cam_in_hi,
             vtec_exhaust_camshaft: cam_ex,
             intake_camshaft: cam_in_lo,
             exhaust_camshaft: cam_ex,
             min_rpm: 5600 * units.rpm
-		),
+        ),
         flip_display: flip_display
     )
 }
 
 // http://solblu.teamsolmokan.com/specs.htm
-public node D16Y8 {
+public node honda_d16y8_engine {
     alias output __out: engine;
 
     engine engine(
@@ -207,22 +207,22 @@ public node D16Y8 {
         starter_speed: -1200 * units.rpm,
         redline: 6800 * units.rpm,
         throttle_gamma: 1.0,
-		hf_gain: 0.007,
-		jitter: 0.5
+        hf_gain: 0.007,
+        jitter: 0.5
     )
-	
-	label lean_angle(5 * units.deg)
+    
+    label lean_angle(5 * units.deg)
 
     label bore(75.0 * units.mm)
     label stroke(90.0 * units.mm)
     label rod_length(137.0 * units.mm)
     label rod_mass(600 * units.g)
-	label piston_mass((355+109) * units.g)
+    label piston_mass((355+109) * units.g)
     label compression_height(29.30 * units.mm)
-	label deck_height((212.0 + 1.3) * units.mm)
-	label piston_dome(-6.20 * units.cc)
-    label crank_mass(3.0 * units.kg)
-    label flywheel_mass(7.5 * units.kg)
+    label deck_height((212.0 + 1.3) * units.mm)
+    label piston_dome(-6.20 * units.cc)
+    label crank_mass(50 * units.lb)
+    label flywheel_mass(10 * units.lb)
     label flywheel_radius(6.0 * units.inch)
 
     label crank_moment(
@@ -241,7 +241,7 @@ public node D16Y8 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -252,7 +252,7 @@ public node D16Y8 {
     rod_journal rj1(angle: 180 * units.deg)
     rod_journal rj2(angle: 180 * units.deg)
     rod_journal rj3(angle:  0  * units.deg)
-	
+    
     c0
         .add_rod_journal(rj0)
         .add_rod_journal(rj1)
@@ -299,16 +299,12 @@ public node D16Y8 {
         primary_tube_length: 12.0 * units.inch,
         primary_flow_rate: k_carb(180.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area((2.5 * units.inch) / 2),
-		length: 2500 * units.mm,
-		volume: 2500 * units.mm * circle_area((2.5 * units.inch) / 2)
+        collector_cross_section_area: circle_area((2.5 * units.inch) / 2),
+        length: 2500 * units.mm,
+        volume: 2500 * units.mm * circle_area((2.5 * units.inch) / 2)
     )
-	
-    exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.02,
-		impulse_response: ir_lib.default_0
-	)
+    
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -319,38 +315,38 @@ public node D16Y8 {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 2.5 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 2.5 * units.inch,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.0 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 1.0 * units.inch,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 0 * units.inch,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.5 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 1.5 * units.inch,
+            sound_attenuation: 1.0
         )
 
     engine
@@ -363,9 +359,9 @@ public node D16Y8 {
     b0.set_cylinder_head (
         honda_d16y8_head(
             cam_in_lo: camshaft.intake_cam_0_lo,
-			cam_in_hi: camshaft.intake_cam_0_hi,
+            cam_in_hi: camshaft.intake_cam_0_hi,
             cam_ex: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
 
@@ -396,7 +392,7 @@ public node honda_civic_ej8_vehicle {
             cross_sectional_area: 1.94 * (units.m * units.m),
             diff_ratio: -3.153,
             tire_radius: 298.5 * units.mm, // 185/65R14
-            rolling_resistance: 380 * units.N
+            rolling_resistance: 1140 * units.kg * 9.81 * (185.0/275.0) * 0.01
         );
 }
 
@@ -413,7 +409,7 @@ public node honda_civic_ej8_transmission {
 }
 
 public node main {
-	set_engine(D16Y8())
+    set_engine(honda_d16y8_engine())
     set_vehicle(honda_civic_ej8_vehicle())
     set_transmission(honda_civic_ej8_transmission())
 }
