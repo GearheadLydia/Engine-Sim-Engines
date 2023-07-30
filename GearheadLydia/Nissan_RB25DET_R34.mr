@@ -258,7 +258,7 @@ public node nissan_rb25det_neo_engine {
         plenum_cross_section_area: circle_area(1.2 * units.inch),
         intake_flow_rate: k_carb(450),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9978,
+        idle_throttle_plate_position: 0.9972,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(200.0),
         runner_length: 9.0 * units.inch,
