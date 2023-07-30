@@ -270,7 +270,7 @@ public node nissan_rb20det_engine {
         outlet_flow_rate: k_carb(300.0),
         primary_tube_length: 3.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
-        velocity_decay: 1.2, //0.5
+        velocity_decay: 2.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
         length: 2500 * units.mm,
         volume: 2500 * units.mm * circle_area(exhaust_radius)
