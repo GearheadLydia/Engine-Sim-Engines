@@ -9,14 +9,14 @@ label cycle(2 * 360 * units.deg)
 public node nissan_ca18_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7700 * units.rpm;
-	input limiter_duration: 0.09;
+    input rev_limit: 7200 * units.rpm;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
             .connect_wire(wires.wire3, (1.0/4.0) * cycle)
-			.connect_wire(wires.wire4, (2.0/4.0) * cycle)
-			.connect_wire(wires.wire2, (3.0/4.0) * cycle);
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (3.0/4.0) * cycle);
 }
 
 private node wires {
@@ -59,12 +59,11 @@ public node nissan_ca18_lobe_profile_exh {
 
 public node nissan_ca18_camshaft_builder {
     input lobe_profile: nissan_ca18_lobe_profile_int();
-	input ex_lobe_profile: nissan_ca18_lobe_profile_exh();
+    input ex_lobe_profile: nissan_ca18_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 117.5 * units.deg;
     input intake_lobe_center: 120.0 * units.deg;
-    input exhaust_lobe_center: 115.0 * units.deg; // Turbo: 120
+    input exhaust_lobe_center: 115.0 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 16.0 * units.mm;
 
@@ -88,15 +87,15 @@ public node nissan_ca18_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 3 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 1 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 2 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot180)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot180)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
 }
 
 private node add_flow_sample {
@@ -113,9 +112,9 @@ public node nissan_ca18_head {
     input exhaust_camshaft;
     input chamber_volume: 53.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 0.95;
+    input flow_attenuation_ex: 0.95;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -134,8 +133,6 @@ public node nissan_ca18_head {
         .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
     function exhaust_flow(1.0 * units.mm)
     exhaust_flow
@@ -152,16 +149,14 @@ public node nissan_ca18_head {
         .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.18 * units.inch) * 3 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.18 * units.inch),
-        exhaust_runner_volume: circle_area(0.85 * units.inch) * 8 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.85 * units.inch),
+        intake_runner_volume: circle_area(1.1 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.62 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.62 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -171,28 +166,30 @@ public node nissan_ca18_head {
     )
 }
 
-public node ca18de {
+// https://forums.nicoclub.com/compression-height-stock-pistons-t172060.html
+// http://datsun1200.com/modules/newbb/viewtopic.php?viewmode=compact&order=DESC&topic_id=42045&forum=1
+public node nissan_ca18de_engine {
     alias output __out: engine;
 
     engine engine(
         name: "Nissan CA18DE",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 1200 * units.rpm,
-        redline: 7500 * units.rpm,
-        throttle_gamma: 2.0
+        starter_speed: 1000 * units.rpm,
+        redline: 7000 * units.rpm,
+        throttle_gamma: 1.0
     )
-	
-	label lean_angle(-8.42 * units.deg)
+    
+    label lean_angle(-7.5 * units.deg)
 
     label bore(83.0 * units.mm)
-	label bore_spacing(91.5 * units.mm)
+    label bore_spacing(91.5 * units.mm)
     label stroke(83.6 * units.mm)
-    label rod_length(132.87 * units.mm)
-    label rod_mass(350 * units.g)
-	label piston_mass(347 * units.g)
-    label compression_height(32.00 * units.mm)
-	label deck_height((210.0 + 0.5) * units.mm)
-	label piston_dome(-0.2 * units.cc) // 0.2 for CA18DET
+    label rod_length(132.87 * units.mm) // aftermarket
+    label rod_mass(450 * units.g)
+    label piston_mass(400 * units.g)
+    label compression_height(29.76 * units.mm) // aftermarket
+    label deck_height((204.8 + 0.5) * units.mm)
+    label piston_dome(4.5 * units.cc) // for 9.5:1 CR
     label crank_mass(4.0 * units.kg)
     label flywheel_mass(5.0 * units.kg)
     label flywheel_radius(5.0 * units.inch)
@@ -213,7 +210,7 @@ public node ca18de {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -224,7 +221,7 @@ public node ca18de {
     rod_journal rj1(angle: 180 * units.deg)
     rod_journal rj2(angle: 180 * units.deg)
     rod_journal rj3(angle:  0  * units.deg)
-	
+    
     c0
         .add_rod_journal(rj0)
         .add_rod_journal(rj1)
@@ -257,32 +254,28 @@ public node ca18de {
     intake intake(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(500.0),
+        intake_flow_rate: k_carb(210.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9965,
+        idle_throttle_plate_position: 0.9956,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(450.0),
-        runner_length: 3.0 * units.inch,
+        runner_flow_rate: k_carb(250.0),
+        runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((2.5 * units.inch)/2)
+    
+    label exhaust_radius((2.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(400.0),
+        outlet_flow_rate: k_carb(210.0),
         primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 3000 * units.mm,
-		volume: 3000 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2500 * units.mm,
+        volume: 2500 * units.mm * circle_area(exhaust_radius)
     )
-	
-    exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.05,
-		impulse_response: ir_lib.default_0
-	)
+    
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -293,38 +286,38 @@ public node ca18de {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 4.0 * units.inch,
-			sound_attenuation: 0.95
+            primary_length: 4.0 * units.inch,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.5 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 0.5 * units.inch,
+            sound_attenuation: 0.9
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.0 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 0.0 * units.inch,
+            sound_attenuation: 0.87 * 0.5
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 3.5 * units.inch,
-			sound_attenuation: 0.95
+            primary_length: 3.5 * units.inch,
+            sound_attenuation: 0.97
         )
 
     engine
@@ -333,36 +326,34 @@ public node ca18de {
     engine.add_crankshaft(c0)
 
     nissan_ca18_camshaft_builder camshaft(
-	    lobe_profile: nissan_ca18_lobe_profile_int(),
-		ex_lobe_profile: nissan_ca18_lobe_profile_exh()
-	)
+        lobe_profile: nissan_ca18_lobe_profile_int(),
+        ex_lobe_profile: nissan_ca18_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         nissan_ca18_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: false
+            flip_display: false
         )
     )
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 50 * units.deg)
-        .add_sample(3000 * units.rpm, 60 * units.deg)
-        .add_sample(4000 * units.rpm, 60 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 60 * units.deg)
-        .add_sample(7000 * units.rpm, 60 * units.deg)
-        .add_sample(8000 * units.rpm, 60 * units.deg)
-        .add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(1000 * units.rpm, 55 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 75 * units.deg)
+        .add_sample(4000 * units.rpm, 75 * units.deg)
+        .add_sample(5000 * units.rpm, 75 * units.deg)
+        .add_sample(6000 * units.rpm, 75 * units.deg)
+        .add_sample(7000 * units.rpm, 75 * units.deg)
+        .add_sample(8000 * units.rpm, 75 * units.deg)
 
     engine.add_ignition_module(
         nissan_ca18_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7700 * units.rpm
+            timing_curve: timing_curve
         ))
 }
 
@@ -375,7 +366,7 @@ public node nissan_silvia_q_s13_vehicle {
             cross_sectional_area: 1.81 * (units.m * units.m),
             diff_ratio: 4.375,
             tire_radius: 307.5 * units.mm, // 185/70R14
-            rolling_resistance: 460 * units.N
+            rolling_resistance: 1090 * units.kg * 9.81 * (185.0/275.0) * 0.01
         );
 }
 
@@ -393,7 +384,7 @@ public node nissan_fs5w71c_transmission {
 }
 
 public node main {
-	set_engine(ca18de())
+    set_engine(nissan_ca18de_engine())
     set_vehicle(nissan_silvia_q_s13_vehicle())
     set_transmission(nissan_fs5w71c_transmission())
 }

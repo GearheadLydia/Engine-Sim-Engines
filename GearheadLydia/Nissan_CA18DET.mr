@@ -6,7 +6,7 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-public node nissan_sr20_distributor {
+public node nissan_ca18_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7200 * units.rpm;
@@ -37,33 +37,33 @@ private node add_sym_sample {
 }
 
 // https://www.tomeiusa.com/_2003web-catalogue/e090_camshaft-specs.html
-public node nissan_sr20_lobe_profile_int {
-    alias output __out:
-        harmonic_cam_lobe(
-            duration_at_50_thou: 248 * units.deg,
-            gamma: 1.00,
-            lift: 10.00 * units.mm,
-            steps: 100
-        );
-}
-
-public node nissan_sr20_lobe_profile_exh {
+public node nissan_ca18_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 240 * units.deg,
-            gamma: 1.0,
-            lift: 9.2 * units.mm,
+            gamma: 1.00,
+            lift: 7.8 * units.mm,
             steps: 100
         );
 }
 
-public node nissan_sr20_camshaft_builder {
-    input lobe_profile: nissan_sr20_lobe_profile_int();
-    input ex_lobe_profile: nissan_sr20_lobe_profile_exh();
+public node nissan_ca18_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 248 * units.deg,
+            gamma: 1.0,
+            lift: 8.5 * units.mm,
+            steps: 100
+        );
+}
+
+public node nissan_ca18_camshaft_builder {
+    input lobe_profile: nissan_ca18_lobe_profile_int();
+    input ex_lobe_profile: nissan_ca18_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input intake_lobe_center: 130.0 * units.deg;
-    input exhaust_lobe_center: 113.0 * units.deg;
+    input intake_lobe_center: 120.0 * units.deg;
+    input exhaust_lobe_center: 120.0 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 16.0 * units.mm;
 
@@ -107,14 +107,14 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node nissan_sr20_head {
+public node nissan_ca18_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 48.5 * units.cc;
+    input chamber_volume: 53.0 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation_in: 1.0;
-    input flow_attenuation_ex: 1.0;
+    input flow_attenuation_in: 0.95;
+    input flow_attenuation_ex: 0.95;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -153,10 +153,10 @@ public node nissan_sr20_head {
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(0.9 * units.inch) * 3 * units.inch,
-        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-        exhaust_runner_volume: circle_area(0.63 * units.inch) * 3 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.63 * units.inch),
+        intake_runner_volume: circle_area(1.1 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.64 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.64 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -166,29 +166,34 @@ public node nissan_sr20_head {
     )
 }
 
-public node nissan_sr20de_engine {
+// https://forums.nicoclub.com/compression-height-stock-pistons-t172060.html
+// http://datsun1200.com/modules/newbb/viewtopic.php?viewmode=compact&order=DESC&topic_id=42045&forum=1
+public node nissan_ca18det_engine {
     alias output __out: engine;
 
     engine engine(
-        name: "Nissan SR20DE",
+        name: "Nissan CA18DET",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1000 * units.rpm,
         redline: 7000 * units.rpm,
-        throttle_gamma: 1.0
+        fuel: fuel(max_burning_efficiency: 1.10), // free power to supplant unavailable turbocharger
+        throttle_gamma: 1.0,
+        hf_gain: 0.05,
+        jitter: 0.6
     )
     
-    label lean_angle(0 * units.deg)
+    label lean_angle(-7.5 * units.deg)
 
-    label bore(86.0 * units.mm)
-    label bore_spacing(96.5 * units.mm)
-    label stroke(86.0 * units.mm)
-    label rod_length(136.27 * units.mm)
+    label bore(83.0 * units.mm)
+    label bore_spacing(91.5 * units.mm)
+    label stroke(83.6 * units.mm)
+    label rod_length(132.87 * units.mm) // aftermarket
     label rod_mass(450 * units.g)
-    label piston_mass(420 * units.g)
-    label compression_height(32.00 * units.mm)
-    label deck_height((211.2 + 1.2) * units.mm)
-    label piston_dome(0.0 * units.cc) // -11.5 for SR20DET
-    label crank_mass(50 * units.lb)
+    label piston_mass(400 * units.g)
+    label compression_height(29.76 * units.mm) // aftermarket
+    label deck_height((204.8 + 0.5) * units.mm)
+    label piston_dome(-2.6 * units.cc) // for 8.5:1 CR
+    label crank_mass(4.0 * units.kg)
     label flywheel_mass(5.0 * units.kg)
     label flywheel_radius(5.0 * units.inch)
 
@@ -252,28 +257,28 @@ public node nissan_sr20de_engine {
     intake intake(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(220.0),
+        intake_flow_rate: k_carb(210.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9955,
+        idle_throttle_plate_position: 0.9956,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(155.0),
-        runner_length: 5.0 * units.inch,
+        runner_flow_rate: k_carb(250.0),
+        runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
     
     label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(220.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(180.0),
-        velocity_decay: 1.0, //0.5
+        outlet_flow_rate: k_carb(300.0),
+        primary_tube_length: 3.0 * units.inch,
+        primary_flow_rate: k_carb(200.0),
+        velocity_decay: 1.5, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
         length: 2500 * units.mm,
         volume: 2500 * units.mm * circle_area(exhaust_radius)
     )
     
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -284,8 +289,8 @@ public node nissan_sr20de_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: 3.8 * units.inch,
-            sound_attenuation: 1.00
+            primary_length: bore_spacing * 1.6,
+            sound_attenuation: 1.0 * 0.5
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -294,8 +299,8 @@ public node nissan_sr20de_engine {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: 2.5 * units.inch,
-            sound_attenuation: 0.95
+            primary_length: bore_spacing * 0.6,
+            sound_attenuation: 0.85
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -304,8 +309,8 @@ public node nissan_sr20de_engine {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: 1.2 * units.inch,
-            sound_attenuation: 0.90
+            primary_length: bore_spacing * 0,
+            sound_attenuation: 0.75
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -314,8 +319,8 @@ public node nissan_sr20de_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: 0.0 * units.inch,
-            sound_attenuation: 0.85
+            primary_length: bore_spacing * 1.0,
+            sound_attenuation: 0.9
         )
 
     engine
@@ -323,13 +328,13 @@ public node nissan_sr20de_engine {
 
     engine.add_crankshaft(c0)
 
-    nissan_sr20_camshaft_builder camshaft(
-        lobe_profile: nissan_sr20_lobe_profile_int(),
-        ex_lobe_profile: nissan_sr20_lobe_profile_exh()
+    nissan_ca18_camshaft_builder camshaft(
+        lobe_profile: nissan_ca18_lobe_profile_int(),
+        ex_lobe_profile: nissan_ca18_lobe_profile_exh()
     )
 
     b0.set_cylinder_head (
-        nissan_sr20_head(
+        nissan_ca18_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
             flip_display: false
@@ -338,51 +343,52 @@ public node nissan_sr20de_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 50 * units.deg)
-        .add_sample(1000 * units.rpm, 70 * units.deg)
-        .add_sample(2000 * units.rpm, 77 * units.deg)
-        .add_sample(3000 * units.rpm, 77 * units.deg)
-        .add_sample(4000 * units.rpm, 77 * units.deg)
-        .add_sample(5000 * units.rpm, 77 * units.deg)
-        .add_sample(6000 * units.rpm, 77 * units.deg)
-        .add_sample(7000 * units.rpm, 77 * units.deg)
-        .add_sample(8000 * units.rpm, 77 * units.deg)
+        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(1000 * units.rpm, 55 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 75 * units.deg)
+        .add_sample(4000 * units.rpm, 72 * units.deg)
+        .add_sample(5000 * units.rpm, 65 * units.deg)
+        .add_sample(6000 * units.rpm, 55 * units.deg)
+        .add_sample(7000 * units.rpm, 45 * units.deg)
+        .add_sample(8000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
-        nissan_sr20_distributor(
+        nissan_ca18_distributor(
             wires: wires,
             timing_curve: timing_curve
         ))
 }
 
-// 2000 Nissan Silvia Spec-S (S15)
-public node nissan_silvia_spec_s_s15_vehicle {
+// 1989 Nissan Silvia K's (S13)
+public node nissan_silvia_k_s13_vehicle {
     alias output __out:
         vehicle(
-            mass: 1200 * units.kg,
-            drag_coefficient: 0.3,
+            mass: 1120 * units.kg,
+            drag_coefficient: 0.33,
             cross_sectional_area: 1.81 * (units.m * units.m),
-            diff_ratio: 3.692,
-            tire_radius: 316 * units.mm, // 205/55R16
-            rolling_resistance: 1200 * units.kg * 9.81 * (205.0/275.0) * 0.01
+            diff_ratio: 4.375,
+            tire_radius: 307.5 * units.mm, // 195/60R15
+            rolling_resistance: 1120 * units.kg * 9.81 * (195.0/275.0) * 0.01
         );
 }
 
+// not sure on the part number 
 public node nissan_fs5w71c_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 350 * units.lb_ft
         )
-        .add_gear(3.321)
-        .add_gear(1.902)
-        .add_gear(1.308)
+        .add_gear(3.592)
+        .add_gear(2.057)
+        .add_gear(1.361)
         .add_gear(1.000)
-        .add_gear(0.759);
+        .add_gear(0.821);
 }
 
 public node main {
-    set_engine(nissan_sr20de_engine())
-    set_vehicle(nissan_silvia_spec_s_s15_vehicle())
+    set_engine(nissan_ca18det_engine())
+    set_vehicle(nissan_silvia_k_s13_vehicle())
     set_transmission(nissan_fs5w71c_transmission())
 }
 
