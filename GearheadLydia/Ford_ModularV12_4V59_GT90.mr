@@ -13,7 +13,7 @@ label rot30(30 * units.deg)
 public node ford_modular_v12_gt90_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7050 * units.rpm;
+    input rev_limit: 6800 * units.rpm;
 	input limiter_duration: 0.05;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -211,7 +211,7 @@ public node ford_modular_v12_engine {
         name: "Ford Modular V12 GT90",
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1200 * units.rpm,
-        redline: 7000 * units.rpm,
+        redline: 6500 * units.rpm,
         fuel: fuel(max_burning_efficiency: 1.15),
         throttle_gamma: 1.0,
 		simulation_frequency: 6000,
