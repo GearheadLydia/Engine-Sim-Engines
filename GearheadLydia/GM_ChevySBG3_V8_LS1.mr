@@ -218,7 +218,7 @@ public node chevrolet_ls1_head {
 }
 
 
-public node chevrolet_ls1 {
+public node chevrolet_ls1_engine {
     alias output __out: engine;
 
     wires wires()
@@ -502,7 +502,7 @@ public node chevrolet_corvette_coupe_c5_vehicle {
         );
 }
 
-// 1999 Pontiac GTO 5.7 (V2)
+// 2004 Pontiac GTO 5.7 (V2)
 public node pontiac_gto_57_v2_vehicle {
     alias output __out:
         vehicle(
@@ -515,7 +515,7 @@ public node pontiac_gto_57_v2_vehicle {
         );
 }
 
-// 2002 Chevrolet Camaro SS
+// 1998-2002 Chevrolet Camaro SS
 public node chevrolet_camaro_fbody_vehicle {
     alias output __out:
         vehicle(
@@ -555,7 +555,7 @@ public node tremec_t56_camaro_transmission {
 }
 
 public node main {
-    set_engine(chevrolet_ls1())
+    set_engine(chevrolet_ls1_engine())
     set_vehicle(chevrolet_camaro_fbody_vehicle())
     set_transmission(tremec_t56_camaro_transmission())
 }
