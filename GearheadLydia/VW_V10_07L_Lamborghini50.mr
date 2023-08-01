@@ -9,22 +9,22 @@ label cycle(2 * 360 * units.deg)
 // firing order:  1-6-5-10-2-7-3-8-4-9
 // in standard: 2-1-10-9-4-3-6-5-8-7
 
-public node lamborghini_gallardo_v10_distributor {
+public node lamborghini_lamborghini_gallardo_v10_07l_engine_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 9000 * units.rpm;
-	input limiter_duration: 0.05;
+    input limiter_duration: 0.05;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, (0.0/10.0) * cycle)
             .connect_wire(wires.wire06, (1.0/10.0) * cycle)
-			.connect_wire(wires.wire05, (2.0/10.0) * cycle)
+            .connect_wire(wires.wire05, (2.0/10.0) * cycle)
             .connect_wire(wires.wire10, (3.0/10.0) * cycle)
             .connect_wire(wires.wire02, (4.0/10.0) * cycle)
-			.connect_wire(wires.wire07, (5.0/10.0) * cycle)
+            .connect_wire(wires.wire07, (5.0/10.0) * cycle)
             .connect_wire(wires.wire03, (6.0/10.0) * cycle)
             .connect_wire(wires.wire08, (7.0/10.0) * cycle)
-			.connect_wire(wires.wire04, (8.0/10.0) * cycle)
+            .connect_wire(wires.wire04, (8.0/10.0) * cycle)
             .connect_wire(wires.wire09, (9.0/10.0) * cycle);
 }
 
@@ -41,7 +41,7 @@ private node wires {
     output wire10: ignition_wire();
 }
 
-public node lamborghini_gallardo_v10_lobe_profile_int {
+public node lamborghini_lamborghini_gallardo_v10_07l_engine_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 250 * units.deg,
@@ -51,7 +51,7 @@ public node lamborghini_gallardo_v10_lobe_profile_int {
         );
 }
 
-public node lamborghini_gallardo_v10_lobe_profile_exh {
+public node lamborghini_lamborghini_gallardo_v10_07l_engine_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 250 * units.deg,
@@ -61,9 +61,9 @@ public node lamborghini_gallardo_v10_lobe_profile_exh {
         );
 }
 
-public node lamborghini_gallardo_v10_camshaft_builder {
-    input in_lobe_profile: lamborghini_gallardo_v10_lobe_profile_int();
-	input ex_lobe_profile: lamborghini_gallardo_v10_lobe_profile_exh();
+public node lamborghini_lamborghini_gallardo_v10_07l_engine_camshaft_builder {
+    input in_lobe_profile: lamborghini_lamborghini_gallardo_v10_07l_engine_lobe_profile_int();
+    input ex_lobe_profile: lamborghini_lamborghini_gallardo_v10_07l_engine_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 110.0 * units.deg;
@@ -89,15 +89,15 @@ public node lamborghini_gallardo_v10_camshaft_builder {
     camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
 
 
-	label rot18(18 * units.deg)
-	label rot30(30 * units.deg)
-	label rot54(54 * units.deg)
-	label rot60(60 * units.deg)
-	label rot72(72 * units.deg)
+    label rot18(18 * units.deg)
+    label rot30(30 * units.deg)
+    label rot54(54 * units.deg)
+    label rot60(60 * units.deg)
+    label rot72(72 * units.deg)
     label rot90(90 * units.deg)
-	label rot120(120 * units.deg)
+    label rot120(120 * units.deg)
     label rot360(360 * units.deg)
-	
+    
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot72) //  #1
         .add_lobe(rot360 + intake_lobe_center + 4 * rot72) //  #2
@@ -136,14 +136,14 @@ private node add_flow_sample {
     this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
-public node lamborghini_gallardo_v10_head {
+public node lamborghini_lamborghini_gallardo_v10_07l_engine_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 46.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 1.0;
+    input flow_attenuation_ex: 1.0;
     input lift_scale: 50.0;
     alias output __out: head;
 
@@ -162,8 +162,6 @@ public node lamborghini_gallardo_v10_head {
         .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
     function exhaust_flow(1.0 * units.mm)
     exhaust_flow
@@ -180,15 +178,13 @@ public node lamborghini_gallardo_v10_head {
         .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.4 * units.inch) * 9 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.4 * units.inch),
-        exhaust_runner_volume: circle_area(0.85 * units.inch) * 12 * units.inch,
+        intake_runner_volume: circle_area(1.3 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.3 * units.inch),
+        exhaust_runner_volume: circle_area(0.85 * units.inch) * 3 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.85 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -200,7 +196,7 @@ public node lamborghini_gallardo_v10_head {
 }
 
 
-public node gallardo_v10 {
+public node lamborghini_gallardo_v10_07l_engine {
     alias output __out: engine;
 
     wires wires()
@@ -208,26 +204,22 @@ public node gallardo_v10 {
     label bore(82.5 * units.mm)
     label stroke(92.8 * units.mm)
     label rod_length(154.0 * units.mm)
-    label rod_mass(434 * units.g)
-	label piston_mass(290 * units.g)
+    label rod_mass(470 * units.g)
+    label piston_mass(350 * units.g)
     label compression_height(27.6 * units.mm)
-	label piston_dome(3.7 * units.cc)
-	label deck_height(228.5 * units.mm)
-    label crank_mass(75 * units.lb)
-    label flywheel_mass(20 * units.lb)
+    label piston_dome(2.3 * units.cc) // for 11.0:1 CR; Manley 10.0:1 CR pistons -3.5cc
+    label deck_height((228.0 + 1.1) * units.mm) // total deck clearance is correct for sure, deck height vs gasket is an educated guess
+    label crank_mass(80 * units.lb)
+    label flywheel_mass(18 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     engine engine(
         name: "Lamborghini V10 Even Fire",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
-        redline: 8800 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
+        starter_speed: 1200 * units.rpm,
+        redline: 8500 * units.rpm,
         throttle_gamma: 1.0,
-		simulation_frequency: 7500
+        simulation_frequency: 7500
     )
 
     label crank_moment(
@@ -244,7 +236,7 @@ public node gallardo_v10 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -257,8 +249,8 @@ public node gallardo_v10 {
     rod_journal rj3(angle: 270 * units.deg)
     rod_journal rj4(angle: 72 * units.deg)
     rod_journal rj5(angle: 54 * units.deg)
-	rod_journal rj6(angle: 216 * units.deg)
-	rod_journal rj7(angle: 198 * units.deg)
+    rod_journal rj6(angle: 216 * units.deg)
+    rod_journal rj7(angle: 198 * units.deg)
     rod_journal rj8(angle: 144 * units.deg)
     rod_journal rj9(angle: 126 * units.deg)
 
@@ -298,57 +290,53 @@ public node gallardo_v10 {
         deck_height: deck_height
     )
 
-	intake intakeL(
-		plenum_volume: 2.0 * units.L,
-		plenum_cross_section_area: 150.0 * units.cm2,
-		intake_flow_rate: k_carb(450.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.9935,
-		throttle_gamma: 2.0,
-		runner_flow_rate: k_carb(450.0),
-		runner_length: 12.0 * units.inch,
-		velocity_decay: 0.1
-	)
+    intake intakeL(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 150.0 * units.cm2,
+        intake_flow_rate: k_carb(450.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.997,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(450.0),
+        runner_length: 12.0 * units.inch,
+        velocity_decay: 0.1
+    )
 
-	intake intakeR(
-		plenum_volume: 2.0 * units.L,
-		plenum_cross_section_area: 150.0 * units.cm2,
-		intake_flow_rate: k_carb(450.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.9935,
-		throttle_gamma: 2.0,
-		runner_flow_rate: k_carb(450.0),
-		runner_length: 12.0 * units.inch,
-		velocity_decay: 0.1
-	)
+    intake intakeR(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 150.0 * units.cm2,
+        intake_flow_rate: k_carb(450.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.997,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(450.0),
+        runner_length: 12.0 * units.inch,
+        velocity_decay: 0.1
+    )
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1000.0),
         primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(450.0),
         velocity_decay: 1.0, //0.5
-        volume: 50.0 * units.L
+        volume: 2.0 * units.L,
+        length: 500 * units.mm
     )
 
-    exhaust_system exhaust(
-		es_params,
-        length: 500 * units.mm,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
-	
-	label pipe_length_1(3.0 * units.inch)
-	label pipe_length_2(2.5 * units.inch)
-	label pipe_length_3(1.0 * units.inch)
-	label pipe_length_4(0.5 * units.inch)
-	label pipe_length_5(0.0 * units.inch)
-	
-	label exhaust_stagger(10 * units.mm)
-	
-	label exh_vol_L1(0.8)
-	label exh_vol_L3(1.0)
-	label exh_vol_R1(0.64)
-	label exh_vol_R3(0.8)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    
+    label pipe_length_1(3.0 * units.inch)
+    label pipe_length_2(2.5 * units.inch)
+    label pipe_length_3(1.0 * units.inch)
+    label pipe_length_4(0.5 * units.inch)
+    label pipe_length_5(0.0 * units.inch)
+    
+    label exhaust_stagger(10 * units.mm)
+    
+    label exh_vol_L1(0.8)
+    label exh_vol_L3(1.0)
+    label exh_vol_R1(0.64)
+    label exh_vol_R3(0.8)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -359,8 +347,8 @@ public node gallardo_v10 {
             ignition_wire: wires.wire01,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: exh_vol_L1
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -369,8 +357,8 @@ public node gallardo_v10 {
             ignition_wire: wires.wire02,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: exh_vol_L1
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -379,8 +367,8 @@ public node gallardo_v10 {
             ignition_wire: wires.wire03,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: exh_vol_L3
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: exh_vol_L3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -389,8 +377,8 @@ public node gallardo_v10 {
             ignition_wire: wires.wire04,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: exh_vol_L3
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: exh_vol_L3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
@@ -399,8 +387,8 @@ public node gallardo_v10 {
             ignition_wire: wires.wire05,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5 + exhaust_stagger,
-			sound_attenuation: exh_vol_L3
+            primary_length: pipe_length_5 + exhaust_stagger,
+            sound_attenuation: exh_vol_L3
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -412,8 +400,8 @@ public node gallardo_v10 {
             ignition_wire: wires.wire06,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: exh_vol_R1
+            primary_length: pipe_length_1,
+            sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -422,8 +410,8 @@ public node gallardo_v10 {
             ignition_wire: wires.wire07,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: exh_vol_R1
+            primary_length: pipe_length_2,
+            sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -432,8 +420,8 @@ public node gallardo_v10 {
             ignition_wire: wires.wire08,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: exh_vol_R3
+            primary_length: pipe_length_3,
+            sound_attenuation: exh_vol_R3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -442,8 +430,8 @@ public node gallardo_v10 {
             ignition_wire: wires.wire09,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: exh_vol_R3
+            primary_length: pipe_length_4,
+            sound_attenuation: exh_vol_R3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
@@ -452,8 +440,8 @@ public node gallardo_v10 {
             ignition_wire: wires.wire10,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5,
-			sound_attenuation: exh_vol_R3
+            primary_length: pipe_length_5,
+            sound_attenuation: exh_vol_R3
         )
 
     engine
@@ -462,20 +450,20 @@ public node gallardo_v10 {
 
     engine.add_crankshaft(c0)
 
-    lamborghini_gallardo_v10_camshaft_builder camshaft(
-	    in_lobe_profile: lamborghini_gallardo_v10_lobe_profile_int(),
-		ex_lobe_profile: lamborghini_gallardo_v10_lobe_profile_exh()
-	)
+    lamborghini_lamborghini_gallardo_v10_07l_engine_camshaft_builder camshaft(
+        in_lobe_profile: lamborghini_lamborghini_gallardo_v10_07l_engine_lobe_profile_int(),
+        ex_lobe_profile: lamborghini_lamborghini_gallardo_v10_07l_engine_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
-        lamborghini_gallardo_v10_head(
+        lamborghini_lamborghini_gallardo_v10_07l_engine_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
             flip_display: true
         )
     )
     b1.set_cylinder_head (
-        lamborghini_gallardo_v10_head(
+        lamborghini_lamborghini_gallardo_v10_07l_engine_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: false
@@ -484,41 +472,40 @@ public node gallardo_v10 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000  * units.rpm, 15 * units.deg)
-        .add_sample(1000  * units.rpm, 21 * units.deg)
-        .add_sample(2000  * units.rpm, 26 * units.deg)
-        .add_sample(3000  * units.rpm, 33 * units.deg)
-        .add_sample(4000  * units.rpm, 40 * units.deg)
-        .add_sample(5000  * units.rpm, 45 * units.deg)
-        .add_sample(6000  * units.rpm, 48 * units.deg)
-		.add_sample(7000  * units.rpm, 50 * units.deg)
-		.add_sample(8000  * units.rpm, 50 * units.deg)
-		.add_sample(9000  * units.rpm, 50 * units.deg)
-		.add_sample(10000 * units.rpm, 50 * units.deg)
+        .add_sample(0000  * units.rpm, 33 * units.deg)
+        .add_sample(1000  * units.rpm, 43 * units.deg)
+        .add_sample(2000  * units.rpm, 45 * units.deg)
+        .add_sample(3000  * units.rpm, 47 * units.deg)
+        .add_sample(4000  * units.rpm, 49 * units.deg)
+        .add_sample(5000  * units.rpm, 51 * units.deg)
+        .add_sample(6000  * units.rpm, 53 * units.deg)
+        .add_sample(7000  * units.rpm, 54 * units.deg)
+        .add_sample(8000  * units.rpm, 55 * units.deg)
+        .add_sample(9000  * units.rpm, 55 * units.deg)
+        .add_sample(10000 * units.rpm, 55 * units.deg)
 
     engine.add_ignition_module(
-        lamborghini_gallardo_v10_distributor(
+        lamborghini_lamborghini_gallardo_v10_07l_engine_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 9000 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
 
-// 2004 Lamborghini Gallardo
-public node lamborghini_gallardo_vehicle {
+// 2004 Lamborghini Gallardo Coupe
+public node lamborghini_gallardo_coupe_50_vehicle {
     alias output __out:
         vehicle(
-            mass: 3153 * units.lb,
+            mass: 1430 * units.kg,
             drag_coefficient: 0.36,
             cross_sectional_area: 1.9 * (units.m * units.m),
             diff_ratio: 3.60,
             tire_radius: 330.2 * units.mm, // 295/35ZR20
-            rolling_resistance: 525 * units.N
+            rolling_resistance: 1430 * units.kg * 9.81 * (295.0/275.0) * 0.01
         );
 }
 
-public node lamborghini_gallardo_transmission {
+public node lamborghini_gallardo_coupe_50_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 700 * units.lb_ft
@@ -532,9 +519,9 @@ public node lamborghini_gallardo_transmission {
 }
 
 public node main {
-    set_engine(gallardo_v10())
-    set_vehicle(lamborghini_gallardo_vehicle())
-    set_transmission(lamborghini_gallardo_transmission())
+    set_engine(lamborghini_gallardo_v10_07l_engine())
+    set_vehicle(lamborghini_gallardo_coupe_50_vehicle())
+    set_transmission(lamborghini_gallardo_coupe_50_transmission())
 }
 
 main()
