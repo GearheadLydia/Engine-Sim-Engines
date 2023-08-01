@@ -363,14 +363,14 @@ public node mclaren_m630_engine {
         mclaren_m630_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-            flip_display: true
+            flip_display: false
         )
     )
     b1.set_cylinder_head (
         mclaren_m630_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
-            flip_display: false
+            flip_display: true
         )
     )
 
