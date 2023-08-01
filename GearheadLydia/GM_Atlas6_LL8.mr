@@ -384,7 +384,7 @@ public node chevrolet_trailblazer_gmt360_vehicle {
 public node gm_4l60e_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 800 * units.lb_ft
+            max_clutch_torque: 600 * units.lb_ft
         )
         .add_gear(3.059)
         .add_gear(1.625)
