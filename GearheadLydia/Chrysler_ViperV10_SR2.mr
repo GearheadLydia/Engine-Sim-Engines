@@ -189,7 +189,7 @@ public node dodge_v10_head {
     )
 }
 
-public node viper_v10 {
+public node dodge_viper_v10_sr2_engine {
     alias output __out: engine;
 
     wires wires()
@@ -199,16 +199,10 @@ public node viper_v10 {
         starter_torque: 200 * units.lb_ft,
 		starter_speed: 900 * units.rpm,
         redline: 6000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.68),
         throttle_gamma: 1.0,
 		simulation_frequency: 7500
     )
-
-
-	// source: 
+	
     label bore(4.000 * units.inch)
 	label bore_spacing(4.460 * units.inch)
     label stroke(3.880 * units.inch)
@@ -218,8 +212,8 @@ public node viper_v10 {
 	label piston_mass(435 * units.g)
 	label piston_dome(0.00 * units.cc)
 	label deck_height(9.480 * units.inch)
-    label crank_mass(75 * units.lb)
-    label flywheel_mass(50 * units.lb)
+    label crank_mass(85 * units.lb)
+    label flywheel_mass(30 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -285,7 +279,7 @@ public node viper_v10 {
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(400.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.993,
+        idle_throttle_plate_position: 0.9953,
         throttle_gamma: 2.0,
         runner_flow_rate: k_carb(400.0),
         runner_length: 6.0 * units.inch,
@@ -297,7 +291,7 @@ public node viper_v10 {
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(400.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.993,
+        idle_throttle_plate_position: 0.9953,
         throttle_gamma: 2.0,
         runner_flow_rate: k_carb(400.0),
         runner_length: 6.0 * units.inch,
@@ -469,20 +463,19 @@ public node viper_v10 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 33 * units.deg)
-        .add_sample(2000 * units.rpm, 36 * units.deg)
-        .add_sample(3000 * units.rpm, 39 * units.deg)
-        .add_sample(4000 * units.rpm, 40 * units.deg)
-        .add_sample(5000 * units.rpm, 42 * units.deg)
-        .add_sample(6000 * units.rpm, 42 * units.deg)
-		.add_sample(7000 * units.rpm, 42 * units.deg)
+        .add_sample(0000 * units.rpm, 25 * units.deg)
+        .add_sample(1000 * units.rpm, 30 * units.deg)
+        .add_sample(2000 * units.rpm, 30 * units.deg)
+        .add_sample(3000 * units.rpm, 30 * units.deg)
+        .add_sample(4000 * units.rpm, 30 * units.deg)
+        .add_sample(5000 * units.rpm, 30 * units.deg)
+        .add_sample(6000 * units.rpm, 30 * units.deg)
+		.add_sample(7000 * units.rpm, 30 * units.deg)
 
     engine.add_ignition_module(
         dodge_v10_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6150 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -514,7 +507,7 @@ public node borgwarner_t56_transmission {
 }
 
 public node main {
-    set_engine(viper_v10())
+    set_engine(dodge_viper_v10_sr2_engine())
     set_vehicle(dodge_viper_gts_sr_vehicle())
     set_transmission(borgwarner_t56_transmission())
 }
