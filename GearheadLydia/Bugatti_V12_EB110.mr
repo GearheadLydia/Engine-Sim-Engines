@@ -45,16 +45,6 @@ private node wires {
     output wire12: ignition_wire();
 }
 
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
-}
-
 public node bugatti_v12_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
@@ -83,7 +73,7 @@ public node bugatti_v12_camshaft_builder {
     input intake_lobe_center: 90.0 * units.deg;
     input exhaust_lobe_center: 100.0 * units.deg;
     input advance: 0.0 * units.deg;
-    input base_radius: 16.0 * units.mm;
+    input base_radius: 15.0 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
     output exhaust_cam_0: _exhaust_cam_0;
