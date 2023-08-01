@@ -480,7 +480,7 @@ public node lamborghini_gallardo_v10_07l_engine {
         .add_sample(5000  * units.rpm, 51 * units.deg)
         .add_sample(6000  * units.rpm, 53 * units.deg)
         .add_sample(7000  * units.rpm, 54 * units.deg)
-        .add_sample(8000  * units.rpm, 55 * units.deg)
+        .add_sample(8000  * units.rpm, 54 * units.deg)
         .add_sample(9000  * units.rpm, 55 * units.deg)
         .add_sample(10000 * units.rpm, 55 * units.deg)
 
