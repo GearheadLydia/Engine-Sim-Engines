@@ -30,8 +30,6 @@ private node wires {
     output wire4: ignition_wire();
     output wire5: ignition_wire();
     output wire6: ignition_wire();
-    output wire7: ignition_wire();
-    output wire8: ignition_wire();
 }
 
 // Wikipedia quoted specs:
