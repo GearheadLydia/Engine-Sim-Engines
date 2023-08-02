@@ -1,8 +1,5 @@
 import "engine_sim.mr"
 
-// Honda C32B replica by GearheadLydia
-// 2022-10-11 | revision 2 | original 2022-09-10
-
 units units()
 constants constants()
 impulse_response_library ir_lib()
@@ -13,15 +10,15 @@ public node honda_c32b_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 8250 * units.rpm;
-	input limiter_duration: 0.12;
+    input limiter_duration: 0.12;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/6.0) * cycle)
             .connect_wire(wires.wire4, (1.0/6.0) * cycle)
-			.connect_wire(wires.wire2, (2.0/6.0) * cycle)
-			.connect_wire(wires.wire5, (3.0/6.0) * cycle)
-			.connect_wire(wires.wire3, (4.0/6.0) * cycle)
-			.connect_wire(wires.wire6, (5.0/6.0) * cycle);
+            .connect_wire(wires.wire2, (2.0/6.0) * cycle)
+            .connect_wire(wires.wire5, (3.0/6.0) * cycle)
+            .connect_wire(wires.wire3, (4.0/6.0) * cycle)
+            .connect_wire(wires.wire6, (5.0/6.0) * cycle);
 }
 
 private node wires {
@@ -85,7 +82,7 @@ public node honda_c32b_lobe_profile_exh_hi {
 
 public node honda_c32b_camshaft_builder {
     input in_lobe_profile_lo: honda_c32b_lobe_profile_int_lo();
-	input ex_lobe_profile_lo: honda_c32b_lobe_profile_exh_lo();
+    input ex_lobe_profile_lo: honda_c32b_lobe_profile_exh_lo();
     input in_lobe_profile_hi: honda_c32b_lobe_profile_int_hi();
     input ex_lobe_profile_hi: honda_c32b_lobe_profile_exh_hi();
     input lobe_separation: 110.0 * units.deg;
@@ -95,8 +92,8 @@ public node honda_c32b_camshaft_builder {
     input exhaust_lobe_center_hi: 104.0 * units.deg;
     input advance_in_lo: 0.0 * units.deg;
     input advance_ex_lo: 0.0 * units.deg;
-	input advance_in_hi: 0.0 * units.deg;
-	input advance_ex_hi: 0.0 * units.deg;
+    input advance_in_hi: 0.0 * units.deg;
+    input advance_ex_hi: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
     output intake_cam_0_lo: _intake_cam_0_lo;
@@ -128,7 +125,7 @@ public node honda_c32b_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -136,43 +133,43 @@ public node honda_c32b_camshaft_builder {
 
     _intake_cam_0_lo
         .add_lobe(rot360 + intake_lobe_center_lo + (0 * rot120))
-		.add_lobe(rot360 + intake_lobe_center_lo + (2 * rot120))
-		.add_lobe(rot360 + intake_lobe_center_lo + (4 * rot120))
+        .add_lobe(rot360 + intake_lobe_center_lo + (2 * rot120))
+        .add_lobe(rot360 + intake_lobe_center_lo + (4 * rot120))
 
-	_exhaust_cam_0_lo
+    _exhaust_cam_0_lo
         .add_lobe(rot360 - exhaust_lobe_center_lo + (0 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center_lo + (2 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center_lo + (4 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center_lo + (2 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center_lo + (4 * rot120))
 
     _intake_cam_1_lo
         .add_lobe(rot360 + intake_lobe_center_lo + (1 * rot120))
-		.add_lobe(rot360 + intake_lobe_center_lo + (3 * rot120))
-		.add_lobe(rot360 + intake_lobe_center_lo + (5 * rot120))
+        .add_lobe(rot360 + intake_lobe_center_lo + (3 * rot120))
+        .add_lobe(rot360 + intake_lobe_center_lo + (5 * rot120))
 
-	_exhaust_cam_1_lo
+    _exhaust_cam_1_lo
         .add_lobe(rot360 - exhaust_lobe_center_lo + (1 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center_lo + (3 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center_lo + (5 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center_lo + (3 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center_lo + (5 * rot120))
 
     _intake_cam_0_hi
         .add_lobe(rot360 + intake_lobe_center_hi + (0 * rot120))
-		.add_lobe(rot360 + intake_lobe_center_hi + (2 * rot120))
-		.add_lobe(rot360 + intake_lobe_center_hi + (4 * rot120))
+        .add_lobe(rot360 + intake_lobe_center_hi + (2 * rot120))
+        .add_lobe(rot360 + intake_lobe_center_hi + (4 * rot120))
 
-	_exhaust_cam_0_hi
+    _exhaust_cam_0_hi
         .add_lobe(rot360 - exhaust_lobe_center_hi + (0 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center_hi + (2 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center_hi + (4 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center_hi + (2 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center_hi + (4 * rot120))
 
     _intake_cam_1_hi
         .add_lobe(rot360 + intake_lobe_center_hi + (1 * rot120))
-		.add_lobe(rot360 + intake_lobe_center_hi + (3 * rot120))
-		.add_lobe(rot360 + intake_lobe_center_hi + (5 * rot120))
+        .add_lobe(rot360 + intake_lobe_center_hi + (3 * rot120))
+        .add_lobe(rot360 + intake_lobe_center_hi + (5 * rot120))
 
-	_exhaust_cam_1_hi
+    _exhaust_cam_1_hi
         .add_lobe(rot360 - exhaust_lobe_center_hi + (1 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center_hi + (3 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center_hi + (5 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center_hi + (3 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center_hi + (5 * rot120))
 }
 
 private node add_flow_sample {
@@ -186,13 +183,13 @@ private node add_flow_sample {
 
 public node honda_c32b_head {
     input cam_in_lo;
-	input cam_ex_lo;
+    input cam_ex_lo;
     input cam_in_hi;
-	input cam_ex_hi;
+    input cam_ex_hi;
     input chamber_volume: 51.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation: 1.1;
+    
+    input flow_attenuation: 1.1;
     input lift_scale: 45.0;
     alias output __out: head;
 
@@ -232,7 +229,7 @@ public node honda_c32b_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation)
 
-		
+        
     generic_cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.15 * units.inch) * 1.2 * units.inch,
@@ -242,19 +239,19 @@ public node honda_c32b_head {
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
-		valvetrain: vtec_valvetrain(
+        valvetrain: vtec_valvetrain(
             vtec_intake_camshaft: cam_in_hi,
             vtec_exhaust_camshaft: cam_ex_hi,
             intake_camshaft: cam_in_lo,
             exhaust_camshaft: cam_ex_lo,
             min_rpm: 5800 * units.rpm
-		),
+        ),
         flip_display: flip_display
     )
 }
 
 
-public node c32b {
+public node honda_c32b_engine {
     alias output __out: engine;
 
     wires wires()
@@ -263,10 +260,10 @@ public node c32b {
     label stroke(78.0 * units.mm)
     label rod_length(152.5 * units.mm)
     label rod_mass(350 * units.g) // guesstimate based on aftermarket chromoly rods - stock rods are titanium
-	label piston_mass(400 * units.g)
+    label piston_mass(400 * units.g)
     label compression_height(1.184 * units.inch)
-	label piston_dome(0.0 * units.cc)
-	label deck_height(8.715 * units.inch)
+    label piston_dome(0.0 * units.cc)
+    label deck_height(8.715 * units.inch)
     label crank_mass(45 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(5 * units.inch)
@@ -274,7 +271,7 @@ public node c32b {
     engine engine(
         name: "Honda C32B",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 8000 * units.rpm,
         throttle_gamma: 1.0
     )
@@ -357,7 +354,7 @@ public node c32b {
         primary_flow_rate: k_carb(300.0),
         velocity_decay: 0.6, //0.5
         volume: 5.0 * units.L,
-		length: 1500 * units.mm
+        length: 1500 * units.mm
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
@@ -371,7 +368,7 @@ public node c32b {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			sound_attenuation: 0.6
+            sound_attenuation: 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -380,7 +377,7 @@ public node c32b {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			sound_attenuation: 0.6
+            sound_attenuation: 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
@@ -389,7 +386,7 @@ public node c32b {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			sound_attenuation: 1.0
+            sound_attenuation: 1.0
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -401,8 +398,8 @@ public node c32b {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 10 * units.inch,
-			sound_attenuation: 0.3
+            primary_length: 10 * units.inch,
+            sound_attenuation: 0.3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -411,8 +408,8 @@ public node c32b {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 10 * units.inch,
-			sound_attenuation: 0.3
+            primary_length: 10 * units.inch,
+            sound_attenuation: 0.3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
@@ -421,8 +418,8 @@ public node c32b {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 10 * units.inch,
-			sound_attenuation: 0.5
+            primary_length: 10 * units.inch,
+            sound_attenuation: 0.5
         )
 
     engine
@@ -436,18 +433,18 @@ public node c32b {
     b0.set_cylinder_head (
         honda_c32b_head(
             cam_in_lo: camshaft.intake_cam_0_lo,
-			cam_in_hi: camshaft.intake_cam_0_hi,
+            cam_in_hi: camshaft.intake_cam_0_hi,
             cam_ex_lo: camshaft.exhaust_cam_0_lo,
-			cam_ex_hi: camshaft.exhaust_cam_0_hi,
+            cam_ex_hi: camshaft.exhaust_cam_0_hi,
             flip_display: true
         )
     )
     b1.set_cylinder_head (
         honda_c32b_head(
             cam_in_lo: camshaft.intake_cam_1_lo,
-			cam_in_hi: camshaft.intake_cam_1_hi,
+            cam_in_hi: camshaft.intake_cam_1_hi,
             cam_ex_lo: camshaft.exhaust_cam_1_lo,
-			cam_ex_hi: camshaft.exhaust_cam_1_hi,
+            cam_ex_hi: camshaft.exhaust_cam_1_hi,
             flip_display: false
         )
     )
@@ -461,9 +458,9 @@ public node c32b {
         .add_sample(4000 * units.rpm, 50 * units.deg)
         .add_sample(5000 * units.rpm, 50 * units.deg)
         .add_sample(6000 * units.rpm, 50 * units.deg)
-		.add_sample(7000 * units.rpm, 50 * units.deg)
-		.add_sample(8000 * units.rpm, 50 * units.deg)
-		.add_sample(9000 * units.rpm, 50 * units.deg)
+        .add_sample(7000 * units.rpm, 50 * units.deg)
+        .add_sample(8000 * units.rpm, 50 * units.deg)
+        .add_sample(9000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         honda_c32b_distributor(
@@ -500,7 +497,7 @@ public node honda_nsx_na2_transmission {
 }
 
 public node main {
-    set_engine(c32b())
+    set_engine(honda_c32b_engine())
     set_vehicle(honda_nsx_na2_vehicle())
     set_transmission(honda_nsx_na2_transmission())
 }
