@@ -355,9 +355,9 @@ public node mitsubishi_6a12 {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
     
-    label pipe_length_1(3.0 * units.inch)
+    label pipe_length_1(1.5 * units.inch)
     label pipe_length_2(0.0 * units.inch)
-    label pipe_length_3(2.0 * units.inch)
+    label pipe_length_3(1.0 * units.inch)
     
     label exhaust_stagger(1.0 * units.inch)
 
