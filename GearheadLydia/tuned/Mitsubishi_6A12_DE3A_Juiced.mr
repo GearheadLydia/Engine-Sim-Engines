@@ -227,8 +227,8 @@ public node mitsubishi_6a12_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
         intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-        exhaust_runner_volume: circle_area(0.65 * units.inch) * 3 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.65 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -345,9 +345,9 @@ public node mitsubishi_6a12 {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(250.0),
-        velocity_decay: 0.77, //0.5
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(220.0),
+        velocity_decay: 0.8, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
         length: 1800 * units.mm,
         volume: 1800 * units.mm * circle_area(exhaust_radius)
@@ -355,11 +355,11 @@ public node mitsubishi_6a12 {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
     
-    label pipe_length_1(3.0 * units.inch)
+    label pipe_length_1(4.0 * units.inch)
     label pipe_length_2(0.0 * units.inch)
     label pipe_length_3(2.0 * units.inch)
     
-    label exhaust_stagger(1.0 * units.inch)
+    label exhaust_stagger(3.0 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 30.0 * units.deg)
     b0
