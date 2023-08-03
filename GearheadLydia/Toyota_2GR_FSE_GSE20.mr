@@ -10,15 +10,15 @@ public node toyota_2grfse_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7200 * units.rpm;
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/6.0) * cycle)
             .connect_wire(wires.wire2, (1.0/6.0) * cycle)
-			.connect_wire(wires.wire3, (2.0/6.0) * cycle)
-			.connect_wire(wires.wire4, (3.0/6.0) * cycle)
-			.connect_wire(wires.wire5, (4.0/6.0) * cycle)
-			.connect_wire(wires.wire6, (5.0/6.0) * cycle);
+            .connect_wire(wires.wire3, (2.0/6.0) * cycle)
+            .connect_wire(wires.wire4, (3.0/6.0) * cycle)
+            .connect_wire(wires.wire5, (4.0/6.0) * cycle)
+            .connect_wire(wires.wire6, (5.0/6.0) * cycle);
 }
 
 private node wires {
@@ -53,7 +53,7 @@ public node toyota_2grfse_lobe_profile_exh {
 
 public node toyota_2grfse_camshaft_builder {
     input in_lobe_profile: toyota_2grfse_lobe_profile_int();
-	input ex_lobe_profile: toyota_2grfse_lobe_profile_exh();
+    input ex_lobe_profile: toyota_2grfse_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 120.0 * units.deg; // guess
@@ -79,7 +79,7 @@ public node toyota_2grfse_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -87,23 +87,23 @@ public node toyota_2grfse_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + (0 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (2 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (4 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (2 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (4 * rot120))
 
     _intake_cam_1
         .add_lobe(rot360 + intake_lobe_center + (1 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (3 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (5 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (3 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (5 * rot120))
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + (0 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
 
-	_exhaust_cam_1
+    _exhaust_cam_1
         .add_lobe(rot360 - exhaust_lobe_center + (1 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
 }
 
 private node add_flow_sample {
@@ -120,8 +120,8 @@ public node toyota_2grfse_head {
     input exhaust_camshaft;
     input chamber_volume: 50.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation: 0.95;
+    
+    input flow_attenuation: 0.95;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -157,7 +157,7 @@ public node toyota_2grfse_head {
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 2 * units.inch,
@@ -182,11 +182,11 @@ public node toyota_2grfse_engine {
     engine engine(
         name: "Toyota 2GR-FSE",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1000 * units.rpm,
+        starter_speed: 1000 * units.rpm,
         redline: 6800 * units.rpm,
         throttle_gamma: 1.0,
-		hf_gain: 0.05,
-		jitter: 0.75
+        hf_gain: 0.05,
+        jitter: 0.75
     )
 
     label bore(94.0 * units.mm)
@@ -194,9 +194,9 @@ public node toyota_2grfse_engine {
     label rod_length(147.5 * units.mm)
     label rod_mass(550 * units.g)
     label compression_height(31.29 * units.mm)
-	label piston_mass(450 * units.g)
-	label piston_dome(-1.5 * units.cc) // for 11.8:1 CR
-	label deck_height((220 + 0.5) * units.mm) // deck height is a guess
+    label piston_mass(450 * units.g)
+    label piston_dome(-1.5 * units.cc) // for 11.8:1 CR
+    label deck_height((220 + 0.5) * units.mm) // deck height is a guess
     label crank_mass(54.3 * units.lb)
     label flywheel_mass(50 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -274,25 +274,25 @@ public node toyota_2grfse_engine {
         velocity_decay: 0.1
     )
 
-	label exhaust_radius((3.0 * units.inch)/2)
-	
+    label exhaust_radius((3.0 * units.inch)/2)
+    
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(250.0),
         primary_tube_length: 8.0 * units.inch,
         primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2500 * units.mm,
-		volume: (2000 * units.mm * circle_area(exhaust_radius)) + (500 * units.mm * circle_area(exhaust_radius) * 2)
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2500 * units.mm,
+        volume: (2000 * units.mm * circle_area(exhaust_radius)) + (500 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(2.6 * units.inch)
-	label pipe_length_2(1.3 * units.inch)
-	label pipe_length_3(0.0 * units.inch)
-	
-	label exhaust_stagger(0.5 * units.inch)
+    
+    label pipe_length_1(2.6 * units.inch)
+    label pipe_length_2(1.3 * units.inch)
+    label pipe_length_3(0.0 * units.inch)
+    
+    label exhaust_stagger(0.5 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 30.0 * units.deg) // L (first)
     b0
@@ -303,8 +303,8 @@ public node toyota_2grfse_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.8
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -313,8 +313,8 @@ public node toyota_2grfse_engine {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 0.9
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: 0.9
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -323,8 +323,8 @@ public node toyota_2grfse_engine {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: 1.0
         )
 
     cylinder_bank b1(bank_params, angle: -30.0 * units.deg) // R (second)
@@ -336,8 +336,8 @@ public node toyota_2grfse_engine {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_1,
+            sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -346,8 +346,8 @@ public node toyota_2grfse_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 0.8
+            primary_length: pipe_length_2,
+            sound_attenuation: 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -356,8 +356,8 @@ public node toyota_2grfse_engine {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 0.9
+            primary_length: pipe_length_3,
+            sound_attenuation: 0.9
         )
 
     engine
@@ -367,15 +367,15 @@ public node toyota_2grfse_engine {
     engine.add_crankshaft(c0)
 
     toyota_2grfse_camshaft_builder camshaft(
-	    in_lobe_profile: toyota_2grfse_lobe_profile_int(),
-		ex_lobe_profile: toyota_2grfse_lobe_profile_exh()
-	)
+        in_lobe_profile: toyota_2grfse_lobe_profile_int(),
+        ex_lobe_profile: toyota_2grfse_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         toyota_2grfse_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
     b1.set_cylinder_head (
@@ -395,8 +395,8 @@ public node toyota_2grfse_engine {
         .add_sample(4000 * units.rpm, 65 * units.deg)
         .add_sample(5000 * units.rpm, 65 * units.deg)
         .add_sample(6000 * units.rpm, 65 * units.deg)
-		.add_sample(7000 * units.rpm, 65 * units.deg)
-		.add_sample(8000 * units.rpm, 65 * units.deg)
+        .add_sample(7000 * units.rpm, 65 * units.deg)
+        .add_sample(8000 * units.rpm, 65 * units.deg)
 
     engine.add_ignition_module(
         toyota_2grfse_distributor(
@@ -407,7 +407,7 @@ public node toyota_2grfse_engine {
 }
 
 // 2006 Lexus IS350 (GSE20)
-public node lexus_is350_vehicle {
+public node lexus_is350_gse20_vehicle {
     alias output __out:
         vehicle(
             mass: 1610 * units.kg,
@@ -415,7 +415,7 @@ public node lexus_is350_vehicle {
             cross_sectional_area: 2.13 * (units.m * units.m),
             diff_ratio: 4.083,
             tire_radius: 328.5 * units.mm, // 245/45ZR17
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 1610 * units.kg * 9.81 * (245.0/275.0) * 0.01
         );
 }
 
@@ -434,7 +434,7 @@ public node toyota_a760e_transmission {
 
 public node main {
     set_engine(toyota_2grfse_engine())
-    set_vehicle(lexus_is350_vehicle())
+    set_vehicle(lexus_is350_gse20_vehicle())
     set_transmission(toyota_a760e_transmission())
 }
 
