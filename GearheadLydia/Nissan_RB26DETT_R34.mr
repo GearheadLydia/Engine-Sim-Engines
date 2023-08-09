@@ -271,7 +271,7 @@ public node nissan_rb26dett_engine {
     // https://www.tf-works.com/nismo-intake-manifold-rb26dett-skyline-gt-r-bnr32-bcnr33-bnr34/
     intake intake(
         plenum_volume: 3.4 * units.L,
-        plenum_cross_section_area: 58.72 * units.cm2,
+        plenum_cross_section_area: 58.7 * units.cm2, // guesstimate: 3.4L divided by (bore spacing * 6)
         intake_flow_rate: k_carb(800.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9987,
