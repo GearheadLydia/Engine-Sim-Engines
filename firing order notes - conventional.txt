@@ -152,8 +152,8 @@ L/R
 142635/635142 (L) - Lamborghini most (Miura, Diablo, Murcielago), Rolls-Royce V12 (Merlin, Griffon, Kestrel etc)
 145632/145632 (L) - hypothetical
 145632/632145 (L) - hypothetical
-153624/153624 (D) - Ferrari (except maybe 456M), BMW
-153624/624153 (D) - Lamborghini Countach, Mercedes-Benz / AMG / Pagani, Toyota 1GZ, Jaguar SOHC, maybe Ferrari 456M
+153624/153624 (D) - BMW; Aston Martin; Ferrari 456M (unless only numbering changed)
+153624/624153 (D) - Ferrari (except maybe 456M); Lamborghini Countach; Mercedes-Benz / AMG / Pagani; Toyota 1GZ; Jaguar SOHC
 
 Ferrari flat-12 (guess)
 0	180
