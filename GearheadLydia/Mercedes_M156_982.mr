@@ -13,7 +13,7 @@ public node mercedes_m156_63_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7250 * units.rpm;
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -59,7 +59,7 @@ public node mercedes_m156_63_lobe_profile_exh {
 
 public node mercedes_m156_63_camshaft_builder {
     input in_lobe_profile: mercedes_m156_63_lobe_profile_int();
-	input ex_lobe_profile: mercedes_m156_63_lobe_profile_exh();
+    input ex_lobe_profile: mercedes_m156_63_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 110.0 * units.deg;
@@ -85,7 +85,7 @@ public node mercedes_m156_63_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -130,8 +130,8 @@ public node mercedes_m156_63_head {
     input exhaust_camshaft;
     input chamber_volume: 46.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation: 0.95;
+    
+    input flow_attenuation: 0.95;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -167,7 +167,7 @@ public node mercedes_m156_63_head {
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 3 * units.inch,
@@ -192,22 +192,22 @@ public node mercedes_amg_m156_982_engine {
     engine engine(
         name: "Mercedes-AMG M156.982",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1500 * units.rpm,
+        starter_speed: 1100 * units.rpm,
         redline: 7000 * units.rpm,
         throttle_gamma: 1.0
     )
 
     label bore(102.2 * units.mm)
-	label bore_spacing(109 * units.mm) // this is a guess
+    label bore_spacing(109 * units.mm) // this is a guess
     label stroke(94.6 * units.mm)
     label rod_length(145.5 * units.mm)
-    label rod_mass(434 * units.g)
+    label rod_mass(450 * units.g)
     label compression_height(30.07 * units.mm) // probably not correct
-	label piston_mass(292 * units.g)
-	label piston_dome(0.00 * units.cc) // this one is a guess
-	label deck_clearance(1.5 * units.mm)
-    label crank_mass(45 * units.lb)
-    label flywheel_mass(29 * 2 * units.lb)
+    label piston_mass(400 * units.g)
+    label piston_dome(0.00 * units.cc) // this one is a guess
+    label deck_clearance(1.5 * units.mm)
+    label crank_mass(75 * units.lb)
+    label flywheel_mass(20 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -278,27 +278,27 @@ public node mercedes_amg_m156_982_engine {
         runner_length: 5.5 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((4.0 * units.inch)/2)
+    
+    label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2700 * units.mm,
-		volume: 2700 * units.mm * circle_area(exhaust_radius) * 2
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2700 * units.mm,
+        volume: 2700 * units.mm * circle_area(exhaust_radius) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
 
-	label pipe_length_1(3.8 * bore_spacing)
-	label pipe_length_2(2.7 * bore_spacing)
-	label pipe_length_3(1.3 * bore_spacing)
-	label pipe_length_4(0.0 * bore_spacing)
-	
-	label exhaust_stagger(50 * units.mm)
+    label pipe_length_1(3.8 * bore_spacing)
+    label pipe_length_2(2.7 * bore_spacing)
+    label pipe_length_3(1.3 * bore_spacing)
+    label pipe_length_4(0.0 * bore_spacing)
+    
+    label exhaust_stagger(50 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -309,8 +309,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.7 * 0.7
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: 0.7 * 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -319,7 +319,7 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -328,7 +328,7 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+            primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -337,8 +337,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: 0.7 * 0.7
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: 0.7 * 0.7
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -350,8 +350,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 0.7
+            primary_length: pipe_length_1,
+            sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -360,8 +360,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 0.7
+            primary_length: pipe_length_2,
+            sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -370,8 +370,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 0.7
+            primary_length: pipe_length_3,
+            sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -380,8 +380,8 @@ public node mercedes_amg_m156_982_engine {
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: 0.7
+            primary_length: pipe_length_4,
+            sound_attenuation: 0.7
         )
 
     engine
@@ -391,15 +391,15 @@ public node mercedes_amg_m156_982_engine {
     engine.add_crankshaft(c0)
 
     mercedes_m156_63_camshaft_builder camshaft(
-	    in_lobe_profile: mercedes_m156_63_lobe_profile_int(),
-		ex_lobe_profile: mercedes_m156_63_lobe_profile_exh()
-	)
+        in_lobe_profile: mercedes_m156_63_lobe_profile_int(),
+        ex_lobe_profile: mercedes_m156_63_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         mercedes_m156_63_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
     b1.set_cylinder_head (
@@ -419,9 +419,9 @@ public node mercedes_amg_m156_982_engine {
         .add_sample(4000 * units.rpm, 50 * units.deg)
         .add_sample(5000 * units.rpm, 50 * units.deg)
         .add_sample(6000 * units.rpm, 50 * units.deg)
-		.add_sample(7000 * units.rpm, 50 * units.deg)
-		.add_sample(8000 * units.rpm, 50 * units.deg)
-		.add_sample(9000 * units.rpm, 50 * units.deg)
+        .add_sample(7000 * units.rpm, 50 * units.deg)
+        .add_sample(8000 * units.rpm, 50 * units.deg)
+        .add_sample(9000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         mercedes_m156_63_distributor(
