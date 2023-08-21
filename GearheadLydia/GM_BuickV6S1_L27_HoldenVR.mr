@@ -6,6 +6,8 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
+// ABSOLUTELY NOTHING DONE YET
+
 public node buick_v6_distributor {
     input wires;
     input timing_curve;

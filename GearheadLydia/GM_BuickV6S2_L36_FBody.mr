@@ -1,9 +1,5 @@
 import "engine_sim.mr"
 
-
-// SUPER UNFINISHED
-
-
 units units()
 constants constants()
 impulse_response_library ir_lib()
@@ -109,7 +105,9 @@ public node buick_v6_camshaft_builder {
 public node buick_v6_head {
     input intake_camshaft;
     input exhaust_camshaft;
+	input chamber_volume: 64.0 * units.cc;
     input flip_display: false;
+	
     alias output __out: head;
 
     function intake_flow(50 * units.thou)
@@ -149,7 +147,7 @@ public node buick_v6_head {
         .add_flow_sample(700, 210)
 
     cylinder_head head(
-        chamber_volume: 48.0 * units.cc,
+        chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 3 * units.inch,
         intake_runner_cross_section_area: circle_area(1.0 * units.inch),
         exhaust_runner_volume: circle_area(0.85 * units.inch) * 3 * units.inch,
@@ -176,9 +174,9 @@ public node buick_v6_l36 {
     label compression_height(1.0867 * units.inch)
 	label piston_mass(550 * units.g)
 	label piston_dome(-7.50 * units.cc)
-	label deck_height((8.715 + 0.02) * units.inch)
-    label crank_mass(40 * units.lb)
-    label flywheel_mass(55 * units.lb)
+	label deck_height((8.715 * units.inch) + (20 * units.thou))
+    label crank_mass(75 * units.lb)
+    label flywheel_mass(30 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -196,10 +194,6 @@ public node buick_v6_l36 {
         starter_torque: 150 * units.lb_ft,
 		starter_speed: 1000 * units.rpm,
         redline: 6000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 3.0,
-            burning_efficiency_randomness: 0.5,
-            max_burning_efficiency: 0.85),
         throttle_gamma: 1.5
     )
 
@@ -295,7 +289,7 @@ public node buick_v6_l36 {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
+			primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -304,7 +298,7 @@ public node buick_v6_l36 {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2
+			primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.6)),
@@ -313,7 +307,7 @@ public node buick_v6_l36 {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+			primary_length: pipe_length_3 + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -325,7 +319,7 @@ public node buick_v6_l36 {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
+			primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.4)),
@@ -334,7 +328,7 @@ public node buick_v6_l36 {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+			primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.6)),
@@ -343,7 +337,7 @@ public node buick_v6_l36 {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+			primary_length: pipe_length_3
         )
 
     engine

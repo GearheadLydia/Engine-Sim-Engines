@@ -203,8 +203,8 @@ public node buick_fireball_225_engine {
     engine engine(
         name: "Buick Fireball V6",
         starter_torque: 150 * units.lb_ft,
-        redline: 5000 * units.rpm,
 		starter_speed: 800 * units.rpm,
+        redline: 5000 * units.rpm,
         throttle_gamma: 1.0
     )
 
