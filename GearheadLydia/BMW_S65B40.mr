@@ -188,8 +188,8 @@ public node bmw_s65b40_head {
 
 public node bmw_s65b40_itb {
     input throttlebody_cfm: 250;
-    input idle_flow_rate_cfm: 0.001;
-    input idle_throttle_plate_position: 0.9983;
+    input idle_flow_rate_cfm: 0.0001;
+    input idle_throttle_plate_position: 0.9987;
     input throttle_gamma: 8.0;
 
     alias output __out: intake;
@@ -227,7 +227,7 @@ public node S65B40 {
     engine engine(
         name: "BMW S65B40",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 1200 * units.rpm,
+        starter_speed: 1000 * units.rpm,
         redline: 8000 * units.rpm,
         throttle_gamma: 1.0
     )
