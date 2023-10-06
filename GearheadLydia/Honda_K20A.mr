@@ -38,11 +38,12 @@ private node add_sym_sample {
 
 
 // http://mywikimotors.com/honda-k20a-k20c/
+// https://www.motortrend.com/how-to/0704-turp-honda-civic/
 
 public node honda_k20a_lobe_profile_int_lo {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 244.5 * units.deg,
+            duration_at_50_thou: 196 * units.deg,
             gamma: 1.0,
             lift: 9.3 * units.mm,
             steps: 100
@@ -52,7 +53,7 @@ public node honda_k20a_lobe_profile_int_lo {
 public node honda_k20a_lobe_profile_exh_lo {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 242.0 * units.deg,
+            duration_at_50_thou: 193 * units.deg,
             gamma: 1.0,
             lift: 8.7 * units.mm,
             steps: 100
@@ -62,8 +63,8 @@ public node honda_k20a_lobe_profile_exh_lo {
 public node honda_k20a_lobe_profile_int_hi {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 280.0 * units.deg,
-            gamma: 1.0,
+            duration_at_50_thou: 224 * units.deg,
+            gamma: 1.5,
             lift: 12.65 * units.mm,
             steps: 100
         );
@@ -72,8 +73,8 @@ public node honda_k20a_lobe_profile_int_hi {
 public node honda_k20a_lobe_profile_exh_hi {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 278.0 * units.deg,
-            gamma: 1.0,
+            duration_at_50_thou: 219 * units.deg,
+            gamma: 1.5,
             lift: 12.14 * units.mm,
             steps: 100
         );
@@ -84,11 +85,10 @@ public node honda_k20a_camshaft_builder {
     input ex_lobe_profile_lo: honda_k20a_lobe_profile_exh_lo();
     input in_lobe_profile_hi: honda_k20a_lobe_profile_int_hi();
     input ex_lobe_profile_hi: honda_k20a_lobe_profile_exh_hi();
-    input lobe_separation: 99.0 * units.deg;
-    input intake_lobe_center_lo: 122.0 * units.deg;
-    input exhaust_lobe_center_lo: 122.0 * units.deg;
-    input intake_lobe_center_hi: 94.0 * units.deg;
-    input exhaust_lobe_center_hi: 94.0 * units.deg;
+    input intake_lobe_center_lo: 115.0 * units.deg;
+    input exhaust_lobe_center_lo: 115.0 * units.deg;
+    input intake_lobe_center_hi: 115.0 * units.deg;
+    input exhaust_lobe_center_hi: 115.0 * units.deg;
     input advance_in_lo: 0.0 * units.deg;
     input advance_ex_lo: 0.0 * units.deg;
     input advance_in_hi: 0.0 * units.deg;
@@ -307,9 +307,9 @@ public node honda_k20a_engine {
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(600.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9983,
+        idle_throttle_plate_position: 0.9975,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(280.0),
+        runner_flow_rate: k_carb(400.0),
         runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -319,7 +319,7 @@ public node honda_k20a_engine {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
         primary_tube_length: bore_spacing * 7,
-        primary_flow_rate: k_carb(250.0),
+        primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
         length: 2500 * units.mm,
@@ -390,16 +390,16 @@ public node honda_k20a_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 38 * units.deg)
-        .add_sample(1000 * units.rpm, 53 * units.deg)
-        .add_sample(2000 * units.rpm, 56 * units.deg)
-        .add_sample(3000 * units.rpm, 56 * units.deg)
-        .add_sample(4000 * units.rpm, 56 * units.deg)
-        .add_sample(5000 * units.rpm, 56 * units.deg)
-        .add_sample(6000 * units.rpm, 56 * units.deg)
-        .add_sample(7000 * units.rpm, 56 * units.deg)
-        .add_sample(8000 * units.rpm, 56 * units.deg)
-        .add_sample(9000 * units.rpm, 56 * units.deg)
+        .add_sample(0000 * units.rpm, 20 * units.deg)
+        .add_sample(1000 * units.rpm, 30 * units.deg)
+        .add_sample(2000 * units.rpm, 37 * units.deg)
+        .add_sample(3000 * units.rpm, 37 * units.deg)
+        .add_sample(4000 * units.rpm, 37 * units.deg)
+        .add_sample(5000 * units.rpm, 37 * units.deg)
+        .add_sample(6000 * units.rpm, 37 * units.deg)
+        .add_sample(7000 * units.rpm, 37 * units.deg)
+        .add_sample(8000 * units.rpm, 37 * units.deg)
+        .add_sample(9000 * units.rpm, 37 * units.deg)
 
     engine.add_ignition_module(
         honda_k20a_distributor(
