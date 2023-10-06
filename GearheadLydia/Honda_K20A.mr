@@ -10,13 +10,13 @@ public node honda_k20a_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 8400 * units.rpm;
-	input limiter_duration: 0.05;
+    input limiter_duration: 0.05;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
             .connect_wire(wires.wire3, (1.0/4.0) * cycle)
-			.connect_wire(wires.wire4, (2.0/4.0) * cycle)
-			.connect_wire(wires.wire2, (3.0/4.0) * cycle);
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (3.0/4.0) * cycle);
 }
 
 private node wires {
@@ -81,7 +81,7 @@ public node honda_k20a_lobe_profile_exh_hi {
 
 public node honda_k20a_camshaft_builder {
     input in_lobe_profile_lo: honda_k20a_lobe_profile_int_lo();
-	input ex_lobe_profile_lo: honda_k20a_lobe_profile_exh_lo();
+    input ex_lobe_profile_lo: honda_k20a_lobe_profile_exh_lo();
     input in_lobe_profile_hi: honda_k20a_lobe_profile_int_hi();
     input ex_lobe_profile_hi: honda_k20a_lobe_profile_exh_hi();
     input lobe_separation: 99.0 * units.deg;
@@ -91,8 +91,8 @@ public node honda_k20a_camshaft_builder {
     input exhaust_lobe_center_hi: 94.0 * units.deg;
     input advance_in_lo: 0.0 * units.deg;
     input advance_ex_lo: 0.0 * units.deg;
-	input advance_in_hi: 0.0 * units.deg;
-	input advance_ex_hi: 0.0 * units.deg;
+    input advance_in_hi: 0.0 * units.deg;
+    input advance_ex_hi: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
     output intake_cam_0_lo: _intake_cam_0_lo;
@@ -121,27 +121,27 @@ public node honda_k20a_camshaft_builder {
 
     _intake_cam_0_lo
         .add_lobe(rot360 + intake_lobe_center_lo + 0 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_lo + 3 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_lo + 1 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_lo + 2 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_lo + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_lo + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_lo + 2 * rot180)
 
-	_exhaust_cam_0_lo
+    _exhaust_cam_0_lo
         .add_lobe(rot360 - exhaust_lobe_center_lo + 0 * rot180)
         .add_lobe(rot360 - exhaust_lobe_center_lo + 3 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center_lo + 1 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center_lo + 2 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center_lo + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center_lo + 2 * rot180)
 
     _intake_cam_0_hi
         .add_lobe(rot360 + intake_lobe_center_hi + 0 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_hi + 3 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_hi + 1 * rot180)
-		.add_lobe(rot360 + intake_lobe_center_hi + 2 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_hi + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_hi + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_hi + 2 * rot180)
 
-	_exhaust_cam_0_hi
+    _exhaust_cam_0_hi
         .add_lobe(rot360 - exhaust_lobe_center_hi + 0 * rot180)
         .add_lobe(rot360 - exhaust_lobe_center_hi + 3 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center_hi + 1 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center_hi + 2 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center_hi + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center_hi + 2 * rot180)
 }
 
 private node add_flow_sample {
@@ -150,80 +150,74 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
 public node honda_k20a_head {
     input cam_in_lo;
-	input cam_ex_lo;
+    input cam_ex_lo;
     input cam_in_hi;
-	input cam_ex_hi;
+    input cam_ex_hi;
     input chamber_volume: 51.5 * units.cc; // K24 is 50.5 apparently
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.0;
+    
     alias output __out: head;
-
-    function intake_flow(1.0 * units.mm)
+    
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#HHonda
+    function intake_flow(50 * units.thou)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  45)
+        .add_flow_sample(100,  85)
+        .add_flow_sample(150, 136)
+        .add_flow_sample(200, 176)
+        .add_flow_sample(250, 215)
+        .add_flow_sample(300, 245)
+        .add_flow_sample(350, 268)
+        .add_flow_sample(400, 282)
+        .add_flow_sample(450, 291)
+        .add_flow_sample(500, 298)
+        .add_flow_sample(550, 309)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(50 * units.thou)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  35)
+        .add_flow_sample(100,  78)
+        .add_flow_sample(150, 120)
+        .add_flow_sample(200, 154)
+        .add_flow_sample(250, 183)
+        .add_flow_sample(300, 199)
+        .add_flow_sample(350, 210)
+        .add_flow_sample(400, 216)
+        .add_flow_sample(450, 221)
+        .add_flow_sample(500, 223)
+        .add_flow_sample(550, 226)
 
-		
+        
     generic_cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.18 * units.inch) * 5 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.18 * units.inch),
-        exhaust_runner_volume: circle_area(0.6 * units.inch) * 8 * units.inch,
+        intake_runner_volume: circle_area(1.1 * units.inch) * 5 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 4 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
-		valvetrain: vtec_valvetrain(
+        valvetrain: vtec_valvetrain(
             vtec_intake_camshaft: cam_in_hi,
             vtec_exhaust_camshaft: cam_ex_hi,
             intake_camshaft: cam_in_lo,
             exhaust_camshaft: cam_ex_lo,
             min_rpm: 6000 * units.rpm
-		),
+        ),
         flip_display: flip_display
     )
 }
 
-public node honda_k20a {
+// https://www.k20a.org/threads/conrod-and-piston-weight.74112/
+
+public node honda_k20a_engine {
     alias output __out: engine;
 
     engine engine(
@@ -231,23 +225,23 @@ public node honda_k20a {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 8000 * units.rpm,
-		hf_gain: 0.01,
-		jitter: 0.5,
-        throttle_gamma: 2.0
+        hf_gain: 0.01,
+        jitter: 0.5,
+        throttle_gamma: 1.0
     )
-	
-	label lean_angle(15 * units.deg)
+    
+    label lean_angle(15 * units.deg)
 
     label bore(86.0 * units.mm)
     label bore_spacing(94.0 * units.mm)
     label stroke(86.0 * units.mm)
     label rod_length(139.0 * units.mm)
-    label rod_mass(350 * units.g)
-	label piston_mass(298 * units.g)
+    label rod_mass(588 * units.g)
+    label piston_mass(427 * units.g)
     label compression_height(30.0 * units.mm)
-	label deck_height((212.0 + 0.84) * units.mm)
-	label piston_dome(0.0 * units.cc)
-    label crank_mass(4.0 * units.kg)
+    label deck_height((212.0 + 0.84) * units.mm)
+    label piston_dome(4.0 * units.cc) // for 10.5:1 CR
+    label crank_mass(17.3 * units.kg)
     label flywheel_mass(5.0 * units.kg)
     label flywheel_radius(5.0 * units.inch)
 
@@ -267,7 +261,7 @@ public node honda_k20a {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -278,7 +272,7 @@ public node honda_k20a {
     rod_journal rj1(angle: 180 * units.deg)
     rod_journal rj2(angle: 180 * units.deg)
     rod_journal rj3(angle:  0  * units.deg)
-	
+    
     c0
         .add_rod_journal(rj0)
         .add_rod_journal(rj1)
@@ -313,26 +307,26 @@ public node honda_k20a {
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(600.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
+        idle_throttle_plate_position: 0.9983,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(450.0),
+        runner_flow_rate: k_carb(280.0),
         runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((3.5 * units.inch)/2)
+    
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: bore_spacing * 5,
+        primary_tube_length: bore_spacing * 7,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2500 * units.mm,
-		volume: 2500 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2500 * units.mm,
+        volume: 2500 * units.mm * circle_area(exhaust_radius)
     )
-	
-	exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -343,38 +337,38 @@ public node honda_k20a {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 1.5,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 1.5,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 0.0,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 0.0,
+            sound_attenuation: 0.87
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 0.5,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 0.3,
+            sound_attenuation: 0.90
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 0.5,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 0.6,
+            sound_attenuation: 0.93
         )
 
     engine
@@ -387,25 +381,25 @@ public node honda_k20a {
     b0.set_cylinder_head (
         honda_k20a_head(
             cam_in_lo: camshaft.intake_cam_0_lo,
-			cam_in_hi: camshaft.intake_cam_0_hi,
+            cam_in_hi: camshaft.intake_cam_0_hi,
             cam_ex_lo: camshaft.exhaust_cam_0_lo,
-			cam_ex_hi: camshaft.exhaust_cam_0_hi,
-			flip_display: true
+            cam_ex_hi: camshaft.exhaust_cam_0_hi,
+            flip_display: true
         )
     )
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 55 * units.deg)
-        .add_sample(2000 * units.rpm, 60 * units.deg)
-        .add_sample(3000 * units.rpm, 60 * units.deg)
-        .add_sample(4000 * units.rpm, 60 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 60 * units.deg)
-        .add_sample(7000 * units.rpm, 60 * units.deg)
-        .add_sample(8000 * units.rpm, 60 * units.deg)
-        .add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(0000 * units.rpm, 38 * units.deg)
+        .add_sample(1000 * units.rpm, 53 * units.deg)
+        .add_sample(2000 * units.rpm, 56 * units.deg)
+        .add_sample(3000 * units.rpm, 56 * units.deg)
+        .add_sample(4000 * units.rpm, 56 * units.deg)
+        .add_sample(5000 * units.rpm, 56 * units.deg)
+        .add_sample(6000 * units.rpm, 56 * units.deg)
+        .add_sample(7000 * units.rpm, 56 * units.deg)
+        .add_sample(8000 * units.rpm, 56 * units.deg)
+        .add_sample(9000 * units.rpm, 56 * units.deg)
 
     engine.add_ignition_module(
         honda_k20a_distributor(
@@ -418,19 +412,19 @@ public node honda_k20a {
 public node honda_civic_type_r_ep3_vehicle {
     alias output __out:
         vehicle(
-            mass: 2654 * units.lb,
+            mass: 1204 * units.kg,
             drag_coefficient: 0.34,
             cross_sectional_area: 2.00 * (units.m * units.m),
             diff_ratio: 4.764,
             tire_radius: 308.5 * units.mm, // 205/45R17
-            rolling_resistance: 400 * units.N
+            rolling_resistance: 1204 * units.kg * 9.81 * (205.0/275.0) * 0.01
         );
 }
 
 public node honda_npr3_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 500 * units.lb_ft
+            max_clutch_torque: 350 * units.lb_ft
         )
         .add_gear(3.266)
         .add_gear(2.130)
@@ -441,7 +435,7 @@ public node honda_npr3_transmission {
 }
 
 public node main {
-	set_engine(honda_k20a())
+    set_engine(honda_k20a_engine())
     set_vehicle(honda_civic_type_r_ep3_vehicle())
     set_transmission(honda_npr3_transmission())
 }
