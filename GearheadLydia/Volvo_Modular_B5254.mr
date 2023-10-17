@@ -374,7 +374,7 @@ public node volvo_s60_t5_vehicle {
             cross_sectional_area: 2.23 * (units.m * units.m),
             diff_ratio: 2.27,
             tire_radius: 321.5 * units.mm, // 235/45HR17
-            rolling_resistance: 440 * units.N
+            rolling_resistance: 1540 * units.kg * 9.81 * (235.0/275.0) * 0.01
         );
 }
 
