@@ -10,13 +10,13 @@ public node chrysler_neon_ecc_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7550 * units.rpm;
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
             .connect_wire(wires.wire3, (1.0/4.0) * cycle)
-			.connect_wire(wires.wire4, (2.0/4.0) * cycle)
-			.connect_wire(wires.wire2, (3.0/4.0) * cycle);
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (3.0/4.0) * cycle);
 }
 
 private node wires {
@@ -49,7 +49,7 @@ public node chrysler_neon_ecc_lobe_profile_exh {
 
 public node chrysler_neon_ecc_camshaft_builder {
     input lobe_profile: chrysler_neon_ecc_lobe_profile_int();
-	input ex_lobe_profile: chrysler_neon_ecc_lobe_profile_exh();
+    input ex_lobe_profile: chrysler_neon_ecc_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 110.45 * units.deg;
@@ -78,15 +78,15 @@ public node chrysler_neon_ecc_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 3 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 1 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 2 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot180)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot180)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
 }
 
 private node add_flow_sample {
@@ -95,7 +95,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
 public node chrysler_neon_ecc_head {
@@ -103,49 +103,39 @@ public node chrysler_neon_ecc_head {
     input exhaust_camshaft;
     input chamber_volume: 50.2 * units.cc; // various readings are are "50.2" and "52-53"; former might be for SRT
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.0;
+    
     alias output __out: head;
-
-    function intake_flow(1.0 * units.mm)
+    
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#Chrysler
+    function intake_flow(50 * units.thou)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  50) // interp
+        .add_flow_sample(100,  86)
+        .add_flow_sample(150, 130) // interp
+        .add_flow_sample(200, 167)
+        .add_flow_sample(250, 200) // interp
+        .add_flow_sample(300, 225)
+        .add_flow_sample(350, 236) // interp
+        .add_flow_sample(400, 245)
+        .add_flow_sample(450, 250) // interp
+        .add_flow_sample(500, 253)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(50 * units.thou)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  50) // interp
+        .add_flow_sample(100,  84)
+        .add_flow_sample(150, 117) // interp
+        .add_flow_sample(200, 150)
+        .add_flow_sample(250, 158) // interp
+        .add_flow_sample(300, 165)
+        .add_flow_sample(350, 168) // interp
+        .add_flow_sample(400, 169)
+        .add_flow_sample(450, 170) // interp
+        .add_flow_sample(500, 170)
 
-		
+    // valve sizes: 34.75 int / 30.5 exh
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.15 * units.inch) * 3 * units.inch,
@@ -171,21 +161,21 @@ public node chrysler_neon_ecc {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 7500 * units.rpm,
-		hf_gain: 0.005,
-		jitter: 0.6,
+        hf_gain: 0.005,
+        jitter: 0.6,
         throttle_gamma: 1.0
     )
-	
-	label lean_angle(10 * units.deg)
+    
+    label lean_angle(10 * units.deg)
 
     label bore(87.5 * units.mm)
     label stroke(83.0 * units.mm)
     label rod_length(139.0 * units.mm) // SRT: 151
     label rod_mass(350 * units.g)
-	label piston_mass(347 * units.g)
+    label piston_mass(347 * units.g)
     label compression_height(31.4 * units.mm)
-	label deck_height((212.0 + 1.0) * units.mm) // SRT: 238.15
-	label piston_dome(0.0 * units.cc) // guess, seems correct
+    label deck_height((212.0 + 1.0) * units.mm) // SRT: 238.15
+    label piston_dome(0.0 * units.cc) // guess, seems correct
     label crank_mass(4.0 * units.kg)
     label flywheel_mass(5.0 * units.kg)
     label flywheel_radius(5.0 * units.inch)
@@ -206,7 +196,7 @@ public node chrysler_neon_ecc {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -217,7 +207,7 @@ public node chrysler_neon_ecc {
     rod_journal rj1(angle: 180 * units.deg)
     rod_journal rj2(angle: 180 * units.deg)
     rod_journal rj3(angle:  0  * units.deg)
-	
+    
     c0
         .add_rod_journal(rj0)
         .add_rod_journal(rj1)
@@ -258,24 +248,24 @@ public node chrysler_neon_ecc {
         runner_length: 7.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((2.5 * units.inch)/2)
+    
+    label exhaust_radius((2.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(250.0),
         primary_tube_length: 11.0 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2300 * units.mm,
-		volume: 2300 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2300 * units.mm,
+        volume: 2300 * units.mm * circle_area(exhaust_radius)
     )
-	
+    
     exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.05,
-		impulse_response: ir_lib.default_0
-	)
+        es_params,
+        audio_volume: 1.0 * 0.05,
+        impulse_response: ir_lib.default_0
+    )
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -286,38 +276,38 @@ public node chrysler_neon_ecc {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.5 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 1.5 * units.inch,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.0 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 0.0 * units.inch,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.0 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 1.0 * units.inch,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 2.5 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 2.5 * units.inch,
+            sound_attenuation: 1.0
         )
 
     engine
@@ -326,21 +316,21 @@ public node chrysler_neon_ecc {
     engine.add_crankshaft(c0)
 
     chrysler_neon_ecc_camshaft_builder camshaft(
-	    lobe_profile: chrysler_neon_ecc_lobe_profile_int(),
-		ex_lobe_profile: chrysler_neon_ecc_lobe_profile_exh()
-	)
+        lobe_profile: chrysler_neon_ecc_lobe_profile_int(),
+        ex_lobe_profile: chrysler_neon_ecc_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         chrysler_neon_ecc_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 20 * units.deg)
+        .add_sample(0000 * units.rpm, 40 * units.deg)
         .add_sample(1000 * units.rpm, 50 * units.deg)
         .add_sample(2000 * units.rpm, 55 * units.deg)
         .add_sample(3000 * units.rpm, 55 * units.deg)
@@ -383,7 +373,7 @@ public node chrysler_nvg_t350_transmission {
 }
 
 public node main {
-	set_engine(chrysler_neon_ecc())
+    set_engine(chrysler_neon_ecc())
     set_vehicle(dodge_neon_sport_coupe_vehicle())
     set_transmission(chrysler_nvg_t350_transmission())
 }
