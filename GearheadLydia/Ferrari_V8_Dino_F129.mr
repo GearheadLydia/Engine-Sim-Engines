@@ -13,7 +13,7 @@ public node ferrari_f129_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 8800 * units.rpm;
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -59,7 +59,7 @@ public node ferrari_f129_lobe_profile_exh {
 
 public node ferrari_f129_camshaft_builder {
     input in_lobe_profile: ferrari_f129_lobe_profile_int();
-	input ex_lobe_profile: ferrari_f129_lobe_profile_exh();
+    input ex_lobe_profile: ferrari_f129_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 115.0 * units.deg;
@@ -116,7 +116,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
 public node ferrari_f129_head {
@@ -124,54 +124,47 @@ public node ferrari_f129_head {
     input exhaust_camshaft;
     input chamber_volume: 30.0 * units.cc; // guess
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.0;
+    
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
-    intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+// http://www.users.interport.net/s/r/srweiss/tablehdc.htm#FERRARI
 
-    function exhaust_flow(1.0 * units.mm)
+    function intake_flow(50 * units.thou)
+    intake_flow
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  44)
+        .add_flow_sample(100,  87)
+        .add_flow_sample(150, 127)
+        .add_flow_sample(200, 164)
+        .add_flow_sample(250, 192)
+        .add_flow_sample(300, 204)
+        .add_flow_sample(350, 213)
+        .add_flow_sample(400, 219)
+        .add_flow_sample(450, 224)
+        .add_flow_sample(500, 227)
+        .add_flow_sample(550, 229)
+
+    function exhaust_flow(50 * units.thou)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  28)
+        .add_flow_sample(100,  58)
+        .add_flow_sample(150,  89)
+        .add_flow_sample(200, 114)
+        .add_flow_sample(250, 128)
+        .add_flow_sample(300, 138)
+        .add_flow_sample(350, 147)
+        .add_flow_sample(400, 152)
+        .add_flow_sample(450, 156)
+        .add_flow_sample(500, 157)
+        .add_flow_sample(550, 162)
 
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.05 * units.inch) * 4 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.05 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        intake_runner_volume: circle_area(26.5 * units.mm / 2.0) * 3 * (4 * units.inch),  // valve diameter: 26.5mm x 3
+        intake_runner_cross_section_area: circle_area(26.5 * units.mm / 2.0) * 3,
+        exhaust_runner_volume: circle_area(28.5 * units.mm / 2.0) * 2 * (4 * units.inch), // valve diameter: 28.5mm x 2
+        exhaust_runner_cross_section_area: circle_area(28.5 * units.mm / 2.0) * 2,
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -189,7 +182,7 @@ public node ferrari_f129_engine {
     engine engine(
         name: "Ferrari F129",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 8500 * units.rpm, // 8700
         throttle_gamma: 1.0
     )
@@ -198,10 +191,10 @@ public node ferrari_f129_engine {
     label stroke(77.0 * units.mm)
     label rod_length(137.0 * units.mm)
     label rod_mass(621.5 * units.g)
-	label piston_mass(400 * units.g)
+    label piston_mass(400 * units.g)
     label compression_height(29.00 * units.mm)
-	label piston_dome(-1.2 * units.cc) // for 11.2:1 compression
-	label deck_height((204.2 + 1.5) * units.mm) // real, apparently
+    label piston_dome(-1.2 * units.cc) // for 11.2:1 compression
+    label deck_height((204.2 + 1.5) * units.mm) // real, apparently
     label crank_mass(41 * units.lb)
     label flywheel_mass(20 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -239,7 +232,7 @@ public node ferrari_f129_engine {
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
 
-	// piston specs are guesses
+    // piston specs are guesses
     piston_parameters piston_params(
         mass: piston_mass,
         //blowby: 0,
@@ -264,25 +257,25 @@ public node ferrari_f129_engine {
     )
 
     intake intakeL(
-        plenum_volume: 2.0 * units.L,
+        plenum_volume: 2.0 * units.L, // actually about accurate
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(500),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.998,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(350.0),
+        runner_flow_rate: k_carb(275.0),
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
     )
 
     intake intakeR(
-        plenum_volume: 2.0 * units.L,
+        plenum_volume: 2.0 * units.L, // actually about accurate
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(500),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.998,
         throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(350.0),
+        runner_flow_rate: k_carb(275.0),
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
     )
@@ -293,20 +286,20 @@ public node ferrari_f129_engine {
         primary_flow_rate: k_carb(400.0),
         velocity_decay: 0.2,
         volume: 3.0 * units.L,
-		length: 500 * units.mm
+        length: 500 * units.mm
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1( 0 * units.mm)
-	label pipe_length_2(11 * units.mm)
-	label pipe_length_3(22 * units.mm)
-	label pipe_length_4(33 * units.mm)
-	
-	label exhaust_stagger(25 * units.mm)
-	
-	label exh_vol_L(0.9)
-	label exh_vol_R(1.0)
+    
+    label pipe_length_1( 0 * units.mm)
+    label pipe_length_2(11 * units.mm)
+    label pipe_length_3(22 * units.mm)
+    label pipe_length_4(33 * units.mm)
+    
+    label exhaust_stagger(25 * units.mm)
+    
+    label exh_vol_L(0.9)
+    label exh_vol_R(1.0)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -317,8 +310,8 @@ public node ferrari_f129_engine {
             ignition_wire: wires.wire1,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: exh_vol_L * 0.85
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: exh_vol_L * 0.85
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -327,8 +320,8 @@ public node ferrari_f129_engine {
             ignition_wire: wires.wire2,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: exh_vol_L * 0.9
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: exh_vol_L * 0.9
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -337,8 +330,8 @@ public node ferrari_f129_engine {
             ignition_wire: wires.wire3,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: exh_vol_L * 0.95
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: exh_vol_L * 0.95
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -347,8 +340,8 @@ public node ferrari_f129_engine {
             ignition_wire: wires.wire4,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: exh_vol_L * 1.0
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: exh_vol_L * 1.0
         )
 
     cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (second)
@@ -360,8 +353,8 @@ public node ferrari_f129_engine {
             ignition_wire: wires.wire8,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: exh_vol_R * 0.85
+            primary_length: pipe_length_1,
+            sound_attenuation: exh_vol_R * 0.85
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -370,8 +363,8 @@ public node ferrari_f129_engine {
             ignition_wire: wires.wire7,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: exh_vol_R * 0.9
+            primary_length: pipe_length_2,
+            sound_attenuation: exh_vol_R * 0.9
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -380,8 +373,8 @@ public node ferrari_f129_engine {
             ignition_wire: wires.wire6,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: exh_vol_R * 0.95
+            primary_length: pipe_length_3,
+            sound_attenuation: exh_vol_R * 0.95
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -390,8 +383,8 @@ public node ferrari_f129_engine {
             ignition_wire: wires.wire5,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: exh_vol_R * 1.0
+            primary_length: pipe_length_4,
+            sound_attenuation: exh_vol_R * 1.0
         )
 
     engine
@@ -401,15 +394,15 @@ public node ferrari_f129_engine {
     engine.add_crankshaft(c0)
 
     ferrari_f129_camshaft_builder camshaft(
-	    in_lobe_profile: ferrari_f129_lobe_profile_int(),
-		ex_lobe_profile: ferrari_f129_lobe_profile_exh()
-	)
+        in_lobe_profile: ferrari_f129_lobe_profile_int(),
+        ex_lobe_profile: ferrari_f129_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         ferrari_f129_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
     b1.set_cylinder_head (
@@ -429,9 +422,9 @@ public node ferrari_f129_engine {
         .add_sample(4000 * units.rpm, 48 * units.deg)
         .add_sample(5000 * units.rpm, 47 * units.deg)
         .add_sample(6000 * units.rpm, 46 * units.deg)
-		.add_sample(7000 * units.rpm, 44 * units.deg)
-		.add_sample(8000 * units.rpm, 42 * units.deg)
-		.add_sample(9000 * units.rpm, 42 * units.deg)
+        .add_sample(7000 * units.rpm, 44 * units.deg)
+        .add_sample(8000 * units.rpm, 42 * units.deg)
+        .add_sample(9000 * units.rpm, 42 * units.deg)
 
     engine.add_ignition_module(
         ferrari_f129_distributor(
