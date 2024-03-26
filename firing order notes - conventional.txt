@@ -69,7 +69,7 @@ V6
 18654372 (L) - RL adj - not used anywhere;           cylinder transposition and CCW mirror image of 18436572, hypothetical 6/7 swap on S65
 18724365 (L) - FL adj - not used anywhere;           cylinder transposition and CCW mirror image of 18726543, hypothetical 2/5 swap on S65
 18726543 (D) - FR adj - GM LS and L8T; Ford 80s-00s (Cleveland, late Windsor, early Modular); RR/Bentley L late; Volvo Penta; Cadillac BB pre-1963; Porsche M28/M48
-18736542 (D) - FL adj - Ford earliest & latest (Nailhead, Y-block, Coyote/Miami, Godzilla); some GM (Holden, Buick Nailhead, Cadillac Flathead); most BMW (M60, M62/S62); Toyota UR; Nissan VH/VK; Audi 4.2; MB M116/M117/M119; Hyundai Omega/Tau; RR/Bentley L early
+18736542 (D) - FL adj - Ford earliest & latest (Nailhead, Y-block, Coyote/Miami, Godzilla); some GM (Holden, Buick Nailhead, Cadillac Flathead); most BMW (M60, M62/S62); Toyota UR; Nissan VH/VK; Audi 4.2; MB M116/M117/M119; Hyundai Omega/Tau; RR/Bentley L early; probably Tatra V8
 18754362 (L) - RR adj - BMW S65; Lamborghini Urraco; cylinder transposition of 18736542, CCW mirror image of 15436872
 
 W8 VW - firing angles
