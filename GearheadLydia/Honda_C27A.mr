@@ -10,15 +10,15 @@ public node honda_c27a_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6700 * units.rpm;
-	input limiter_duration: 0.12;
+    input limiter_duration: 0.12;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/6.0) * cycle)
             .connect_wire(wires.wire4, (1.0/6.0) * cycle)
-			.connect_wire(wires.wire2, (2.0/6.0) * cycle)
-			.connect_wire(wires.wire5, (3.0/6.0) * cycle)
-			.connect_wire(wires.wire3, (4.0/6.0) * cycle)
-			.connect_wire(wires.wire6, (5.0/6.0) * cycle);
+            .connect_wire(wires.wire2, (2.0/6.0) * cycle)
+            .connect_wire(wires.wire5, (3.0/6.0) * cycle)
+            .connect_wire(wires.wire3, (4.0/6.0) * cycle)
+            .connect_wire(wires.wire6, (5.0/6.0) * cycle);
 }
 
 private node wires {
@@ -34,7 +34,7 @@ private node wires {
 public node honda_c27a_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 250 * units.deg,
+            duration_at_50_thou: 210 * units.deg,
             gamma: 1.0,
             lift: 9.0 * units.mm,
             steps: 100
@@ -44,7 +44,7 @@ public node honda_c27a_lobe_profile_int {
 public node honda_c27a_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 250 * units.deg,
+            duration_at_50_thou: 210 * units.deg,
             gamma: 1.0,
             lift: 9.0 * units.mm,
             steps: 100
@@ -57,7 +57,7 @@ public node honda_c27a_camshaft_builder {
     input lobe_separation: 115.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-	input advance: 0.0 * units.deg;
+    input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -78,7 +78,7 @@ public node honda_c27a_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -86,23 +86,23 @@ public node honda_c27a_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + (0 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (2 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (4 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (2 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (4 * rot120))
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + (0 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
 
     _intake_cam_1
         .add_lobe(rot360 + intake_lobe_center + (1 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (3 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (5 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (3 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (5 * rot120))
 
-	_exhaust_cam_1
+    _exhaust_cam_1
         .add_lobe(rot360 - exhaust_lobe_center + (1 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
 }
 
 private node add_flow_sample {
@@ -111,7 +111,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node honda_c27a_head {
@@ -119,12 +119,12 @@ public node honda_c27a_head {
     input exhaust_camshaft;
     input chamber_volume: 51.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation: 1.0;
-    input lift_scale: 45.0;
+    
+    input flow_attenuation: 1.0;
+    input lift_scale: 1.1;
     alias output __out: head;
 
-    function intake_flow(1.05 * units.mm)
+    function intake_flow(1.0 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -139,10 +139,8 @@ public node honda_c27a_head {
         .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.05 * units.mm)
+    function exhaust_flow(1.0 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -157,10 +155,8 @@ public node honda_c27a_head {
         .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(0.8 * units.inch) * 2 * units.inch,
@@ -173,11 +169,11 @@ public node honda_c27a_head {
         intake_camshaft: intake_camshaft,
         exhaust_camshaft: exhaust_camshaft,
         flip_display: flip_display
-	)
+    )
 }
 
 
-public node c27a {
+public node honda_c27a_engine {
     alias output __out: engine;
 
     wires wires()
@@ -186,10 +182,10 @@ public node c27a {
     label stroke(75.0 * units.mm)
     label rod_length(152.5 * units.mm)
     label rod_mass(350 * units.g)
-	label piston_mass(400 * units.g)
+    label piston_mass(400 * units.g)
     label compression_height(31.57 * units.mm)
-	label piston_dome(0.0 * units.cc)
-	label deck_height(8.715 * units.inch)
+    label piston_dome(0.0 * units.cc)
+    label deck_height((221.5 + 0.75) * units.mm)
     label crank_mass(45 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(5 * units.inch)
@@ -197,7 +193,7 @@ public node c27a {
     engine engine(
         name: "Honda C27A",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
+        starter_speed: 900 * units.rpm,
         redline: 6500 * units.rpm,
         throttle_gamma: 2.0
     )
@@ -216,7 +212,7 @@ public node c27a {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -268,8 +264,8 @@ public node c27a {
         intake_flow_rate: k_carb(300.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.994,
-        throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(200.0),
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(150.0),
         runner_length: 4.5 * units.inch,
         velocity_decay: 0.1
     )
@@ -279,18 +275,18 @@ public node c27a {
         primary_tube_length: 6.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area((2.5 * units.inch) / 2),
-		length: 3500 * units.mm,
-		volume: 3500 * units.mm * circle_area((2.5 * units.inch) / 2)
+        collector_cross_section_area: circle_area((2.5 * units.inch) / 2),
+        length: 3500 * units.mm,
+        volume: 3500 * units.mm * circle_area((2.5 * units.inch) / 2)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.025, impulse_response: ir_lib.default_0)
 
-	label pipe_length_1(3 * units.inch)
-	label pipe_length_2(0 * units.inch)
-	label pipe_length_3(3.5 * units.inch)
-	
-	label exhaust_stagger(6 * units.inch)
+    label pipe_length_1(3 * units.inch)
+    label pipe_length_2(0 * units.inch)
+    label pipe_length_3(3.5 * units.inch)
+    
+    label exhaust_stagger(6 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
@@ -301,7 +297,7 @@ public node c27a {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -310,7 +306,7 @@ public node c27a {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -319,7 +315,7 @@ public node c27a {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+            primary_length: pipe_length_3 + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -331,7 +327,7 @@ public node c27a {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
+            primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -340,7 +336,7 @@ public node c27a {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -349,7 +345,7 @@ public node c27a {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_3
         )
 
     engine
@@ -362,15 +358,15 @@ public node c27a {
 
     b0.set_cylinder_head (
         honda_c27a_head(
-			intake_camshaft: camshaft.intake_cam_0,
-			exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0,
             flip_display: true
         )
     )
     b1.set_cylinder_head (
         honda_c27a_head(
-			intake_camshaft: camshaft.intake_cam_1,
-			exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_1,
+            exhaust_camshaft: camshaft.exhaust_cam_1,
             flip_display: false
         )
     )
@@ -384,7 +380,7 @@ public node c27a {
         .add_sample(4000 * units.rpm, 50 * units.deg)
         .add_sample(5000 * units.rpm, 50 * units.deg)
         .add_sample(6000 * units.rpm, 50 * units.deg)
-		.add_sample(7000 * units.rpm, 50 * units.deg)
+        .add_sample(7000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         honda_c27a_distributor(
@@ -404,7 +400,7 @@ public node honda_accord_ce6_vehicle {
             cross_sectional_area: 2.07 * (units.m * units.m),
             diff_ratio: 4.53,
             tire_radius: 313.5 * units.mm, // 205/60R15
-            rolling_resistance: 420 * units.N
+            rolling_resistance: 1490 * units.kg * 9.81 * (205.0/275.0) * 0.01
         );
 }
 
@@ -420,7 +416,7 @@ public node honda_accord_ce6_transmission {
 }
 
 public node main {
-	set_engine(c27a())
+    set_engine(honda_c27a_engine())
     set_vehicle(honda_accord_ce6_vehicle())
     set_transmission(honda_accord_ce6_transmission())
 }
