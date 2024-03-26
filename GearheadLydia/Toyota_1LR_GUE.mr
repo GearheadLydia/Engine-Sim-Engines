@@ -99,28 +99,28 @@ public node lexus_1lrgue_camshaft_builder {
     label rot360(360 * units.deg)
 
     // firing order: 1-2-3-4-7-8-9-10-5-6
-    _intake_cam_0
+    _intake_cam_1
         .add_lobe(rot360 + intake_lobe_center + 0 * rot72) //  #1
         .add_lobe(rot360 + intake_lobe_center + 2 * rot72) //  #3
         .add_lobe(rot360 + intake_lobe_center + 8 * rot72) //  #5
         .add_lobe(rot360 + intake_lobe_center + 4 * rot72) //  #7
         .add_lobe(rot360 + intake_lobe_center + 6 * rot72) //  #9
     
-    _intake_cam_1
+    _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 9 * rot72) //  #2
         .add_lobe(rot360 + intake_lobe_center + 1 * rot72) //  #4
         .add_lobe(rot360 + intake_lobe_center + 7 * rot72) //  #6
         .add_lobe(rot360 + intake_lobe_center + 3 * rot72) //  #8
         .add_lobe(rot360 + intake_lobe_center + 5 * rot72) // #10
 
-    _exhaust_cam_0
+    _exhaust_cam_1
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 8 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot72)
 
-    _exhaust_cam_1
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + 9 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot72)
@@ -327,61 +327,8 @@ public node lexus_1lrgue_engine {
     label exh_vol_R4(0.80)
     label exh_vol_R5(0.85)
 
-    cylinder_bank b0(bank_params, angle: -36.0 * units.deg) // R (first)
+    cylinder_bank b0(bank_params, angle: 36.0 * units.deg) // L (first)
     b0
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
-            ignition_wire: wires.wire01,
-            intake: intake,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_1 + exhaust_stagger,
-            sound_attenuation: exh_vol_R1
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire03,
-            intake: intake,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_2 + exhaust_stagger,
-            sound_attenuation: exh_vol_R2
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
-            ignition_wire: wires.wire05,
-            intake: intake,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_3 + exhaust_stagger,
-            sound_attenuation: exh_vol_R3
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
-            ignition_wire: wires.wire07,
-            intake: intake,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_4 + exhaust_stagger,
-            sound_attenuation: exh_vol_R4
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
-            ignition_wire: wires.wire09,
-            intake: intake,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_5 + exhaust_stagger,
-            sound_attenuation: exh_vol_R5
-        )
-
-    cylinder_bank b1(bank_params, angle: 36.0 * units.deg) // L (second)
-    b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
@@ -389,7 +336,7 @@ public node lexus_1lrgue_engine {
             ignition_wire: wires.wire02,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1,
+            primary_length: pipe_length_1 + exhaust_stagger,
             sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
@@ -399,7 +346,7 @@ public node lexus_1lrgue_engine {
             ignition_wire: wires.wire04,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2,
+            primary_length: pipe_length_2 + exhaust_stagger,
             sound_attenuation: exh_vol_L2
         )
         .add_cylinder(
@@ -409,7 +356,7 @@ public node lexus_1lrgue_engine {
             ignition_wire: wires.wire06,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3,
+            primary_length: pipe_length_3 + exhaust_stagger,
             sound_attenuation: exh_vol_L3
         )
         .add_cylinder(
@@ -419,7 +366,7 @@ public node lexus_1lrgue_engine {
             ignition_wire: wires.wire08,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_4,
+            primary_length: pipe_length_4 + exhaust_stagger,
             sound_attenuation: exh_vol_L4
         )
         .add_cylinder(
@@ -429,8 +376,61 @@ public node lexus_1lrgue_engine {
             ignition_wire: wires.wire10,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_5,
+            primary_length: pipe_length_5 + exhaust_stagger,
             sound_attenuation: exh_vol_L5
+        )
+
+    cylinder_bank b1(bank_params, angle: -36.0 * units.deg) // R (second)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            ignition_wire: wires.wire01,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_1,
+            sound_attenuation: exh_vol_R1
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire03,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_2,
+            sound_attenuation: exh_vol_R2
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire05,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3,
+            sound_attenuation: exh_vol_R3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire07,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_4,
+            sound_attenuation: exh_vol_R4
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire09,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_5,
+            sound_attenuation: exh_vol_R5
         )
 
     engine
@@ -445,14 +445,14 @@ public node lexus_1lrgue_engine {
         lexus_1lrgue_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-            flip_display: false
+            flip_display: true
         )
     )
     b1.set_cylinder_head (
         lexus_1lrgue_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
-            flip_display: true
+            flip_display: false
         )
     )
 
