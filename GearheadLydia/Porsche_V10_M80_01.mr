@@ -330,7 +330,7 @@ public node carrera_gt_v10 {
 	label pipe_length_4(40 * units.mm)
 	label pipe_length_5(30 * units.mm)
 	
-	label exhaust_stagger(-10 * units.mm)
+	label exhaust_stagger(20 * units.mm)
 	
 	label exh_vol_L1(0.9)
 	label exh_vol_L2(1.0)
