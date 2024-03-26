@@ -12,7 +12,7 @@ public node chevrolet_ls1_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6500 * units.rpm;
-	input limiter_duration: 0.09;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -88,7 +88,7 @@ label chevrolet_ls1_2002_advance(-1.0 * units.deg) // guess
 
 public node chevrolet_ls1_camshaft_builder {
     input in_lobe_profile: chevrolet_ls1_1999_fbody_lobe_profile_int();
-	input ex_lobe_profile: chevrolet_ls1_1999_fbody_lobe_profile_exh();
+    input ex_lobe_profile: chevrolet_ls1_1999_fbody_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: chevrolet_ls1_1999_fbody_lobe_separation;
@@ -115,7 +115,7 @@ public node chevrolet_ls1_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -160,54 +160,48 @@ public node chevrolet_ls1_head {
     input exhaust_camshaft;
     input chamber_volume: 67.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
-    input lift_scale: 50.0;
+    
     alias output __out: head;
-
+    
+    // https://www.motortrend.com/how-to/hrdp-1012-ultimate-chevrolet-ls-cylinder-head-test/
     function intake_flow(50 * units.thou)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  76 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 146 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 175 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 212 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 230 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 255 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 275 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 294 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 300 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 314 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 314 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 314 * flow_attenuation_in)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  32) // interp
+        .add_flow_sample(100,  67)
+        .add_flow_sample(150, 100) // interp
+        .add_flow_sample(200, 136)
+        .add_flow_sample(250, 170) // interp
+        .add_flow_sample(300, 196)
+        .add_flow_sample(350, 210) // interp
+        .add_flow_sample(400, 217)
+        .add_flow_sample(450, 221) // interp
+        .add_flow_sample(500, 224)
+        .add_flow_sample(550, 227) // interp
+        .add_flow_sample(600, 230)
 
     function exhaust_flow(50 * units.thou)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  70 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 132 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 156 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 170 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 181 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 191 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 207 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 214 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
-		
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  28) // interp
+        .add_flow_sample(100,  53)
+        .add_flow_sample(150,  80) // interp
+        .add_flow_sample(200, 105)
+        .add_flow_sample(250, 124) // interp
+        .add_flow_sample(300, 141)
+        .add_flow_sample(350, 154) // interp
+        .add_flow_sample(400, 165)
+        .add_flow_sample(450, 179) // interp
+        .add_flow_sample(500, 193)
+        .add_flow_sample(550, 204) // interp
+        .add_flow_sample(600, 211)
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.43 * units.inch) * 8 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.43 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        intake_runner_volume:  205 * units.cc,
+        intake_runner_cross_section_area:  circle_area(2.00 * units.inch / 2),
+        exhaust_runner_volume:  70 * units.cc,
+        exhaust_runner_cross_section_area: circle_area(1.55 * units.inch / 2),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -226,28 +220,28 @@ public node chevrolet_ls1_engine {
     engine engine(
         name: "Chevrolet LS1",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1000 * units.rpm,
+        starter_speed: 1000 * units.rpm,
         redline: 6000 * units.rpm,
         throttle_gamma: 1.0,
-		// jitter: 0.7,
-		// hf_gain: 0.15
-		jitter: 0.6,
-		hf_gain: 0.1
-		// jitter: 0.1,
-		// hf_gain: 0.1
+        // jitter: 0.7,
+        // hf_gain: 0.15
+        jitter: 0.6,
+        hf_gain: 0.1
+        // jitter: 0.1,
+        // hf_gain: 0.1
     )
 
 
-	// source: https://help.summitracing.com/app/answers/detail/a_id/4813/~/chevy-ls1-engine-specs
+    // source: https://help.summitracing.com/app/answers/detail/a_id/4813/~/chevy-ls1-engine-specs
     label bore(3.898 * units.inch)
-	label bore_spacing(4.4 * units.inch)
+    label bore_spacing(4.4 * units.inch)
     label stroke(3.622 * units.inch)
     label rod_length(6.098 * units.inch)
     label rod_mass(464 * units.g)
     label compression_height(1.314 * units.inch)
-	label piston_mass(482 * units.g)
-	label piston_dome(-4.00 * units.cc)
-	label deck_height(9.240 * units.inch)
+    label piston_mass(482 * units.g)
+    label piston_dome(-4.00 * units.cc)
+    label deck_height(9.240 * units.inch)
     label crank_mass(57 * units.lb)
     label flywheel_mass(57 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -316,47 +310,47 @@ public node chevrolet_ls1_engine {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(450.0),
-        runner_length: 12.0 * units.inch,
+        runner_flow_rate: k_carb(250.0),
+        runner_length: 11.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((4.0 * units.inch)/2)
+    
+    label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: 15.0 * units.inch,
-        primary_flow_rate: k_carb(300.0),
-        velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2600 * units.mm,
-		volume: 2600 * units.mm * circle_area(exhaust_radius)
+        primary_tube_length: 2.0 * units.inch,
+        primary_flow_rate: k_carb(250.0),
+        velocity_decay: 0.3,
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2600 * units.mm,
+        volume: 2600 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-	
-	// lower grade LS headers //
-	label pipe_length_1(bore_spacing * 2.2)
-	label pipe_length_2(bore_spacing * 1.2)
-	label pipe_length_3(bore_spacing * 0.2)
-	label pipe_length_4(bore_spacing * 0.0)
-	label pipe_volume_1(0.6)
-	label pipe_volume_2(0.8)
-	label pipe_volume_3(1.0)
-	label pipe_volume_4(1.0)
-	
-	// stock Z06 headers //
-	// label pipe_length_1(bore_spacing * 0.6)
-	// label pipe_length_2(bore_spacing * 0.1)
-	// label pipe_length_3(bore_spacing * 0.0)
-	// label pipe_length_4(bore_spacing * 0.5)
-	// label pipe_volume_1(0.9)
-	// label pipe_volume_2(1.0)
-	// label pipe_volume_3(1.0)
-	// label pipe_volume_4(0.9)
-	
-	label exhaust_stagger(40 * units.mm)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
+    
+    // lower grade LS headers //
+    label pipe_length_1(bore_spacing * 2.2)
+    label pipe_length_2(bore_spacing * 1.2)
+    label pipe_length_3(bore_spacing * 0.2)
+    label pipe_length_4(bore_spacing * 0.0)
+    label pipe_volume_1(0.6)
+    label pipe_volume_2(0.8)
+    label pipe_volume_3(1.0)
+    label pipe_volume_4(1.0)
+    
+    // stock Z06 headers //
+    // label pipe_length_1(bore_spacing * 0.6)
+    // label pipe_length_2(bore_spacing * 0.1)
+    // label pipe_length_3(bore_spacing * 0.0)
+    // label pipe_length_4(bore_spacing * 0.5)
+    // label pipe_volume_1(0.9)
+    // label pipe_volume_2(1.0)
+    // label pipe_volume_3(1.0)
+    // label pipe_volume_4(0.9)
+    
+    label exhaust_stagger(40 * units.mm)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
     b0
@@ -367,8 +361,8 @@ public node chevrolet_ls1_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: pipe_volume_1 * 0.9
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: pipe_volume_1 * 0.9
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -377,8 +371,8 @@ public node chevrolet_ls1_engine {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: pipe_volume_2 * 0.9
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: pipe_volume_2 * 0.9
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -387,8 +381,8 @@ public node chevrolet_ls1_engine {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: pipe_volume_3 * 0.9
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: pipe_volume_3 * 0.9
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -397,8 +391,8 @@ public node chevrolet_ls1_engine {
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: pipe_volume_4 * 0.9
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: pipe_volume_4 * 0.9
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -410,8 +404,8 @@ public node chevrolet_ls1_engine {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_1,
-			sound_attenuation: pipe_volume_1
+            primary_length: pipe_length_1,
+            sound_attenuation: pipe_volume_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -420,8 +414,8 @@ public node chevrolet_ls1_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_2,
-			sound_attenuation: pipe_volume_2
+            primary_length: pipe_length_2,
+            sound_attenuation: pipe_volume_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -430,8 +424,8 @@ public node chevrolet_ls1_engine {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_3,
-			sound_attenuation: pipe_volume_3
+            primary_length: pipe_length_3,
+            sound_attenuation: pipe_volume_3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -440,8 +434,8 @@ public node chevrolet_ls1_engine {
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_4,
-			sound_attenuation: pipe_volume_4
+            primary_length: pipe_length_4,
+            sound_attenuation: pipe_volume_4
         )
 
     engine
@@ -451,15 +445,15 @@ public node chevrolet_ls1_engine {
     engine.add_crankshaft(c0)
 
     chevrolet_ls1_camshaft_builder camshaft(
-	    in_lobe_profile: chevrolet_ls1_1999_fbody_lobe_profile_int(),
-		ex_lobe_profile: chevrolet_ls1_1999_fbody_lobe_profile_exh()
-	)
+        in_lobe_profile: chevrolet_ls1_1999_fbody_lobe_profile_int(),
+        ex_lobe_profile: chevrolet_ls1_1999_fbody_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         chevrolet_ls1_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: false
+            flip_display: false
         )
     )
     b1.set_cylinder_head (
@@ -479,7 +473,7 @@ public node chevrolet_ls1_engine {
         .add_sample(4000 * units.rpm, 37 * units.deg)
         .add_sample(5000 * units.rpm, 40 * units.deg)
         .add_sample(6000 * units.rpm, 41 * units.deg)
-		.add_sample(7000 * units.rpm, 41 * units.deg)
+        .add_sample(7000 * units.rpm, 41 * units.deg)
 
     engine.add_ignition_module(
         chevrolet_ls1_distributor(
