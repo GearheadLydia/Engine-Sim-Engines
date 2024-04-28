@@ -10,13 +10,13 @@ public node rover_k4_16v_1800_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7250 * units.rpm;
-	input limiter_duration: 0.06;
+    input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
             .connect_wire(wires.wire3, (1.0/4.0) * cycle)
-			.connect_wire(wires.wire4, (2.0/4.0) * cycle)
-			.connect_wire(wires.wire2, (3.0/4.0) * cycle);
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (3.0/4.0) * cycle);
 }
 
 private node wires {
@@ -60,7 +60,7 @@ public node rover_k4_16v_1800_lobe_profile_exh {
 
 public node rover_k4_16v_1800_camshaft_builder {
     input lobe_profile: rover_k4_16v_1800_lobe_profile_int();
-	input ex_lobe_profile: rover_k4_16v_1800_lobe_profile_exh();
+    input ex_lobe_profile: rover_k4_16v_1800_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 110.0 * units.deg;
@@ -88,15 +88,15 @@ public node rover_k4_16v_1800_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 3 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 1 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 2 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot180)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot180)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
 }
 
 private node add_flow_sample {
@@ -105,7 +105,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
 public node rover_k4_16v_1800_head {
@@ -113,49 +113,39 @@ public node rover_k4_16v_1800_head {
     input exhaust_camshaft;
     input chamber_volume: 30.2 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.0;
+    
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#Rover
+    function intake_flow(50 * units.thou)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  34)
+        .add_flow_sample(100,  63)
+        .add_flow_sample(150, 100)
+        .add_flow_sample(200, 137)
+        .add_flow_sample(250, 165)
+        .add_flow_sample(300, 181)
+        .add_flow_sample(350, 187)
+        .add_flow_sample(400, 192)
+        .add_flow_sample(450, 194)
+        .add_flow_sample(500, 196)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(50 * units.thou)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  27)
+        .add_flow_sample(100,  58)
+        .add_flow_sample(150,  86)
+        .add_flow_sample(200, 108)
+        .add_flow_sample(250, 121)
+        .add_flow_sample(300, 126)
+        .add_flow_sample(350, 128)
+        .add_flow_sample(400, 130)
+        .add_flow_sample(450, 130)
+        .add_flow_sample(500, 130)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 5 * units.inch,
@@ -180,22 +170,22 @@ public node rover_k4_16v_1800_engine {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
-		hf_gain: 0.002,
-		jitter: 0.55,
+        hf_gain: 0.002,
+        jitter: 0.55,
         throttle_gamma: 1.0
     )
-	
-	label lean_angle(-10 * units.deg)
+    
+    label lean_angle(-10 * units.deg)
 
     label bore(80.0 * units.mm)
     label bore_spacing(84.5 * units.mm) // visual estimate
     label stroke(89.3 * units.mm)
     label rod_length(133.1 * units.mm)
     label rod_mass(350 * units.g)
-	label piston_mass(347 * units.g)
+    label piston_mass(347 * units.g)
     label compression_height(22.7 * units.mm)
-	label deck_height((200.5 + 1.0) * units.mm) // deck height is a guess
-	label piston_dome(-11.7 * units.cc) // for 10.5:1 CR
+    label deck_height((200.5 + 1.0) * units.mm) // deck height is a guess
+    label piston_dome(-11.7 * units.cc) // for 10.5:1 CR
     label crank_mass(6.0 * units.kg)
     label flywheel_mass(12.0 * units.kg)
     label flywheel_radius(6.0 * units.inch)
@@ -227,7 +217,7 @@ public node rover_k4_16v_1800_engine {
     rod_journal rj1(angle: 180 * units.deg)
     rod_journal rj2(angle: 180 * units.deg)
     rod_journal rj3(angle:  0  * units.deg)
-	
+    
     c0
         .add_rod_journal(rj0)
         .add_rod_journal(rj1)
@@ -264,24 +254,24 @@ public node rover_k4_16v_1800_engine {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(160.0),
+        runner_flow_rate: k_carb(200.0),
         runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((3.5 * units.inch)/2)
+    
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(300.0),
         primary_tube_length: 12.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 600 * units.mm,
-		volume: 600 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 600 * units.mm,
+        volume: 600 * units.mm * circle_area(exhaust_radius)
     )
-	
-	exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
@@ -292,38 +282,38 @@ public node rover_k4_16v_1800_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 0.3,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 0.3,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 0.0,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 0.0,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 0.2,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 0.2,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 0.5,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 0.5,
+            sound_attenuation: 1.0
         )
 
     engine
@@ -332,15 +322,15 @@ public node rover_k4_16v_1800_engine {
     engine.add_crankshaft(c0)
 
     rover_k4_16v_1800_camshaft_builder camshaft(
-	    lobe_profile: rover_k4_16v_1800_lobe_profile_int(),
-		ex_lobe_profile: rover_k4_16v_1800_lobe_profile_exh()
-	)
+        lobe_profile: rover_k4_16v_1800_lobe_profile_int(),
+        ex_lobe_profile: rover_k4_16v_1800_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         rover_k4_16v_1800_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: false
+            flip_display: false
         )
     )
 
@@ -390,7 +380,7 @@ public node rover_pg1_elise_transmission {
 }
 
 public node main {
-	set_engine(rover_k4_16v_1800_engine())
+    set_engine(rover_k4_16v_1800_engine())
     set_vehicle(lotus_elise_111s_vehicle())
     set_transmission(rover_pg1_elise_transmission())
 }
