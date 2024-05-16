@@ -1,0 +1,430 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+// firing order: 123456
+
+public node mythos_modular_v6_302_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 7200 * units.rpm;
+    input limiter_duration: 0.08;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire1, (0.00 / 6.0) * cycle)
+            .connect_wire(wires.wire2, (0.75 / 6.0) * cycle)
+            .connect_wire(wires.wire3, (2.00 / 6.0) * cycle)
+            .connect_wire(wires.wire4, (2.75 / 6.0) * cycle)
+            .connect_wire(wires.wire5, (4.00 / 6.0) * cycle)
+            .connect_wire(wires.wire6, (4.75 / 6.0) * cycle);
+}
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+    output wire3: ignition_wire();
+    output wire4: ignition_wire();
+    output wire5: ignition_wire();
+    output wire6: ignition_wire();
+    output wire7: ignition_wire();
+    output wire8: ignition_wire();
+}
+
+public node mythos_modular_v6_302_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 230 * units.deg,
+            gamma: 1.0,
+            lift: 10.5 * units.mm,
+            steps: 100
+        );
+}
+
+public node mythos_modular_v6_302_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 230 * units.deg,
+            gamma: 1.0,
+            lift: 10.5 * units.mm,
+            steps: 100
+        );
+}
+
+public node mythos_modular_v6_302_camshaft_builder {
+    input in_lobe_profile: mythos_modular_v6_302_lobe_profile_int();
+    input ex_lobe_profile: mythos_modular_v6_302_lobe_profile_exh();
+    input intake_lobe_profile: in_lobe_profile;
+    input exhaust_lobe_profile: ex_lobe_profile;
+    input intake_lobe_center: 110.0 * units.deg;
+    input exhaust_lobe_center: 105.0 * units.deg;
+    input advance: 0.0 * units.deg;
+    input base_radius: 15 * units.mm;
+
+    output intake_cam_0: _intake_cam_0;
+    output exhaust_cam_0: _exhaust_cam_0;
+    output intake_cam_1: _intake_cam_1;
+    output exhaust_cam_1: _exhaust_cam_1;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+
+    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+
+
+    label rot30(30 * units.deg)
+    label rot60(60 * units.deg)
+    label rot90(90 * units.deg)
+    label rot120(120 * units.deg)
+    label rot180(180 * units.deg)
+    label rot360(360 * units.deg)
+
+    _intake_cam_0
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 4 * rot120)
+
+    _intake_cam_1
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot120 - rot30)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot120 - rot30)
+        .add_lobe(rot360 + intake_lobe_center + 5 * rot120 - rot30)
+
+    _exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot120)
+
+    _exhaust_cam_1
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot120 - rot30)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot120 - rot30)
+        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot120 - rot30)
+}
+
+public node mythos_modular_v6_302_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 46.0 * units.cc;
+    input flip_display: false;
+    
+    input flow_intake: 335.0;
+    input flow_exhaust: 280.0;
+    input lift_max: 12.0 * units.mm;
+    alias output __out: head;
+
+    function intake_flow(lift_max / 10.0)
+    intake_flow
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
+
+    function exhaust_flow(lift_max / 10.0)
+    exhaust_flow
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
+
+        
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: circle_area(1.05 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.05 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+
+public node mythos_modular_v6_302_engine {
+    alias output __out: engine;
+
+    wires wires()
+
+    engine engine(
+        name: "Mythos Modular V6 OF",
+        starter_torque: 150 * units.lb_ft,
+        starter_speed: 1100 * units.rpm,
+        redline: 7000 * units.rpm,
+        throttle_gamma: 1.0
+    )
+
+    label bore(4.00 * units.inch)
+    label bore_spacing(4.25 * units.inch)
+    label stroke(4.00 * units.inch)
+    label rod_length(6.15 * units.inch)
+    label compression_height(1.20 * units.inch)
+    label piston_dome(0.00 * units.cc)
+    label chamber_volume(45.0 * units.cc)
+
+    label crank_mass(75 * units.lb)
+    label rod_mass(600 * units.g)
+    label piston_mass(400 * units.g)
+    label flywheel_mass(15 * units.lb)
+    label flywheel_radius(6 * units.inch)
+
+    label compression_ratio(11.0)
+    label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 20 * units.kg, radius: 8.0 * units.cm)
+    )
+
+    crankshaft c0(
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 5.0 * units.lb_ft,
+        moment_of_inertia:
+            crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: (90.0 * units.deg) + (45.0 * units.deg)
+    )
+
+    rod_journal rj1(angle:   0.0 * units.deg)
+    rod_journal rj3(angle: 240.0 * units.deg)
+    rod_journal rj5(angle: 120.0 * units.deg)
+
+    c0
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj3)
+        .add_rod_journal(rj5)
+
+
+    piston_parameters piston_params(
+        mass: piston_mass,
+        blowby: k_28inH2O(0.1),
+        compression_height: compression_height,
+        wrist_pin_position: 0 * units.mm,
+        displacement: piston_dome
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
+        center_of_mass: 0.0,
+        length: rod_length
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: bore,
+        deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
+    )
+
+    intake intake(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(750),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.997,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(250.0),
+        runner_length: 5.5 * units.inch,
+        velocity_decay: 0.1
+    )
+    
+    label exhaust_radius((4.0 * units.inch)/2)
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(350),
+        primary_tube_length: 12.0 * units.inch,
+        primary_flow_rate: k_carb(300.0),
+        velocity_decay: 1.0, //0.5
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2700 * units.mm,
+        volume: 2700 * units.mm * circle_area(exhaust_radius) * 2
+    )
+
+    exhaust_system exhaust_L(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust_R(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
+
+    label pipe_length_1(0.8 * bore_spacing)
+    label pipe_length_2(0.4 * bore_spacing)
+    label pipe_length_3(0.0 * bore_spacing)
+    
+    label exhaust_stagger(120 * units.mm)
+
+    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (second)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire1,
+            intake: intake,
+            exhaust_system: exhaust_L,
+            primary_length: pipe_length_1
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust_L,
+            primary_length: pipe_length_2
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust_L,
+            primary_length: pipe_length_3
+        )
+
+    cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (first)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire2,
+            intake: intake,
+            exhaust_system: exhaust_R,
+            primary_length: pipe_length_1 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust_R,
+            primary_length: pipe_length_2 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire6,
+            intake: intake,
+            exhaust_system: exhaust_R,
+            primary_length: pipe_length_3 + exhaust_stagger
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+        .add_cylinder_bank(b1)
+
+    engine.add_crankshaft(c0)
+
+    mythos_modular_v6_302_camshaft_builder camshaft(
+        in_lobe_profile: mythos_modular_v6_302_lobe_profile_int(),
+        ex_lobe_profile: mythos_modular_v6_302_lobe_profile_exh()
+    )
+
+    b0.set_cylinder_head (
+        mythos_modular_v6_302_head(
+            intake_camshaft: camshaft.intake_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0,
+            chamber_volume: chamber_volume,
+            flip_display: true
+        )
+    )
+    b1.set_cylinder_head (
+        mythos_modular_v6_302_head(
+            intake_camshaft: camshaft.intake_cam_1,
+            exhaust_camshaft: camshaft.exhaust_cam_1,
+            chamber_volume: chamber_volume,
+            flip_display: false
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 70 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
+        .add_sample(6000 * units.rpm, 70 * units.deg)
+        .add_sample(7000 * units.rpm, 70 * units.deg)
+        .add_sample(8000 * units.rpm, 70 * units.deg)
+        .add_sample(9000 * units.rpm, 70 * units.deg)
+
+    engine.add_ignition_module(
+        mythos_modular_v6_302_distributor(
+            wires: wires,
+            timing_curve: timing_curve
+        )
+    )
+}
+
+public node mythos_athame_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1460 * units.kg,
+            drag_coefficient: 0.29,
+            cross_sectional_area: 2.08 * (units.m * units.m),
+            diff_ratio: 3.3,
+            tire_radius: 326.5 * units.mm, // 285/30ZR19
+            rolling_resistance: 1460 * units.kg * 9.81 * (285.0/275.0) * 0.01
+        );
+}
+
+public node mythos_athame_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 800 * units.lb_ft
+        )
+        .add_gear(3.500)
+        .add_gear(2.360)
+        .add_gear(1.685)
+        .add_gear(1.312)
+        .add_gear(1.000)
+        .add_gear(0.793);
+}
+
+public node main {
+    set_engine(mythos_modular_v6_302_engine())
+    set_vehicle(mythos_athame_vehicle())
+    set_transmission(mythos_athame_transmission())
+}
+
+main()
