@@ -6,18 +6,17 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-public node i5_bigturbofive_distributor {
+public node i4_bigturbofour_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 5600 * units.rpm;
     input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
-            .connect_wire(wires.wire1, (0.0/5.0) * cycle)
-            .connect_wire(wires.wire2, (1.0/5.0) * cycle)
-            .connect_wire(wires.wire4, (2.0/5.0) * cycle)
-            .connect_wire(wires.wire5, (3.0/5.0) * cycle)
-            .connect_wire(wires.wire3, (4.0/5.0) * cycle);
+            .connect_wire(wires.wire1, (0.0/4.0) * cycle)
+            .connect_wire(wires.wire3, (1.0/4.0) * cycle)
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (3.0/4.0) * cycle);
 }
 
 private node wires {
@@ -25,10 +24,9 @@ private node wires {
     output wire2: ignition_wire();
     output wire3: ignition_wire();
     output wire4: ignition_wire();
-    output wire5: ignition_wire();
 }
 
-public node i5_bigturbofive_lobe_profile_int {
+public node i4_bigturbofour_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
@@ -38,7 +36,7 @@ public node i5_bigturbofive_lobe_profile_int {
         );
 }
 
-public node i5_bigturbofive_lobe_profile_exh {
+public node i4_bigturbofour_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
@@ -48,9 +46,9 @@ public node i5_bigturbofive_lobe_profile_exh {
         );
 }
 
-public node i5_bigturbofive_camshaft_builder {
-    input lobe_profile: i5_bigturbofive_lobe_profile_int();
-    input ex_lobe_profile: i5_bigturbofive_lobe_profile_exh();
+public node i4_bigturbofour_camshaft_builder {
+    input lobe_profile: i4_bigturbofour_lobe_profile_int();
+    input ex_lobe_profile: i4_bigturbofour_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 105.0 * units.deg;
@@ -78,18 +76,16 @@ public node i5_bigturbofive_camshaft_builder {
     label rot360(360 * units.deg)
 
     _intake_cam_0
-        .add_lobe(rot360 + intake_lobe_center + 0 * rot144)
-        .add_lobe(rot360 + intake_lobe_center + 1 * rot144)
-        .add_lobe(rot360 + intake_lobe_center + 4 * rot144)
-        .add_lobe(rot360 + intake_lobe_center + 2 * rot144)
-        .add_lobe(rot360 + intake_lobe_center + 3 * rot144)
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot180)
 
     _exhaust_cam_0
-        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot144)
-        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot144)
-        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot144)
-        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot144)
-        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot144)
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
 }
 
 private node add_flow_sample {
@@ -101,7 +97,7 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node i5_bigturbofive_head {
+public node i4_bigturbofour_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 45.0 * units.cc;
@@ -159,11 +155,11 @@ public node i5_bigturbofive_head {
     )
 }
 
-public node i5_bigturbofive_engine {
+public node i4_bigturbofour_engine {
     alias output __out: engine;
 
     engine engine(
-        name: "Big Turbo Five",
+        name: "Big Turbo Four",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 5500 * units.rpm,
@@ -215,18 +211,16 @@ public node i5_bigturbofive_engine {
         tdc: 90.0 * units.deg + lean_angle
     )
 
-    rod_journal rj1(angle: (0.0 / 5.0) * 360 * units.deg)
-    rod_journal rj2(angle: (2.0 / 5.0) * 360 * units.deg)
-    rod_journal rj3(angle: (3.0 / 5.0) * 360 * units.deg)
-    rod_journal rj4(angle: (4.0 / 5.0) * 360 * units.deg)
-    rod_journal rj5(angle: (1.0 / 5.0) * 360 * units.deg)
+    rod_journal rj1(angle:   0.0 * units.deg)
+    rod_journal rj2(angle: 180.0 * units.deg)
+    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj4(angle:   0.0 * units.deg)
     
     c0
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
-        .add_rod_journal(rj5)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -254,7 +248,7 @@ public node i5_bigturbofive_engine {
     intake intake(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(500.0),
+        intake_flow_rate: k_carb(400.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
@@ -266,7 +260,7 @@ public node i5_bigturbofive_engine {
     label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500.0),
+        outlet_flow_rate: k_carb(400.0),
         primary_tube_length: 15.0 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
@@ -323,29 +317,19 @@ public node i5_bigturbofive_engine {
             primary_length: bore_spacing * 1.0,
             sound_attenuation: 1.0
         )
-        .add_cylinder(
-            piston: piston(piston_params),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
-            ignition_wire: wires.wire5,
-            intake: intake,
-            exhaust_system: exhaust,
-            primary_length: bore_spacing * 2.0,
-            sound_attenuation: 1.0
-        )
 
     engine
         .add_cylinder_bank(b0)
 
     engine.add_crankshaft(c0)
 
-    i5_bigturbofive_camshaft_builder camshaft(
-        lobe_profile: i5_bigturbofive_lobe_profile_int(),
-        ex_lobe_profile: i5_bigturbofive_lobe_profile_exh()
+    i4_bigturbofour_camshaft_builder camshaft(
+        lobe_profile: i4_bigturbofour_lobe_profile_int(),
+        ex_lobe_profile: i4_bigturbofour_lobe_profile_exh()
     )
 
     b0.set_cylinder_head (
-        i5_bigturbofive_head(
+        i4_bigturbofour_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
             chamber_volume: chamber_volume,
@@ -366,7 +350,7 @@ public node i5_bigturbofive_engine {
         .add_sample(8000 * units.rpm, 85 * units.deg)
 
     engine.add_ignition_module(
-        i5_bigturbofive_distributor(
+        i4_bigturbofour_distributor(
             wires: wires,
             timing_curve: timing_curve
         ))
@@ -387,7 +371,7 @@ public node random_automation_car_vehicle {
 public node random_automation_car_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 550 * units.lb_ft
+            max_clutch_torque: 440 * units.lb_ft
         )
         .add_gear(2.66)
         .add_gear(1.65)
@@ -398,7 +382,7 @@ public node random_automation_car_transmission {
 }
 
 public node main {
-    set_engine(i5_bigturbofive_engine())
+    set_engine(i4_bigturbofour_engine())
     set_vehicle(random_automation_car_vehicle())
     set_transmission(random_automation_car_transmission())
 }

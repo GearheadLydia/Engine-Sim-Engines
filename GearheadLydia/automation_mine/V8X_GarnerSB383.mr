@@ -36,82 +36,52 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-
-// https://www.onallcylinders.com/2017/10/12/ls1-engine-specs-performance-bore-stroke-cylinder-heads-cam-specs/
-
-// 1999 Camaro cams
-public node garner_383_1999_fbody_lobe_profile_int {
+public node garner_383_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 198 * units.deg,
+            duration_at_50_thou: 210 * units.deg,
             gamma: 1.0,
-            lift: 498 * units.thou,
+            lift: 475 * units.thou,
             steps: 100
         );
 }
 
-public node garner_383_1999_fbody_lobe_profile_exh {
+public node garner_383_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 209 * units.deg,
+            duration_at_50_thou: 210 * units.deg,
             gamma: 1.0,
-            lift: 497 * units.thou,
+            lift: 475 * units.thou,
             steps: 100
         );
 }
-
-// 2002 all model cams
-public node garner_383_2002_lobe_profile_int {
-    alias output __out:
-        harmonic_cam_lobe(
-            duration_at_50_thou: 196 * units.deg,
-            gamma: 1.0,
-            lift: 467 * units.thou,
-            steps: 100
-        );
-}
-
-public node garner_383_2002_lobe_profile_exh {
-    alias output __out:
-        harmonic_cam_lobe(
-            duration_at_50_thou: 208 * units.deg,
-            gamma: 1.0,
-            lift: 479 * units.thou,
-            steps: 100
-        );
-}
-
-label garner_383_1999_fbody_lobe_separation(119.5 * units.deg)
-label garner_383_1999_fbody_advance(-2.5 * units.deg)
-label garner_383_2002_lobe_separation(116.0 * units.deg)
-label garner_383_2002_advance(-1.0 * units.deg) // guess
 
 public node garner_383_camshaft_builder {
-    input in_lobe_profile: garner_383_1999_fbody_lobe_profile_int();
-    input ex_lobe_profile: garner_383_1999_fbody_lobe_profile_exh();
+    input in_lobe_profile: garner_383_lobe_profile_int();
+    input ex_lobe_profile: garner_383_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: garner_383_1999_fbody_lobe_separation;
+    input lobe_separation: 115.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-    input advance: garner_383_1999_fbody_advance;
+    input advance: -4.0 * units.deg;
     input base_radius: 1.462 / 2 * units.inch;
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
 
     label rot30(30 * units.deg)
@@ -121,38 +91,29 @@ public node garner_383_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_0
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
 
-    _intake_cam_1
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
 
-    _exhaust_cam_0
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
 
-    _exhaust_cam_1
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
-}
-
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
 public node garner_383_head {
@@ -161,52 +122,48 @@ public node garner_383_head {
     input chamber_volume: 67.0 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation_in: 1.0;
-    input flow_attenuation_ex: 1.0;
-    input lift_scale: 50.0;
+    input flow_intake: 280.0;
+    input flow_exhaust: 230.0;
+    input lift_max: 600 * units.thou;
     alias output __out: head;
 
-    function intake_flow(50 * units.thou)
+    function intake_flow(lift_max / 10.0)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  76 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 146 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 175 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 212 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 230 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 255 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 275 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 294 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 300 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 314 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 314 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 314 * flow_attenuation_in)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(50 * units.thou)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  70 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 132 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 156 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 170 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 181 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 191 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 207 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 214 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.43 * units.inch) * 8 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.43 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 4 * units.inch,
+        intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.75 * units.inch) * 3 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -226,29 +183,29 @@ public node garner_383_engine {
     engine engine(
         name: "Garner 383",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 1000 * units.rpm,
+        starter_speed: 1100 * units.rpm,
         redline: 6500 * units.rpm,
         throttle_gamma: 1.0,
-        // jitter: 0.7,
-        // hf_gain: 0.15
         jitter: 0.6,
         hf_gain: 0.1
-        // jitter: 0.1,
-        // hf_gain: 0.1
     )
 
     label bore(4.000 * units.inch)
-    label bore_spacing(4.4 * units.inch)
+    label bore_spacing(4.400 * units.inch)
     label stroke(3.800 * units.inch)
     label rod_length(6.000 * units.inch)
-    label rod_mass(464 * units.g)
     label compression_height(1.300 * units.inch)
-    label piston_mass(482 * units.g)
-    label piston_dome(-4.00 * units.cc)
-    label deck_height(9.250 * units.inch)
-    label crank_mass(57 * units.lb)
-    label flywheel_mass(57 * units.lb)
+    label piston_dome(0.0 * units.cc)
+    label chamber_volume(65.0 * units.cc)
+    
+    label crank_mass(35 * units.kg)
+    label rod_mass(550 * units.g)
+    label piston_mass(480 * units.g)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
+    
+    label compression_ratio(9.5)
+    label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
 
     label crank_moment(
         disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
@@ -272,21 +229,21 @@ public node garner_383_engine {
         tdc: 45.0 * units.deg // 45 degrees back from right side
     )
 
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle: 90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0.0 * units.deg)
+    rod_journal rj2(angle: -90.0 * units.deg)
+    rod_journal rj3(angle:  90.0 * units.deg)
+    rod_journal rj4(angle: 180.0 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -304,17 +261,17 @@ public node garner_383_engine {
 
     cylinder_bank_parameters bank_params(
         bore: bore,
-        deck_height: deck_height
+        deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
     intake intake(
         plenum_volume: 0.3 * units.L,
         plenum_cross_section_area: circle_area(45 * units.mm),
-        intake_flow_rate: k_carb(750),
+        intake_flow_rate: k_carb(750.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.996,
+        idle_throttle_plate_position: 0.995,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(450.0),
+        runner_flow_rate: k_carb(300.0),
         runner_length: 12.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -322,79 +279,36 @@ public node garner_383_engine {
     label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(400.0),
-        primary_tube_length: 15.0 * units.inch,
-        primary_flow_rate: k_carb(300.0),
+        outlet_flow_rate: k_carb(500.0),
+        primary_tube_length: 16.0 * units.inch,
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
         length: 2600 * units.mm,
         volume: 2600 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
     
     // lower grade LS headers //
     label pipe_length_1(bore_spacing * 2.7)
     label pipe_length_2(bore_spacing * 1.7)
     label pipe_length_3(bore_spacing * 0.7)
     label pipe_length_4(bore_spacing * 0.0)
-    label pipe_volume_1(1.0)
-    label pipe_volume_2(1.0)
-    label pipe_volume_3(1.0)
-    label pipe_volume_4(1.0)
+    label pipe_volume_1(1.00)
+    label pipe_volume_2(0.95)
+    label pipe_volume_3(0.90)
+    label pipe_volume_4(0.87)
     
-    label exhaust_stagger(60 * units.mm)
+    label exhaust_stagger(80 * units.mm)
 
-    cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
-    b0
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (second)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
-            ignition_wire: wires.wire1,
-            intake: intake,
-            exhaust_system: exhaustR,
-            primary_length: pipe_length_1 + exhaust_stagger,
-            sound_attenuation: pipe_volume_1
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
-            ignition_wire: wires.wire3,
-            intake: intake,
-            exhaust_system: exhaustR,
-            primary_length: pipe_length_2 + exhaust_stagger,
-            sound_attenuation: pipe_volume_2
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
-            ignition_wire: wires.wire5,
-            intake: intake,
-            exhaust_system: exhaustR,
-            primary_length: pipe_length_3 + exhaust_stagger,
-            sound_attenuation: pipe_volume_3
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
-            ignition_wire: wires.wire7,
-            intake: intake,
-            exhaust_system: exhaustR,
-            primary_length: pipe_length_4 + exhaust_stagger,
-            sound_attenuation: pipe_volume_4
-        )
-
-    cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
-    b1
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaustL,
@@ -402,9 +316,9 @@ public node garner_383_engine {
             sound_attenuation: pipe_volume_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaustL,
@@ -412,9 +326,9 @@ public node garner_383_engine {
             sound_attenuation: pipe_volume_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaustL,
@@ -422,9 +336,9 @@ public node garner_383_engine {
             sound_attenuation: pipe_volume_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaustL,
@@ -432,42 +346,87 @@ public node garner_383_engine {
             sound_attenuation: pipe_volume_4
         )
 
+    cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (first)
+    bR
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire1,
+            intake: intake,
+            exhaust_system: exhaustR,
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: pipe_volume_1
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaustR,
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: pipe_volume_2
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaustR,
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: pipe_volume_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire7,
+            intake: intake,
+            exhaust_system: exhaustR,
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: pipe_volume_4
+        )
+
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bR)
+        .add_cylinder_bank(bL)
 
     engine.add_crankshaft(c0)
 
     garner_383_camshaft_builder camshaft(
-        in_lobe_profile: garner_383_1999_fbody_lobe_profile_int(),
-        ex_lobe_profile: garner_383_1999_fbody_lobe_profile_exh()
+        in_lobe_profile: garner_383_lobe_profile_int(),
+        ex_lobe_profile: garner_383_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         garner_383_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
-            flip_display: false
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
+            chamber_volume: chamber_volume,
+            flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         garner_383_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
-            flip_display: true
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
+            chamber_volume: chamber_volume,
+            flip_display: false
         )
     )
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 27 * units.deg)
-        .add_sample(2000 * units.rpm, 31 * units.deg)
-        .add_sample(3000 * units.rpm, 34 * units.deg)
-        .add_sample(4000 * units.rpm, 37 * units.deg)
+        .add_sample(0000 * units.rpm, 25 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 40 * units.deg)
+        .add_sample(3000 * units.rpm, 40 * units.deg)
+        .add_sample(4000 * units.rpm, 40 * units.deg)
         .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 41 * units.deg)
-        .add_sample(7000 * units.rpm, 41 * units.deg)
+        .add_sample(6000 * units.rpm, 40 * units.deg)
+        .add_sample(7000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
         garner_383_distributor(

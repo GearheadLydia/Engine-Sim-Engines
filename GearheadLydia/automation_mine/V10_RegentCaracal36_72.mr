@@ -6,6 +6,9 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
+label vee_angle(72 * units.deg)
+label anglesplay(vee_angle - (72 * units.deg))
+
 // firing order: 1-6-5-10-2-7-3-8-4-9
 // in standard:  2-1-10-9-4-3-6-5-8-7
 
@@ -13,19 +16,19 @@ public node regent_caracal_v10_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 8800 * units.rpm;
-	input limiter_duration: 0.07;
+    input limiter_duration: 0.07;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, (0.0/10.0) * cycle)
-            .connect_wire(wires.wire06, (1.0/10.0) * cycle)
-			.connect_wire(wires.wire05, (2.0/10.0) * cycle)
-            .connect_wire(wires.wire10, (3.0/10.0) * cycle)
+            .connect_wire(wires.wire06, (1.0/10.0) * cycle + anglesplay)
+            .connect_wire(wires.wire05, (2.0/10.0) * cycle)
+            .connect_wire(wires.wire10, (3.0/10.0) * cycle + anglesplay)
             .connect_wire(wires.wire02, (4.0/10.0) * cycle)
-			.connect_wire(wires.wire07, (5.0/10.0) * cycle)
+            .connect_wire(wires.wire07, (5.0/10.0) * cycle + anglesplay)
             .connect_wire(wires.wire03, (6.0/10.0) * cycle)
-            .connect_wire(wires.wire08, (7.0/10.0) * cycle)
-			.connect_wire(wires.wire04, (8.0/10.0) * cycle)
-            .connect_wire(wires.wire09, (9.0/10.0) * cycle);
+            .connect_wire(wires.wire08, (7.0/10.0) * cycle + anglesplay)
+            .connect_wire(wires.wire04, (8.0/10.0) * cycle)
+            .connect_wire(wires.wire09, (9.0/10.0) * cycle + anglesplay);
 }
 
 private node wires {
@@ -63,7 +66,7 @@ public node regent_caracal_v10_lobe_profile_exh {
 
 public node regent_caracal_v10_camshaft_builder {
     input in_lobe_profile: regent_caracal_v10_lobe_profile_int();
-	input ex_lobe_profile: regent_caracal_v10_lobe_profile_exh();
+    input ex_lobe_profile: regent_caracal_v10_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 110.0 * units.deg;
@@ -72,61 +75,61 @@ public node regent_caracal_v10_camshaft_builder {
     input advance: -4 * units.deg;
     input base_radius: 15.0 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_R: _intake_cam_R;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_R: _exhaust_cam_R;
+    output exhaust_cam_L: _exhaust_cam_L;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
-	
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
+    
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
 
-	label rot4(4 * units.deg)
-	label rot18(18 * units.deg)
-	label rot30(30 * units.deg)
-	label rot54(54 * units.deg)
-	label rot60(60 * units.deg)
-	label rot72(72 * units.deg)
+    label rot4(4 * units.deg)
+    label rot18(18 * units.deg)
+    label rot30(30 * units.deg)
+    label rot54(54 * units.deg)
+    label rot60(60 * units.deg)
+    label rot72(72 * units.deg)
     label rot90(90 * units.deg)
-	label rot120(120 * units.deg)
+    label rot120(120 * units.deg)
     label rot360(360 * units.deg)
 
-	// firing order: 1-6-5-10-2-7-3-8-4-9
-    _intake_cam_0
-        .add_lobe(rot360 + intake_lobe_center + 1 * rot72) //  #6
-        .add_lobe(rot360 + intake_lobe_center + 5 * rot72) //  #7
-        .add_lobe(rot360 + intake_lobe_center + 7 * rot72) //  #8
-        .add_lobe(rot360 + intake_lobe_center + 9 * rot72) //  #9
-        .add_lobe(rot360 + intake_lobe_center + 3 * rot72) // #10
-	
-    _intake_cam_1
+    // firing order: 1-6-5-10-2-7-3-8-4-9
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 0 * rot72) //  #1
         .add_lobe(rot360 + intake_lobe_center + 4 * rot72) //  #2
         .add_lobe(rot360 + intake_lobe_center + 6 * rot72) //  #3
         .add_lobe(rot360 + intake_lobe_center + 8 * rot72) //  #4
         .add_lobe(rot360 + intake_lobe_center + 2 * rot72) //  #5
+    
+    _intake_cam_R
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot72 + anglesplay) //  #6
+        .add_lobe(rot360 + intake_lobe_center + 5 * rot72 + anglesplay) //  #7
+        .add_lobe(rot360 + intake_lobe_center + 7 * rot72 + anglesplay) //  #8
+        .add_lobe(rot360 + intake_lobe_center + 9 * rot72 + anglesplay) //  #9
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot72 + anglesplay) // #10
 
-    _exhaust_cam_0
-        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot72)
-        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot72)
-        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot72)
-        .add_lobe(rot360 - exhaust_lobe_center + 9 * rot72)
-        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot72)
-
-    _exhaust_cam_1
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 8 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot72)
+
+    _exhaust_cam_R
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot72 + anglesplay)
+        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot72 + anglesplay)
+        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot72 + anglesplay)
+        .add_lobe(rot360 - exhaust_lobe_center + 9 * rot72 + anglesplay)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot72 + anglesplay)
 }
 
 private node add_flow_sample {
@@ -142,8 +145,8 @@ public node regent_caracal_v10_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input flip_display: false;
-	
-	input flow_attenuation: 1.18;
+    
+    input flow_attenuation: 1.18;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -206,20 +209,20 @@ public node regent_caracal_v10_36_engine {
     engine engine(
         name: "Regent Caracal V10",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 8500 * units.rpm,
         throttle_gamma: 1.0,
-		simulation_frequency: 7200
+        simulation_frequency: 7200
     )
 
     label bore(80.0 * units.mm)
     label stroke(71.0 * units.mm)
     label rod_length(130.0 * units.mm)
     label rod_mass(350 * units.g)
-	label piston_mass(250 * units.g)
+    label piston_mass(250 * units.g)
     label compression_height(25.00 * units.mm)
-	label piston_dome(0.0 * units.cc)
-	label deck_clearance(0.5 * units.mm)
+    label piston_dome(0.0 * units.cc)
+    label deck_clearance(0.5 * units.mm)
     label crank_mass(45 * units.lb)
     label flywheel_mass(30 * units.lb)
     label flywheel_radius(5 * units.inch)
@@ -242,25 +245,25 @@ public node regent_caracal_v10_36_engine {
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: 126.0 * units.deg // +36 degrees off vertical
+        tdc: (90.0 * units.deg) + (vee_angle / 2.0)
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 288 * units.deg)
-    rod_journal rj2(angle: 72 * units.deg)
-	rod_journal rj3(angle: 216 * units.deg)
-    rod_journal rj4(angle: 144 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: 288 * units.deg)
+    rod_journal rj3(angle: 72 * units.deg)
+    rod_journal rj4(angle: 216 * units.deg)
+    rod_journal rj5(angle: 144 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
 
     piston_parameters piston_params(
-        mass: 487 * units.g,
-        blowby: 0,
+        mass: piston_mass,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -305,141 +308,141 @@ public node regent_caracal_v10_36_engine {
         velocity_decay: 0.1
     )
 
-	label exhaust_radius((4.0 * units.inch)/2)
+    label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1600.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(650.0),
         velocity_decay: 0.9, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 450 * units.mm,
-		volume: 450 * units.mm * circle_area(exhaust_radius) * 2
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 450 * units.mm,
+        volume: 450 * units.mm * circle_area(exhaust_radius) * 2
     )
 
     exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
-	
-	label pipe_length_1(80 * units.mm)
-	label pipe_length_2(60 * units.mm)
-	label pipe_length_3(40 * units.mm)
-	label pipe_length_4(20 * units.mm)
-	label pipe_length_5(00 * units.mm)
-	
-	label exhaust_stagger(25 * units.mm)
-	
-	label exh_vol_L1(0.6)
-	label exh_vol_L2(1.0)
-	label exh_vol_R1(1.0)
-	label exh_vol_R2(0.6)
+        es_params,
+        audio_volume: 1.0 * 0.01,
+        impulse_response: ir_lib.default_0
+    )
+    
+    label pipe_length_1(80 * units.mm)
+    label pipe_length_2(60 * units.mm)
+    label pipe_length_3(40 * units.mm)
+    label pipe_length_4(20 * units.mm)
+    label pipe_length_5(00 * units.mm)
+    
+    label exhaust_stagger(25 * units.mm)
+    
+    label exh_vol_L1(0.6)
+    label exh_vol_L2(1.0)
+    label exh_vol_R1(1.0)
+    label exh_vol_R2(0.6)
 
-    cylinder_bank b0(bank_params, angle: -36.0 * units.deg) // R (first)
+    cylinder_bank b0(bank_params, angle: -vee_angle / 2.0) // R (first)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire06,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: exh_vol_R1
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire07,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: exh_vol_R2
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: exh_vol_R2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire08,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: exh_vol_R1
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire09,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: exh_vol_R2
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: exh_vol_R2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire10,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5 + exhaust_stagger,
-			sound_attenuation: exh_vol_R1
+            primary_length: pipe_length_5 + exhaust_stagger,
+            sound_attenuation: exh_vol_R1
         )
 
-    cylinder_bank b1(bank_params, angle: 36.0 * units.deg) // L (second)
+    cylinder_bank b1(bank_params, angle: vee_angle / 2.0) // L (second)
     b1
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire01,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: exh_vol_L1
+            primary_length: pipe_length_1,
+            sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire02,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: exh_vol_L2
+            primary_length: pipe_length_2,
+            sound_attenuation: exh_vol_L2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire03,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: exh_vol_L1
+            primary_length: pipe_length_3,
+            sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire04,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: exh_vol_L2
+            primary_length: pipe_length_4,
+            sound_attenuation: exh_vol_L2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire05,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5,
-			sound_attenuation: exh_vol_L1
+            primary_length: pipe_length_5,
+            sound_attenuation: exh_vol_L1
         )
 
     engine
@@ -452,14 +455,14 @@ public node regent_caracal_v10_36_engine {
 
     b0.set_cylinder_head (
         regent_caracal_v10_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R
         )
     )
     b1.set_cylinder_head (
         regent_caracal_v10_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
@@ -473,9 +476,9 @@ public node regent_caracal_v10_36_engine {
         .add_sample(4000 * units.rpm, 60 * units.deg)
         .add_sample(5000 * units.rpm, 60 * units.deg)
         .add_sample(6000 * units.rpm, 60 * units.deg)
-		.add_sample(7000 * units.rpm, 60 * units.deg)
-		.add_sample(8000 * units.rpm, 60 * units.deg)
-		.add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(7000 * units.rpm, 60 * units.deg)
+        .add_sample(8000 * units.rpm, 60 * units.deg)
+        .add_sample(9000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
         regent_caracal_v10_distributor(

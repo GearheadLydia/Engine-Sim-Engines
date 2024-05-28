@@ -13,10 +13,10 @@ public node i4_bikeliketurbo_distributor {
     input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
-            .connect_wire(wires.wire1, (0.0/5.0) * cycle)
-            .connect_wire(wires.wire3, (1.0/5.0) * cycle)
-            .connect_wire(wires.wire4, (2.0/5.0) * cycle)
-            .connect_wire(wires.wire2, (3.0/5.0) * cycle);
+            .connect_wire(wires.wire1, (0.0/4.0) * cycle)
+            .connect_wire(wires.wire3, (1.0/4.0) * cycle)
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (3.0/4.0) * cycle);
 }
 
 private node wires {
@@ -29,9 +29,9 @@ private node wires {
 public node i4_bikeliketurbo_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 200 * units.deg,
+            duration_at_50_thou: 230 * units.deg,
             gamma: 1.0,
-            lift: 12.5 * units.mm,
+            lift: 7.5 * units.mm,
             steps: 100
         );
 }
@@ -39,9 +39,9 @@ public node i4_bikeliketurbo_lobe_profile_int {
 public node i4_bikeliketurbo_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 200 * units.deg,
+            duration_at_50_thou: 230 * units.deg,
             gamma: 1.0,
-            lift: 12.5 * units.mm,
+            lift: 7.5 * units.mm,
             steps: 100
         );
 }
@@ -51,10 +51,10 @@ public node i4_bikeliketurbo_camshaft_builder {
     input ex_lobe_profile: i4_bikeliketurbo_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input intake_lobe_center: 100.0 * units.deg;
-    input exhaust_lobe_center: 100.0 * units.deg;
-    input advance: 0.0 * units.deg;
-    input base_radius: 16.0 * units.mm; // guess
+    input intake_lobe_center: 120.0 * units.deg;
+    input exhaust_lobe_center: 120.0 * units.deg;
+    input advance: -10.0 * units.deg;
+    input base_radius: 12.0 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
     output exhaust_cam_0: _exhaust_cam_0;
@@ -103,52 +103,48 @@ public node i4_bikeliketurbo_head {
     input chamber_volume: 45.0 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation_in: 1.0;
-    input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.0;
+    input flow_intake: 220.0;
+    input flow_exhaust: 170.0;
+    input lift_max: 7.0 * units.mm;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(lift_max / 10.0)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
+        intake_runner_volume: circle_area(0.7 * units.inch) * 2 * units.inch,
         intake_runner_cross_section_area: circle_area(0.7 * units.inch),
-        exhaust_runner_volume: circle_area(0.6 * units.inch) * 4 * units.inch,
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 2 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -163,11 +159,11 @@ public node i4_bikeliketurbo_engine {
     alias output __out: engine;
 
     engine engine(
-        name: "Big Turbo Five",
+        name: "One-Liter Turbo Four",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 12000 * units.rpm,
-        fuel: fuel(max_burning_efficiency: 1.0), // free power to simulate unavailable turbo
+        fuel: fuel(max_burning_efficiency: 1.3), // free power to simulate unavailable turbo
         hf_gain: 0.01,
         jitter: 0.50,
         throttle_gamma: 1.0
@@ -185,9 +181,9 @@ public node i4_bikeliketurbo_engine {
     
     label rod_mass(400 * units.g)
     label piston_mass(250 * units.g)
-    label crank_mass(35.0 * units.kg)
-    label flywheel_mass(10.0 * units.kg)
-    label flywheel_radius(5.0 * units.inch)
+    label crank_mass(15.0 * units.kg)
+    label flywheel_mass(3.0 * units.kg)
+    label flywheel_radius(4.0 * units.inch)
 
     label compression_ratio(12.5)
     label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
@@ -215,16 +211,16 @@ public node i4_bikeliketurbo_engine {
         tdc: 90.0 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle:   0.0 * units.deg)
-    rod_journal rj1(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0.0 * units.deg)
     rod_journal rj2(angle: 180.0 * units.deg)
-    rod_journal rj3(angle:   0.0 * units.deg)
+    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj4(angle:   0.0 * units.deg)
     
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -252,11 +248,11 @@ public node i4_bikeliketurbo_engine {
     intake intake(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(600.0),
+        intake_flow_rate: k_carb(400.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9972,
+        idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(200.0),
+        runner_flow_rate: k_carb(250.0),
         runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -264,9 +260,9 @@ public node i4_bikeliketurbo_engine {
     label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(200.0),
+        outlet_flow_rate: k_carb(400.0),
+        primary_tube_length: 5.0 * units.inch,
+        primary_flow_rate: k_carb(220.0),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
         length: 2600 * units.mm,
@@ -284,17 +280,17 @@ public node i4_bikeliketurbo_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: bore_spacing * 1.3,
+            primary_length: bore_spacing * 0.8,
             sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
@@ -304,7 +300,7 @@ public node i4_bikeliketurbo_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
@@ -314,11 +310,11 @@ public node i4_bikeliketurbo_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: bore_spacing * 1.0,
+            primary_length: bore_spacing * 0.5,
             sound_attenuation: 1.0
         )
 
@@ -343,15 +339,15 @@ public node i4_bikeliketurbo_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 70 * units.deg)
-        .add_sample(1000 * units.rpm, 85 * units.deg)
-        .add_sample(2000 * units.rpm, 85 * units.deg)
-        .add_sample(3000 * units.rpm, 85 * units.deg)
-        .add_sample(4000 * units.rpm, 85 * units.deg)
-        .add_sample(5000 * units.rpm, 85 * units.deg)
-        .add_sample(6000 * units.rpm, 85 * units.deg)
-        .add_sample(7000 * units.rpm, 85 * units.deg)
-        .add_sample(8000 * units.rpm, 85 * units.deg)
+        .add_sample(0000 * units.rpm, 80 * units.deg)
+        .add_sample(1000 * units.rpm, 95 * units.deg)
+        .add_sample(2000 * units.rpm, 95 * units.deg)
+        .add_sample(3000 * units.rpm, 95 * units.deg)
+        .add_sample(4000 * units.rpm, 95 * units.deg)
+        .add_sample(5000 * units.rpm, 95 * units.deg)
+        .add_sample(6000 * units.rpm, 95 * units.deg)
+        .add_sample(7000 * units.rpm, 95 * units.deg)
+        .add_sample(8000 * units.rpm, 95 * units.deg)
 
     engine.add_ignition_module(
         i4_bikeliketurbo_distributor(
@@ -363,19 +359,19 @@ public node i4_bikeliketurbo_engine {
 public node random_automation_car_vehicle {
     alias output __out:
         vehicle(
-            mass: 1393 * units.kg,
+            mass: 780 * units.kg,
             drag_coefficient: 0.28,
-            cross_sectional_area: 2.23 * (units.m * units.m),
-            diff_ratio: 2.80,
-            tire_radius: 350 * units.mm,
-            rolling_resistance: 1393 * units.kg * 9.81 * (305.0/275.0) * 0.01
+            cross_sectional_area: 1.9 * (units.m * units.m),
+            diff_ratio: 5.20,
+            tire_radius: 300 * units.mm,
+            rolling_resistance: 780 * units.kg * 9.81 * (265.0/275.0) * 0.01
         );
 }
 
 public node random_automation_car_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 550 * units.lb_ft
+            max_clutch_torque: 250 * units.lb_ft
         )
         .add_gear(2.66)
         .add_gear(1.65)

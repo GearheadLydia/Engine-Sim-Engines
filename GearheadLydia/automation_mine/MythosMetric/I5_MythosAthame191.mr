@@ -6,11 +6,13 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-public node i5_bigturbofive_distributor {
+// firing order: 123456
+
+public node mythos_modular_i5_191_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 5600 * units.rpm;
-    input limiter_duration: 0.06;
+    input rev_limit: 7550 * units.rpm;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/5.0) * cycle)
@@ -28,35 +30,35 @@ private node wires {
     output wire5: ignition_wire();
 }
 
-public node i5_bigturbofive_lobe_profile_int {
+public node mythos_modular_i5_191_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
             gamma: 1.0,
-            lift: 9.5 * units.mm,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
 
-public node i5_bigturbofive_lobe_profile_exh {
+public node mythos_modular_i5_191_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
             gamma: 1.0,
-            lift: 9.5 * units.mm,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
 
-public node i5_bigturbofive_camshaft_builder {
-    input lobe_profile: i5_bigturbofive_lobe_profile_int();
-    input ex_lobe_profile: i5_bigturbofive_lobe_profile_exh();
-    input intake_lobe_profile: lobe_profile;
+public node mythos_modular_i5_191_camshaft_builder {
+    input in_lobe_profile: mythos_modular_i5_191_lobe_profile_int();
+    input ex_lobe_profile: mythos_modular_i5_191_lobe_profile_exh();
+    input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input intake_lobe_center: 105.0 * units.deg;
+    input intake_lobe_center: 110.0 * units.deg;
     input exhaust_lobe_center: 105.0 * units.deg;
-    input advance: 10.0 * units.deg;
-    input base_radius: 16.0 * units.mm; // guess
+    input advance: 0.0 * units.deg;
+    input base_radius: 15 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
     output exhaust_cam_0: _exhaust_cam_0;
@@ -92,24 +94,15 @@ public node i5_bigturbofive_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot144)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
-public node i5_bigturbofive_head {
+public node mythos_modular_i5_191_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 45.0 * units.cc;
+    input chamber_volume: 46.0 * units.cc;
     input flip_display: false;
     
-    input flow_intake: 260.0;
-    input flow_exhaust: 200.0;
-    input lift_max: 9.0 * units.mm;
+    input flow_intake: 335.0;
+    input flow_exhaust: 280.0;
+    input lift_max: 12.0 * units.mm;
     alias output __out: head;
 
     function intake_flow(lift_max / 10.0)
@@ -143,13 +136,14 @@ public node i5_bigturbofive_head {
         .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
         .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
         .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
+
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.1 * units.inch) * 4 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        intake_runner_volume: circle_area(1.05 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.05 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -159,37 +153,37 @@ public node i5_bigturbofive_head {
     )
 }
 
-public node i5_bigturbofive_engine {
+
+public node mythos_modular_i5_191_engine {
     alias output __out: engine;
 
+    wires wires()
+
     engine engine(
-        name: "Big Turbo Five",
+        name: "Mythos Modular I5",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 1200 * units.rpm,
-        redline: 5500 * units.rpm,
-        fuel: fuel(max_burning_efficiency: 1.0), // free power to simulate unavailable turbo
-        hf_gain: 0.01,
-        jitter: 0.50,
+        starter_speed: 1100 * units.rpm,
+        redline: 7500 * units.rpm,
         throttle_gamma: 1.0
     )
     
-    label lean_angle(36 * units.deg)
+    label lean_angle(45 * units.deg)
 
-    label bore(103.0 * units.mm)
-    label bore_spacing(110.0 * units.mm)
-    label stroke(96.0 * units.mm)
-    label rod_length(170.0 * units.mm)
+    label bore(92.0 * units.mm)
+    label bore_spacing(100.0 * units.mm)
+    label stroke(94.0 * units.mm)
+    label rod_length(150.0 * units.mm)
     label compression_height(30.0 * units.mm)
-    label piston_dome(0.0 * units.cc)
+    label piston_dome(0.00 * units.cc)
     label chamber_volume(45.0 * units.cc)
-    
-    label rod_mass(600 * units.g)
-    label piston_mass(450 * units.g)
-    label crank_mass(35.0 * units.kg)
-    label flywheel_mass(10.0 * units.kg)
-    label flywheel_radius(5.0 * units.inch)
 
-    label compression_ratio(8.5)
+    label crank_mass(75 * units.lb)
+    label rod_mass(600 * units.g)
+    label piston_mass(400 * units.g)
+    label flywheel_mass(15 * units.lb)
+    label flywheel_radius(6 * units.inch)
+
+    label compression_ratio(11.0)
     label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
 
     label crank_moment(
@@ -199,17 +193,16 @@ public node i5_bigturbofive_engine {
         disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
     )
     label other_moment( // Moment from cams, pulleys, etc [estimated]
-        disk_moment_of_inertia(mass: 15 * units.kg, radius: 8.0 * units.cm)
+        disk_moment_of_inertia(mass: 20 * units.kg, radius: 8.0 * units.cm)
     )
-
-    wires wires()
 
     crankshaft c0(
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
         friction_torque: 5.0 * units.lb_ft,
-        moment_of_inertia: crank_moment + flywheel_moment + other_moment,
+        moment_of_inertia:
+            crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
         tdc: 90.0 * units.deg + lean_angle
@@ -232,7 +225,7 @@ public node i5_bigturbofive_engine {
         mass: piston_mass,
         blowby: k_28inH2O(0.1),
         compression_height: compression_height,
-        wrist_pin_position: 0.0,
+        wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
     )
 
@@ -252,36 +245,38 @@ public node i5_bigturbofive_engine {
     )
 
     intake intake(
-        plenum_volume: 1.0 * units.L,
-        plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(500.0),
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(625),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.997,
+        idle_throttle_plate_position: 0.9975,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(250.0),
-        runner_length: 8.0 * units.inch,
+        runner_length: 5.5 * units.inch,
         velocity_decay: 0.1
     )
     
-    label exhaust_radius((3.5 * units.inch)/2)
+    label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500.0),
-        primary_tube_length: 15.0 * units.inch,
-        primary_flow_rate: k_carb(250.0),
+        outlet_flow_rate: k_carb(625),
+        primary_tube_length: 12.0 * units.inch,
+        primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.0, //0.5
-        collector_cross_section_area: circle_area(exhaust_radius),
-        length: 2600 * units.mm,
-        volume: 2600 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2700 * units.mm,
+        volume: 2700 * units.mm * circle_area(exhaust_radius) * 2
     )
-    
-    exhaust_system exhaust(
-        es_params,
-        audio_volume: 1.0 * 0.01,
-        impulse_response: ir_lib.default_0
-    )
- 
-    cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
+
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
+
+    label pipe_length_1(1.6 * bore_spacing)
+    label pipe_length_2(1.2 * bore_spacing)
+    label pipe_length_3(0.8 * bore_spacing)
+    label pipe_length_4(0.4 * bore_spacing)
+    label pipe_length_5(0.0 * bore_spacing)
+
+    cylinder_bank b0(bank_params, angle: lean_angle) // L (second)
     b0
         .add_cylinder(
             piston: piston(piston_params),
@@ -290,8 +285,7 @@ public node i5_bigturbofive_engine {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: bore_spacing * 1.3,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -300,8 +294,7 @@ public node i5_bigturbofive_engine {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: bore_spacing * 0.3,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -310,8 +303,7 @@ public node i5_bigturbofive_engine {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: bore_spacing * 0.0,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_3
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -320,8 +312,7 @@ public node i5_bigturbofive_engine {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: bore_spacing * 1.0,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_4
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -330,8 +321,7 @@ public node i5_bigturbofive_engine {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: bore_spacing * 2.0,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_5
         )
 
     engine
@@ -339,13 +329,13 @@ public node i5_bigturbofive_engine {
 
     engine.add_crankshaft(c0)
 
-    i5_bigturbofive_camshaft_builder camshaft(
-        lobe_profile: i5_bigturbofive_lobe_profile_int(),
-        ex_lobe_profile: i5_bigturbofive_lobe_profile_exh()
+    mythos_modular_i5_191_camshaft_builder camshaft(
+        in_lobe_profile: mythos_modular_i5_191_lobe_profile_int(),
+        ex_lobe_profile: mythos_modular_i5_191_lobe_profile_exh()
     )
 
     b0.set_cylinder_head (
-        i5_bigturbofive_head(
+        mythos_modular_i5_191_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
             chamber_volume: chamber_volume,
@@ -355,52 +345,54 @@ public node i5_bigturbofive_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 70 * units.deg)
-        .add_sample(1000 * units.rpm, 85 * units.deg)
-        .add_sample(2000 * units.rpm, 85 * units.deg)
-        .add_sample(3000 * units.rpm, 85 * units.deg)
-        .add_sample(4000 * units.rpm, 85 * units.deg)
-        .add_sample(5000 * units.rpm, 85 * units.deg)
-        .add_sample(6000 * units.rpm, 85 * units.deg)
-        .add_sample(7000 * units.rpm, 85 * units.deg)
-        .add_sample(8000 * units.rpm, 85 * units.deg)
+        .add_sample(0000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 70 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
+        .add_sample(6000 * units.rpm, 70 * units.deg)
+        .add_sample(7000 * units.rpm, 70 * units.deg)
+        .add_sample(8000 * units.rpm, 70 * units.deg)
+        .add_sample(9000 * units.rpm, 70 * units.deg)
 
     engine.add_ignition_module(
-        i5_bigturbofive_distributor(
+        mythos_modular_i5_191_distributor(
             wires: wires,
             timing_curve: timing_curve
-        ))
+        )
+    )
 }
 
-public node random_automation_car_vehicle {
+public node mythos_athame_vehicle {
     alias output __out:
         vehicle(
-            mass: 1393 * units.kg,
-            drag_coefficient: 0.28,
-            cross_sectional_area: 2.23 * (units.m * units.m),
-            diff_ratio: 2.80,
-            tire_radius: 350 * units.mm,
-            rolling_resistance: 1393 * units.kg * 9.81 * (305.0/275.0) * 0.01
+            mass: 1460 * units.kg,
+            drag_coefficient: 0.29,
+            cross_sectional_area: 2.08 * (units.m * units.m),
+            diff_ratio: 3.3,
+            tire_radius: 326.5 * units.mm, // 285/30ZR19
+            rolling_resistance: 1460 * units.kg * 9.81 * (285.0/275.0) * 0.01
         );
 }
 
-public node random_automation_car_transmission {
+public node mythos_athame_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 550 * units.lb_ft
+            max_clutch_torque: 800 * units.lb_ft
         )
-        .add_gear(2.66)
-        .add_gear(1.65)
-        .add_gear(1.33)
-        .add_gear(1.00)
-        .add_gear(0.89)
-        .add_gear(0.63);
+        .add_gear(3.500)
+        .add_gear(2.360)
+        .add_gear(1.685)
+        .add_gear(1.312)
+        .add_gear(1.000)
+        .add_gear(0.793);
 }
 
 public node main {
-    set_engine(i5_bigturbofive_engine())
-    set_vehicle(random_automation_car_vehicle())
-    set_transmission(random_automation_car_transmission())
+    set_engine(mythos_modular_i5_191_engine())
+    set_vehicle(mythos_athame_vehicle())
+    set_transmission(mythos_athame_transmission())
 }
 
 main()
