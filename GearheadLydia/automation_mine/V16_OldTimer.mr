@@ -6,7 +6,7 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 1-12-9-14-15-6-7-4-8-13-2-5-10-3-16-11
+// firing order: 1-13-2-14-15-3-16-4-8-12-9-5-10-6-7-11
 
 public node old_timer_v16_distributor {
     input wires;
@@ -16,20 +16,20 @@ public node old_timer_v16_distributor {
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, ( 0.0 / 16.0) * cycle)
-            .connect_wire(wires.wire12, ( 1.0 / 16.0) * cycle)
-            .connect_wire(wires.wire09, ( 2.0 / 16.0) * cycle)
+            .connect_wire(wires.wire13, ( 1.0 / 16.0) * cycle)
+            .connect_wire(wires.wire02, ( 2.0 / 16.0) * cycle)
             .connect_wire(wires.wire14, ( 3.0 / 16.0) * cycle)
             .connect_wire(wires.wire15, ( 4.0 / 16.0) * cycle)
-            .connect_wire(wires.wire06, ( 5.0 / 16.0) * cycle)
-            .connect_wire(wires.wire07, ( 6.0 / 16.0) * cycle)
+            .connect_wire(wires.wire03, ( 5.0 / 16.0) * cycle)
+            .connect_wire(wires.wire16, ( 6.0 / 16.0) * cycle)
             .connect_wire(wires.wire04, ( 7.0 / 16.0) * cycle)
             .connect_wire(wires.wire08, ( 8.0 / 16.0) * cycle)
-            .connect_wire(wires.wire13, ( 9.0 / 16.0) * cycle)
-            .connect_wire(wires.wire02, (10.0 / 16.0) * cycle)
+            .connect_wire(wires.wire12, ( 9.0 / 16.0) * cycle)
+            .connect_wire(wires.wire09, (10.0 / 16.0) * cycle)
             .connect_wire(wires.wire05, (11.0 / 16.0) * cycle)
             .connect_wire(wires.wire10, (12.0 / 16.0) * cycle)
-            .connect_wire(wires.wire03, (13.0 / 16.0) * cycle)
-            .connect_wire(wires.wire16, (14.0 / 16.0) * cycle)
+            .connect_wire(wires.wire06, (13.0 / 16.0) * cycle)
+            .connect_wire(wires.wire07, (14.0 / 16.0) * cycle)
             .connect_wire(wires.wire11, (15.0 / 16.0) * cycle);
 }
 
@@ -108,47 +108,47 @@ public node old_timer_v16_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    // firing order: 1-12-9-14-15-6-7-4-8-13-2-5-10-3-16-11
+    // firing order: 1-13-2-14-15-3-16-4-8-12-9-5-10-6-7-11
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center +  0 * rot45) //  1
-        .add_lobe(rot360 + intake_lobe_center + 13 * rot45) //  3
+        .add_lobe(rot360 + intake_lobe_center +  5 * rot45) //  3
         .add_lobe(rot360 + intake_lobe_center + 11 * rot45) //  5
-        .add_lobe(rot360 + intake_lobe_center +  6 * rot45) //  7
-        .add_lobe(rot360 + intake_lobe_center +  2 * rot45) //  9
+        .add_lobe(rot360 + intake_lobe_center + 14 * rot45) //  7
+        .add_lobe(rot360 + intake_lobe_center + 10 * rot45) //  9
         .add_lobe(rot360 + intake_lobe_center + 15 * rot45) // 11
-        .add_lobe(rot360 + intake_lobe_center +  9 * rot45) // 13
+        .add_lobe(rot360 + intake_lobe_center +  1 * rot45) // 13
         .add_lobe(rot360 + intake_lobe_center +  4 * rot45) // 15
 
     _intake_cam_1
-        .add_lobe(rot360 + intake_lobe_center + 10 * rot45) //  2
+        .add_lobe(rot360 + intake_lobe_center +  2 * rot45) //  2
         .add_lobe(rot360 + intake_lobe_center +  7 * rot45) //  4
-        .add_lobe(rot360 + intake_lobe_center +  5 * rot45) //  6
+        .add_lobe(rot360 + intake_lobe_center + 13 * rot45) //  6
         .add_lobe(rot360 + intake_lobe_center +  8 * rot45) //  8
         .add_lobe(rot360 + intake_lobe_center + 12 * rot45) // 10
-        .add_lobe(rot360 + intake_lobe_center +  1 * rot45) // 12
+        .add_lobe(rot360 + intake_lobe_center +  9 * rot45) // 12
         .add_lobe(rot360 + intake_lobe_center +  3 * rot45) // 14
-        .add_lobe(rot360 + intake_lobe_center + 14 * rot45) // 16
+        .add_lobe(rot360 + intake_lobe_center +  6 * rot45) // 16
 
     _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center +  0 * rot45) //  1
-        .add_lobe(rot360 - exhaust_lobe_center + 13 * rot45) //  3
+        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot45) //  3
         .add_lobe(rot360 - exhaust_lobe_center + 11 * rot45) //  5
-        .add_lobe(rot360 - exhaust_lobe_center +  6 * rot45) //  7
-        .add_lobe(rot360 - exhaust_lobe_center +  2 * rot45) //  9
+        .add_lobe(rot360 - exhaust_lobe_center + 14 * rot45) //  7
+        .add_lobe(rot360 - exhaust_lobe_center + 10 * rot45) //  9
         .add_lobe(rot360 - exhaust_lobe_center + 15 * rot45) // 11
-        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot45) // 13
+        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot45) // 13
         .add_lobe(rot360 - exhaust_lobe_center +  4 * rot45) // 15
 
     _exhaust_cam_1
-        .add_lobe(rot360 - exhaust_lobe_center + 10 * rot45) //  2
+        .add_lobe(rot360 - exhaust_lobe_center +  2 * rot45) //  2
         .add_lobe(rot360 - exhaust_lobe_center +  7 * rot45) //  4
-        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot45) //  6
+        .add_lobe(rot360 - exhaust_lobe_center + 13 * rot45) //  6
         .add_lobe(rot360 - exhaust_lobe_center +  8 * rot45) //  8
         .add_lobe(rot360 - exhaust_lobe_center + 12 * rot45) // 10
-        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot45) // 12
+        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot45) // 12
         .add_lobe(rot360 - exhaust_lobe_center +  3 * rot45) // 14
-        .add_lobe(rot360 - exhaust_lobe_center + 14 * rot45) // 16
+        .add_lobe(rot360 - exhaust_lobe_center +  6 * rot45) // 16
 }
 
 private node add_flow_sample {
