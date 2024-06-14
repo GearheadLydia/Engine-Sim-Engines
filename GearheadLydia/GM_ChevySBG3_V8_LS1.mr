@@ -163,26 +163,26 @@ public node chevrolet_ls1_head {
     
     alias output __out: head;
     
-    // https://www.motortrend.com/how-to/hrdp-1012-ultimate-chevrolet-ls-cylinder-head-test/
+    // https://sites.google.com/site/sloppywiki/everything-ls/lsx-head-cast-numbers-flow-swap-info
     function intake_flow(100 * units.thou)
     intake_flow
         .add_flow_sample(  0,   0)
         .add_flow_sample(100,  67)
-        .add_flow_sample(200, 136)
-        .add_flow_sample(300, 196)
-        .add_flow_sample(400, 217)
-        .add_flow_sample(500, 224)
-        .add_flow_sample(600, 230)
+        .add_flow_sample(200, 122)
+        .add_flow_sample(300, 178)
+        .add_flow_sample(400, 215)
+        .add_flow_sample(500, 219)
+        .add_flow_sample(600, 227)
 
     function exhaust_flow(100 * units.thou)
     exhaust_flow
         .add_flow_sample(  0,   0)
-        .add_flow_sample(100,  53)
-        .add_flow_sample(200, 105)
-        .add_flow_sample(300, 141)
-        .add_flow_sample(400, 165)
-        .add_flow_sample(500, 193)
-        .add_flow_sample(600, 211)
+        .add_flow_sample(100,  52)
+        .add_flow_sample(200,  97)
+        .add_flow_sample(300, 133)
+        .add_flow_sample(400, 156)
+        .add_flow_sample(500, 170)
+        .add_flow_sample(600, 180)
         
     cylinder_head head(
         chamber_volume: chamber_volume,
@@ -231,7 +231,7 @@ public node chevrolet_ls1_engine {
     label piston_dome(-4.00 * units.cc)
     label deck_height(9.240 * units.inch)
     label crank_mass(57 * units.lb)
-    label flywheel_mass(15 * units.lb)
+    label flywheel_mass(24 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -270,7 +270,7 @@ public node chevrolet_ls1_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -292,14 +292,14 @@ public node chevrolet_ls1_engine {
     )
 
     intake intake(
-        plenum_volume: 0.3 * units.L,
+        plenum_volume: 0.2 * units.L,
         plenum_cross_section_area: circle_area(45 * units.mm),
         intake_flow_rate: k_carb(750),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(250.0),
-        runner_length: 11.0 * units.inch,
+        runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
     )
     
@@ -333,17 +333,17 @@ public node chevrolet_ls1_engine {
     // label pipe_length_2(bore_spacing * 0.1)
     // label pipe_length_3(bore_spacing * 0.0)
     // label pipe_length_4(bore_spacing * 0.5)
-    // label pipe_volume_1(0.9)
-    // label pipe_volume_2(1.0)
-    // label pipe_volume_3(1.0)
-    // label pipe_volume_4(0.9)
+    // label pipe_volume_1(0.94)
+    // label pipe_volume_2(0.99)
+    // label pipe_volume_3(1.00)
+    // label pipe_volume_4(0.95)
     
     label exhaust_stagger(40 * units.mm)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -353,7 +353,7 @@ public node chevrolet_ls1_engine {
             sound_attenuation: pipe_volume_1 * 0.9
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
@@ -363,7 +363,7 @@ public node chevrolet_ls1_engine {
             sound_attenuation: pipe_volume_2 * 0.9
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire5,
@@ -373,7 +373,7 @@ public node chevrolet_ls1_engine {
             sound_attenuation: pipe_volume_3 * 0.9
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire7,
@@ -386,7 +386,7 @@ public node chevrolet_ls1_engine {
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
     b1
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
@@ -396,7 +396,7 @@ public node chevrolet_ls1_engine {
             sound_attenuation: pipe_volume_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire4,
@@ -406,7 +406,7 @@ public node chevrolet_ls1_engine {
             sound_attenuation: pipe_volume_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire6,
@@ -416,7 +416,7 @@ public node chevrolet_ls1_engine {
             sound_attenuation: pipe_volume_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire8,
@@ -434,7 +434,9 @@ public node chevrolet_ls1_engine {
 
     chevrolet_ls1_camshaft_builder camshaft(
         in_lobe_profile: chevrolet_ls1_1999_fbody_lobe_profile_int(),
-        ex_lobe_profile: chevrolet_ls1_1999_fbody_lobe_profile_exh()
+        ex_lobe_profile: chevrolet_ls1_1999_fbody_lobe_profile_exh(),
+        lobe_separation: chevrolet_ls1_1999_fbody_lobe_separation,
+        advance: chevrolet_ls1_1999_fbody_advance
     )
 
     b0.set_cylinder_head (
@@ -452,21 +454,32 @@ public node chevrolet_ls1_engine {
         )
     )
 
-    function timing_curve(1000 * units.rpm)
-    timing_curve
-        .add_sample(0000 * units.rpm, 20 * units.deg)
-        .add_sample(1000 * units.rpm, 27 * units.deg)
-        .add_sample(2000 * units.rpm, 31 * units.deg)
+    function timing_curve_camaro(1000 * units.rpm)
+    timing_curve_camaro
+        .add_sample(0000 * units.rpm,  8 * units.deg)
+        .add_sample(1000 * units.rpm, 19 * units.deg)
+        .add_sample(2000 * units.rpm, 26 * units.deg)
+        .add_sample(3000 * units.rpm, 30 * units.deg)
+        .add_sample(4000 * units.rpm, 33 * units.deg)
+        .add_sample(5000 * units.rpm, 36 * units.deg)
+        .add_sample(6000 * units.rpm, 38 * units.deg)
+        .add_sample(7000 * units.rpm, 40 * units.deg)
+
+    function timing_curve_corvette(1000 * units.rpm)
+    timing_curve_corvette
+        .add_sample(0000 * units.rpm,  8 * units.deg)
+        .add_sample(1000 * units.rpm, 22 * units.deg)
+        .add_sample(2000 * units.rpm, 30 * units.deg)
         .add_sample(3000 * units.rpm, 34 * units.deg)
         .add_sample(4000 * units.rpm, 37 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
+        .add_sample(5000 * units.rpm, 39 * units.deg)
         .add_sample(6000 * units.rpm, 41 * units.deg)
-        .add_sample(7000 * units.rpm, 41 * units.deg)
+        .add_sample(7000 * units.rpm, 43 * units.deg)
 
     engine.add_ignition_module(
         chevrolet_ls1_distributor(
             wires: wires,
-            timing_curve: timing_curve
+            timing_curve: timing_curve_camaro
         )
     )
 }
