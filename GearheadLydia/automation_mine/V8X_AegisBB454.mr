@@ -191,7 +191,7 @@ public node aegis_bigblock_454_engine {
     )
 
     label bore(4.175 * units.inch)
-    label bore_spacing(4.500 * units.inch)
+    label bore_spacing(4.750 * units.inch)
     label stroke(4.150 * units.inch)
     label rod_length(6.500 * units.inch)
     label compression_height(1.000 * units.inch)
@@ -204,7 +204,7 @@ public node aegis_bigblock_454_engine {
     label flywheel_mass(20 * units.lb)
     label flywheel_radius(6 * units.inch)
     
-    label compression_ratio(10.0)
+    label compression_ratio(11.0)
     label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
 
     label crank_moment(

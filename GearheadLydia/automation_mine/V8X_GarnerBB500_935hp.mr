@@ -6,23 +6,23 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 18726543
+// firing order: 18436572
 
-public node garner_smallblock_383_distributor {
+public node garner_bigblock_500_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6600 * units.rpm;
+    input rev_limit: 6800 * units.rpm;
     input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
             .connect_wire(wires.wire8, (1.0 / 8.0) * cycle)
-            .connect_wire(wires.wire7, (2.0 / 8.0) * cycle)
-            .connect_wire(wires.wire2, (3.0 / 8.0) * cycle)
+            .connect_wire(wires.wire4, (2.0 / 8.0) * cycle)
+            .connect_wire(wires.wire3, (3.0 / 8.0) * cycle)
             .connect_wire(wires.wire6, (4.0 / 8.0) * cycle)
             .connect_wire(wires.wire5, (5.0 / 8.0) * cycle)
-            .connect_wire(wires.wire4, (6.0 / 8.0) * cycle)
-            .connect_wire(wires.wire3, (7.0 / 8.0) * cycle);
+            .connect_wire(wires.wire7, (6.0 / 8.0) * cycle)
+            .connect_wire(wires.wire2, (7.0 / 8.0) * cycle);
 }
 
 private node wires {
@@ -36,36 +36,36 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-public node garner_smallblock_383_lobe_profile_int {
+public node garner_bigblock_500_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 210 * units.deg,
+            duration_at_50_thou: 240 * units.deg,
             gamma: 1.0,
-            lift: 475 * units.thou,
+            lift: 575 * units.thou,
             steps: 100
         );
 }
 
-public node garner_smallblock_383_lobe_profile_exh {
+public node garner_bigblock_500_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 210 * units.deg,
+            duration_at_50_thou: 240 * units.deg,
             gamma: 1.0,
-            lift: 475 * units.thou,
+            lift: 575 * units.thou,
             steps: 100
         );
 }
 
-public node garner_smallblock_383_camshaft_builder {
-    input in_lobe_profile: garner_smallblock_383_lobe_profile_int();
-    input ex_lobe_profile: garner_smallblock_383_lobe_profile_exh();
+public node garner_bigblock_500_camshaft_builder {
+    input in_lobe_profile: garner_bigblock_500_lobe_profile_int();
+    input ex_lobe_profile: garner_bigblock_500_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 115.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-    input advance: -4.0 * units.deg;
-    input base_radius: 1.462 / 2 * units.inch;
+    input advance: 10.0 * units.deg;
+    input base_radius: 1.75 / 2 * units.inch;
 
     output intake_cam_R: _intake_cam_R;
     output exhaust_cam_R: _exhaust_cam_R;
@@ -93,38 +93,38 @@ public node garner_smallblock_383_camshaft_builder {
 
     _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
 
     _intake_cam_L
-        .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
 
     _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
 
     _exhaust_cam_L
-        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
 }
 
-public node garner_smallblock_383_head {
+public node garner_bigblock_500_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 67.0 * units.cc;
+    input chamber_volume: 85.0 * units.cc;
     input flip_display: false;
     
-    input flow_intake: 280.0;
-    input flow_exhaust: 230.0;
-    input lift_max: 600 * units.thou;
+    input flow_intake: 400.0;
+    input flow_exhaust: 340.0;
+    input lift_max: 800 * units.thou;
     alias output __out: head;
 
     function intake_flow(lift_max / 10.0)
@@ -175,34 +175,34 @@ public node garner_smallblock_383_head {
 }
 
 
-public node garner_smallblock_383_engine {
+public node garner_bigblock_500_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Garner 383",
+        name: "Garner 500",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1100 * units.rpm,
         redline: 6500 * units.rpm,
         throttle_gamma: 1.0
     )
 
-    label bore(4.000 * units.inch)
-    label bore_spacing(4.400 * units.inch)
-    label stroke(3.800 * units.inch)
-    label rod_length(6.000 * units.inch)
+    label bore(4.300 * units.inch)
+    label bore_spacing(4.800 * units.inch)
+    label stroke(4.300 * units.inch)
+    label rod_length(7.200 * units.inch)
     label compression_height(1.300 * units.inch)
     label piston_dome(0.0 * units.cc)
-    label chamber_volume(65.0 * units.cc)
+    label chamber_volume(85.0 * units.cc)
     
-    label crank_mass(35 * units.kg)
-    label rod_mass(550 * units.g)
-    label piston_mass(480 * units.g)
-    label flywheel_mass(15 * units.lb)
+    label crank_mass(50 * units.kg)
+    label rod_mass(650 * units.g)
+    label piston_mass(550 * units.g)
+    label flywheel_mass(20 * units.lb)
     label flywheel_radius(6 * units.inch)
     
-    label compression_ratio(9.5)
+    label compression_ratio(11.0)
     label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
 
     label crank_moment(
@@ -265,9 +265,9 @@ public node garner_smallblock_383_engine {
     intake intake(
         plenum_volume: 0.3 * units.L,
         plenum_cross_section_area: circle_area(45 * units.mm),
-        intake_flow_rate: k_carb(750.0),
+        intake_flow_rate: k_carb(1250.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(300.0),
         runner_length: 12.0 * units.inch,
@@ -277,7 +277,7 @@ public node garner_smallblock_383_engine {
     label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500.0),
+        outlet_flow_rate: k_carb(900.0),
         primary_tube_length: 16.0 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
@@ -289,10 +289,9 @@ public node garner_smallblock_383_engine {
     exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
     exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
     
-    // lower grade LS headers //
-    label pipe_length_1(bore_spacing * 2.7)
-    label pipe_length_2(bore_spacing * 1.7)
-    label pipe_length_3(bore_spacing * 0.7)
+    label pipe_length_1(bore_spacing * 3.2)
+    label pipe_length_2(bore_spacing * 1.8)
+    label pipe_length_3(bore_spacing * 1.4)
     label pipe_length_4(bore_spacing * 0.0)
     label pipe_volume_1(1.00)
     label pipe_volume_2(0.95)
@@ -393,13 +392,13 @@ public node garner_smallblock_383_engine {
 
     engine.add_crankshaft(c0)
 
-    garner_smallblock_383_camshaft_builder camshaft(
-        in_lobe_profile: garner_smallblock_383_lobe_profile_int(),
-        ex_lobe_profile: garner_smallblock_383_lobe_profile_exh()
+    garner_bigblock_500_camshaft_builder camshaft(
+        in_lobe_profile: garner_bigblock_500_lobe_profile_int(),
+        ex_lobe_profile: garner_bigblock_500_lobe_profile_exh()
     )
 
     bL.set_cylinder_head (
-        garner_smallblock_383_head(
+        garner_bigblock_500_head(
             intake_camshaft: camshaft.intake_cam_L,
             exhaust_camshaft: camshaft.exhaust_cam_L,
             chamber_volume: chamber_volume,
@@ -407,7 +406,7 @@ public node garner_smallblock_383_engine {
         )
     )
     bR.set_cylinder_head (
-        garner_smallblock_383_head(
+        garner_bigblock_500_head(
             intake_camshaft: camshaft.intake_cam_R,
             exhaust_camshaft: camshaft.exhaust_cam_R,
             chamber_volume: chamber_volume,
@@ -417,17 +416,17 @@ public node garner_smallblock_383_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 25 * units.deg)
-        .add_sample(1000 * units.rpm, 35 * units.deg)
-        .add_sample(2000 * units.rpm, 40 * units.deg)
-        .add_sample(3000 * units.rpm, 40 * units.deg)
-        .add_sample(4000 * units.rpm, 40 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 40 * units.deg)
-        .add_sample(7000 * units.rpm, 40 * units.deg)
+        .add_sample(0000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 55 * units.deg)
+        .add_sample(2000 * units.rpm, 60 * units.deg)
+        .add_sample(3000 * units.rpm, 60 * units.deg)
+        .add_sample(4000 * units.rpm, 60 * units.deg)
+        .add_sample(5000 * units.rpm, 60 * units.deg)
+        .add_sample(6000 * units.rpm, 60 * units.deg)
+        .add_sample(7000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
-        garner_smallblock_383_distributor(
+        garner_bigblock_500_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
@@ -447,32 +446,6 @@ public node chevrolet_corvette_coupe_c5_vehicle {
         );
 }
 
-// 1999 Pontiac GTO 5.7 (V2)
-public node pontiac_gto_57_v2_vehicle {
-    alias output __out:
-        vehicle(
-            mass: 3726 * units.lb,
-            drag_coefficient: 0.32,
-            cross_sectional_area: 2.13 * (units.m) * (units.m),
-            diff_ratio: 3.46,
-            tire_radius: 329.0 * units.mm, // 225/50ZR17
-            rolling_resistance: 450 * units.N
-        );
-}
-
-// 2002 Chevrolet Camaro SS
-public node chevrolet_camaro_fbody_vehicle {
-    alias output __out:
-        vehicle(
-            mass: 3410 * units.lb,
-            drag_coefficient: 0.34,
-            cross_sectional_area: 2.03 * (units.m) * (units.m),
-            diff_ratio: 3.42,
-            tire_radius: 326.5 * units.mm, // 275/40ZR17
-            rolling_resistance: 500 * units.N
-        );
-}
-
 public node tremec_t56_transmission {
     alias output __out:
         transmission(
@@ -486,23 +459,10 @@ public node tremec_t56_transmission {
         .add_gear(0.56);
 }
 
-public node tremec_t56_camaro_transmission {
-    alias output __out:
-        transmission(
-            max_clutch_torque: 1000 * units.lb_ft
-        )
-        .add_gear(2.66)
-        .add_gear(1.78)
-        .add_gear(1.30)
-        .add_gear(1.00)
-        .add_gear(0.74)
-        .add_gear(0.50);
-}
-
 public node main {
-    set_engine(garner_smallblock_383_engine())
-    set_vehicle(chevrolet_camaro_fbody_vehicle())
-    set_transmission(tremec_t56_camaro_transmission())
+    set_engine(garner_bigblock_500_engine())
+    set_vehicle(chevrolet_corvette_coupe_c5_vehicle())
+    set_transmission(tremec_t56_transmission())
 }
 
 main()

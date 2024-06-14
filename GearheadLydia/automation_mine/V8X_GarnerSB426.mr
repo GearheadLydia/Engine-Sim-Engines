@@ -8,7 +8,7 @@ label cycle(2 * 360 * units.deg)
 
 // firing order: 18726543
 
-public node garner_smallblock_383_distributor {
+public node garner_smallblock_426_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6600 * units.rpm;
@@ -36,7 +36,7 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-public node garner_smallblock_383_lobe_profile_int {
+public node garner_smallblock_426_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 210 * units.deg,
@@ -46,7 +46,7 @@ public node garner_smallblock_383_lobe_profile_int {
         );
 }
 
-public node garner_smallblock_383_lobe_profile_exh {
+public node garner_smallblock_426_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 210 * units.deg,
@@ -56,9 +56,9 @@ public node garner_smallblock_383_lobe_profile_exh {
         );
 }
 
-public node garner_smallblock_383_camshaft_builder {
-    input in_lobe_profile: garner_smallblock_383_lobe_profile_int();
-    input ex_lobe_profile: garner_smallblock_383_lobe_profile_exh();
+public node garner_smallblock_426_camshaft_builder {
+    input in_lobe_profile: garner_smallblock_426_lobe_profile_int();
+    input ex_lobe_profile: garner_smallblock_426_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 115.0 * units.deg;
@@ -116,7 +116,7 @@ public node garner_smallblock_383_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
 }
 
-public node garner_smallblock_383_head {
+public node garner_smallblock_426_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 67.0 * units.cc;
@@ -175,24 +175,24 @@ public node garner_smallblock_383_head {
 }
 
 
-public node garner_smallblock_383_engine {
+public node garner_smallblock_426_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Garner 383",
+        name: "Garner 426R",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1100 * units.rpm,
         redline: 6500 * units.rpm,
         throttle_gamma: 1.0
     )
 
-    label bore(4.000 * units.inch)
+    label bore(4.120 * units.inch)
     label bore_spacing(4.400 * units.inch)
-    label stroke(3.800 * units.inch)
+    label stroke(4.000 * units.inch)
     label rod_length(6.000 * units.inch)
-    label compression_height(1.300 * units.inch)
+    label compression_height(1.200 * units.inch)
     label piston_dome(0.0 * units.cc)
     label chamber_volume(65.0 * units.cc)
     
@@ -202,7 +202,7 @@ public node garner_smallblock_383_engine {
     label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
     
-    label compression_ratio(9.5)
+    label compression_ratio(10.0)
     label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
 
     label crank_moment(
@@ -393,13 +393,13 @@ public node garner_smallblock_383_engine {
 
     engine.add_crankshaft(c0)
 
-    garner_smallblock_383_camshaft_builder camshaft(
-        in_lobe_profile: garner_smallblock_383_lobe_profile_int(),
-        ex_lobe_profile: garner_smallblock_383_lobe_profile_exh()
+    garner_smallblock_426_camshaft_builder camshaft(
+        in_lobe_profile: garner_smallblock_426_lobe_profile_int(),
+        ex_lobe_profile: garner_smallblock_426_lobe_profile_exh()
     )
 
     bL.set_cylinder_head (
-        garner_smallblock_383_head(
+        garner_smallblock_426_head(
             intake_camshaft: camshaft.intake_cam_L,
             exhaust_camshaft: camshaft.exhaust_cam_L,
             chamber_volume: chamber_volume,
@@ -407,7 +407,7 @@ public node garner_smallblock_383_engine {
         )
     )
     bR.set_cylinder_head (
-        garner_smallblock_383_head(
+        garner_smallblock_426_head(
             intake_camshaft: camshaft.intake_cam_R,
             exhaust_camshaft: camshaft.exhaust_cam_R,
             chamber_volume: chamber_volume,
@@ -427,7 +427,7 @@ public node garner_smallblock_383_engine {
         .add_sample(7000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
-        garner_smallblock_383_distributor(
+        garner_smallblock_426_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
@@ -500,7 +500,7 @@ public node tremec_t56_camaro_transmission {
 }
 
 public node main {
-    set_engine(garner_smallblock_383_engine())
+    set_engine(garner_smallblock_426_engine())
     set_vehicle(chevrolet_camaro_fbody_vehicle())
     set_transmission(tremec_t56_camaro_transmission())
 }

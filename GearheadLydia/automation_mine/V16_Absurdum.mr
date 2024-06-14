@@ -6,31 +6,31 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 1-9-2-10-7-15-8-16-4-12-5-13-6-14-3-11
+// firing order: 1-12-2-13-7-14-8-11-4-9-5-10-6-15-3-16
 
-public node old_timer_v16_distributor {
+public node absurdum_v16_qt_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 5400 * units.rpm;
-    input limiter_duration: 0.12;
+    input rev_limit: 7100 * units.rpm;
+    input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, ( 0.0 / 16.0) * cycle)
-            .connect_wire(wires.wire09, ( 1.0 / 16.0) * cycle)
+            .connect_wire(wires.wire12, ( 1.0 / 16.0) * cycle)
             .connect_wire(wires.wire02, ( 2.0 / 16.0) * cycle)
-            .connect_wire(wires.wire10, ( 3.0 / 16.0) * cycle)
+            .connect_wire(wires.wire13, ( 3.0 / 16.0) * cycle)
             .connect_wire(wires.wire07, ( 4.0 / 16.0) * cycle)
-            .connect_wire(wires.wire15, ( 5.0 / 16.0) * cycle)
+            .connect_wire(wires.wire14, ( 5.0 / 16.0) * cycle)
             .connect_wire(wires.wire08, ( 6.0 / 16.0) * cycle)
-            .connect_wire(wires.wire16, ( 7.0 / 16.0) * cycle)
+            .connect_wire(wires.wire11, ( 7.0 / 16.0) * cycle)
             .connect_wire(wires.wire04, ( 8.0 / 16.0) * cycle)
-            .connect_wire(wires.wire12, ( 9.0 / 16.0) * cycle)
+            .connect_wire(wires.wire09, ( 9.0 / 16.0) * cycle)
             .connect_wire(wires.wire05, (10.0 / 16.0) * cycle)
-            .connect_wire(wires.wire13, (11.0 / 16.0) * cycle)
+            .connect_wire(wires.wire10, (11.0 / 16.0) * cycle)
             .connect_wire(wires.wire06, (12.0 / 16.0) * cycle)
-            .connect_wire(wires.wire14, (13.0 / 16.0) * cycle)
+            .connect_wire(wires.wire15, (13.0 / 16.0) * cycle)
             .connect_wire(wires.wire03, (14.0 / 16.0) * cycle)
-            .connect_wire(wires.wire11, (15.0 / 16.0) * cycle);
+            .connect_wire(wires.wire16, (15.0 / 16.0) * cycle);
 }
 
 private node wires {
@@ -52,34 +52,33 @@ private node wires {
     output wire16: ignition_wire();
 }
 
-public node old_timer_v16_lobe_profile_int {
+public node absurdum_v16_qt_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
             gamma: 1.0,
-            lift: 10.5 * units.mm,
+            lift: 9.5 * units.mm,
             steps: 100
         );
 }
 
-public node old_timer_v16_lobe_profile_exh {
+public node absurdum_v16_qt_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 230 * units.deg,
             gamma: 1.0,
-            lift: 10.5 * units.mm,
+            lift: 9.5 * units.mm,
             steps: 100
         );
 }
 
-public node old_timer_v16_camshaft_builder {
-    input in_lobe_profile: old_timer_v16_lobe_profile_int();
-    input ex_lobe_profile: old_timer_v16_lobe_profile_exh();
+public node absurdum_v16_qt_camshaft_builder {
+    input in_lobe_profile: absurdum_v16_qt_lobe_profile_int();
+    input ex_lobe_profile: absurdum_v16_qt_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 115.0 * units.deg;
-    input intake_lobe_center: lobe_separation;
-    input exhaust_lobe_center: lobe_separation;
+    input intake_lobe_center: 120.0 * units.deg;
+    input exhaust_lobe_center: 120.0 * units.deg;
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
@@ -108,47 +107,47 @@ public node old_timer_v16_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    // firing order: 1-9-2-10-7-15-8-16-4-12-5-13-6-14-3-11
+    // firing order: 1-12-2-13-7-14-8-11-4-9-5-10-6-15-3-16
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center +  0 * rot45) //  1
         .add_lobe(rot360 + intake_lobe_center + 14 * rot45) //  3
         .add_lobe(rot360 + intake_lobe_center + 10 * rot45) //  5
         .add_lobe(rot360 + intake_lobe_center +  4 * rot45) //  7
-        .add_lobe(rot360 + intake_lobe_center +  1 * rot45) //  9
-        .add_lobe(rot360 + intake_lobe_center + 15 * rot45) // 11
-        .add_lobe(rot360 + intake_lobe_center + 11 * rot45) // 13
-        .add_lobe(rot360 + intake_lobe_center +  5 * rot45) // 15
+        .add_lobe(rot360 + intake_lobe_center +  9 * rot45) //  9
+        .add_lobe(rot360 + intake_lobe_center +  7 * rot45) // 11
+        .add_lobe(rot360 + intake_lobe_center +  3 * rot45) // 13
+        .add_lobe(rot360 + intake_lobe_center + 13 * rot45) // 15
 
     _intake_cam_1
         .add_lobe(rot360 + intake_lobe_center +  2 * rot45) //  2
         .add_lobe(rot360 + intake_lobe_center +  8 * rot45) //  4
         .add_lobe(rot360 + intake_lobe_center + 12 * rot45) //  6
         .add_lobe(rot360 + intake_lobe_center +  6 * rot45) //  8
-        .add_lobe(rot360 + intake_lobe_center +  3 * rot45) // 10
-        .add_lobe(rot360 + intake_lobe_center +  9 * rot45) // 12
-        .add_lobe(rot360 + intake_lobe_center + 13 * rot45) // 14
-        .add_lobe(rot360 + intake_lobe_center +  7 * rot45) // 16
+        .add_lobe(rot360 + intake_lobe_center + 11 * rot45) // 10
+        .add_lobe(rot360 + intake_lobe_center +  1 * rot45) // 12
+        .add_lobe(rot360 + intake_lobe_center +  5 * rot45) // 14
+        .add_lobe(rot360 + intake_lobe_center + 15 * rot45) // 16
 
     _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center +  0 * rot45) //  1
         .add_lobe(rot360 - exhaust_lobe_center + 14 * rot45) //  3
         .add_lobe(rot360 - exhaust_lobe_center + 10 * rot45) //  5
         .add_lobe(rot360 - exhaust_lobe_center +  4 * rot45) //  7
-        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot45) //  9
-        .add_lobe(rot360 - exhaust_lobe_center + 15 * rot45) // 11
-        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot45) // 13
-        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot45) // 15
+        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot45) //  9
+        .add_lobe(rot360 - exhaust_lobe_center +  7 * rot45) // 11
+        .add_lobe(rot360 - exhaust_lobe_center +  3 * rot45) // 13
+        .add_lobe(rot360 - exhaust_lobe_center + 13 * rot45) // 15
 
     _exhaust_cam_1
         .add_lobe(rot360 - exhaust_lobe_center +  2 * rot45) //  2
         .add_lobe(rot360 - exhaust_lobe_center +  8 * rot45) //  4
         .add_lobe(rot360 - exhaust_lobe_center + 12 * rot45) //  6
         .add_lobe(rot360 - exhaust_lobe_center +  6 * rot45) //  8
-        .add_lobe(rot360 - exhaust_lobe_center +  3 * rot45) // 10
-        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot45) // 12
-        .add_lobe(rot360 - exhaust_lobe_center + 13 * rot45) // 14
-        .add_lobe(rot360 - exhaust_lobe_center +  7 * rot45) // 16
+        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot45) // 10
+        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot45) // 12
+        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot45) // 14
+        .add_lobe(rot360 - exhaust_lobe_center + 15 * rot45) // 16
 }
 
 private node add_flow_sample {
@@ -160,15 +159,15 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node old_timer_v16_head {
+public node absurdum_v16_qt_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 46.0 * units.cc;
     input flip_display: false;
     
-    input flow_intake: 210.0;
-    input flow_exhaust: 160.0;
-    input lift_max: 13.0 * units.mm;
+    input flow_intake: 320.0;
+    input flow_exhaust: 270.0;
+    input lift_max: 12.0 * units.mm;
     alias output __out: head;
 
     function intake_flow(lift_max / 10.0)
@@ -202,14 +201,13 @@ public node old_timer_v16_head {
         .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
         .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
         .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
-
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.00 * units.inch) * 3 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.00 * units.inch),
-        exhaust_runner_volume: circle_area(0.6 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
+        intake_runner_volume: circle_area(1.1 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.72 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.72 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -220,35 +218,36 @@ public node old_timer_v16_head {
 }
 
 
-public node old_timer_v16_engine {
+public node absurdum_v16_qt_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Old-Timer V16",
+        name: "Absurdum V16 QT",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1100 * units.rpm,
-        redline: 5000 * units.rpm,
+        fuel: fuel(max_burning_efficiency: 0.95), // free power to supplant unavailable turbo
+        redline: 7000 * units.rpm,
         throttle_gamma: 1.0,
         simulation_frequency: 7200
     )
 
-    label bore(3.00 * units.inch)
-    label bore_spacing(3.50 * units.inch)
-    label stroke(3.23 * units.inch)
-    label rod_length(5.76 * units.inch)
-    label compression_height(1.20 * units.inch)
+    label bore(79.0 * units.mm)
+    label bore_spacing(90.0 * units.mm)
+    label stroke(82.5 * units.mm)
+    label rod_length(140.0 * units.mm)
+    label compression_height(20.0 * units.mm)
     label piston_dome(0.00 * units.cc)
     label chamber_volume(45.0 * units.cc)
 
-    label crank_mass(220 * units.lb)
-    label rod_mass(700 * units.g)
-    label piston_mass(500 * units.g)
-    label flywheel_mass(20 * units.lb)
+    label crank_mass(80 * units.kg)
+    label rod_mass(600 * units.g)
+    label piston_mass(400 * units.g)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
-    label compression_ratio(11.0)
+    label compression_ratio(8.5)
     label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
 
     label crank_moment(
@@ -319,41 +318,41 @@ public node old_timer_v16_engine {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(600),
+        intake_flow_rate: k_carb(1500),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.998,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(150.0),
-        runner_length: 7.5 * units.inch,
+        runner_flow_rate: k_carb(250.0),
+        runner_length: 5.5 * units.inch,
         velocity_decay: 0.1
     )
     
-    label exhaust_radius((4.0 * units.inch)/2)
+    label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500),
-        primary_tube_length: 16.0 * units.inch,
-        primary_flow_rate: k_carb(100.0),
-        velocity_decay: 1.0, //0.5
-        collector_cross_section_area: circle_area(exhaust_radius) * 2,
-        length: 2700 * units.mm,
-        volume: 2700 * units.mm * circle_area(exhaust_radius) * 2
+        outlet_flow_rate: k_carb(1500),
+        primary_tube_length: 15.0 * units.inch,
+        primary_flow_rate: k_carb(300.0),
+        velocity_decay: 0.3, //0.5
+        collector_cross_section_area: circle_area(exhaust_radius) * 4,
+        length: 500 * units.mm,
+        volume: 500 * units.mm * circle_area(exhaust_radius) * 4
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.03, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
 
-    label pipe_length_1(5.6 * bore_spacing)
-    label pipe_length_2(4.8 * bore_spacing)
-    label pipe_length_3(4.0 * bore_spacing)
-    label pipe_length_4(3.2 * bore_spacing)
-    label pipe_length_5(2.4 * bore_spacing)
-    label pipe_length_6(1.6 * bore_spacing)
-    label pipe_length_7(0.8 * bore_spacing)
-    label pipe_length_8(0.0 * bore_spacing)
+    label pipe_length_1(2.0 * bore_spacing)
+    label pipe_length_2(1.0 * bore_spacing)
+    label pipe_length_3(0.5 * bore_spacing)
+    label pipe_length_4(0.8 * bore_spacing)
+    label pipe_length_5(0.3 * bore_spacing)
+    label pipe_length_6(0.0 * bore_spacing)
+    label pipe_length_7(0.5 * bore_spacing)
+    label pipe_length_8(1.5 * bore_spacing)
     
-    label exhaust_stagger(60 * units.mm)
+    label exhaust_stagger(0.4 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (second)
+    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params),
@@ -428,7 +427,7 @@ public node old_timer_v16_engine {
             primary_length: pipe_length_8
         )
 
-    cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (first)
+    cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
     b1
         .add_cylinder(
             piston: piston(piston_params),
@@ -509,13 +508,13 @@ public node old_timer_v16_engine {
 
     engine.add_crankshaft(c0)
 
-    old_timer_v16_camshaft_builder camshaft(
-        in_lobe_profile: old_timer_v16_lobe_profile_int(),
-        ex_lobe_profile: old_timer_v16_lobe_profile_exh()
+    absurdum_v16_qt_camshaft_builder camshaft(
+        in_lobe_profile: absurdum_v16_qt_lobe_profile_int(),
+        ex_lobe_profile: absurdum_v16_qt_lobe_profile_exh()
     )
 
     b0.set_cylinder_head (
-        old_timer_v16_head(
+        absurdum_v16_qt_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
             chamber_volume: chamber_volume,
@@ -523,7 +522,7 @@ public node old_timer_v16_engine {
         )
     )
     b1.set_cylinder_head (
-        old_timer_v16_head(
+        absurdum_v16_qt_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
             chamber_volume: chamber_volume,
@@ -533,51 +532,54 @@ public node old_timer_v16_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 25 * units.deg)
-        .add_sample(1000 * units.rpm, 30 * units.deg)
-        .add_sample(2000 * units.rpm, 35 * units.deg)
-        .add_sample(3000 * units.rpm, 35 * units.deg)
-        .add_sample(4000 * units.rpm, 35 * units.deg)
-        .add_sample(5000 * units.rpm, 35 * units.deg)
-        .add_sample(6000 * units.rpm, 35 * units.deg)
+        .add_sample(0000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 70 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 70 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
+        .add_sample(6000 * units.rpm, 70 * units.deg)
+        .add_sample(7000 * units.rpm, 70 * units.deg)
+        .add_sample(8000 * units.rpm, 70 * units.deg)
+        .add_sample(9000 * units.rpm, 70 * units.deg)
 
     engine.add_ignition_module(
-        old_timer_v16_distributor(
+        absurdum_v16_qt_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
     )
 }
 
-public node mythos_machete_vehicle {
+public node absurdum_vehicle {
     alias output __out:
         vehicle(
-            mass: 1600 * units.kg,
-            drag_coefficient: 0.29,
+            mass: 1683 * units.kg,
+            drag_coefficient: 0.56,
             cross_sectional_area: 2.08 * (units.m * units.m),
-            diff_ratio: 2.7,
-            tire_radius: 326.5 * units.mm, // 285/30ZR19
-            rolling_resistance: 1460 * units.kg * 9.81 * (285.0/275.0) * 0.01
+            diff_ratio: 3.73,
+            tire_radius: 380 * units.mm, // 325/35ZR21
+            rolling_resistance: 1683 * units.kg * 9.81 * (275.0/275.0) * 0.01
         );
 }
 
-public node mythos_machete_transmission {
+public node absurdum_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 1400 * units.lb_ft
         )
-        .add_gear(3.500)
-        .add_gear(2.360)
-        .add_gear(1.685)
-        .add_gear(1.312)
-        .add_gear(1.000)
-        .add_gear(0.793);
+        .add_gear(2.57)
+        .add_gear(1.88)
+        .add_gear(1.34)
+        .add_gear(1.00)
+        .add_gear(0.78)
+        .add_gear(0.63);
 }
 
 public node main {
-    set_engine(old_timer_v16_engine())
-    set_vehicle(mythos_machete_vehicle())
-    set_transmission(mythos_machete_transmission())
+    set_engine(absurdum_v16_qt_engine())
+    set_vehicle(absurdum_vehicle())
+    set_transmission(absurdum_transmission())
 }
 
 main()

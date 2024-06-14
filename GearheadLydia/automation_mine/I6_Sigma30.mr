@@ -220,7 +220,7 @@ public node i6_sigma30_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: k_28inH2O(0.1),
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -270,7 +270,7 @@ public node i6_sigma30_engine {
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -280,44 +280,44 @@ public node i6_sigma30_engine {
             sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
             primary_length: 3.0 * units.inch,
-            sound_attenuation: 1.0
+            sound_attenuation: 0.95
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
             primary_length: 1.0 * units.inch,
-            sound_attenuation: 1.0
+            sound_attenuation: 0.9
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
             primary_length: 0.0 * units.inch,
-            sound_attenuation: 1.0
+            sound_attenuation: 0.87
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
             primary_length: 2.0 * units.inch,
-            sound_attenuation: 1.0
+            sound_attenuation: 0.92
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -327,7 +327,7 @@ public node i6_sigma30_engine {
             intake: intake,
             exhaust_system: exhaust,
             primary_length: 4.0 * units.inch,
-            sound_attenuation: 1.0
+            sound_attenuation: 0.97
         )
 
 
