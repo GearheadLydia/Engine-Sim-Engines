@@ -111,57 +111,38 @@ public node hyundai_delta_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 public node hyundai_delta_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 47 * units.cc; // guess
     input flip_display: false;
     
-    input flow_attenuation: 0.9;
-    input lift_scale: 1.0;
     alias output __out: head;
-
-    function intake_flow(1.0 * units.mm)
+    
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#Hyundai
+    function intake_flow(50 * units.thou)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  42) // interp
+        .add_flow_sample(100,  83)
+        .add_flow_sample(150, 113)
+        .add_flow_sample(200, 150)
+        .add_flow_sample(250, 168)
+        .add_flow_sample(300, 180)
+        .add_flow_sample(350, 186)
+        .add_flow_sample(400, 185)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(50 * units.thou)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
-
+        .add_flow_sample(  0,   0)
+        .add_flow_sample( 50,  40) // interp
+        .add_flow_sample(100,  71)
+        .add_flow_sample(150, 102)
+        .add_flow_sample(200, 128)
+        .add_flow_sample(250, 144)
+        .add_flow_sample(300, 152)
+        .add_flow_sample(350, 152)
+        .add_flow_sample(400, 152)
         
     cylinder_head head(
         chamber_volume: chamber_volume,
@@ -225,8 +206,8 @@ public node hyundai_delta_g6ba {
         tdc: 120.0 * units.deg
     )
 
-    rod_journal rj1(angle: 60 * units.deg)
-    rod_journal rj2(angle: 0 * units.deg)
+    rod_journal rj1(angle:  60 * units.deg)
+    rod_journal rj2(angle:   0 * units.deg)
     rod_journal rj3(angle: 300 * units.deg)
     rod_journal rj4(angle: 240 * units.deg)
     rod_journal rj5(angle: 180 * units.deg)
@@ -306,7 +287,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_1,
-            sound_attenuation: 1.0 * 0.85
+            sound_attenuation: 0.96 * 0.9
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -316,7 +297,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_2,
-            sound_attenuation: 0.9 * 0.85
+            sound_attenuation: 0.9 * 0.9
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -326,7 +307,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_3,
-            sound_attenuation: 0.95 * 0.85
+            sound_attenuation: 1.0 * 0.9
         )
 
     cylinder_bank b1(bank_params, angle: -30.0 * units.deg) // R (first, front)
@@ -339,7 +320,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_1 + exhaust_stagger,
-            sound_attenuation: 1.0
+            sound_attenuation: 0.96
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -359,7 +340,7 @@ public node hyundai_delta_g6ba {
             intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_3 + exhaust_stagger,
-            sound_attenuation: 0.95
+            sound_attenuation: 1.0
         )
 
     engine
@@ -390,14 +371,14 @@ public node hyundai_delta_g6ba {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 45 * units.deg)
-        .add_sample(1000 * units.rpm, 50 * units.deg)
-        .add_sample(2000 * units.rpm, 50 * units.deg)
-        .add_sample(3000 * units.rpm, 49 * units.deg)
-        .add_sample(4000 * units.rpm, 49 * units.deg)
-        .add_sample(5000 * units.rpm, 48 * units.deg)
-        .add_sample(6000 * units.rpm, 47 * units.deg)
-        .add_sample(7000 * units.rpm, 47 * units.deg)
+        .add_sample(0000 * units.rpm, 47 * units.deg)
+        .add_sample(1000 * units.rpm, 51 * units.deg)
+        .add_sample(2000 * units.rpm, 51 * units.deg)
+        .add_sample(3000 * units.rpm, 51 * units.deg)
+        .add_sample(4000 * units.rpm, 51 * units.deg)
+        .add_sample(5000 * units.rpm, 51 * units.deg)
+        .add_sample(6000 * units.rpm, 51 * units.deg)
+        .add_sample(7000 * units.rpm, 51 * units.deg)
 
     engine.add_ignition_module(
         hyundai_delta_distributor(
