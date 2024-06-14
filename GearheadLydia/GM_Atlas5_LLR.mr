@@ -10,14 +10,14 @@ public node gm_vortec_llr_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6300 * units.rpm;
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/5.0) * cycle)
             .connect_wire(wires.wire2, (1.0/5.0) * cycle)
-			.connect_wire(wires.wire4, (2.0/5.0) * cycle)
-			.connect_wire(wires.wire5, (3.0/5.0) * cycle)
-			.connect_wire(wires.wire3, (4.0/5.0) * cycle);
+            .connect_wire(wires.wire4, (2.0/5.0) * cycle)
+            .connect_wire(wires.wire5, (3.0/5.0) * cycle)
+            .connect_wire(wires.wire3, (4.0/5.0) * cycle);
 }
 
 private node wires {
@@ -51,7 +51,7 @@ public node gm_vortec_llr_lobe_profile_exh {
 
 public node gm_vortec_llr_camshaft_builder {
     input lobe_profile: gm_vortec_llr_lobe_profile_int();
-	input ex_lobe_profile: gm_vortec_llr_lobe_profile_exh();
+    input ex_lobe_profile: gm_vortec_llr_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 115.0 * units.deg;  // not sure on the center line angles
@@ -85,7 +85,7 @@ public node gm_vortec_llr_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center + 2 * rot144)
         .add_lobe(rot360 + intake_lobe_center + 3 * rot144)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot144)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot144)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot144)
@@ -107,44 +107,47 @@ public node gm_vortec_llr_head {
     input exhaust_camshaft;
     input chamber_volume: 65.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation: 1.0;
-    input lift_scale: 1.0;
+    
+    // https://purplesagetradingpost.com/sumner/bvillecar-4/construction%20page-134.html
+    // doubting the "150cfm" exhaust flow number because not enough power
+    input flow_intake: 270.0;
+    input flow_exhaust: 185.0;
+    input lift_max: 400 * units.thou; // guess
     alias output __out: head;
 
-    function intake_flow(1 * units.mm)
+    function intake_flow(lift_max / 10.0)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 65 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 120 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 155 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 245 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 255 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1 * units.mm)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 75 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 105 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 130 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 150 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 158 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 164 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 168 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 176 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.25 * units.inch) * 4 * units.inch,
@@ -160,7 +163,7 @@ public node gm_vortec_llr_head {
     )
 }
 
-public node gm_vortec_llr {
+public node gm_vortec_llr_engine {
     alias output __out: engine;
 
     engine engine(
@@ -170,17 +173,17 @@ public node gm_vortec_llr {
         redline: 6000 * units.rpm,
         throttle_gamma: 1.0
     )
-	
-	label lean_angle(0 * units.deg)
+    
+    label lean_angle(0 * units.deg)
 
     label bore(95.5 * units.mm)
     label stroke(102.0 * units.mm)
     label rod_length(142.0 * units.mm)
     label rod_mass(300 * units.g)
-	label piston_mass(280 * units.g)
+    label piston_mass(280 * units.g)
     label compression_height(34.0 * units.mm)
-	label piston_dome(0.0 * units.cc)
-	label deck_clearance(0.5 * units.mm)
+    label piston_dome(0.0 * units.cc)
+    label deck_clearance(0.5 * units.mm)
     label crank_mass(5 * units.kg)
     label flywheel_mass(50 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -208,22 +211,22 @@ public node gm_vortec_llr {
         tdc: 90 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle: (0.0 / 5.0) * 360 * units.deg)
-	rod_journal rj1(angle: (2.0 / 5.0) * 360 * units.deg)
-	rod_journal rj2(angle: (3.0 / 5.0) * 360 * units.deg)
-	rod_journal rj3(angle: (4.0 / 5.0) * 360 * units.deg)
-    rod_journal rj4(angle: (1.0 / 5.0) * 360 * units.deg)
+    rod_journal rj1(angle: (0.0 / 5.0) * 360 * units.deg)
+    rod_journal rj2(angle: (2.0 / 5.0) * 360 * units.deg)
+    rod_journal rj3(angle: (3.0 / 5.0) * 360 * units.deg)
+    rod_journal rj4(angle: (4.0 / 5.0) * 360 * units.deg)
+    rod_journal rj5(angle: (1.0 / 5.0) * 360 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: k_28inH2O(0.1),
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -255,17 +258,17 @@ public node gm_vortec_llr {
         runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((3.0 * units.inch)/2)
+    
+    label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(375.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2800 * units.mm,
-		volume: 2800 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2800 * units.mm,
+        volume: 2800 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
@@ -273,49 +276,49 @@ public node gm_vortec_llr {
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 8.0 * units.inch
+            primary_length: 8.0 * units.inch
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+        .add_cylinder(
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 4.0 * units.inch
+            primary_length: 4.0 * units.inch
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+        .add_cylinder(
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.0 * units.inch
+            primary_length: 0.0 * units.inch
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+        .add_cylinder(
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 2.0 * units.inch
+            primary_length: 2.0 * units.inch
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+        .add_cylinder(
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 6.0 * units.inch
+            primary_length: 6.0 * units.inch
         )
 
     engine
@@ -324,15 +327,15 @@ public node gm_vortec_llr {
     engine.add_crankshaft(c0)
 
     gm_vortec_llr_camshaft_builder camshaft(
-	    lobe_profile: gm_vortec_llr_lobe_profile_int(),
-		ex_lobe_profile: gm_vortec_llr_lobe_profile_exh()
-	)
+        lobe_profile: gm_vortec_llr_lobe_profile_int(),
+        ex_lobe_profile: gm_vortec_llr_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         gm_vortec_llr_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
 
@@ -379,7 +382,7 @@ public node gm_4l60e_transmission {
 }
 
 public node main {
-    set_engine(gm_vortec_llr())
+    set_engine(gm_vortec_llr_engine())
     set_vehicle(chevrolet_colorado_2lt_gmt355_vehicle())
     set_transmission(gm_4l60e_transmission())
 }
