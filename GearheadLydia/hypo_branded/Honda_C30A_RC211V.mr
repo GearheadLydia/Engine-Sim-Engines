@@ -1,7 +1,5 @@
 import "engine_sim.mr"
 
-// Honda C30A / RC211V hybrid
-
 units units()
 constants constants()
 impulse_response_library ir_lib()
@@ -12,7 +10,7 @@ public node honda_c30a_v5_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 8250 * units.rpm;
-    input limiter_duration: 0.09;
+    input limiter_duration: 0.07;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1,  0.0  * units.deg)
@@ -30,11 +28,24 @@ private node wires {
     output wire5: ignition_wire();
 }
 
+// camshaft specs via TODA Racing catalog (probably not stock)
+// lift via http://www.speedhunters.com/2019/07/project-nsx-dreams-power-part-one/
+// centers are guesses based on https://www.nsxprime.com/threads/camshaft-info-and-gurus-please.174161/
+// advance just set to 0 as a guess / default
+
+// advertised specs:
+// primary non-VTEC intake:  233 / 8.7
+// primary non-VTEC exhaust: 238 / 7.7
+// secondary non-VTEC intake:  238 / 8.3
+// secondary non-VTEC exhaust: 243 / 8.6
+// VTEC intake:  285 / 10.2
+// VTEC exhaust: 280 /  9.5
+
 public node honda_c30a_v5_lobe_profile_int_lo {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 235.5 * units.deg,
-            gamma: 1.4,
+            duration_at_50_thou: 207.5 * units.deg, // average of 197.5 and 217.5
+            gamma: 1.0,
             lift: 8.5 * units.mm,
             steps: 100
         );
@@ -43,8 +54,8 @@ public node honda_c30a_v5_lobe_profile_int_lo {
 public node honda_c30a_v5_lobe_profile_exh_lo {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 240.5 * units.deg,
-            gamma: 1.4,
+            duration_at_50_thou: 209.4 * units.deg, // average of 199.1 and 219.6
+            gamma: 1.0,
             lift: 8.2 * units.mm,
             steps: 100
         );
@@ -53,8 +64,8 @@ public node honda_c30a_v5_lobe_profile_exh_lo {
 public node honda_c30a_v5_lobe_profile_int_hi {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 285 * units.deg,
-            gamma: 1.5,
+            duration_at_50_thou: 248.0 * units.deg,
+            gamma: 1.0,
             lift: 10.2 * units.mm,
             steps: 100
         );
@@ -63,8 +74,8 @@ public node honda_c30a_v5_lobe_profile_int_hi {
 public node honda_c30a_v5_lobe_profile_exh_hi {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 280 * units.deg,
-            gamma: 1.5,
+            duration_at_50_thou: 243.4 * units.deg,
+            gamma: 1.0,
             lift: 9.5 * units.mm,
             steps: 100
         );
@@ -75,9 +86,8 @@ public node honda_c30a_v5_camshaft_builder {
     input ex_lobe_profile_lo: honda_c30a_v5_lobe_profile_exh_lo();
     input in_lobe_profile_hi: honda_c30a_v5_lobe_profile_int_hi();
     input ex_lobe_profile_hi: honda_c30a_v5_lobe_profile_exh_hi();
-    input lobe_separation: 110.0 * units.deg;
-    input intake_lobe_center_lo: 100.0 * units.deg;
-    input exhaust_lobe_center_lo: 100.0 * units.deg;
+    input intake_lobe_center_lo: 100.0 * units.deg;  // fudged to improve cam crossover
+    input exhaust_lobe_center_lo: 100.0 * units.deg; // fudged to improve cam crossover
     input intake_lobe_center_hi: 106.75 * units.deg;
     input exhaust_lobe_center_hi: 104.0 * units.deg;
     input advance_in_lo: 0.0 * units.deg;
@@ -86,13 +96,13 @@ public node honda_c30a_v5_camshaft_builder {
     input advance_ex_hi: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
-    output intake_cam_F_lo: _intake_cam_F_lo;
-    output exhaust_cam_F_lo: _exhaust_cam_F_lo;
+    output intake_cam_L_lo: _intake_cam_L_lo;
+    output exhaust_cam_L_lo: _exhaust_cam_L_lo;
     output intake_cam_R_lo: _intake_cam_R_lo;
     output exhaust_cam_R_lo: _exhaust_cam_R_lo;
 
-    output intake_cam_F_hi: _intake_cam_F_hi;
-    output exhaust_cam_F_hi: _exhaust_cam_F_hi;
+    output intake_cam_L_hi: _intake_cam_L_hi;
+    output exhaust_cam_L_hi: _exhaust_cam_L_hi;
     output intake_cam_R_hi: _intake_cam_R_hi;
     output exhaust_cam_R_hi: _exhaust_cam_R_hi;
 
@@ -101,17 +111,17 @@ public node honda_c30a_v5_camshaft_builder {
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_F_lo(params, lobe_profile: in_lobe_profile_lo, advance: advance_in_lo)
-    camshaft _exhaust_cam_F_lo(params, lobe_profile: ex_lobe_profile_lo, advance: advance_ex_lo)
-
     camshaft _intake_cam_R_lo(params, lobe_profile: in_lobe_profile_lo, advance: advance_in_lo)
     camshaft _exhaust_cam_R_lo(params, lobe_profile: ex_lobe_profile_lo, advance: advance_ex_lo)
 
-    camshaft _intake_cam_F_hi(params, lobe_profile: in_lobe_profile_hi, advance: advance_in_hi)
-    camshaft _exhaust_cam_F_hi(params, lobe_profile: ex_lobe_profile_hi, advance: advance_ex_hi)
+    camshaft _intake_cam_L_lo(params, lobe_profile: in_lobe_profile_lo, advance: advance_in_lo)
+    camshaft _exhaust_cam_L_lo(params, lobe_profile: ex_lobe_profile_lo, advance: advance_ex_lo)
 
     camshaft _intake_cam_R_hi(params, lobe_profile: in_lobe_profile_hi, advance: advance_in_hi)
     camshaft _exhaust_cam_R_hi(params, lobe_profile: ex_lobe_profile_hi, advance: advance_ex_hi)
+
+    camshaft _intake_cam_L_hi(params, lobe_profile: in_lobe_profile_hi, advance: advance_in_hi)
+    camshaft _exhaust_cam_L_hi(params, lobe_profile: ex_lobe_profile_hi, advance: advance_ex_hi)
 
 
     label rot30(30 * units.deg)
@@ -121,39 +131,39 @@ public node honda_c30a_v5_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_F_lo
+    _intake_cam_R_lo
         .add_lobe(rot360 + intake_lobe_center_lo +  0.0  * units.deg) // #1
         .add_lobe(rot360 + intake_lobe_center_lo + 464.5 * units.deg) // #3
         .add_lobe(rot360 + intake_lobe_center_lo + 360.0 * units.deg) // #5
 
-    _intake_cam_R_lo
+    _intake_cam_L_lo
         .add_lobe(rot360 + intake_lobe_center_lo + 254.5 * units.deg) // #2
         .add_lobe(rot360 + intake_lobe_center_lo + 644.5 * units.deg) // #4
 
-    _exhaust_cam_F_lo
+    _exhaust_cam_R_lo
         .add_lobe(rot360 - exhaust_lobe_center_lo +  0.0  * units.deg) // #1
         .add_lobe(rot360 - exhaust_lobe_center_lo + 464.5 * units.deg) // #3
         .add_lobe(rot360 - exhaust_lobe_center_lo + 360.0 * units.deg) // #5
 
-    _exhaust_cam_R_lo
+    _exhaust_cam_L_lo
         .add_lobe(rot360 - exhaust_lobe_center_lo + 254.5 * units.deg) // #2
         .add_lobe(rot360 - exhaust_lobe_center_lo + 644.5 * units.deg) // #4
 
-    _intake_cam_F_hi
+    _intake_cam_R_hi
         .add_lobe(rot360 + intake_lobe_center_hi +  0.0  * units.deg) // #1
         .add_lobe(rot360 + intake_lobe_center_hi + 464.5 * units.deg) // #3
         .add_lobe(rot360 + intake_lobe_center_hi + 360.0 * units.deg) // #5
 
-    _intake_cam_R_hi
+    _intake_cam_L_hi
         .add_lobe(rot360 + intake_lobe_center_hi + 254.5 * units.deg) // #2
         .add_lobe(rot360 + intake_lobe_center_hi + 644.5 * units.deg) // #4
 
-    _exhaust_cam_F_hi
+    _exhaust_cam_R_hi
         .add_lobe(rot360 - exhaust_lobe_center_hi +  0.0  * units.deg) // #1
         .add_lobe(rot360 - exhaust_lobe_center_hi + 464.5 * units.deg) // #3
         .add_lobe(rot360 - exhaust_lobe_center_hi + 360.0 * units.deg) // #5
 
-    _exhaust_cam_R_hi
+    _exhaust_cam_L_hi
         .add_lobe(rot360 - exhaust_lobe_center_hi + 254.5 * units.deg) // #2
         .add_lobe(rot360 - exhaust_lobe_center_hi + 644.5 * units.deg) // #4
 }
@@ -164,7 +174,7 @@ private node add_flow_sample {
     input this;
     alias output __out: this;
 
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node honda_c30a_v5_head {
@@ -172,14 +182,14 @@ public node honda_c30a_v5_head {
     input cam_ex_lo;
     input cam_in_hi;
     input cam_ex_hi;
-    input chamber_volume: 51.0 * units.cc;
+    input chamber_volume: 51.0 * units.cc; // not sure where I got this spec
     input flip_display: false;
     
-    input flow_attenuation: 1.1;
-    input lift_scale: 45.0;
+    input flow_attenuation: 1.0;
+    input lift_scale: 1.1;
     alias output __out: head;
 
-    function intake_flow(1.05 * units.mm)
+    function intake_flow(1.1 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -194,10 +204,8 @@ public node honda_c30a_v5_head {
         .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.05 * units.mm)
+    function exhaust_flow(1.1 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -212,16 +220,14 @@ public node honda_c30a_v5_head {
         .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation)
 
         
     generic_cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 30.0 * units.cc,
-        intake_runner_cross_section_area: 10 * units.cm2,
-        exhaust_runner_volume: 30.0 * units.cc,
-        exhaust_runner_cross_section_area: 10 * units.cm2,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 1.2 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.75 * units.inch) * 1.2 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -237,30 +243,30 @@ public node honda_c30a_v5_head {
 }
 
 
-public node c30a_v5 {
+public node honda_c30a_v5_engine {
     alias output __out: engine;
 
     wires wires()
 
     label bore(90.0 * units.mm)
+    label bore_spacing(100.0 * units.mm)
     label stroke(78.0 * units.mm)
     label rod_length(152.5 * units.mm)
-    label rod_mass(350 * units.g) // guesstimate based on aftermarket chromoly rods - stock rods are titanium
+    label rod_mass(400 * units.g) // guesstimate based on aftermarket chromoly rods (~550g) - stock rods are titanium
     label piston_mass(400 * units.g)
-    label compression_height(1.184 * units.inch)
-    label piston_dome(0.0 * units.cc)
-    label deck_height(8.715 * units.inch)
+    label compression_height(30.00 * units.mm)
+    label piston_dome(-1.5 * units.cc) // for 10.2:1 CR
+    label deck_height((221.5 + 0.75) * units.mm)
     label crank_mass(45 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(5 * units.inch)
 
     engine engine(
-        name: "Honda C30A RC211V",
-        starter_torque: 300 * units.lb_ft,
-        starter_speed: 600 * units.rpm,
+        name: "Honda C30A/RC211V",
+        starter_torque: 150 * units.lb_ft,
+        starter_speed: 1200 * units.rpm,
         redline: 8000 * units.rpm,
-        throttle_gamma: 1.0,
-        simulation_frequency: 7500
+        throttle_gamma: 1.0
     )
 
     label crank_moment(
@@ -284,14 +290,14 @@ public node c30a_v5 {
         tdc: 52.25 * units.deg
     )
 
-    rod_journal rj2(angle:  0.0  * units.deg)
-    rod_journal rj3(angle: 105.5 * units.deg) // 360 - 105.5
-    rod_journal rj4(angle:  0.0  * units.deg)
+    rod_journal rj1(angle:  0.0  * units.deg)
+    rod_journal rj2(angle: 105.5 * units.deg) // 360 - 105.5
+    rod_journal rj3(angle:  0.0  * units.deg)
 
     c0
+        .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
-        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -320,86 +326,103 @@ public node c30a_v5 {
     intake intake(
         plenum_volume: 0.5 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(500.0),
+        intake_flow_rate: k_carb(430.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.996,
-        throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(150.0),
+        idle_throttle_plate_position: 0.9972,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(250.0),
         runner_length: 4.5 * units.inch,
         velocity_decay: 0.1
     )
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(350.0),
-        primary_tube_length: 20.0 * units.inch,
-        primary_flow_rate: k_carb(200.0),
-        velocity_decay: 1.0, //0.5
-        volume: 50.0 * units.L
+        outlet_flow_rate: k_carb(500.0),
+        primary_tube_length: 6.0 * units.inch,
+        primary_flow_rate: k_carb(240.0),
+        velocity_decay: 0.6, //0.5
+        volume: 5.0 * units.L,
+        length: 800 * units.mm
     )
-    exhaust_system exhaustF(es_params, audio_volume: 1.0 * 0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.01), length: 1500 * units.mm)
-    exhaust_system exhaustR(es_params, audio_volume: 0.9 * 0.01, impulse_response: impulse_response(filename: "../../sound-library/smooth/smooth_39.wav", volume: 0.01), length: 1500 * units.mm)
 
-    cylinder_bank bF(bank_params, angle: -37.75 * units.deg) // Front (first)
-    bF
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
-            ignition_wire: wires.wire1,
-            intake: intake,
-            exhaust_system: exhaustF
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
-            ignition_wire: wires.wire3,
-            intake: intake,
-            exhaust_system: exhaustF
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
-            ignition_wire: wires.wire5,
-            intake: intake,
-            exhaust_system: exhaustF
-        )
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
+    
+    label pipe_length_1(00 * units.mm)
+    label pipe_length_2(03 * units.mm)
+    label pipe_length_3(10 * units.mm)
+    
+    label exhaust_stagger(5 * units.inch)
 
-    cylinder_bank bR(bank_params, angle: 37.75 * units.deg) // R (second)
+    cylinder_bank bR(bank_params, angle: -37.75 * units.deg) // R (first)
     bR
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
-            ignition_wire: wires.wire2,
+            rod_journal: rj1,
+            ignition_wire: wires.wire1,
             intake: intake,
-            exhaust_system: exhaustR
+            exhaust_system: exhaust,
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj2,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: 0.85
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: 1.0
+        )
+
+    cylinder_bank bL(bank_params, angle: 37.75 * units.deg) // L (second)
+    bL
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire2,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_1,
+            sound_attenuation: 0.77 * 0.9
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustR
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3,
+            sound_attenuation: 0.93 * 0.9
         )
 
     engine
-        .add_cylinder_bank(bF)
         .add_cylinder_bank(bR)
+        .add_cylinder_bank(bL)
 
     engine.add_crankshaft(c0)
 
     honda_c30a_v5_camshaft_builder camshaft()
 
-    bF.set_cylinder_head (
+    bL.set_cylinder_head (
         honda_c30a_v5_head(
-            cam_in_lo: camshaft.intake_cam_F_lo,
-            cam_in_hi: camshaft.intake_cam_F_hi,
-            cam_ex_lo: camshaft.exhaust_cam_F_lo,
-            cam_ex_hi: camshaft.exhaust_cam_F_hi,
-            flip_display: false
+            cam_in_lo: camshaft.intake_cam_L_lo,
+            cam_in_hi: camshaft.intake_cam_L_hi,
+            cam_ex_lo: camshaft.exhaust_cam_L_lo,
+            cam_ex_hi: camshaft.exhaust_cam_L_hi,
+            flip_display: true
         )
     )
     bR.set_cylinder_head (
@@ -408,28 +431,27 @@ public node c30a_v5 {
             cam_in_hi: camshaft.intake_cam_R_hi,
             cam_ex_lo: camshaft.exhaust_cam_R_lo,
             cam_ex_hi: camshaft.exhaust_cam_R_hi,
-            flip_display: true
+            flip_display: false
         )
     )
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(0000 * units.rpm, 35 * units.deg)
         .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 65 * units.deg)
-        .add_sample(7000 * units.rpm, 70 * units.deg)
-        .add_sample(8000 * units.rpm, 75 * units.deg)
-        .add_sample(9000 * units.rpm, 75 * units.deg)
+        .add_sample(2000 * units.rpm, 43 * units.deg)
+        .add_sample(3000 * units.rpm, 46 * units.deg)
+        .add_sample(4000 * units.rpm, 49 * units.deg)
+        .add_sample(5000 * units.rpm, 52 * units.deg)
+        .add_sample(6000 * units.rpm, 54 * units.deg)
+        .add_sample(7000 * units.rpm, 55 * units.deg)
+        .add_sample(8000 * units.rpm, 56 * units.deg)
+        .add_sample(9000 * units.rpm, 56 * units.deg)
 
     engine.add_ignition_module(
         honda_c30a_v5_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 8250 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -443,7 +465,7 @@ public node honda_nsx_na2_vehicle {
             cross_sectional_area: 1.78 * (units.m * units.m),
             diff_ratio: 4.062,
             tire_radius: 314 * units.mm, // 245/40ZR17
-            rolling_resistance: 500 * units.N
+            rolling_resistance: 3015 * units.lb * 9.81 * (245.0/275.0) * 0.01
         );
 }
 
@@ -461,7 +483,7 @@ public node honda_nsx_na2_transmission {
 }
 
 public node main {
-    set_engine(c30a_v5())
+    set_engine(honda_c30a_v5_engine())
     set_vehicle(honda_nsx_na2_vehicle())
     set_transmission(honda_nsx_na2_transmission())
 }

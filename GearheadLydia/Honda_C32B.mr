@@ -195,7 +195,7 @@ public node honda_c32b_head {
     input lift_scale: 1.1;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(1.1 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -211,7 +211,7 @@ public node honda_c32b_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(1.1 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
