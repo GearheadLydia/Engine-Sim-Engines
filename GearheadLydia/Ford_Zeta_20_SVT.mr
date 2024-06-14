@@ -10,13 +10,13 @@ public node ford_zeta_20_svt_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7200 * units.rpm;
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
             .connect_wire(wires.wire3, (1.0/4.0) * cycle)
-			.connect_wire(wires.wire4, (2.0/4.0) * cycle)
-			.connect_wire(wires.wire2, (3.0/4.0) * cycle);
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (3.0/4.0) * cycle);
 }
 
 private node wires {
@@ -24,16 +24,6 @@ private node wires {
     output wire2: ignition_wire();
     output wire3: ignition_wire();
     output wire4: ignition_wire();
-}
-
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
 // https://www.focaljet.com/threads/svt-cam-specs.557426/
@@ -60,7 +50,7 @@ public node ford_zeta_20_svt_lobe_profile_exh {
 
 public node ford_zeta_20_svt_camshaft_builder {
     input lobe_profile: ford_zeta_20_svt_lobe_profile_int();
-	input ex_lobe_profile: ford_zeta_20_svt_lobe_profile_exh();
+    input ex_lobe_profile: ford_zeta_20_svt_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 115 * units.deg; // guess
@@ -88,15 +78,15 @@ public node ford_zeta_20_svt_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 3 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 1 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 2 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot180)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot180)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
 }
 
 private node add_flow_sample {
@@ -113,9 +103,9 @@ public node ford_zeta_20_svt_head {
     input exhaust_camshaft;
     input chamber_volume: 42.0 * units.cc; // Focus standard: 48cc; Focus SVT: 42cc
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 1.0;
+    input flow_attenuation_ex: 1.0;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -155,7 +145,7 @@ public node ford_zeta_20_svt_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.15 * units.inch) * 6 * units.inch,
@@ -181,18 +171,18 @@ public node ford_zeta_20_svt_engine {
         redline: 7000 * units.rpm, // 6200
         throttle_gamma: 1.0
     )
-	
-	label lean_angle(-8 * units.deg)
+    
+    label lean_angle(-8 * units.deg)
 
     label bore(84.8 * units.mm)
     label bore_spacing(91.0 * units.mm)
     label stroke(88.0 * units.mm)
     label rod_length(132.85 * units.mm)
     label rod_mass(350 * units.g)
-	label piston_mass(347 * units.g)
+    label piston_mass(347 * units.g)
     label compression_height(28.15 * units.mm)
-	label deck_height((206.5 + 1.016) * units.mm) // "27 thou for standard Focus, 40 thou for SVT"
-	label piston_dome(2.3 * units.cc) // calculated for 10.2:1 compression
+    label deck_height((206.5 + 1.016) * units.mm) // "27 thou for standard Focus, 40 thou for SVT"
+    label piston_dome(2.3 * units.cc) // calculated for 10.2:1 compression
     label crank_mass(4.0 * units.kg)
     label flywheel_mass(5.0 * units.kg)
     label flywheel_radius(5.0 * units.inch)
@@ -220,16 +210,16 @@ public node ford_zeta_20_svt_engine {
         tdc: 90.0 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 180 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
     rod_journal rj2(angle: 180 * units.deg)
-    rod_journal rj3(angle:  0  * units.deg)
-	
+    rod_journal rj3(angle: 180 * units.deg)
+    rod_journal rj4(angle:  0  * units.deg)
+    
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -265,19 +255,19 @@ public node ford_zeta_20_svt_engine {
         runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((3.5 * units.inch)/2)
+    
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(300.0),
         primary_tube_length: 8.0 * units.inch,
         primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2000 * units.mm,
-		volume: 2000 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2000 * units.mm,
+        volume: 2000 * units.mm * circle_area(exhaust_radius)
     )
-	
+    
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
@@ -285,42 +275,42 @@ public node ford_zeta_20_svt_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.5 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 0.5 * units.inch,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: 2.0 * units.inch,
-			sound_attenuation: 1.0
-        )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.5 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 2.0 * units.inch,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: 1.5 * units.inch,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.0 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 0.0 * units.inch,
+            sound_attenuation: 1.0
         )
 
     engine
@@ -329,15 +319,15 @@ public node ford_zeta_20_svt_engine {
     engine.add_crankshaft(c0)
 
     ford_zeta_20_svt_camshaft_builder camshaft(
-	    lobe_profile: ford_zeta_20_svt_lobe_profile_int(),
-		ex_lobe_profile: ford_zeta_20_svt_lobe_profile_exh()
-	)
+        lobe_profile: ford_zeta_20_svt_lobe_profile_int(),
+        ex_lobe_profile: ford_zeta_20_svt_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         ford_zeta_20_svt_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: false
+            flip_display: false
         )
     )
 
@@ -387,7 +377,7 @@ public node getrag_285_transmission {
 }
 
 public node main {
-	set_engine(ford_zeta_20_svt_engine())
+    set_engine(ford_zeta_20_svt_engine())
     set_vehicle(ford_focus_svt_c170_vehicle())
     set_transmission(getrag_285_transmission())
 }

@@ -147,7 +147,7 @@ public node lamborghini_lamborghini_gallardo_v10_07l_engine_head {
     input lift_scale: 50.0;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(50 * units.thou)
     intake_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
@@ -163,7 +163,7 @@ public node lamborghini_lamborghini_gallardo_v10_07l_engine_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(50 * units.thou)
     exhaust_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
@@ -243,28 +243,28 @@ public node lamborghini_gallardo_v10_07l_engine {
         tdc: 135.0 * units.deg // +45 degrees
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: -18  * units.deg)
-    rod_journal rj2(angle: 288 * units.deg)
-    rod_journal rj3(angle: 270 * units.deg)
-    rod_journal rj4(angle: 72 * units.deg)
-    rod_journal rj5(angle: 54 * units.deg)
-    rod_journal rj6(angle: 216 * units.deg)
-    rod_journal rj7(angle: 198 * units.deg)
-    rod_journal rj8(angle: 144 * units.deg)
-    rod_journal rj9(angle: 126 * units.deg)
+    rod_journal rj01(angle:  0  * units.deg)
+    rod_journal rj02(angle: -18  * units.deg)
+    rod_journal rj03(angle: 288 * units.deg)
+    rod_journal rj04(angle: 270 * units.deg)
+    rod_journal rj05(angle: 72 * units.deg)
+    rod_journal rj06(angle: 54 * units.deg)
+    rod_journal rj07(angle: 216 * units.deg)
+    rod_journal rj08(angle: 198 * units.deg)
+    rod_journal rj09(angle: 144 * units.deg)
+    rod_journal rj10(angle: 126 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
-        .add_rod_journal(rj1)
-        .add_rod_journal(rj2)
-        .add_rod_journal(rj3)
-        .add_rod_journal(rj4)
-        .add_rod_journal(rj5)
-        .add_rod_journal(rj6)
-        .add_rod_journal(rj7)
-        .add_rod_journal(rj8)
-        .add_rod_journal(rj9)
+        .add_rod_journal(rj01)
+        .add_rod_journal(rj02)
+        .add_rod_journal(rj03)
+        .add_rod_journal(rj04)
+        .add_rod_journal(rj05)
+        .add_rod_journal(rj06)
+        .add_rod_journal(rj07)
+        .add_rod_journal(rj08)
+        .add_rod_journal(rj09)
+        .add_rod_journal(rj10)
 
 
     piston_parameters piston_params(
@@ -343,7 +343,7 @@ public node lamborghini_gallardo_v10_07l_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj01,
             ignition_wire: wires.wire01,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -353,7 +353,7 @@ public node lamborghini_gallardo_v10_07l_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj03,
             ignition_wire: wires.wire02,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -363,7 +363,7 @@ public node lamborghini_gallardo_v10_07l_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj05,
             ignition_wire: wires.wire03,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -373,7 +373,7 @@ public node lamborghini_gallardo_v10_07l_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj6,
+            rod_journal: rj07,
             ignition_wire: wires.wire04,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -383,7 +383,7 @@ public node lamborghini_gallardo_v10_07l_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj8,
+            rod_journal: rj09,
             ignition_wire: wires.wire05,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -396,7 +396,7 @@ public node lamborghini_gallardo_v10_07l_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj02,
             ignition_wire: wires.wire06,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -406,7 +406,7 @@ public node lamborghini_gallardo_v10_07l_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj04,
             ignition_wire: wires.wire07,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -416,7 +416,7 @@ public node lamborghini_gallardo_v10_07l_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
+            rod_journal: rj06,
             ignition_wire: wires.wire08,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -426,7 +426,7 @@ public node lamborghini_gallardo_v10_07l_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj7,
+            rod_journal: rj08,
             ignition_wire: wires.wire09,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -436,7 +436,7 @@ public node lamborghini_gallardo_v10_07l_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj9,
+            rod_journal: rj10,
             ignition_wire: wires.wire10,
             intake: intakeR,
             exhaust_system: exhaust,

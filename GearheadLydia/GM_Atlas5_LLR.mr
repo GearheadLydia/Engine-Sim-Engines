@@ -185,7 +185,7 @@ public node gm_vortec_llr_engine {
     label piston_dome(0.0 * units.cc)
     label deck_clearance(0.5 * units.mm)
     label crank_mass(5 * units.kg)
-    label flywheel_mass(50 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -211,11 +211,11 @@ public node gm_vortec_llr_engine {
         tdc: 90 * units.deg + lean_angle
     )
 
-    rod_journal rj1(angle: (0.0 / 5.0) * 360 * units.deg)
-    rod_journal rj2(angle: (2.0 / 5.0) * 360 * units.deg)
-    rod_journal rj3(angle: (3.0 / 5.0) * 360 * units.deg)
-    rod_journal rj4(angle: (4.0 / 5.0) * 360 * units.deg)
-    rod_journal rj5(angle: (1.0 / 5.0) * 360 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 144 * units.deg)
+    rod_journal rj3(angle: 216 * units.deg)
+    rod_journal rj4(angle: 288 * units.deg)
+    rod_journal rj5(angle:  72 * units.deg)
 
     c0
         .add_rod_journal(rj1)

@@ -232,16 +232,16 @@ public node nissan_vk45de_engine {
         tdc: 45.0 * units.deg // -45 degrees
     )
 
-    rod_journal rj0(angle:   0.0 * units.deg)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle:  90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 270 * units.deg)
+    rod_journal rj3(angle:  90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -305,7 +305,7 @@ public node nissan_vk45de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
@@ -314,7 +314,7 @@ public node nissan_vk45de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
@@ -323,7 +323,7 @@ public node nissan_vk45de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
@@ -332,7 +332,7 @@ public node nissan_vk45de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
@@ -344,7 +344,7 @@ public node nissan_vk45de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
@@ -353,7 +353,7 @@ public node nissan_vk45de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
@@ -362,7 +362,7 @@ public node nissan_vk45de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
@@ -371,7 +371,7 @@ public node nissan_vk45de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,

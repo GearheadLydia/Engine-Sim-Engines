@@ -10,13 +10,13 @@ public node honda_f22b1_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6500 * units.rpm;
-	input limiter_duration: 0.1;
+    input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
             .connect_wire(wires.wire3, (1.0/4.0) * cycle)
-			.connect_wire(wires.wire4, (2.0/4.0) * cycle)
-			.connect_wire(wires.wire2, (3.0/4.0) * cycle);
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (3.0/4.0) * cycle);
 }
 
 private node wires {
@@ -24,16 +24,6 @@ private node wires {
     output wire2: ignition_wire();
     output wire3: ignition_wire();
     output wire4: ignition_wire();
-}
-
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
 // cam specs are loosely based on F22A6
@@ -70,7 +60,7 @@ public node honda_f22b1_lobe_profile_exh {
 public node honda_f22b1_camshaft_builder {
     input in_lobe_profile_lo: honda_f22b1_lobe_profile_int_lo();
     input in_lobe_profile_hi: honda_f22b1_lobe_profile_int_hi();
-	input ex_lobe_profile: honda_f22b1_lobe_profile_exh();
+    input ex_lobe_profile: honda_f22b1_lobe_profile_exh();
     input lobe_separation: 114.0 * units.deg;
     input intake_lobe_center_lo: lobe_separation;
     input intake_lobe_center_hi: lobe_separation;
@@ -100,21 +90,21 @@ public node honda_f22b1_camshaft_builder {
 
     _intake_cam_0_lo
         .add_lobe(rot360 - intake_lobe_center_lo - 0 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_lo - 3 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_lo - 1 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_lo - 2 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_lo - 3 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_lo - 1 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_lo - 2 * rot180)
 
     _intake_cam_0_hi
         .add_lobe(rot360 - intake_lobe_center_hi - 0 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_hi - 3 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_hi - 1 * rot180)
-		.add_lobe(rot360 - intake_lobe_center_hi - 2 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_hi - 3 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_hi - 1 * rot180)
+        .add_lobe(rot360 - intake_lobe_center_hi - 2 * rot180)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 + exhaust_lobe_center - 0 * rot180)
         .add_lobe(rot360 + exhaust_lobe_center - 3 * rot180)
-		.add_lobe(rot360 + exhaust_lobe_center - 1 * rot180)
-		.add_lobe(rot360 + exhaust_lobe_center - 2 * rot180)
+        .add_lobe(rot360 + exhaust_lobe_center - 1 * rot180)
+        .add_lobe(rot360 + exhaust_lobe_center - 2 * rot180)
 }
 
 private node add_flow_sample {
@@ -129,12 +119,12 @@ private node add_flow_sample {
 public node honda_f22b1_head {
     input cam_in_lo;
     input cam_in_hi;
-	input cam_ex;
+    input cam_ex;
     input chamber_volume: 50.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 0.85;
-	input flow_attenuation_ex: 0.85;
+    
+    input flow_attenuation_in: 0.85;
+    input flow_attenuation_ex: 0.85;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -174,7 +164,7 @@ public node honda_f22b1_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     generic_cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(0.8 * units.inch) * 2 * units.inch,
@@ -184,13 +174,13 @@ public node honda_f22b1_head {
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
-		valvetrain: vtec_valvetrain(
+        valvetrain: vtec_valvetrain(
             vtec_intake_camshaft: cam_in_hi,
             vtec_exhaust_camshaft: cam_ex,
             intake_camshaft: cam_in_lo,
             exhaust_camshaft: cam_ex,
             min_rpm: 3000 * units.rpm
-		),
+        ),
         flip_display: flip_display
     )
 }
@@ -206,20 +196,20 @@ public node honda_f22b1_engine {
         starter_speed: -1200 * units.rpm,
         redline: 6000 * units.rpm,
         throttle_gamma: 1.0,
-		hf_gain: 0.007,
-		jitter: 0.3
+        hf_gain: 0.007,
+        jitter: 0.3
     )
-	
-	label lean_angle(2 * units.deg)
+    
+    label lean_angle(2 * units.deg)
 
     label bore(85.0 * units.mm)
     label stroke(95.0 * units.mm)
     label rod_length(141.53 * units.mm)
     label rod_mass(600 * units.g)
-	label piston_mass((355+109) * units.g)
+    label piston_mass((355+109) * units.g)
     label compression_height(30.6 * units.mm) // I had 29.75 at one point??
-	label deck_height((219.5 + 0.91) * units.mm)
-	label piston_dome(-14.5 * units.cc)
+    label deck_height((219.5 + 0.91) * units.mm)
+    label piston_dome(-14.5 * units.cc)
     label crank_mass(3.0 * units.kg)
     label flywheel_mass(7.5 * units.kg)
     label flywheel_radius(6.0 * units.inch)
@@ -247,16 +237,16 @@ public node honda_f22b1_engine {
         tdc: 90.0 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 180 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
     rod_journal rj2(angle: 180 * units.deg)
-    rod_journal rj3(angle:  0  * units.deg)
-	
+    rod_journal rj3(angle: 180 * units.deg)
+    rod_journal rj4(angle:  0  * units.deg)
+    
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -298,58 +288,58 @@ public node honda_f22b1_engine {
         primary_tube_length: 12.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area((2.5 * units.inch) / 2),
-		length: 3000 * units.mm,
-		volume: 3000 * units.mm * circle_area((2.5 * units.inch) / 2)
+        collector_cross_section_area: circle_area((2.5 * units.inch) / 2),
+        length: 3000 * units.mm,
+        volume: 3000 * units.mm * circle_area((2.5 * units.inch) / 2)
     )
-	
+    
     exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.02,
-		impulse_response: ir_lib.default_0
-	)
+        es_params,
+        audio_volume: 1.0 * 0.02,
+        impulse_response: ir_lib.default_0
+    )
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 2.5 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 2.5 * units.inch,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: 1.5 * units.inch,
-			sound_attenuation: 1.0
-        )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 1.5 * units.inch,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: 0 * units.inch,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.5 * units.inch,
-			sound_attenuation: 1.0
+            primary_length: 1.5 * units.inch,
+            sound_attenuation: 1.0
         )
 
     engine
@@ -362,9 +352,9 @@ public node honda_f22b1_engine {
     b0.set_cylinder_head (
         honda_f22b1_head(
             cam_in_lo: camshaft.intake_cam_0_lo,
-			cam_in_hi: camshaft.intake_cam_0_hi,
+            cam_in_hi: camshaft.intake_cam_0_hi,
             cam_ex: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
 
@@ -412,7 +402,7 @@ public node honda_p2a4_transmission {
 }
 
 public node main {
-	set_engine(honda_f22b1_engine())
+    set_engine(honda_f22b1_engine())
     set_vehicle(honda_accord_ce1_vehicle())
     set_transmission(honda_p2a4_transmission())
 }

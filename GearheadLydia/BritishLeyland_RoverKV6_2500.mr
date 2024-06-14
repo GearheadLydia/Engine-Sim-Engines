@@ -10,7 +10,7 @@ public node rover_kv6_2500_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6750 * units.rpm;
-	input limiter_duration: 0.06;
+    input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 6.0) * cycle)
@@ -28,16 +28,6 @@ private node wires {
     output wire4: ignition_wire();
     output wire5: ignition_wire();
     output wire6: ignition_wire();
-}
-
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
 // https://the75andztclub.co.uk/forum/showthread.php?p=2652851
@@ -63,7 +53,7 @@ public node rover_kv6_2500_lobe_profile_exh {
 
 public node rover_kv6_2500_camshaft_builder {
     input lobe_profile: rover_kv6_2500_lobe_profile_int();
-	input ex_lobe_profile: rover_kv6_2500_lobe_profile_exh();
+    input ex_lobe_profile: rover_kv6_2500_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 110.0 * units.deg;
@@ -93,7 +83,7 @@ public node rover_kv6_2500_camshaft_builder {
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
-	
+    
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot120)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot120)
@@ -129,9 +119,9 @@ public node rover_kv6_2500_head {
     input exhaust_camshaft;
     input chamber_volume: 30.2 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 1.0;
+    input flow_attenuation_ex: 1.0;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -171,7 +161,7 @@ public node rover_kv6_2500_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 5 * units.inch,
@@ -196,8 +186,8 @@ public node rover_kv6_2500_engine {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 6500 * units.rpm,
-		hf_gain: 0.002,
-		jitter: 0.55,
+        hf_gain: 0.002,
+        jitter: 0.55,
         throttle_gamma: 1.0
     )
 
@@ -206,10 +196,10 @@ public node rover_kv6_2500_engine {
     label stroke(82.8 * units.mm)
     label rod_length(133.1 * units.mm)
     label rod_mass(350 * units.g)
-	label piston_mass(347 * units.g)
+    label piston_mass(347 * units.g)
     label compression_height(26.0 * units.mm)
-	label deck_height((200.5 + 1.0) * units.mm) // deck height is a guess
-	label piston_dome(-8.5 * units.cc) // for 10.5:1 CR
+    label deck_height((200.5 + 1.0) * units.mm) // deck height is a guess
+    label piston_dome(-8.5 * units.cc) // for 10.5:1 CR
     label crank_mass(6.0 * units.kg)
     label flywheel_mass(12.0 * units.kg)
     label flywheel_radius(6.0 * units.inch)
@@ -237,24 +227,24 @@ public node rover_kv6_2500_engine {
         tdc: 60.0 * units.deg
     )
 
-    rod_journal rj0(angle:   0 * units.deg)
-    rod_journal rj1(angle: 300 * units.deg)
-    rod_journal rj2(angle: 120 * units.deg)
-    rod_journal rj3(angle:  60 * units.deg)
-    rod_journal rj4(angle: 240 * units.deg)
-    rod_journal rj5(angle: 180 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 300 * units.deg)
+    rod_journal rj3(angle: 120 * units.deg)
+    rod_journal rj4(angle:  60 * units.deg)
+    rod_journal rj5(angle: 240 * units.deg)
+    rod_journal rj6(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
         .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: k_28inH2O(0.1),
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -286,88 +276,88 @@ public node rover_kv6_2500_engine {
         runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((2.5 * units.inch)/2)
+    
+    label exhaust_radius((2.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(150.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2500 * units.mm,
-		volume: (2000 * units.mm * circle_area(exhaust_radius)) + (500 * units.mm * circle_area(exhaust_radius) * 2)
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2500 * units.mm,
+        volume: (2000 * units.mm * circle_area(exhaust_radius)) + (500 * units.mm * circle_area(exhaust_radius) * 2)
     )
-	
-	exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(1.0 * bore_spacing)
-	label pipe_length_2(0.0 * bore_spacing)
-	label pipe_length_3(0.5 * bore_spacing)
-	
-	label exhaust_stagger(2.0 * units.inch)
-	
+    
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    
+    label pipe_length_1(1.0 * bore_spacing)
+    label pipe_length_2(0.0 * bore_spacing)
+    label pipe_length_3(0.5 * bore_spacing)
+    
+    label exhaust_stagger(2.0 * units.inch)
+    
     cylinder_bank b0(bank_params, angle: -30 * units.deg) // R (first, front)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+            primary_length: pipe_length_3 + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: 30 * units.deg) // L (second, rear)
     b1
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 0.9
+            primary_length: pipe_length_1,
+            sound_attenuation: 0.9
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 0.9
+            primary_length: pipe_length_2,
+            sound_attenuation: 0.9
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
+            rod_journal: rj6,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 0.9
+            primary_length: pipe_length_3,
+            sound_attenuation: 0.9
         )
 
     engine
@@ -377,15 +367,15 @@ public node rover_kv6_2500_engine {
     engine.add_crankshaft(c0)
 
     rover_kv6_2500_camshaft_builder camshaft(
-	    lobe_profile: rover_kv6_2500_lobe_profile_int(),
-		ex_lobe_profile: rover_kv6_2500_lobe_profile_exh()
-	)
+        lobe_profile: rover_kv6_2500_lobe_profile_int(),
+        ex_lobe_profile: rover_kv6_2500_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         rover_kv6_2500_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: false
+            flip_display: false
         )
     )
     b1.set_cylinder_head (
@@ -443,7 +433,7 @@ public node rover_pg1_kv6_transmission {
 }
 
 public node main {
-	set_engine(rover_kv6_2500_engine())
+    set_engine(rover_kv6_2500_engine())
     set_vehicle(mg_zs_180_vehicle())
     set_transmission(rover_pg1_kv6_transmission())
 }

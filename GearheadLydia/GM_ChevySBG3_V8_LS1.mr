@@ -243,7 +243,7 @@ public node chevrolet_ls1_engine {
     label piston_dome(-4.00 * units.cc)
     label deck_height(9.240 * units.inch)
     label crank_mass(57 * units.lb)
-    label flywheel_mass(57 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -268,16 +268,16 @@ public node chevrolet_ls1_engine {
         tdc: 45.0 * units.deg // 45 degrees back from right side
     )
 
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle: 90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 270 * units.deg)
+    rod_journal rj3(angle:  90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -357,7 +357,7 @@ public node chevrolet_ls1_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaustR,
@@ -367,7 +367,7 @@ public node chevrolet_ls1_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaustR,
@@ -377,7 +377,7 @@ public node chevrolet_ls1_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaustR,
@@ -387,7 +387,7 @@ public node chevrolet_ls1_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaustR,
@@ -400,7 +400,7 @@ public node chevrolet_ls1_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaustL,
@@ -410,7 +410,7 @@ public node chevrolet_ls1_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaustL,
@@ -420,7 +420,7 @@ public node chevrolet_ls1_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaustL,
@@ -430,7 +430,7 @@ public node chevrolet_ls1_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaustL,

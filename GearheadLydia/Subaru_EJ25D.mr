@@ -10,13 +10,13 @@ public node subaru_ej25d_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7750 * units.rpm;
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
             .connect_wire(wires.wire3, (1.0/4.0) * cycle)
-			.connect_wire(wires.wire2, (2.0/4.0) * cycle)
-			.connect_wire(wires.wire4, (3.0/4.0) * cycle);
+            .connect_wire(wires.wire2, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire4, (3.0/4.0) * cycle);
 }
 
 private node wires {
@@ -48,7 +48,7 @@ public node subaru_ej25d_lobe_profile_exh {
 
 public node subaru_ej25d_camshaft_builder {
     input in_lobe_profile: subaru_ej25d_lobe_profile_int();
-	input ex_lobe_profile: subaru_ej25d_lobe_profile_exh();
+    input ex_lobe_profile: subaru_ej25d_lobe_profile_exh();
     input lobe_separation: 110.0 * units.deg;
     input intake_lobe_center: 110.0 * units.deg;
     input exhaust_lobe_center: 110.0 * units.deg;
@@ -74,7 +74,7 @@ public node subaru_ej25d_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -82,19 +82,19 @@ public node subaru_ej25d_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + (0 * rot180))
-		.add_lobe(rot360 + intake_lobe_center + (1 * rot180))
+        .add_lobe(rot360 + intake_lobe_center + (1 * rot180))
 
     _intake_cam_1
         .add_lobe(rot360 + intake_lobe_center + (2 * rot180))
-		.add_lobe(rot360 + intake_lobe_center + (3 * rot180))
+        .add_lobe(rot360 + intake_lobe_center + (3 * rot180))
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + (0 * rot180))
-		.add_lobe(rot360 - exhaust_lobe_center + (1 * rot180))
+        .add_lobe(rot360 - exhaust_lobe_center + (1 * rot180))
 
-	_exhaust_cam_1
+    _exhaust_cam_1
         .add_lobe(rot360 - exhaust_lobe_center + (2 * rot180))
-		.add_lobe(rot360 - exhaust_lobe_center + (3 * rot180))
+        .add_lobe(rot360 - exhaust_lobe_center + (3 * rot180))
 }
 
 private node add_flow_sample {
@@ -111,9 +111,9 @@ public node subaru_ej25d_head {
     input exhaust_camshaft;
     input chamber_volume: 42.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.1;
-	input flow_attenuation_ex: 1.1;
+    
+    input flow_attenuation_in: 1.1;
+    input flow_attenuation_ex: 1.1;
     input lift_scale: 50.0;
     alias output __out: head;
 
@@ -153,7 +153,7 @@ public node subaru_ej25d_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.00 * units.inch) * 7 * units.inch,
@@ -179,10 +179,10 @@ public node ej25d {
     label stroke(76.4 * units.mm)
     label rod_length(127 * units.mm)
     label rod_mass(350 * units.g)
-	label piston_mass(423 * units.g)
+    label piston_mass(423 * units.g)
     label compression_height(32.95 * units.mm)
-	label piston_dome(-13.2 * units.cc)
-	label deck_height(201.5 * units.mm)
+    label piston_dome(-13.2 * units.cc)
+    label deck_height(201.5 * units.mm)
     label crank_mass(45 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(5 * units.inch)
@@ -190,7 +190,7 @@ public node ej25d {
     engine engine(
         name: "Subaru EJ25D",
         starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_speed: 600 * units.rpm,
         redline: 7500 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 4.0,
@@ -220,16 +220,16 @@ public node ej25d {
         tdc: 180.0 * units.deg
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 180 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
     rod_journal rj2(angle: 180 * units.deg)
-    rod_journal rj3(angle:  0  * units.deg)
+    rod_journal rj3(angle: 180 * units.deg)
+    rod_journal rj4(angle:  0  * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -276,34 +276,34 @@ public node ej25d {
     )
 
     exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0,
-		length: 300 * units.mm
-	)
-	
-	label exhaust_shrt( 0 * units.inch)
-	label exhaust_long(12 * units.inch)
+        es_params,
+        audio_volume: 1.0 * 0.01,
+        impulse_response: ir_lib.default_0,
+        length: 300 * units.mm
+    )
+    
+    label exhaust_shrt( 0 * units.inch)
+    label exhaust_long(12 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 90.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: exhaust_shrt
+            primary_length: exhaust_shrt
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: exhaust_shrt
+            primary_length: exhaust_shrt
         )
 
     cylinder_bank b1(bank_params, angle: -90.0 * units.deg) // R (second)
@@ -311,20 +311,20 @@ public node ej25d {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: exhaust_long
+            primary_length: exhaust_long
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: exhaust_long
+            primary_length: exhaust_long
         )
 
     engine
@@ -359,9 +359,9 @@ public node ej25d {
         .add_sample(4000 * units.rpm, 55 * units.deg)
         .add_sample(5000 * units.rpm, 60 * units.deg)
         .add_sample(6000 * units.rpm, 65 * units.deg)
-		.add_sample(7000 * units.rpm, 65 * units.deg)
-		.add_sample(8000 * units.rpm, 70 * units.deg)
-		.add_sample(9000 * units.rpm, 70 * units.deg)
+        .add_sample(7000 * units.rpm, 65 * units.deg)
+        .add_sample(8000 * units.rpm, 70 * units.deg)
+        .add_sample(9000 * units.rpm, 70 * units.deg)
 
     engine.add_ignition_module(
         subaru_ej25d_distributor(

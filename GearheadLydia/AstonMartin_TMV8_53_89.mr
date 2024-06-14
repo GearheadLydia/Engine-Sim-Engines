@@ -24,7 +24,7 @@ public node aston_martin_v8_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 5650 * units.rpm;
-	input limiter_duration: 0.1;
+    input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -71,7 +71,7 @@ public node aston_martin_v8_lobe_profile_exh {
 
 public node aston_martin_v8_camshaft_builder {
     input in_lobe_profile: aston_martin_v8_lobe_profile_int();
-	input ex_lobe_profile: aston_martin_v8_lobe_profile_exh();
+    input ex_lobe_profile: aston_martin_v8_lobe_profile_exh();
     input intake_lobe_center: 115.0 * units.deg;
     input exhaust_lobe_center: 115.0 * units.deg;
     input advance: 0.0 * units.deg;
@@ -95,13 +95,13 @@ public node aston_martin_v8_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-	// firing order: 15426378
+    // firing order: 15426378
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
@@ -141,9 +141,9 @@ public node aston_martin_v8_head {
     input exhaust_camshaft;
     input chamber_volume: 50.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 0.8;
-	input flow_attenuation_ex: 0.85;
+    
+    input flow_attenuation_in: 0.8;
+    input flow_attenuation_ex: 0.85;
     input lift_scale: 0.97;
     alias output __out: head;
 
@@ -183,7 +183,7 @@ public node aston_martin_v8_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
@@ -209,10 +209,10 @@ public node aston_martin_v8_engine {
     label stroke(85.0 * units.mm)
     label rod_length(150.0 * units.mm)
     label rod_mass(600 * units.g)
-	label piston_mass(400 * units.g)
+    label piston_mass(400 * units.g)
     label compression_height(30 * units.mm)
-	label piston_dome(-17 * units.cc) // total guess, still adds up to 9.5:1 CR
-	label deck_clearance(1.5 * units.mm)
+    label piston_dome(-17 * units.cc) // total guess, still adds up to 9.5:1 CR
+    label deck_clearance(1.5 * units.mm)
     label crank_mass(45 * units.lb)
     label flywheel_mass(45 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -220,7 +220,7 @@ public node aston_martin_v8_engine {
     engine engine(
         name: "Aston Martin V8",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
+        starter_speed: 900 * units.rpm,
         redline: 5500 * units.rpm,
         throttle_gamma: 1.0
     )
@@ -246,16 +246,16 @@ public node aston_martin_v8_engine {
         tdc: 135.0 * units.deg
     )
 
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle: 90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 270 * units.deg)
+    rod_journal rj3(angle:  90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -305,67 +305,67 @@ public node aston_martin_v8_engine {
         velocity_decay: 0.1
     )
 
-	label exhaust_radius((3.5 * units.inch)/2)
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 3.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5,
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2500 * units.mm,
-		volume: (2500 * units.mm * circle_area(exhaust_radius)) * 2
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2500 * units.mm,
+        volume: (2500 * units.mm * circle_area(exhaust_radius)) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 
-	label exhaust_stagger(0.5 * units.inch)
-	label pipe_length_1(7.5 * units.inch)
-	label pipe_length_2(5.0 * units.inch)
-	label pipe_length_3(2.5 * units.inch)
-	label pipe_length_4(0.0 * units.inch)
+    label exhaust_stagger(0.5 * units.inch)
+    label pipe_length_1(7.5 * units.inch)
+    label pipe_length_2(5.0 * units.inch)
+    label pipe_length_3(2.5 * units.inch)
+    label pipe_length_4(0.0 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (second)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 1.0
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intakeL,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_1,
+            sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_2,
+            sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire3,
+            intake: intakeL,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_4,
+            sound_attenuation: 1.0
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (first)
@@ -373,42 +373,42 @@ public node aston_martin_v8_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire5,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 1.0
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire6,
-            intake: intakeR,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire7,
+            ignition_wire: wires.wire6,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire7,
+            intake: intakeR,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: 1.0
         )
 
     engine

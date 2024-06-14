@@ -25,17 +25,17 @@ public node sinusoidal_flow_port {
         );
 
     function flow_rate()
-		flow_rate.add_sample(0.0, max_flow_rate * 0.000000)
-		flow_rate.add_sample(0.1, max_flow_rate * 0.156434)
-		flow_rate.add_sample(0.2, max_flow_rate * 0.309016)
-		flow_rate.add_sample(0.3, max_flow_rate * 0.453990)
-		flow_rate.add_sample(0.4, max_flow_rate * 0.587785)
-		flow_rate.add_sample(0.5, max_flow_rate * 0.707106)
-		flow_rate.add_sample(0.6, max_flow_rate * 0.809016)
-		flow_rate.add_sample(0.7, max_flow_rate * 0.891007)
-		flow_rate.add_sample(0.8, max_flow_rate * 0.951057)
-		flow_rate.add_sample(0.9, max_flow_rate * 0.987688)
-		flow_rate.add_sample(1.0, max_flow_rate * 1.000000)
+        flow_rate.add_sample(0.0, max_flow_rate * 0.000000)
+        flow_rate.add_sample(0.1, max_flow_rate * 0.156434)
+        flow_rate.add_sample(0.2, max_flow_rate * 0.309016)
+        flow_rate.add_sample(0.3, max_flow_rate * 0.453990)
+        flow_rate.add_sample(0.4, max_flow_rate * 0.587785)
+        flow_rate.add_sample(0.5, max_flow_rate * 0.707106)
+        flow_rate.add_sample(0.6, max_flow_rate * 0.809016)
+        flow_rate.add_sample(0.7, max_flow_rate * 0.891007)
+        flow_rate.add_sample(0.8, max_flow_rate * 0.951057)
+        flow_rate.add_sample(0.9, max_flow_rate * 0.987688)
+        flow_rate.add_sample(1.0, max_flow_rate * 1.000000)
 }
 
 public node reverse_sine_flow_port {
@@ -50,17 +50,17 @@ public node reverse_sine_flow_port {
         );
 
     function flow_rate()
-		flow_rate.add_sample(0.000000, max_flow_rate * 0.0)
-		flow_rate.add_sample(0.156434, max_flow_rate * 0.1)
-		flow_rate.add_sample(0.309016, max_flow_rate * 0.2)
-		flow_rate.add_sample(0.453990, max_flow_rate * 0.3)
-		flow_rate.add_sample(0.587785, max_flow_rate * 0.4)
-		flow_rate.add_sample(0.707106, max_flow_rate * 0.5)
-		flow_rate.add_sample(0.809016, max_flow_rate * 0.6)
-		flow_rate.add_sample(0.891007, max_flow_rate * 0.7)
-		flow_rate.add_sample(0.951057, max_flow_rate * 0.8)
-		flow_rate.add_sample(0.987688, max_flow_rate * 0.9)
-		flow_rate.add_sample(1.000000, max_flow_rate * 1.0)
+        flow_rate.add_sample(0.000000, max_flow_rate * 0.0)
+        flow_rate.add_sample(0.156434, max_flow_rate * 0.1)
+        flow_rate.add_sample(0.309016, max_flow_rate * 0.2)
+        flow_rate.add_sample(0.453990, max_flow_rate * 0.3)
+        flow_rate.add_sample(0.587785, max_flow_rate * 0.4)
+        flow_rate.add_sample(0.707106, max_flow_rate * 0.5)
+        flow_rate.add_sample(0.809016, max_flow_rate * 0.6)
+        flow_rate.add_sample(0.891007, max_flow_rate * 0.7)
+        flow_rate.add_sample(0.951057, max_flow_rate * 0.8)
+        flow_rate.add_sample(0.987688, max_flow_rate * 0.9)
+        flow_rate.add_sample(1.000000, max_flow_rate * 1.0)
 }
 
 private node mazda_13b_rew {
@@ -74,7 +74,7 @@ private node mazda_13b_rew {
         throttle_gamma: 1.0,
         rotor_calculation_quality: 1024,
         rotor_housing_resolution: 1024,
-		simulation_frequency: (75000/12)
+        simulation_frequency: (75000/12)
     )
 
     wires wires()
@@ -82,17 +82,17 @@ private node mazda_13b_rew {
     label eccentricity(15.0 * units.mm)
     label rotor_radius(105.0 * units.mm)
     label rotor_depth(80 * units.mm)
-	label rotor_depression_volume(30 * units.cc)
+    label rotor_depression_volume(30 * units.cc)
     label intake_port_start(62.5 * units.deg)
     label intake_port_end(47.5 * units.deg)
-	label intake_flow_rate(k_carb(550))
-	label intake_runner_area(circle_area(0.5 * units.inch))
+    label intake_flow_rate(k_carb(550))
+    label intake_runner_area(circle_area(0.5 * units.inch))
     label exhaust_port_start(47.5 * units.deg)
     label exhaust_port_end(62.5 * units.deg)
-	label exhaust_flow_rate(k_carb(550))
-	label exhaust_runner_area(circle_area(0.55 * units.inch))
+    label exhaust_flow_rate(k_carb(550))
+    label exhaust_runner_area(circle_area(0.55 * units.inch))
     label spark_plug_angle(-20 * units.deg)
-	label rotor_mass(20 * units.kg)
+    label rotor_mass(20 * units.kg)
     label rotor_I(disk_moment_of_inertia(mass: rotor_mass, radius: rotor_radius))
     label crank_mass(3.8 * units.kg)
     label flywheel_mass(8.5 * units.kg)
@@ -182,17 +182,17 @@ private node mazda_13b_rew {
         runner_length: 4.5 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((4.0 * units.inch)/2)
+    
+    label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2400 * units.mm,
-		volume: 2400 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2400 * units.mm,
+        volume: 2400 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 10.0 * 0.05, impulse_response: ir_lib.default_0)

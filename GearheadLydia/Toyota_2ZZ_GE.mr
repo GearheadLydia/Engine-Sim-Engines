@@ -26,16 +26,6 @@ private node wires {
     output wire4: ignition_wire();
 }
 
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
-}
-
 
 // cam specs are approximate
 
@@ -277,7 +267,7 @@ public node toyota_2zzge_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: k_28inH2O(0.1),
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -339,7 +329,7 @@ public node toyota_2zzge_engine {
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -349,7 +339,7 @@ public node toyota_2zzge_engine {
             sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
@@ -359,7 +349,7 @@ public node toyota_2zzge_engine {
             sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
@@ -369,7 +359,7 @@ public node toyota_2zzge_engine {
             sound_attenuation: 1.02
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,

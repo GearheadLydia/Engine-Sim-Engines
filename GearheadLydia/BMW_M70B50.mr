@@ -45,16 +45,6 @@ private node wires {
     output wire12: ignition_wire();
 }
 
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
-}
-
 public node bmw_m70_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
@@ -262,20 +252,20 @@ public node bmw_m70b50_engine {
         tdc: 120.0 * units.deg
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 120 * units.deg)
-    rod_journal rj2(angle: 240 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: 120 * units.deg)
     rod_journal rj3(angle: 240 * units.deg)
-    rod_journal rj4(angle: 120 * units.deg)
-    rod_journal rj5(angle:  0  * units.deg)
+    rod_journal rj4(angle: 240 * units.deg)
+    rod_journal rj5(angle: 120 * units.deg)
+    rod_journal rj6(angle:  0  * units.deg)
     
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
         .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -356,7 +346,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire07,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -366,7 +356,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire08,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -376,7 +366,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire09,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -386,7 +376,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire10,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -396,7 +386,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire11,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -406,7 +396,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
+            rod_journal: rj6,
             ignition_wire: wires.wire12,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -419,7 +409,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire01,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -429,7 +419,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire02,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -439,7 +429,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire03,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -449,7 +439,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire04,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -459,7 +449,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire05,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -469,7 +459,7 @@ public node bmw_m70b50_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
+            rod_journal: rj6,
             ignition_wire: wires.wire06,
             intake: intakeR,
             exhaust_system: exhaust,

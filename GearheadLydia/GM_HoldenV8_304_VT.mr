@@ -12,7 +12,7 @@ public node holden_v8_304_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 5800 * units.rpm;
-	input limiter_duration: 0.09;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -61,7 +61,7 @@ public node holden_v8_304_lobe_profile_exh {
 
 public node holden_v8_304_camshaft_builder {
     input in_lobe_profile: holden_v8_304_lobe_profile_int();
-	input ex_lobe_profile: holden_v8_304_lobe_profile_exh();
+    input ex_lobe_profile: holden_v8_304_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 112.0 * units.deg;
@@ -88,7 +88,7 @@ public node holden_v8_304_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -133,9 +133,9 @@ public node holden_v8_304_head {
     input exhaust_camshaft;
     input chamber_volume: 60.5 * units.cc; // "63-64cc" for VR/VS, "60-61cc" for VN/VT
     input flip_display: false;
-	
-	input flow_attenuation_in: 0.8;
-	input flow_attenuation_ex: 0.8;
+    
+    input flow_attenuation_in: 0.8;
+    input flow_attenuation_ex: 0.8;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -172,7 +172,7 @@ public node holden_v8_304_head {
         .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
         .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.015 * units.inch) * 4 * units.inch,
@@ -197,25 +197,25 @@ public node holden_v8_304_engine {
     engine engine(
         name: "Holden V8",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 5500 * units.rpm, // 6250
         throttle_gamma: 1.0,
-		jitter: 0.5,
-		hf_gain: 0.03
+        jitter: 0.5,
+        hf_gain: 0.03
     )
 
 
     label bore(4.0 * units.inch)
-	label bore_spacing(4.40 * units.inch)
+    label bore_spacing(4.40 * units.inch)
     label stroke(3.02 * units.inch)
     label rod_length(5.627 * units.inch)
     label rod_mass(600 * units.g)
     label compression_height(1.710 * units.inch) // both 1.710 and 1.719 are quoted variously
-	label piston_mass(450 * units.g)
-	label piston_dome(-8.00 * units.cc) // for 8.8:1 compression ratio
-	label deck_height((8.875 * units.inch) + (27 * units.thou))
+    label piston_mass(450 * units.g)
+    label piston_dome(-8.00 * units.cc) // for 8.8:1 compression ratio
+    label deck_height((8.875 * units.inch) + (27 * units.thou))
     label crank_mass(57 * units.lb)
-    label flywheel_mass(57 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -240,16 +240,16 @@ public node holden_v8_304_engine {
         tdc: 135.0 * units.deg // 45 degrees CCW from vertical
     )
 
-    rod_journal rj0(angle:   0.0 * units.deg)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle:  90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 270 * units.deg)
+    rod_journal rj3(angle:  90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -286,65 +286,65 @@ public node holden_v8_304_engine {
         runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((3.5 * units.inch)/2)
+    
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(320.0),
         primary_tube_length: 12.0 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2800 * units.mm,
-		volume: 2800 * units.mm * circle_area(exhaust_radius) * 2
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2800 * units.mm,
+        volume: 2800 * units.mm * circle_area(exhaust_radius) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(1.6 * bore_spacing)
-	label pipe_length_2(0.6 * bore_spacing)
-	label pipe_length_3(0.0 * bore_spacing)
-	label pipe_length_4(0.4 * bore_spacing)
-	
-	label exhaust_stagger(0.4 * bore_spacing)
+    
+    label pipe_length_1(1.6 * bore_spacing)
+    label pipe_length_2(0.6 * bore_spacing)
+    label pipe_length_3(0.0 * bore_spacing)
+    label pipe_length_4(0.4 * bore_spacing)
+    
+    label exhaust_stagger(0.4 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire3,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire5,
+            ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger
+            primary_length: pipe_length_4 + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -352,38 +352,38 @@ public node holden_v8_304_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire4,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2
+            primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire6,
+            ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire6,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4
+            primary_length: pipe_length_4
         )
 
     engine
@@ -393,15 +393,15 @@ public node holden_v8_304_engine {
     engine.add_crankshaft(c0)
 
     holden_v8_304_camshaft_builder camshaft(
-	    in_lobe_profile: holden_v8_304_lobe_profile_int(),
-		ex_lobe_profile: holden_v8_304_lobe_profile_exh()
-	)
+        in_lobe_profile: holden_v8_304_lobe_profile_int(),
+        ex_lobe_profile: holden_v8_304_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         holden_v8_304_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
     b1.set_cylinder_head (

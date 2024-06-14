@@ -10,15 +10,15 @@ public node volkswagen_vr6_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6700 * units.rpm;
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/6.0) * cycle)
             .connect_wire(wires.wire5, (1.0/6.0) * cycle)
-			.connect_wire(wires.wire3, (2.0/6.0) * cycle)
-			.connect_wire(wires.wire6, (3.0/6.0) * cycle)
-			.connect_wire(wires.wire2, (4.0/6.0) * cycle)
-			.connect_wire(wires.wire4, (5.0/6.0) * cycle);
+            .connect_wire(wires.wire3, (2.0/6.0) * cycle)
+            .connect_wire(wires.wire6, (3.0/6.0) * cycle)
+            .connect_wire(wires.wire2, (4.0/6.0) * cycle)
+            .connect_wire(wires.wire4, (5.0/6.0) * cycle);
 }
 
 private node wires {
@@ -63,7 +63,7 @@ public node volkswagen_vr6_lobe_profile_exh {
 
 public node volkswagen_vr6_camshaft_builder {
     input in_lobe_profile: volkswagen_vr6_lobe_profile_int();
-	input ex_lobe_profile: volkswagen_vr6_lobe_profile_exh();
+    input ex_lobe_profile: volkswagen_vr6_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 115.0 * units.deg;
@@ -90,7 +90,7 @@ public node volkswagen_vr6_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -98,86 +98,74 @@ public node volkswagen_vr6_camshaft_builder {
 
     _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + (0 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (2 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (1 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (2 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (1 * rot120))
 
     _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + (4 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (5 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (3 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (5 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (3 * rot120))
 
-	_exhaust_cam_L
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + (0 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (1 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (1 * rot120))
 
-	_exhaust_cam_R
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
-}
-
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
+        .add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
 }
 
 public node volkswagen_vr6_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 45.0 * units.cc;
-	input intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch;
-	input intake_runner_cross_section_area: circle_area(1.1 * units.inch);
-	input exhaust_runner_volume: circle_area(0.85 * units.inch) * 2 * units.inch;
-	input exhaust_runner_cross_section_area: circle_area(0.85 * units.inch);
+    input intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch;
+    input intake_runner_cross_section_area: circle_area(1.1 * units.inch);
+    input exhaust_runner_volume: circle_area(0.85 * units.inch) * 2 * units.inch;
+    input exhaust_runner_cross_section_area: circle_area(0.85 * units.inch);
     input flip_display: false;
-	
-	input flow_attenuation: 0.9;
-    input lift_scale: 50.0;
+    
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#VW
+    // approximated
+    input flow_intake: 160.0;
+    input flow_exhaust: 145.0;
+    input lift_max: 450 * units.thou;
     alias output __out: head;
 
-    function intake_flow(50 * units.thou)
+    function intake_flow(lift_max / 10.0)
     intake_flow
-        .add_flow_sample(0,    0  * flow_attenuation)
-        .add_flow_sample(50,   25 * flow_attenuation)
-        .add_flow_sample(100,  76 * flow_attenuation)
-        .add_flow_sample(150, 100 * flow_attenuation)
-        .add_flow_sample(200, 146 * flow_attenuation)
-        .add_flow_sample(250, 175 * flow_attenuation)
-        .add_flow_sample(300, 212 * flow_attenuation)
-        .add_flow_sample(350, 230 * flow_attenuation)
-        .add_flow_sample(400, 255 * flow_attenuation)
-        .add_flow_sample(450, 275 * flow_attenuation)
-        .add_flow_sample(500, 294 * flow_attenuation)
-        .add_flow_sample(550, 300 * flow_attenuation)
-        .add_flow_sample(600, 314 * flow_attenuation)
-        .add_flow_sample(650, 314 * flow_attenuation)
-        .add_flow_sample(700, 314 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(50 * units.thou)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
-        .add_flow_sample(0,    0  * flow_attenuation)
-        .add_flow_sample(50,   25 * flow_attenuation)
-        .add_flow_sample(100,  70 * flow_attenuation)
-        .add_flow_sample(150, 100 * flow_attenuation)
-        .add_flow_sample(200, 132 * flow_attenuation)
-        .add_flow_sample(250, 140 * flow_attenuation)
-        .add_flow_sample(300, 156 * flow_attenuation)
-        .add_flow_sample(350, 170 * flow_attenuation)
-        .add_flow_sample(400, 181 * flow_attenuation)
-        .add_flow_sample(450, 191 * flow_attenuation)
-        .add_flow_sample(500, 207 * flow_attenuation)
-        .add_flow_sample(550, 214 * flow_attenuation)
-        .add_flow_sample(600, 228 * flow_attenuation)
-        .add_flow_sample(650, 228 * flow_attenuation)
-        .add_flow_sample(700, 228 * flow_attenuation)
-
-
-		
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: intake_runner_volume,
@@ -193,22 +181,22 @@ public node volkswagen_vr6_head {
     )
 }
 
-public node vr6_28 {
+public node volkswagen_vr6_abv_engine {
     alias output __out: engine;
 
     wires wires()
-	
-	label lean_angle(0.0 * units.deg)
-	label bank_angle(15 * units.deg / 2)
+    
+    label lean_angle(0.0 * units.deg)
+    label bank_angle(15 * units.deg / 2)
 
     label bore(82.0 * units.mm)
     label stroke(90.3 * units.mm)
     label rod_length(164.0 * units.mm)
     label rod_mass(434 * units.g)
-	label piston_mass(400 * units.g)
+    label piston_mass(400 * units.g)
     label compression_height(37.1 * units.mm)
-	label piston_dome(10.0 * units.cc)
-	label deck_height(248.00 * units.mm)
+    label piston_dome(10.0 * units.cc)
+    label deck_height(248.00 * units.mm)
     label crank_mass(55 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -216,7 +204,7 @@ public node vr6_28 {
     engine engine(
         name: "Volkswagen VR6 12V",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 6400 * units.rpm,
         throttle_gamma: 1.0
     )
@@ -242,20 +230,20 @@ public node vr6_28 {
         tdc: 90 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle:  0  * units.deg + bank_angle)
-    rod_journal rj1(angle: 120 * units.deg - bank_angle)
-    rod_journal rj2(angle: 240 * units.deg + bank_angle)
-    rod_journal rj3(angle: 240 * units.deg - bank_angle)
-    rod_journal rj4(angle: 120 * units.deg + bank_angle)
-    rod_journal rj5(angle:  0  * units.deg - bank_angle)
+    rod_journal rj1(angle:  0  * units.deg + (bank_angle + 3.5 * units.deg))
+    rod_journal rj2(angle: 120 * units.deg - (bank_angle + 3.5 * units.deg))
+    rod_journal rj3(angle: 240 * units.deg + (bank_angle + 3.5 * units.deg))
+    rod_journal rj4(angle: 240 * units.deg - (bank_angle + 3.5 * units.deg))
+    rod_journal rj5(angle: 120 * units.deg + (bank_angle + 3.5 * units.deg))
+    rod_journal rj6(angle:  0  * units.deg - (bank_angle + 3.5 * units.deg))
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
         .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
 
 
     piston_parameters piston_params(
@@ -292,98 +280,97 @@ public node vr6_28 {
         runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((2.5 * units.inch)/2)
+    
+    label exhaust_radius((2.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(300.0),
         primary_tube_length: 12.0 * units.inch,
         primary_flow_rate: k_carb(110.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2500 * units.mm,
-		volume: 2500 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2500 * units.mm,
+        volume: 2500 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0*0.05, impulse_response: ir_lib.default_0)
-	
-	label position_x_offset(deck_height * 0.13052619222005159154840622789549)  // sin(7.5)
-	label position_y_offset(deck_height * -0.00855513862618958885544247307144) // 1-cos(7.5)
-	
-	label pipe_length_1(60 * units.mm)
-	label pipe_length_2(40 * units.mm)
-	label pipe_length_3(20 * units.mm)
-	label pipe_length_4(00 * units.mm)
-	label pipe_length_5(20 * units.mm)
-	label pipe_length_6(40 * units.mm)
-	label exhaust_stagger(40 * units.mm)
+    
+    // 12.5mm offset
+    label position_x_offset(6.25 * units.mm *  0.99144486137381041114455752692856) // sin(82.5)
+    label position_y_offset(6.25 * units.mm * -0.13052619222005159154840622789549) // cos(82.5)
+    
+    label pipe_length_1(60 * units.mm)
+    label pipe_length_2(40 * units.mm)
+    label pipe_length_3(20 * units.mm)
+    label pipe_length_4(00 * units.mm)
+    label pipe_length_5(20 * units.mm)
+    label pipe_length_6(40 * units.mm)
+    label exhaust_stagger(0 * units.mm)
 
-	cylinder_bank bL(bank_params, angle: bank_angle + lean_angle) // L (first) | angle: 7.5
-    //cylinder_bank bL(bank_params, angle: 0, position_x: -position_x_offset, position_y: position_y_offset) // L (first) | angle: -7.5
+    cylinder_bank bL(bank_params, angle: bank_angle + lean_angle, position_x: -position_x_offset, position_y: position_y_offset) // L (first) | angle: -7.5
     bL
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.56
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
-            ignition_wire: wires.wire3,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.7
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
-            ignition_wire: wires.wire5,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_5 + exhaust_stagger,
-			sound_attenuation: 0.63
-        )
-
-	cylinder_bank bR(bank_params, angle: -bank_angle + lean_angle) // R (second)
-    //cylinder_bank bR(bank_params, angle: 0, position_x: position_x_offset, position_y: position_y_offset) // R (second) | angle: 7.5
-    bR
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 0.9
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: 0.56
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            ignition_wire: wires.wire4,
+            ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_5 + exhaust_stagger,
+            sound_attenuation: 0.63
+        )
+
+    cylinder_bank bR(bank_params, angle: -bank_angle + lean_angle, position_x: position_x_offset, position_y: position_y_offset) // R (second) | angle: 7.5
+    bR
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire2,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_2,
+            sound_attenuation: 0.9
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_4,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj6,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_6,
-			sound_attenuation: 0.8
+            primary_length: pipe_length_6,
+            sound_attenuation: 0.8
         )
 
     engine
@@ -393,19 +380,18 @@ public node vr6_28 {
     engine.add_crankshaft(c0)
 
     volkswagen_vr6_camshaft_builder camshaft(
-	    in_lobe_profile: volkswagen_vr6_lobe_profile_int(),
-		ex_lobe_profile: volkswagen_vr6_lobe_profile_exh()
-	)
+        in_lobe_profile: volkswagen_vr6_lobe_profile_int(),
+        ex_lobe_profile: volkswagen_vr6_lobe_profile_exh()
+    )
 
     bL.set_cylinder_head (
         volkswagen_vr6_head(
             intake_camshaft: camshaft.intake_cam_L,
             exhaust_camshaft: camshaft.exhaust_cam_L,
-			flow_attenuation: 0.65,
-			intake_runner_volume: circle_area(0.9 * units.inch) * 6 * units.inch,
-			intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-			exhaust_runner_volume: circle_area(0.48 * units.inch) * 2 * units.inch,
-			exhaust_runner_cross_section_area: circle_area(0.48 * units.inch),
+            intake_runner_volume: circle_area(0.9 * units.inch) * 5 * units.inch,
+            intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+            exhaust_runner_volume: circle_area(0.48 * units.inch) * 2 * units.inch,
+            exhaust_runner_cross_section_area: circle_area(0.48 * units.inch),
             flip_display: true
         )
     )
@@ -413,11 +399,10 @@ public node vr6_28 {
         volkswagen_vr6_head(
             intake_camshaft: camshaft.intake_cam_R,
             exhaust_camshaft: camshaft.exhaust_cam_R,
-			flow_attenuation: 0.65,
-			intake_runner_volume: circle_area(0.9 * units.inch) * 2 * units.inch,
-			intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-			exhaust_runner_volume: circle_area(0.48 * units.inch) * 6 * units.inch,
-			exhaust_runner_cross_section_area: circle_area(0.48 * units.inch),
+            intake_runner_volume: circle_area(0.9 * units.inch) * 2 * units.inch,
+            intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+            exhaust_runner_volume: circle_area(0.48 * units.inch) * 5 * units.inch,
+            exhaust_runner_cross_section_area: circle_area(0.48 * units.inch),
             flip_display: true
         )
     )
@@ -431,7 +416,7 @@ public node vr6_28 {
         .add_sample(4000 * units.rpm, 34 * units.deg)
         .add_sample(5000 * units.rpm, 39 * units.deg)
         .add_sample(6000 * units.rpm, 42 * units.deg)
-		.add_sample(7000 * units.rpm, 42 * units.deg)
+        .add_sample(7000 * units.rpm, 42 * units.deg)
 
     engine.add_ignition_module(
         volkswagen_vr6_distributor(
@@ -468,7 +453,7 @@ public node volkswagen_corrado_vr6_transmission {
 }
 
 public node main {
-    set_engine(vr6_28())
+    set_engine(volkswagen_vr6_abv_engine())
     set_vehicle(volkswagen_corrado_vr6_vehicle())
     set_transmission(volkswagen_corrado_vr6_transmission())
 }

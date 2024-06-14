@@ -30,16 +30,6 @@ private node wires {
     output wire6: ignition_wire();
 }
 
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
-}
-
 // https://www.eatsleepboost.lt/tech-info/jz-tech-info/1jz-2jz-cam-specs/
 public node toyota_2jz_lobe_profile_int {
     alias output __out:

@@ -12,15 +12,15 @@ public node tvr_speed_six_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7550 * units.rpm;
-	input limiter_duration: 0.09;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/6.0) * cycle)
             .connect_wire(wires.wire5, (1.0/6.0) * cycle)
-			.connect_wire(wires.wire3, (2.0/6.0) * cycle)
-			.connect_wire(wires.wire6, (3.0/6.0) * cycle)
-			.connect_wire(wires.wire2, (4.0/6.0) * cycle)
-			.connect_wire(wires.wire4, (5.0/6.0) * cycle);
+            .connect_wire(wires.wire3, (2.0/6.0) * cycle)
+            .connect_wire(wires.wire6, (3.0/6.0) * cycle)
+            .connect_wire(wires.wire2, (4.0/6.0) * cycle)
+            .connect_wire(wires.wire4, (5.0/6.0) * cycle);
 }
 
 private node wires {
@@ -30,16 +30,6 @@ private node wires {
     output wire4: ignition_wire();
     output wire5: ignition_wire();
     output wire6: ignition_wire();
-}
-
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
 // https://www.pistonheads.com/gassing/topic.asp?h=0&f=152&t=1210549
@@ -65,7 +55,7 @@ public node tvr_speed_six_lobe_profile_exh {
 
 public node tvr_speed_six_camshaft_builder {
     input lobe_profile: tvr_speed_six_lobe_profile_int();
-	input ex_lobe_profile: tvr_speed_six_lobe_profile_exh();
+    input ex_lobe_profile: tvr_speed_six_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 106.0 * units.deg;
@@ -94,19 +84,19 @@ public node tvr_speed_six_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center)
-		.add_lobe(rot360 + intake_lobe_center + 4 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 2 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 5 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 1 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 3 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 4 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 5 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot120)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 5 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 3 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot120)
 }
 
 private node add_flow_sample {
@@ -123,9 +113,9 @@ public node tvr_speed_six_head {
     input exhaust_camshaft;
     input chamber_volume: 44.0 * units.cc; // unknown; guess (makes compression ratio come out right)
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 1.0;
+    input flow_attenuation_ex: 1.0;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -165,7 +155,7 @@ public node tvr_speed_six_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 9 * units.inch,
@@ -212,20 +202,20 @@ public node speedsix {
         starter_speed: 1800 * units.rpm,
         redline: 7500 * units.rpm,
         throttle_gamma: 1.0,
-		hf_gain: 0.05,
-		jitter: 0.6
+        hf_gain: 0.05,
+        jitter: 0.6
     )
-	
-	label lean_angle(-30 * units.deg)
+    
+    label lean_angle(-30 * units.deg)
 
     label bore(96.0 * units.mm)
     label stroke(92.0 * units.mm)
     label rod_length(144.5 * units.mm)
     label rod_mass(450 * units.g)
-	label piston_mass(347 * units.g)
+    label piston_mass(347 * units.g)
     label compression_height(30.5 * units.mm)
-	label deck_height((220.0 + 1.5) * units.mm) // deck height estimated from a drawing and the known stroke measurement
-	label piston_dome(-20.0 * units.cc) // makes compression come out right
+    label deck_height((220.0 + 1.5) * units.mm) // deck height estimated from a drawing and the known stroke measurement
+    label piston_dome(-20.0 * units.cc) // makes compression come out right
     label crank_mass(65 * units.lb) // from a manual
     label flywheel_mass(8.5 * units.kg) // 4.3kg flywheel, plus unknown clutch
     label flywheel_radius(6.5 * units.inch)
@@ -253,20 +243,20 @@ public node speedsix {
         tdc: 90.0 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 120 * units.deg)
-    rod_journal rj2(angle: 240 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: 120 * units.deg)
     rod_journal rj3(angle: 240 * units.deg)
-    rod_journal rj4(angle: 120 * units.deg)
-    rod_journal rj5(angle:  0  * units.deg)
-	
+    rod_journal rj4(angle: 240 * units.deg)
+    rod_journal rj5(angle: 120 * units.deg)
+    rod_journal rj6(angle:  0  * units.deg)
+    
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
         .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -292,94 +282,94 @@ public node speedsix {
     )
 
     tvr_speed_six_itb itb1()
-	tvr_speed_six_itb itb2()
-	tvr_speed_six_itb itb3()
-	tvr_speed_six_itb itb4()
-	tvr_speed_six_itb itb5()
-	tvr_speed_six_itb itb6()
-	
-	label exhaust_radius((4.0 * units.inch)/2)
+    tvr_speed_six_itb itb2()
+    tvr_speed_six_itb itb3()
+    tvr_speed_six_itb itb4()
+    tvr_speed_six_itb itb5()
+    tvr_speed_six_itb itb6()
+    
+    label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(900.0),
         primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(375.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2000 * units.mm,
-		volume: (1800 * units.mm * circle_area(exhaust_radius)) + (200 * units.mm * circle_area(exhaust_radius) * 2)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2000 * units.mm,
+        volume: (1800 * units.mm * circle_area(exhaust_radius)) + (200 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.04, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(70 * units.mm)
-	label pipe_length_2(15 * units.mm)
-	label pipe_length_3(30 * units.mm)
-	label pipe_length_4(55 * units.mm)
-	label pipe_length_5(0 * units.mm)
-	label pipe_length_6(0 * units.mm)
+    
+    label pipe_length_1(70 * units.mm)
+    label pipe_length_2(15 * units.mm)
+    label pipe_length_3(30 * units.mm)
+    label pipe_length_4(55 * units.mm)
+    label pipe_length_5(0 * units.mm)
+    label pipe_length_6(0 * units.mm)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: itb1,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 0.8
+            primary_length: pipe_length_1,
+            sound_attenuation: 0.8
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: itb2,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 1.0
-        )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
-            intake: itb3,
+            ignition_wire: wires.wire2,
+            intake: itb2,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_2,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            ignition_wire: wires.wire4,
-            intake: itb4,
+            ignition_wire: wires.wire3,
+            intake: itb3,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: 0.8
+            primary_length: pipe_length_3,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
-            ignition_wire: wires.wire5,
-            intake: itb5,
+            ignition_wire: wires.wire4,
+            intake: itb4,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_4,
+            sound_attenuation: 0.8
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
+            ignition_wire: wires.wire5,
+            intake: itb5,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_5,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj6,
             ignition_wire: wires.wire6,
             intake: itb6,
             exhaust_system: exhaust,
-			primary_length: pipe_length_6,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_6,
+            sound_attenuation: 1.0
         )
 
     engine
@@ -388,15 +378,15 @@ public node speedsix {
     engine.add_crankshaft(c0)
 
     tvr_speed_six_camshaft_builder camshaft(
-	    lobe_profile: tvr_speed_six_lobe_profile_int(),
-		ex_lobe_profile: tvr_speed_six_lobe_profile_exh()
-	)
+        lobe_profile: tvr_speed_six_lobe_profile_int(),
+        ex_lobe_profile: tvr_speed_six_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         tvr_speed_six_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: false
+            flip_display: false
         )
     )
 
@@ -446,7 +436,7 @@ public node tvr_sagaris_transmission {
 }
 
 public node main {
-	set_engine(speedsix())
+    set_engine(speedsix())
     set_vehicle(tvr_sagaris_vehicle())
     set_transmission(tvr_sagaris_transmission())
 }

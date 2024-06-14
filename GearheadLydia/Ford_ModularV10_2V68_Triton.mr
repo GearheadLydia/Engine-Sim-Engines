@@ -13,18 +13,18 @@ public node ford_modular_v10_triton68_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 5300 * units.rpm; // rev limit quoted variously as 5300, or 5300 in certain gears but 5600 in others
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, (0.0/10.0) * cycle)
             .connect_wire(wires.wire06, (1.0/10.0) * cycle)
-			.connect_wire(wires.wire05, (2.0/10.0) * cycle)
+            .connect_wire(wires.wire05, (2.0/10.0) * cycle)
             .connect_wire(wires.wire10, (3.0/10.0) * cycle)
             .connect_wire(wires.wire02, (4.0/10.0) * cycle)
-			.connect_wire(wires.wire07, (5.0/10.0) * cycle)
+            .connect_wire(wires.wire07, (5.0/10.0) * cycle)
             .connect_wire(wires.wire03, (6.0/10.0) * cycle)
             .connect_wire(wires.wire08, (7.0/10.0) * cycle)
-			.connect_wire(wires.wire04, (8.0/10.0) * cycle)
+            .connect_wire(wires.wire04, (8.0/10.0) * cycle)
             .connect_wire(wires.wire09, (9.0/10.0) * cycle);
 }
 
@@ -76,62 +76,62 @@ public node ford_modular_v10_triton68_lobe_profile_exh {
 
 public node ford_modular_v10_triton68_camshaft_builder {
     input in_lobe_profile: ford_modular_v10_triton68_lobe_profile_int();
-	input ex_lobe_profile: ford_modular_v10_triton68_lobe_profile_exh();
+    input ex_lobe_profile: ford_modular_v10_triton68_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 139.0 * units.deg;
-    input intake_lobe_center: 139.0 * units.deg;
-    input exhaust_lobe_center: 121.0 * units.deg;
-    input advance: 0.0 * units.deg;
+    input lobe_separation: 114.5 * units.deg;
+    input intake_lobe_center: lobe_separation;
+    input exhaust_lobe_center: lobe_separation;
+    input advance: -0.5 * units.deg;
     input base_radius: 15 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot72(72 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
-	
-    _intake_cam_0
+    
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 0 * rot72) //  #1
         .add_lobe(rot360 + intake_lobe_center + 4 * rot72) //  #2
         .add_lobe(rot360 + intake_lobe_center + 6 * rot72) //  #3
         .add_lobe(rot360 + intake_lobe_center + 8 * rot72) //  #4
         .add_lobe(rot360 + intake_lobe_center + 2 * rot72) //  #5
 
-    _intake_cam_1
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 1 * rot72) //  #6
         .add_lobe(rot360 + intake_lobe_center + 5 * rot72) //  #7
         .add_lobe(rot360 + intake_lobe_center + 7 * rot72) //  #8
         .add_lobe(rot360 + intake_lobe_center + 9 * rot72) //  #9
         .add_lobe(rot360 + intake_lobe_center + 3 * rot72) // #10
 
-    _exhaust_cam_0
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 8 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot72)
 
-    _exhaust_cam_1
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot72)
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot72)
@@ -153,51 +153,39 @@ public node ford_modular_v10_triton68_head {
     input exhaust_camshaft;
     input chamber_volume: 42.45 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 0.7;
-	input flow_attenuation_ex: 0.7;
-    input lift_scale: 50.0;
+    
     alias output __out: head;
-
-    function intake_flow(1.15 * units.mm)
+    
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#Ford
+    function intake_flow(100 * units.thou)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation_in)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation_in)
-        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation_in)
-        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation_in)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  54)
+        .add_flow_sample(200, 102)
+        .add_flow_sample(300, 139)
+        .add_flow_sample(400, 151)
+        .add_flow_sample(500, 169)
+        .add_flow_sample(600, 172)
+        .add_flow_sample(700, 176)
 
-    function exhaust_flow(1.15 * units.mm)
+    function exhaust_flow(100 * units.thou)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation_ex)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation_ex)
-        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation_ex)
-        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation_ex)
-        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  50)
+        .add_flow_sample(200,  91)
+        .add_flow_sample(300, 121)
+        .add_flow_sample(400, 137)
+        .add_flow_sample(500, 142)
+        .add_flow_sample(600, 150)
+        .add_flow_sample(700, 153)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.1 * units.inch) * 5 * units.inch,
         intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 5 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 5 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -216,26 +204,26 @@ public node ford_modular_v10_2v68_engine {
     engine engine(
         name: "Ford Triton V10 2V",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
+        starter_speed: 900 * units.rpm,
         redline: 5000 * units.rpm,
         throttle_gamma: 1.0,
-		simulation_frequency: 7500
-		//jitter: 0.3,
-		//hf_gain: 0.005
+        simulation_frequency: 7500
+        //jitter: 0.3,
+        //hf_gain: 0.005
     )
 
-	// https://fordauthority.com/fmc/ford-motor-company-engines/ford-modular-family/ford-6-8l-triton-engine/
+    // https://fordauthority.com/fmc/ford-motor-company-engines/ford-modular-family/ford-6-8l-triton-engine/
     label bore(90.22 * units.mm)
-	label bore_spacing(100.0 * units.mm)
+    label bore_spacing(100.0 * units.mm)
     label stroke(105.8 * units.mm)
     label rod_length(169.1 * units.mm)
     label rod_mass(618 * units.g)
-    label compression_height(31.00 * units.mm)
-	label piston_mass(361 * units.g)
-	label piston_dome(-16.0 * units.cc) // dubious
-	label deck_height((256.0 + 0.2) * units.mm)
+    label compression_height(29.64 * units.mm)
+    label piston_mass(361 * units.g)
+    label piston_dome(-9 * units.cc) // calculated for 9.0:1 compression ratio
+    label deck_height((256.0 + 0.762) * units.mm)
     label crank_mass(54.3 * units.lb)
-    label flywheel_mass(29 * 2 * units.lb)
+    label flywheel_mass(25 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -260,33 +248,33 @@ public node ford_modular_v10_2v68_engine {
         tdc: 135.0 * units.deg // -45 degrees
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: -18  * units.deg)
-    rod_journal rj2(angle: 288 * units.deg)
-    rod_journal rj3(angle: 270 * units.deg)
-    rod_journal rj4(angle: 72 * units.deg)
-    rod_journal rj5(angle: 54 * units.deg)
-	rod_journal rj6(angle: 216 * units.deg)
-	rod_journal rj7(angle: 198 * units.deg)
-    rod_journal rj8(angle: 144 * units.deg)
-    rod_journal rj9(angle: 126 * units.deg)
+    rod_journal rj01(angle:  0  * units.deg)
+    rod_journal rj02(angle: -18  * units.deg)
+    rod_journal rj03(angle: 288 * units.deg)
+    rod_journal rj04(angle: 270 * units.deg)
+    rod_journal rj05(angle: 72 * units.deg)
+    rod_journal rj06(angle: 54 * units.deg)
+    rod_journal rj07(angle: 216 * units.deg)
+    rod_journal rj08(angle: 198 * units.deg)
+    rod_journal rj09(angle: 144 * units.deg)
+    rod_journal rj10(angle: 126 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
-        .add_rod_journal(rj1)
-        .add_rod_journal(rj2)
-        .add_rod_journal(rj3)
-        .add_rod_journal(rj4)
-        .add_rod_journal(rj5)
-        .add_rod_journal(rj6)
-        .add_rod_journal(rj7)
-        .add_rod_journal(rj8)
-        .add_rod_journal(rj9)
+        .add_rod_journal(rj01)
+        .add_rod_journal(rj02)
+        .add_rod_journal(rj03)
+        .add_rod_journal(rj04)
+        .add_rod_journal(rj05)
+        .add_rod_journal(rj06)
+        .add_rod_journal(rj07)
+        .add_rod_journal(rj08)
+        .add_rod_journal(rj09)
+        .add_rod_journal(rj10)
 
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -310,155 +298,155 @@ public node ford_modular_v10_2v68_engine {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(600),
+        intake_flow_rate: k_carb(600.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.993,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(450.0),
-        runner_length: 6.5 * units.inch,
+        runner_flow_rate: k_carb(400.0),
+        runner_length: 7.0 * units.inch,
         velocity_decay: 0.1
     )
 
-	label exhaust_radius((4.0 * units.inch)/2)
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(500.0),
+        outlet_flow_rate: k_carb(700.0),
         primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(150.0),
+        primary_flow_rate: k_carb(130.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 3500 * units.mm,
-		volume: 3500 * units.mm * circle_area(exhaust_radius) * 2
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 3500 * units.mm,
+        volume: 3500 * units.mm * circle_area(exhaust_radius) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 
-	label pipe_length_1(4 * bore_spacing)
-	label pipe_length_2(3 * bore_spacing)
-	label pipe_length_3(2 * bore_spacing)
-	label pipe_length_4(1 * bore_spacing)
-	label pipe_length_5(0 * bore_spacing)
-	
-	label exhaust_stagger(0.4 * bore_spacing)
+    label pipe_length_1(4 * bore_spacing)
+    label pipe_length_2(3 * bore_spacing)
+    label pipe_length_3(2 * bore_spacing)
+    label pipe_length_4(1 * bore_spacing)
+    label pipe_length_5(0 * bore_spacing)
+    
+    label exhaust_stagger(0.4 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
-    b0
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj01,
             ignition_wire: wires.wire01,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj03,
             ignition_wire: wires.wire02,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj05,
             ignition_wire: wires.wire03,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+            primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj6,
+            rod_journal: rj07,
             ignition_wire: wires.wire04,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger
+            primary_length: pipe_length_4 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj8,
+            rod_journal: rj09,
             ignition_wire: wires.wire05,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5 + exhaust_stagger
+            primary_length: pipe_length_5 + exhaust_stagger
         )
 
-    cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
-    b1
+    cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (second)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj02,
             ignition_wire: wires.wire06,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
+            primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj04,
             ignition_wire: wires.wire07,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2
+            primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
+            rod_journal: rj06,
             ignition_wire: wires.wire08,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj7,
+            rod_journal: rj08,
             ignition_wire: wires.wire09,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4
+            primary_length: pipe_length_4
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj9,
+            rod_journal: rj10,
             ignition_wire: wires.wire10,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5
+            primary_length: pipe_length_5
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bL)
+        .add_cylinder_bank(bR)
 
     engine.add_crankshaft(c0)
 
     ford_modular_v10_triton68_camshaft_builder camshaft(
-	    in_lobe_profile: ford_modular_v10_triton68_lobe_profile_int(),
-		ex_lobe_profile: ford_modular_v10_triton68_lobe_profile_exh()
-	)
+        in_lobe_profile: ford_modular_v10_triton68_lobe_profile_int(),
+        ex_lobe_profile: ford_modular_v10_triton68_lobe_profile_exh()
+    )
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         ford_modular_v10_triton68_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
+            flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         ford_modular_v10_triton68_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
@@ -472,7 +460,7 @@ public node ford_modular_v10_2v68_engine {
         .add_sample(4000 * units.rpm, 30 * units.deg)
         .add_sample(5000 * units.rpm, 30 * units.deg)
         .add_sample(6000 * units.rpm, 30 * units.deg)
-		.add_sample(7000 * units.rpm, 30 * units.deg)
+        .add_sample(7000 * units.rpm, 30 * units.deg)
 
     engine.add_ignition_module(
         ford_modular_v10_triton68_distributor(
@@ -483,6 +471,7 @@ public node ford_modular_v10_2v68_engine {
 }
 
 // 2004 Ford F250 Super Duty Crew Cab 6.8
+									 
 public node ford_f250_super_duty_crew_cab_vehicle {
     alias output __out:
         vehicle(

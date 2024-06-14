@@ -13,7 +13,7 @@ public node bmw_s62b50_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7250 * units.rpm;
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -60,7 +60,7 @@ public node bmw_s62b50_lobe_profile_exh {
 
 public node bmw_s62b50_camshaft_builder {
     input in_lobe_profile: bmw_s62b50_lobe_profile_int();
-	input ex_lobe_profile: bmw_s62b50_lobe_profile_exh();
+    input ex_lobe_profile: bmw_s62b50_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 110.0 * units.deg;
@@ -86,7 +86,7 @@ public node bmw_s62b50_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -131,12 +131,12 @@ public node bmw_s62b50_head {
     input exhaust_camshaft;
     input chamber_volume: 49.5 * units.cc; // had "46.0" before, not sure where that came from
     input flip_display: false;
-	
-	input flow_attenuation: 0.95;
+    
+    input flow_attenuation: 0.95;
     input lift_scale: 1.2;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(1.2 * units.mm)
     intake_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -152,7 +152,7 @@ public node bmw_s62b50_head {
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(1.2 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
         .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
@@ -168,7 +168,7 @@ public node bmw_s62b50_head {
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.1 * units.inch) * 6 * units.inch,
@@ -193,7 +193,7 @@ public node S62B50 {
     engine engine(
         name: "BMW S62B50",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
         throttle_gamma: 1.0
     )
@@ -203,9 +203,9 @@ public node S62B50 {
     label rod_length(141.5 * units.mm)
     label rod_mass(525 * units.g)
     label compression_height(29.51 * units.mm)
-	label piston_mass(350 * units.g)
-	label piston_dome(-3.0 * units.cc) // for 11.0:1 compression
-	label deck_height((215.1 + 1.74) * units.mm)
+    label piston_mass(350 * units.g)
+    label piston_dome(-3.0 * units.cc) // for 11.0:1 compression
+    label deck_height((215.1 + 1.74) * units.mm)
     label crank_mass(55 * units.lb)
     label flywheel_mass(37 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -232,16 +232,16 @@ public node S62B50 {
         tdc: 135.0 * units.deg // -45 degrees
     )
 
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle: 90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 270 * units.deg)
+    rod_journal rj3(angle:  90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -279,65 +279,65 @@ public node S62B50 {
         velocity_decay: 0.1
     )
 
-	label exhaust_radius((3.5 * units.inch)/2)
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(800.0),
         primary_tube_length: 12.0 * units.inch,
         primary_flow_rate: k_carb(150.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2800 * units.mm,
-		volume: (2800 * units.mm * circle_area(exhaust_radius)) * 2
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2800 * units.mm,
+        volume: (2800 * units.mm * circle_area(exhaust_radius)) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
-	
-	label exhaust_stagger(10 * units.mm)
-	label exhaust_volume_L(0.7)
-	label exhaust_volume_R(1.0)
+    
+    label exhaust_stagger(10 * units.mm)
+    label exhaust_volume_L(0.7)
+    label exhaust_volume_R(1.0)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 5.0 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L * 0.7
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: 1.5 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L
+            primary_length: 5.0 * units.inch + exhaust_stagger,
+            sound_attenuation: exhaust_volume_L * 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 3.5 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L * 0.7
+            primary_length: 1.5 * units.inch + exhaust_stagger,
+            sound_attenuation: exhaust_volume_L
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: 3.5 * units.inch + exhaust_stagger,
+            sound_attenuation: exhaust_volume_L * 0.7
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.0 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_L
+            primary_length: 0.0 * units.inch + exhaust_stagger,
+            sound_attenuation: exhaust_volume_L
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -345,42 +345,42 @@ public node S62B50 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 4.5 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_R * 0.7
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire6,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: 3.0 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_R * 0.7
+            primary_length: 4.5 * units.inch + exhaust_stagger,
+            sound_attenuation: exhaust_volume_R * 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire7,
+            ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 1.0 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_R
+            primary_length: 3.0 * units.inch + exhaust_stagger,
+            sound_attenuation: exhaust_volume_R * 0.7
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire7,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: 1.0 * units.inch + exhaust_stagger,
+            sound_attenuation: exhaust_volume_R
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: 0.5 * units.inch + exhaust_stagger,
-			sound_attenuation: exhaust_volume_R
+            primary_length: 0.5 * units.inch + exhaust_stagger,
+            sound_attenuation: exhaust_volume_R
         )
 
     engine
@@ -390,15 +390,15 @@ public node S62B50 {
     engine.add_crankshaft(c0)
 
     bmw_s62b50_camshaft_builder camshaft(
-	    in_lobe_profile: bmw_s62b50_lobe_profile_int(),
-		ex_lobe_profile: bmw_s62b50_lobe_profile_exh()
-	)
+        in_lobe_profile: bmw_s62b50_lobe_profile_int(),
+        ex_lobe_profile: bmw_s62b50_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         bmw_s62b50_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
     b1.set_cylinder_head (
@@ -418,8 +418,8 @@ public node S62B50 {
         .add_sample(4000 * units.rpm, 56 * units.deg)
         .add_sample(5000 * units.rpm, 58 * units.deg)
         .add_sample(6000 * units.rpm, 60 * units.deg)
-		.add_sample(7000 * units.rpm, 60 * units.deg)
-		.add_sample(8000 * units.rpm, 60 * units.deg)
+        .add_sample(7000 * units.rpm, 60 * units.deg)
+        .add_sample(8000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
         bmw_s62b50_distributor(

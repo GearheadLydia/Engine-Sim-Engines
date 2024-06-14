@@ -7,7 +7,7 @@ impulse_response_library ir_lib()
 label cycle(2 * 360 * units.deg)
 
 // firing order: 15487263
-// standardized:  18736524
+// in GM layout:  18736524
 
 public node bmw_s65b40_distributor {
     input wires;
@@ -57,61 +57,66 @@ public node bmw_s65b40_lobe_profile_exh {
         );
 }
 
+
+// https://ia801005.us.archive.org/11/items/BMWTechnicalTrainingDocuments/ST709%204th%20Generation%20M3%20Complete%20Vehicle/03_S65B40%2520Engine.pdf
+// BMW timing data:
+// intake cam:  72-130 degrees ATDC
+// exhaust cam: 81-129 degrees BTDC
+// not sure where other data came from (Schrick?)
 public node bmw_s65b40_camshaft_builder {
     input in_lobe_profile: bmw_s65b40_lobe_profile_int();
     input ex_lobe_profile: bmw_s65b40_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 132.625 * units.deg;
     //input intake_lobe_center: lobe_separation;
     //input exhaust_lobe_center: lobe_separation;
-    input intake_lobe_center: 140.5 * units.deg;
-    input exhaust_lobe_center: 123.75 * units.deg;
+    input intake_lobe_center: 101 * units.deg;
+    input exhaust_lobe_center: 105 * units.deg;
     //input advance: -8.375 * units.deg;
     input advance: 0 * units.deg;
     input base_radius: 15.0 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_L: _intake_cam_L;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_L: _exhaust_cam_L;
+    output exhaust_cam_R: _exhaust_cam_R;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
     label rot90(90 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_0
-        .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
-
-    _exhaust_cam_0
-        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
-
-    _intake_cam_1
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
 
-    _exhaust_cam_1
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
+
+    _intake_cam_R
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
+
+    _exhaust_cam_R
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
 }
 
 private node add_flow_sample {
@@ -124,16 +129,17 @@ private node add_flow_sample {
 }
 
 public node bmw_s65b40_head {
+    input chamber_volume: 51.0 * units.cc;
     input intake_camshaft;
     input exhaust_camshaft;
     input flip_display: false;
     
-    input flow_attenuation_in: 1.0;
-    input flow_attenuation_ex: 1.0;
+    input flow_attenuation_in: 0.9;
+    input flow_attenuation_ex: 0.9;
     input lift_scale: 1.27;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(1.27 * units.mm)
     intake_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
@@ -151,7 +157,7 @@ public node bmw_s65b40_head {
         .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
         .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(1.27 * units.mm)
     exhaust_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
@@ -170,11 +176,11 @@ public node bmw_s65b40_head {
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
     cylinder_head head(
-        chamber_volume: 51.0 * units.cc,
+        chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
         intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 6 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        exhaust_runner_volume: circle_area(0.65 * units.inch) * 6 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.65 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -184,35 +190,13 @@ public node bmw_s65b40_head {
     )
 }
 
-
-
-public node bmw_s65b40_itb {
-    input throttlebody_cfm: 250;
-    input idle_flow_rate_cfm: 0.0001;
-    input idle_throttle_plate_position: 0.9987;
-    input throttle_gamma: 8.0;
-
-    alias output __out: intake;
-
-    intake intake(
-        plenum_volume: (circle_area(4 * units.inch) * 4 * units.inch) / 8,
-        plenum_cross_section_area: circle_area(4 * units.inch) / 8,
-        intake_flow_rate: k_carb(throttlebody_cfm),
-        idle_flow_rate: k_carb(idle_flow_rate_cfm),
-        idle_throttle_plate_position: idle_throttle_plate_position,
-        throttle_gamma: throttle_gamma,
-        runner_flow_rate: k_carb(350.0),
-        runner_length: 6 * units.inch,
-        velocity_decay: 0.1
-    )
-}
-
-public node S65B40 {
+public node bmw_s65b40_engine {
     alias output __out: engine;
 
     wires wires()
 
     label bore(92.0 * units.mm)
+    label bore_spacing(98.0 * units.mm)
     label stroke(75.2 * units.mm)
     label rod_length(140.72 * units.mm)
     label rod_mass(450 * units.g)
@@ -227,7 +211,7 @@ public node S65B40 {
     engine engine(
         name: "BMW S65B40",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 1000 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 8000 * units.rpm,
         throttle_gamma: 1.0
     )
@@ -254,20 +238,20 @@ public node S65B40 {
     )
 
     // S65B40 has mirror-chiral crankshaft
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: 90.0 * units.deg)
-    rod_journal rj2(angle: -90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle:  90 * units.deg)
+    rod_journal rj3(angle: -90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
     piston_parameters piston_params(
         mass: piston_mass,
-        blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -287,159 +271,158 @@ public node S65B40 {
         bore: bore,
         deck_height: deck_height
     )
-
-    bmw_s65b40_itb itb1()
-    bmw_s65b40_itb itb2()
-    bmw_s65b40_itb itb3()
-    bmw_s65b40_itb itb4()
-    bmw_s65b40_itb itb5()
-    bmw_s65b40_itb itb6()
-    bmw_s65b40_itb itb7()
-    bmw_s65b40_itb itb8()
-
+    
+    intake intake(
+        plenum_volume: (circle_area(3.5 * units.inch) * 4 * units.inch),
+        plenum_cross_section_area: circle_area(3.5 * units.inch),
+        intake_flow_rate: k_carb(900.0),
+        idle_flow_rate: k_carb(0.0001),
+        idle_throttle_plate_position: 0.9983,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(350.0),
+        runner_length: 6.0 * units.inch,
+        velocity_decay: 0.1
+    )
+    
     label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 7.5 * units.inch,
+        outlet_flow_rate: k_carb(900.0),
+        primary_tube_length: 4.0 * bore_spacing,
         primary_flow_rate: k_carb(400.0),
-        velocity_decay: 1.0, //0.5
+        velocity_decay: 0.8,
         collector_cross_section_area: circle_area(exhaust_radius) * 2,
         length: 2700 * units.mm,
         volume: (2700 * units.mm * circle_area(exhaust_radius)) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
 
-    label pipe_length_1(2.25 * units.inch)
-    label pipe_length_2(2.25 * units.inch)
-    label pipe_length_3(0.0 * units.inch)
-    label pipe_length_4(0.0 * units.inch)
+    label pipe_length_1(0.5 * bore_spacing)
+    label pipe_length_2(0.0 * bore_spacing)
+    label pipe_length_3(1.0 * bore_spacing)
+    label pipe_length_4(0.0 * bore_spacing)
     
-    label exhaust_stagger(35 * units.mm)
-    label exhaust_volume_L(1.0)
-    label exhaust_volume_R(0.25)
+    label exhaust_stagger(0.6 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: -45 * units.deg) // R (first)
-    b0
+    cylinder_bank bR(bank_params, angle: -45 * units.deg) // R (first)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.05)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
-            intake: itb5,
+            rod_journal: rj1,
+            intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire5,
             primary_length: pipe_length_1 + exhaust_stagger,
-            sound_attenuation: exhaust_volume_R * 1.6
+            sound_attenuation: 0.9 * 0.8
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.05)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            intake: itb6,
+            rod_journal: rj2,
+            intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire6,
             primary_length: pipe_length_2 + exhaust_stagger,
-            sound_attenuation: exhaust_volume_R
+            sound_attenuation: 0.9
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.05)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
-            intake: itb7,
+            rod_journal: rj3,
+            intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire7,
             primary_length: pipe_length_3 + exhaust_stagger,
-            sound_attenuation: exhaust_volume_R * 1.3
+            sound_attenuation: 0.9 * 0.8
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.05)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
-            intake: itb8,
+            rod_journal: rj4,
+            intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire8,
             primary_length: pipe_length_4 + exhaust_stagger,
-            sound_attenuation: exhaust_volume_R * 1.3 * 1.6
+            sound_attenuation: 0.9
         )
 
-    cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
-    b1
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (second)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.05)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
-            intake: itb1,
+            rod_journal: rj1,
+            intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire1,
             primary_length: pipe_length_1,
-            sound_attenuation: exhaust_volume_L / 1.3
+            sound_attenuation: 0.8
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.05)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            intake: itb2,
-            exhaust_system: exhaust,
-            ignition_wire: wires.wire2,
-            primary_length: pipe_length_2,
-            sound_attenuation: exhaust_volume_L / 1.6
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.05)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            intake: itb3,
+            intake: intake,
+            exhaust_system: exhaust,
+            ignition_wire: wires.wire2,
+            primary_length: pipe_length_2
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire3,
             primary_length: pipe_length_3,
-            sound_attenuation: exhaust_volume_L / 1.3 / 1.6
+            sound_attenuation: 0.8
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.05)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
-            intake: itb4,
+            rod_journal: rj4,
+            intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire4,
-            primary_length: pipe_length_4,
-            sound_attenuation: exhaust_volume_L
+            primary_length: pipe_length_4
         )
 
     engine
-        .add_cylinder_bank(b1)
-        .add_cylinder_bank(b0)
+        .add_cylinder_bank(bL)
+        .add_cylinder_bank(bR)
 
     engine.add_crankshaft(c0)
 
     bmw_s65b40_camshaft_builder camshaft()
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         bmw_s65b40_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
+            flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         bmw_s65b40_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
-            flip_display: true
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R
         )
     )
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 80 * units.deg)
-        .add_sample(1000 * units.rpm, 85 * units.deg)
-        .add_sample(2000 * units.rpm, 85 * units.deg)
-        .add_sample(3000 * units.rpm, 85 * units.deg)
-        .add_sample(4000 * units.rpm, 85 * units.deg)
-        .add_sample(5000 * units.rpm, 85 * units.deg)
-        .add_sample(6000 * units.rpm, 84 * units.deg)
-        .add_sample(7000 * units.rpm, 82 * units.deg)
-        .add_sample(8000 * units.rpm, 80 * units.deg)
-        .add_sample(9000 * units.rpm, 80 * units.deg)
+        .add_sample(0000 * units.rpm, 60 * units.deg)
+        .add_sample(1000 * units.rpm, 65 * units.deg)
+        .add_sample(2000 * units.rpm, 65 * units.deg)
+        .add_sample(3000 * units.rpm, 65 * units.deg)
+        .add_sample(4000 * units.rpm, 65 * units.deg)
+        .add_sample(5000 * units.rpm, 65 * units.deg)
+        .add_sample(6000 * units.rpm, 65 * units.deg)
+        .add_sample(7000 * units.rpm, 65 * units.deg)
+        .add_sample(8000 * units.rpm, 65 * units.deg)
+        .add_sample(9000 * units.rpm, 65 * units.deg)
 
     engine.add_ignition_module(
         bmw_s65b40_distributor(
@@ -476,7 +459,7 @@ public node zf_gs6_53bz_transmission {
 }
 
 public node main {
-    set_engine(S65B40())
+    set_engine(bmw_s65b40_engine())
     set_vehicle(bmw_m3_e92_vehicle())
     set_transmission(zf_gs6_53bz_transmission())
 }

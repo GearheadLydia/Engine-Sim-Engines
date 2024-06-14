@@ -13,7 +13,7 @@ public node ford_windsor_427saleen_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6400 * units.rpm;
-	input limiter_duration: 0.06;
+    input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -59,7 +59,7 @@ public node ford_windsor_427saleen_lobe_profile_exh {
 
 public node ford_windsor_427saleen_camshaft_builder {
     input in_lobe_profile: ford_windsor_427saleen_lobe_profile_int();
-	input ex_lobe_profile: ford_windsor_427saleen_lobe_profile_exh();
+    input ex_lobe_profile: ford_windsor_427saleen_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 112.0 * units.deg;
@@ -86,7 +86,7 @@ public node ford_windsor_427saleen_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -131,8 +131,8 @@ public node ford_windsor_427saleen_head {
     input exhaust_camshaft;
     input chamber_volume: 60.5 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation: 0.8;
+    
+    input flow_attenuation: 0.8;
     input lift_scale: 1.0 / 1.6;
     alias output __out: head;
 
@@ -168,7 +168,7 @@ public node ford_windsor_427saleen_head {
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.15 * units.inch) * 5 * units.inch,
@@ -193,24 +193,24 @@ public node saleen_427w_engine {
     engine engine(
         name: "Saleen 427W",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1500 * units.rpm,
+        starter_speed: 1500 * units.rpm,
         redline: 6000 * units.rpm, // 6400?
         throttle_gamma: 2.0,
-		jitter: 0.5,
-		hf_gain: 0.01
+        jitter: 0.5,
+        hf_gain: 0.01
     )
 
     label bore(4.120 * units.inch)
-	label bore_spacing(4.38 * units.inch)
+    label bore_spacing(4.38 * units.inch)
     label stroke(4.0 * units.inch)
     label rod_length(5.956 * units.inch) // guess - same as 351 rods
     label rod_mass(500 * units.g) // guess
     label compression_height(1.519 * units.inch) // guess
-	label piston_mass(350 * units.g) // guess
-	label piston_dome(5 * units.cc)
-	label deck_height((9.503 * units.inch) + (0.0 * units.mm)) // guess - same as 351W
+    label piston_mass(350 * units.g) // guess
+    label piston_dome(5 * units.cc)
+    label deck_height((9.503 * units.inch) + (0.0 * units.mm)) // guess - same as 351W
     label crank_mass(55 * units.lb)
-    label flywheel_mass(25 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -235,16 +235,16 @@ public node saleen_427w_engine {
         tdc: 135.0 * units.deg // -45 degrees
     )
 
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle: 90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 270 * units.deg)
+    rod_journal rj3(angle:  90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -281,67 +281,67 @@ public node saleen_427w_engine {
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((4.0 * units.inch)/2)
+    
+    label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1400.0),
         primary_tube_length: 12.0 * units.inch,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 700 * units.mm,
-		volume: 700 * units.mm * circle_area(exhaust_radius) * 2
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 700 * units.mm,
+        volume: 700 * units.mm * circle_area(exhaust_radius) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
 
-	label pipe_length_1(1.5 * bore_spacing)
-	label pipe_length_2(1.0 * bore_spacing)
-	label pipe_length_3(0.5 * bore_spacing)
-	label pipe_length_4(0.0 * bore_spacing)
-	
-	label exhaust_stagger_LR(0.3 * bore_spacing)
+    label pipe_length_1(1.5 * bore_spacing)
+    label pipe_length_2(1.0 * bore_spacing)
+    label pipe_length_3(0.5 * bore_spacing)
+    label pipe_length_4(0.0 * bore_spacing)
+    
+    label exhaust_stagger_LR(0.3 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 0.6
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2
+            primary_length: pipe_length_1,
+            sound_attenuation: 0.6
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: 0.6
+            primary_length: pipe_length_4,
+            sound_attenuation: 0.6
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -349,42 +349,42 @@ public node saleen_427w_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger_LR,
-			sound_attenuation: 0.5
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire6,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger_LR,
-			sound_attenuation: 0.3
+            primary_length: pipe_length_1 + exhaust_stagger_LR,
+            sound_attenuation: 0.5
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire7,
+            ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger_LR,
-			sound_attenuation: 0.3
+            primary_length: pipe_length_2 + exhaust_stagger_LR,
+            sound_attenuation: 0.3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire7,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3 + exhaust_stagger_LR,
+            sound_attenuation: 0.3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger_LR,
-			sound_attenuation: 0.5
+            primary_length: pipe_length_4 + exhaust_stagger_LR,
+            sound_attenuation: 0.5
         )
 
     engine
@@ -394,15 +394,15 @@ public node saleen_427w_engine {
     engine.add_crankshaft(c0)
 
     ford_windsor_427saleen_camshaft_builder camshaft(
-	    in_lobe_profile: ford_windsor_427saleen_lobe_profile_int(),
-		ex_lobe_profile: ford_windsor_427saleen_lobe_profile_exh()
-	)
+        in_lobe_profile: ford_windsor_427saleen_lobe_profile_int(),
+        ex_lobe_profile: ford_windsor_427saleen_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         ford_windsor_427saleen_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
     b1.set_cylinder_head (
@@ -422,7 +422,7 @@ public node saleen_427w_engine {
         .add_sample(4000 * units.rpm, 50 * units.deg)
         .add_sample(5000 * units.rpm, 50 * units.deg)
         .add_sample(6000 * units.rpm, 50 * units.deg)
-		.add_sample(7000 * units.rpm, 50 * units.deg)
+        .add_sample(7000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         ford_windsor_427saleen_distributor(

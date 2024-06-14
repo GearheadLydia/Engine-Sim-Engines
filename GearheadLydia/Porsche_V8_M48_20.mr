@@ -13,7 +13,7 @@ public node porsche_m48_20_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6850 * units.rpm; // not actually sure where the limiter is
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -59,7 +59,7 @@ public node porsche_m48_20_lobe_profile_exh {
 
 public node porsche_m48_20_camshaft_builder {
     input in_lobe_profile: porsche_m48_20_lobe_profile_int();
-	input ex_lobe_profile: porsche_m48_20_lobe_profile_exh();
+    input ex_lobe_profile: porsche_m48_20_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 110.0 * units.deg;
@@ -86,7 +86,7 @@ public node porsche_m48_20_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -132,8 +132,8 @@ public node porsche_m48_20_head {
     input exhaust_camshaft;
     input chamber_volume: 42 * units.cc; // informed guesstimate based on valve specs & probable recess depth of 8.8mm
     input flip_display: false;
-	
-	input flow_attenuation: 1.0;
+    
+    input flow_attenuation: 1.0;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -169,7 +169,7 @@ public node porsche_m48_20_head {
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
@@ -192,14 +192,14 @@ public node porsche_m48_20_engine {
     wires wires()
 
     label bore(96.0 * units.mm)
-	label bore_spacing(108 * units.mm) // not sure where I got this?
+    label bore_spacing(108 * units.mm) // not sure where I got this?
     label stroke(83.0 * units.mm)
     label rod_length(155.0 * units.mm)
     label rod_mass(600 * units.g)
-	label piston_mass(450 * units.g)
+    label piston_mass(450 * units.g)
     label compression_height(31.0 * units.mm) // informed guess; JE aftermarket: 29.87 (CR 10.5)
-	label piston_dome(-1.5 * units.cc) // informed guess; JE aftermarket: -5.5 (CR 10.5)
-	label deck_height((228.0 + 0.7) * units.mm) // deck height is an informed guess; calculated for 12.5:1 compression ratio; compression ratio comes out to 10.5:1 with JE -5.5cc pistons
+    label piston_dome(-1.5 * units.cc) // informed guess; JE aftermarket: -5.5 (CR 10.5)
+    label deck_height((228.0 + 0.7) * units.mm) // deck height is an informed guess; calculated for 12.5:1 compression ratio; compression ratio comes out to 10.5:1 with JE -5.5cc pistons
     label crank_mass(85 * units.lb)
     label flywheel_mass(30 * units.lb)
     label flywheel_radius(6.5 * units.inch)
@@ -207,7 +207,7 @@ public node porsche_m48_20_engine {
     engine engine(
         name: "Porsche M48.20",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 6500 * units.rpm, // 6600
         throttle_gamma: 1.0
     )
@@ -233,16 +233,16 @@ public node porsche_m48_20_engine {
         tdc: 135.0 * units.deg // -45 degrees
     )
 
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle: 90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 270 * units.deg)
+    rod_journal rj3(angle:  90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -279,49 +279,39 @@ public node porsche_m48_20_engine {
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((3.5 * units.inch)/2)
+    
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(270.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2800 * units.mm,
-		volume: (400 * units.mm * circle_area(exhaust_radius)) + (2400 * units.mm * circle_area(exhaust_radius) * 2)
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2800 * units.mm,
+        volume: (400 * units.mm * circle_area(exhaust_radius)) + (2400 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(2.2 * bore_spacing)
-	label pipe_length_2(1.6 * bore_spacing)
-	label pipe_length_3(0.8 * bore_spacing)
-	label pipe_length_4(0.0 * bore_spacing)
-	
-	label exhaust_stagger(0.3 * bore_spacing)
+    
+    label pipe_length_1(2.2 * bore_spacing)
+    label pipe_length_2(1.6 * bore_spacing)
+    label pipe_length_3(0.8 * bore_spacing)
+    label pipe_length_4(0.0 * bore_spacing)
+    
+    label exhaust_stagger(0.3 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
-            intake: intake,
-            exhaust_system: exhaust,
-            ignition_wire: wires.wire1,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 1.0
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             intake: intake,
             exhaust_system: exhaust,
-            ignition_wire: wires.wire2,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 0.85
+            ignition_wire: wires.wire1,
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -329,9 +319,9 @@ public node porsche_m48_20_engine {
             rod_journal: rj2,
             intake: intake,
             exhaust_system: exhaust,
-            ignition_wire: wires.wire3,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.7
+            ignition_wire: wires.wire2,
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: 0.85
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -339,9 +329,19 @@ public node porsche_m48_20_engine {
             rod_journal: rj3,
             intake: intake,
             exhaust_system: exhaust,
+            ignition_wire: wires.wire3,
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: 0.7
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            intake: intake,
+            exhaust_system: exhaust,
             ignition_wire: wires.wire4,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: 0.55
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: 0.55
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -349,22 +349,12 @@ public node porsche_m48_20_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
-            intake: intake,
-            exhaust_system: exhaust,
-            ignition_wire: wires.wire5,
-			primary_length: pipe_length_1,
-			sound_attenuation: 1.0 * 0.95
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             intake: intake,
             exhaust_system: exhaust,
-            ignition_wire: wires.wire6,
-			primary_length: pipe_length_2,
-			sound_attenuation: 0.85 * 0.95
+            ignition_wire: wires.wire5,
+            primary_length: pipe_length_1,
+            sound_attenuation: 1.0 * 0.95
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -372,9 +362,9 @@ public node porsche_m48_20_engine {
             rod_journal: rj2,
             intake: intake,
             exhaust_system: exhaust,
-            ignition_wire: wires.wire7,
-			primary_length: pipe_length_3,
-			sound_attenuation: 0.7 * 0.95
+            ignition_wire: wires.wire6,
+            primary_length: pipe_length_2,
+            sound_attenuation: 0.85 * 0.95
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -382,9 +372,19 @@ public node porsche_m48_20_engine {
             rod_journal: rj3,
             intake: intake,
             exhaust_system: exhaust,
+            ignition_wire: wires.wire7,
+            primary_length: pipe_length_3,
+            sound_attenuation: 0.7 * 0.95
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            intake: intake,
+            exhaust_system: exhaust,
             ignition_wire: wires.wire8,
-			primary_length: pipe_length_4,
-			sound_attenuation: 0.55 * 0.95
+            primary_length: pipe_length_4,
+            sound_attenuation: 0.55 * 0.95
         )
 
     engine
@@ -394,9 +394,9 @@ public node porsche_m48_20_engine {
     engine.add_crankshaft(c0)
 
     porsche_m48_20_camshaft_builder camshaft(
-	    in_lobe_profile: porsche_m48_20_lobe_profile_int(),
-		ex_lobe_profile: porsche_m48_20_lobe_profile_exh()
-	)
+        in_lobe_profile: porsche_m48_20_lobe_profile_int(),
+        ex_lobe_profile: porsche_m48_20_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         porsche_m48_20_head(
@@ -422,8 +422,8 @@ public node porsche_m48_20_engine {
         .add_sample(4000 * units.rpm, 57 * units.deg)
         .add_sample(5000 * units.rpm, 57 * units.deg)
         .add_sample(6000 * units.rpm, 57 * units.deg)
-		.add_sample(7000 * units.rpm, 57 * units.deg)
-		.add_sample(8000 * units.rpm, 57 * units.deg)
+        .add_sample(7000 * units.rpm, 57 * units.deg)
+        .add_sample(8000 * units.rpm, 57 * units.deg)
 
     engine.add_ignition_module(
         porsche_m48_20_distributor(

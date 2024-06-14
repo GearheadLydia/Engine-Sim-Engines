@@ -12,7 +12,7 @@ public node dodge_v8_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6150 * units.rpm;
-	input limiter_duration: 0.10;
+    input limiter_duration: 0.10;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -84,12 +84,12 @@ public node dodge_v8_camshaft_builder {
     camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
     camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
 
-	label rot30(30 * units.deg)
-	label rot54(54 * units.deg)
-	label rot60(60 * units.deg)
-	label rot72(72 * units.deg)
+    label rot30(30 * units.deg)
+    label rot54(54 * units.deg)
+    label rot60(60 * units.deg)
+    label rot72(72 * units.deg)
     label rot90(90 * units.deg)
-	label rot120(120 * units.deg)
+    label rot120(120 * units.deg)
     label rot360(360 * units.deg)
 
     _intake_cam_0
@@ -122,9 +122,9 @@ public node dodge_v8_head {
     input exhaust_camshaft;
     input chamber_volume: 105.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 1.0;
+    input flow_attenuation_ex: 1.0;
     input lift_scale: 50.0;
     alias output __out: head;
 
@@ -163,7 +163,7 @@ public node dodge_v8_head {
         .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
         .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.2 * units.inch) * 2 * units.inch,
@@ -187,29 +187,25 @@ public node viper_v8 {
     engine engine(
         name: "Dodge Viper V8 (SR I)",
         starter_torque: 200 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
+        starter_speed: 900 * units.rpm,
         redline: 6000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.68),
         throttle_gamma: 1.0,
-		simulation_frequency: 7500
+        simulation_frequency: 7500
     )
 
 
-	// source: 
+    // source: 
     label bore(4.000 * units.inch)
-	label bore_spacing(4.460 * units.inch)
+    label bore_spacing(4.460 * units.inch)
     label stroke(3.880 * units.inch)
     label rod_length(6.123 * units.inch)
     label rod_mass(785 * units.g)
     label compression_height(1.380 * units.inch)
-	label piston_mass(435 * units.g)
-	label piston_dome(0.00 * units.cc)
-	label deck_height(9.480 * units.inch)
+    label piston_mass(435 * units.g)
+    label piston_dome(0.00 * units.cc)
+    label deck_height(9.480 * units.inch)
     label crank_mass(75 * units.lb)
-    label flywheel_mass(50 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -233,17 +229,17 @@ public node viper_v8 {
         position_y: 0.0,
         tdc: 45.0 * units.deg // 45 degrees back from right side
     )
-	
-    rod_journal rj0(angle:  0.0  * units.deg)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle:  90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 270 * units.deg)
+    rod_journal rj3(angle:  90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -291,17 +287,17 @@ public node viper_v8 {
         runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((4.5 * units.inch)/2)
+    
+    label exhaust_radius((4.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(625.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 1200 * units.mm,
-		volume: (1200 * units.mm * circle_area(exhaust_radius))
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 1200 * units.mm,
+        volume: (1200 * units.mm * circle_area(exhaust_radius))
     )
 
     exhaust_system exhaustL(
@@ -315,49 +311,49 @@ public node viper_v8 {
         audio_volume: 1.0 * 0.01,
         impulse_response: ir_lib.default_0
     )
-	
-	label pipe_length_1(9.0 * units.inch)
-	label pipe_length_2(6.0 * units.inch)
-	label pipe_length_3(3.0 * units.inch)
-	label pipe_length_4(0.0 * units.inch)
+    
+    label pipe_length_1(9.0 * units.inch)
+    label pipe_length_2(6.0 * units.inch)
+    label pipe_length_3(3.0 * units.inch)
+    label pipe_length_4(0.0 * units.inch)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intakeR,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_1
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire3,
-            intake: intakeR,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_2
+            primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire5,
+            ignition_wire: wires.wire3,
             intake: intakeR,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire5,
+            intake: intakeR,
+            exhaust_system: exhaustR,
+            primary_length: pipe_length_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire7,
             intake: intakeR,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_4
+            primary_length: pipe_length_4
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -365,38 +361,38 @@ public node viper_v8 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intakeL,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_1
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire4,
-            intake: intakeL,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_2
+            primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire6,
+            ignition_wire: wires.wire4,
             intake: intakeL,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire6,
+            intake: intakeL,
+            exhaust_system: exhaustL,
+            primary_length: pipe_length_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intakeL,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_4
+            primary_length: pipe_length_4
         )
 
     engine
@@ -406,9 +402,9 @@ public node viper_v8 {
     engine.add_crankshaft(c0)
 
     dodge_v8_camshaft_builder camshaft(
-		in_lobe_profile: dodge_v8_lobe_profile_int(),
-		ex_lobe_profile: dodge_v8_lobe_profile_exh()
-	)
+        in_lobe_profile: dodge_v8_lobe_profile_int(),
+        ex_lobe_profile: dodge_v8_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         dodge_v8_head(
@@ -434,7 +430,7 @@ public node viper_v8 {
         .add_sample(4000 * units.rpm, 38 * units.deg)
         .add_sample(5000 * units.rpm, 40 * units.deg)
         .add_sample(6000 * units.rpm, 40 * units.deg)
-		.add_sample(7000 * units.rpm, 40 * units.deg)
+        .add_sample(7000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
         dodge_v8_distributor(

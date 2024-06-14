@@ -19,7 +19,7 @@ public node mclaren_m838t_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 8750 * units.rpm;
-	input limiter_duration: 0.06;
+    input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -65,7 +65,7 @@ public node mclaren_m838t_lobe_profile_exh {
 
 public node mclaren_m838t_camshaft_builder {
     input in_lobe_profile: mclaren_m838t_lobe_profile_int();
-	input ex_lobe_profile: mclaren_m838t_lobe_profile_exh();
+    input ex_lobe_profile: mclaren_m838t_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 110.0 * units.deg;
@@ -130,9 +130,9 @@ public node mclaren_m838t_head {
     input exhaust_camshaft;
     input chamber_volume: 51.0 * units.cc; // unknown
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.1;
-	input flow_attenuation_ex: 1.1;
+    
+    input flow_attenuation_in: 1.1;
+    input flow_attenuation_ex: 1.1;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -195,22 +195,22 @@ public node mclaren_m838t_600 {
     engine engine(
         name: "McLaren M838T",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 8500 * units.rpm,
         fuel: fuel(max_burning_efficiency: 0.95), // free power to simulate unavailable turbo
         throttle_gamma: 1.0,
-		simulation_frequency: 9000
+        simulation_frequency: 9000
     )
 
     label bore(93.0 * units.mm)
-	label bore_spacing(108.0 * units.mm)
+    label bore_spacing(108.0 * units.mm)
     label stroke(69.9 * units.mm)
     label rod_length(144.0 * units.mm)
     label rod_mass(522.5 * units.g) // one of the few dimensions I did find
-	label piston_mass(400 * units.g)
+    label piston_mass(400 * units.g)
     label compression_height(25.00 * units.mm)
-	label piston_dome(5.00 * units.cc)
-	label deck_clearance(0.5 * units.mm)
+    label piston_dome(5.00 * units.cc)
+    label deck_clearance(0.5 * units.mm)
     label crank_mass(41 * units.lb)
     label flywheel_mass(12 * 2 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -237,18 +237,18 @@ public node mclaren_m838t_600 {
         tdc: 135.0 * units.deg // 45 degrees
     )
 
-    rod_journal rj0(angle: 0.0 * units.deg)
-    rod_journal rj1(angle: 180.0 * units.deg)
-    rod_journal rj2(angle: 180.0 * units.deg)
-    rod_journal rj3(angle: 0.0 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: 180 * units.deg)
+    rod_journal rj3(angle: 180 * units.deg)
+    rod_journal rj4(angle:  0  * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
-	// piston specs are guesses
+    // piston specs are guesses
     piston_parameters piston_params(
         mass: piston_mass,
         //blowby: 0,
@@ -290,63 +290,63 @@ public node mclaren_m838t_600 {
         primary_flow_rate: k_carb(550.0),
         velocity_decay: 1.0, //0.5
         volume: 10.0 * units.L,
-		length: 500 * units.mm
+        length: 500 * units.mm
     )
 
     exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-	exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(bore_spacing * 0.8)
-	label pipe_length_2(bore_spacing * 0.4)
-	label pipe_length_3(bore_spacing * 0.0)
-	label pipe_length_4(bore_spacing * 0.3)
-	
-	label exhaust_stagger(60 * units.mm)
-	
-	label exh_vol_L(1.0)
-	label exh_vol_R(1.0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    
+    label pipe_length_1(bore_spacing * 0.8)
+    label pipe_length_2(bore_spacing * 0.4)
+    label pipe_length_3(bore_spacing * 0.0)
+    label pipe_length_4(bore_spacing * 0.3)
+    
+    label exhaust_stagger(60 * units.mm)
+    
+    label exh_vol_L(1.0)
+    label exh_vol_R(1.0)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: exh_vol_L
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: exh_vol_L
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: exh_vol_L
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: exh_vol_L
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: exh_vol_L
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaustL,
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: exh_vol_L
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: exh_vol_L
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: exh_vol_L
         )
 
     cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (second)
@@ -354,42 +354,42 @@ public node mclaren_m838t_600 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_1,
-			sound_attenuation: exh_vol_R
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire6,
-            intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_2,
-			sound_attenuation: exh_vol_R
+            primary_length: pipe_length_1,
+            sound_attenuation: exh_vol_R
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire7,
+            ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_3,
-			sound_attenuation: exh_vol_R
+            primary_length: pipe_length_2,
+            sound_attenuation: exh_vol_R
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire7,
+            intake: intake,
+            exhaust_system: exhaustR,
+            primary_length: pipe_length_3,
+            sound_attenuation: exh_vol_R
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_4,
-			sound_attenuation: exh_vol_R
+            primary_length: pipe_length_4,
+            sound_attenuation: exh_vol_R
         )
 
     engine
@@ -399,15 +399,15 @@ public node mclaren_m838t_600 {
     engine.add_crankshaft(c0)
 
     mclaren_m838t_camshaft_builder camshaft(
-	    in_lobe_profile: mclaren_m838t_lobe_profile_int(),
-		ex_lobe_profile: mclaren_m838t_lobe_profile_exh()
-	)
+        in_lobe_profile: mclaren_m838t_lobe_profile_int(),
+        ex_lobe_profile: mclaren_m838t_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         mclaren_m838t_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
     b1.set_cylinder_head (
@@ -427,9 +427,9 @@ public node mclaren_m838t_600 {
         .add_sample(4000 * units.rpm, 80 * units.deg)
         .add_sample(5000 * units.rpm, 80 * units.deg)
         .add_sample(6000 * units.rpm, 80 * units.deg)
-		.add_sample(7000 * units.rpm, 80 * units.deg)
-		.add_sample(8000 * units.rpm, 80 * units.deg)
-		.add_sample(9000 * units.rpm, 80 * units.deg)
+        .add_sample(7000 * units.rpm, 80 * units.deg)
+        .add_sample(8000 * units.rpm, 80 * units.deg)
+        .add_sample(9000 * units.rpm, 80 * units.deg)
 
     engine.add_ignition_module(
         mclaren_m838t_distributor(

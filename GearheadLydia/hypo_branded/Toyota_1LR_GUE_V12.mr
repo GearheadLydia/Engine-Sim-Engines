@@ -1,0 +1,546 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+//firing order: 1-4-9-8-5-2-11-10-3-6-7-12
+
+label rot12(12 * units.deg)
+
+public node lexus_1lrgue_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 9500 * units.rpm; // real, apparently
+    input limiter_duration: 0.05;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire01, ( 0.0/12.0) * cycle)
+            .connect_wire(wires.wire04, ( 1.0/12.0) * cycle - rot12)
+            .connect_wire(wires.wire09, ( 2.0/12.0) * cycle)
+            .connect_wire(wires.wire08, ( 3.0/12.0) * cycle - rot12)
+            .connect_wire(wires.wire05, ( 4.0/12.0) * cycle)
+            .connect_wire(wires.wire02, ( 5.0/12.0) * cycle - rot12)
+            .connect_wire(wires.wire11, ( 6.0/12.0) * cycle)
+            .connect_wire(wires.wire10, ( 7.0/12.0) * cycle - rot12)
+            .connect_wire(wires.wire03, ( 8.0/12.0) * cycle)
+            .connect_wire(wires.wire06, ( 9.0/12.0) * cycle - rot12)
+            .connect_wire(wires.wire07, (10.0/12.0) * cycle)
+            .connect_wire(wires.wire12, (11.0/12.0) * cycle - rot12);
+}
+
+private node wires {
+    output wire01: ignition_wire();
+    output wire02: ignition_wire();
+    output wire03: ignition_wire();
+    output wire04: ignition_wire();
+    output wire05: ignition_wire();
+    output wire06: ignition_wire();
+    output wire07: ignition_wire();
+    output wire08: ignition_wire();
+    output wire09: ignition_wire();
+    output wire10: ignition_wire();
+    output wire11: ignition_wire();
+    output wire12: ignition_wire();
+}
+
+public node lexus_1lrgue_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 220 * units.deg,
+            gamma: 1.0,
+            lift: 10.0 * units.mm,
+            steps: 100
+        );
+}
+
+public node lexus_1lrgue_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 220 * units.deg,
+            gamma: 1.0,
+            lift: 10.0 * units.mm,
+            steps: 100
+        );
+}
+
+public node lexus_1lrgue_camshaft_builder {
+    input in_lobe_profile: lexus_1lrgue_lobe_profile_int();
+    input ex_lobe_profile: lexus_1lrgue_lobe_profile_exh();
+    input intake_lobe_profile: in_lobe_profile;
+    input exhaust_lobe_profile: ex_lobe_profile;
+    input intake_lobe_center: 115.0 * units.deg;
+    input exhaust_lobe_center: 115.0 * units.deg;
+    input advance: -4 * units.deg;
+    input base_radius: 15.0 * units.mm;
+
+    output intake_cam_0: _intake_cam_0;
+    output intake_cam_1: _intake_cam_1;
+    output exhaust_cam_0: _exhaust_cam_0;
+    output exhaust_cam_1: _exhaust_cam_1;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    
+    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+
+
+    label rot4(4 * units.deg)
+    label rot18(18 * units.deg)
+    label rot30(30 * units.deg)
+    label rot54(54 * units.deg)
+    label rot60(60 * units.deg)
+    label rot72(72 * units.deg)
+    label rot90(90 * units.deg)
+    label rot120(120 * units.deg)
+    label rot360(360 * units.deg)
+
+    _intake_cam_0
+        .add_lobe(rot360 + intake_lobe_center +  0 * rot60) //  #1
+        .add_lobe(rot360 + intake_lobe_center +  8 * rot60) //  #3
+        .add_lobe(rot360 + intake_lobe_center +  4 * rot60) //  #5
+        .add_lobe(rot360 + intake_lobe_center + 10 * rot60) //  #7
+        .add_lobe(rot360 + intake_lobe_center +  2 * rot60) //  #9
+        .add_lobe(rot360 + intake_lobe_center +  6 * rot60) // #11
+    
+    _intake_cam_1
+        .add_lobe(rot360 + intake_lobe_center +  5 * rot60 - rot12) //  #2
+        .add_lobe(rot360 + intake_lobe_center +  1 * rot60 - rot12) //  #4
+        .add_lobe(rot360 + intake_lobe_center +  9 * rot60 - rot12) //  #6
+        .add_lobe(rot360 + intake_lobe_center +  3 * rot60 - rot12) //  #8
+        .add_lobe(rot360 + intake_lobe_center +  7 * rot60 - rot12) // #10
+        .add_lobe(rot360 + intake_lobe_center + 11 * rot60 - rot12) // #12
+
+    _exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center +  0 * rot60) //  #1
+        .add_lobe(rot360 - exhaust_lobe_center +  8 * rot60) //  #3
+        .add_lobe(rot360 - exhaust_lobe_center +  4 * rot60) //  #5
+        .add_lobe(rot360 - exhaust_lobe_center + 10 * rot60) //  #7
+        .add_lobe(rot360 - exhaust_lobe_center +  2 * rot60) //  #9
+        .add_lobe(rot360 - exhaust_lobe_center +  6 * rot60) // #11
+    
+    _exhaust_cam_1
+        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot60 - rot12) //  #2
+        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot60 - rot12) //  #4
+        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot60 - rot12) //  #6
+        .add_lobe(rot360 - exhaust_lobe_center +  3 * rot60 - rot12) //  #8
+        .add_lobe(rot360 - exhaust_lobe_center +  7 * rot60 - rot12) // #10
+        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot60 - rot12) // #12
+}
+
+private node add_flow_sample {
+    input lift;
+    input flow;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
+}
+
+public node lexus_1lrgue_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 35.0 * units.cc; // guess
+    input flip_display: false;
+    
+    input flow_attenuation: 1.0;
+    input lift_scale: 1.0;
+    
+    alias output __out: head;
+
+    function intake_flow(50 * units.thou)
+    intake_flow
+        .add_flow_sample(0,     0 * flow_attenuation)
+        .add_flow_sample(50,   25 * flow_attenuation)
+        .add_flow_sample(100,  76 * flow_attenuation)
+        .add_flow_sample(150,  90 * flow_attenuation)
+        .add_flow_sample(200, 126 * flow_attenuation)
+        .add_flow_sample(250, 155 * flow_attenuation)
+        .add_flow_sample(300, 212 * flow_attenuation)
+        .add_flow_sample(350, 230 * flow_attenuation)
+        .add_flow_sample(400, 255 * flow_attenuation)
+        .add_flow_sample(450, 275 * flow_attenuation)
+        .add_flow_sample(500, 294 * flow_attenuation)
+        .add_flow_sample(550, 300 * flow_attenuation)
+        .add_flow_sample(600, 314 * flow_attenuation)
+        .add_flow_sample(650, 330 * flow_attenuation)
+        .add_flow_sample(700, 340 * flow_attenuation)
+
+    function exhaust_flow(50 * units.thou)
+    exhaust_flow
+        .add_flow_sample(0,     0 * flow_attenuation)
+        .add_flow_sample(50,   25 * flow_attenuation)
+        .add_flow_sample(100,  70 * flow_attenuation)
+        .add_flow_sample(150,  90 * flow_attenuation)
+        .add_flow_sample(200, 122 * flow_attenuation)
+        .add_flow_sample(250, 140 * flow_attenuation)
+        .add_flow_sample(300, 156 * flow_attenuation)
+        .add_flow_sample(350, 170 * flow_attenuation)
+        .add_flow_sample(400, 181 * flow_attenuation)
+        .add_flow_sample(450, 191 * flow_attenuation)
+        .add_flow_sample(500, 207 * flow_attenuation)
+        .add_flow_sample(550, 214 * flow_attenuation)
+        .add_flow_sample(600, 228 * flow_attenuation)
+        .add_flow_sample(650, 240 * flow_attenuation)
+        .add_flow_sample(700, 255 * flow_attenuation)
+
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+public node lexus_1lrgue_engine {
+    alias output __out: engine;
+
+    wires wires()
+
+    engine engine(
+        name: "Lexus 1LR-GUE",
+        starter_torque: 150 * units.lb_ft,
+        starter_speed: 1000 * units.rpm,
+        redline: 9000 * units.rpm,
+        throttle_gamma: 1.0,
+        simulation_frequency: 7500
+    )
+
+    label bore(88.0 * units.mm)
+    label stroke(79.0 * units.mm)
+    label rod_length(146.99 * units.mm)
+    label rod_mass(350 * units.g)
+    label piston_mass(350 * units.g)
+    label compression_height(25.00 * units.mm)
+    label piston_dome(0.0 * units.cc)
+    label deck_clearance(1.43 * units.mm) // for 12.0:1 CR
+    label crank_mass(65 * units.lb)
+    label flywheel_mass(6 * units.lb)
+    label flywheel_radius(6 * units.inch)
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 5 * units.kg, radius: 6.0 * units.cm)
+    )
+
+    crankshaft c0(
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 5.0 * units.lb_ft,
+        moment_of_inertia: crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 54.0 * units.deg // 36 degrees CW from vertical
+    )
+
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: 120 * units.deg)
+    rod_journal rj3(angle: 240 * units.deg)
+    rod_journal rj4(angle: 240 * units.deg)
+    rod_journal rj5(angle: 120 * units.deg)
+    rod_journal rj6(angle:  0  * units.deg)
+
+    c0
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
+
+    piston_parameters piston_params(
+        mass: 487 * units.g,
+        blowby: 0,
+        compression_height: compression_height,
+        wrist_pin_position: 0.0,
+        displacement: piston_dome
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
+        center_of_mass: 0.0,
+        length: rod_length
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: bore,
+        deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
+    )
+
+    intake intake(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(1320.0),
+        idle_flow_rate: k_carb(0.00001),
+        idle_throttle_plate_position: 0.9973,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(450.0),
+        runner_length: 6.0 * units.inch,
+        velocity_decay: 0.1
+    )
+    
+    label exhaust_radius((3.0 * units.inch)/2)
+    
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(1200.0),
+        primary_tube_length: 12.0 * units.inch,
+        primary_flow_rate: k_carb(500.0),
+        velocity_decay: 0.9, //0.5
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2700 * units.mm,
+        volume: (700 * units.mm * circle_area(exhaust_radius)) + (2000 * units.mm * circle_area(exhaust_radius) * 2)
+    )
+
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.15, impulse_response: ir_lib.default_0)
+    
+    label pipe_length_1(36 * units.mm)
+    label pipe_length_2(12 * units.mm)
+    label pipe_length_3(24 * units.mm)
+    label pipe_length_4(00 * units.mm)
+    label pipe_length_5(12 * units.mm)
+    label pipe_length_6(36 * units.mm)
+    
+    label exhaust_stagger(15 * units.mm)
+    
+    label exh_vol_L1(1.00)
+    label exh_vol_L2(0.90)
+    label exh_vol_L3(0.95)
+    label exh_vol_L4(0.80)
+    label exh_vol_L5(0.85)
+    label exh_vol_L6(1.00)
+    label exh_vol_R1(1.00)
+    label exh_vol_R2(0.90)
+    label exh_vol_R3(0.95)
+    label exh_vol_R4(0.80)
+    label exh_vol_R5(0.85)
+    label exh_vol_R6(1.00)
+
+    cylinder_bank b0(bank_params, angle: -36.0 * units.deg) // R (first)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire01,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: exh_vol_L1
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire03,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: exh_vol_L2
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire05,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: exh_vol_L3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire07,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: exh_vol_L4
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire09,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_5 + exhaust_stagger,
+            sound_attenuation: exh_vol_L5
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj6,
+            ignition_wire: wires.wire11,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_6 + exhaust_stagger,
+            sound_attenuation: exh_vol_L6
+        )
+
+    cylinder_bank b1(bank_params, angle: 36.0 * units.deg) // L (second)
+    b1
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire02,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_1,
+            sound_attenuation: exh_vol_R1
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire04,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_2,
+            sound_attenuation: exh_vol_R2
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire06,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3,
+            sound_attenuation: exh_vol_R3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire08,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_4,
+            sound_attenuation: exh_vol_R4
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire10,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_5,
+            sound_attenuation: exh_vol_R5
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj6,
+            ignition_wire: wires.wire12,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_6,
+            sound_attenuation: exh_vol_R6
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+        .add_cylinder_bank(b1)
+
+    engine.add_crankshaft(c0)
+
+    lexus_1lrgue_camshaft_builder camshaft()
+
+    b0.set_cylinder_head (
+        lexus_1lrgue_head(
+            intake_camshaft: camshaft.intake_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0,
+            flip_display: false
+        )
+    )
+    b1.set_cylinder_head (
+        lexus_1lrgue_head(
+            intake_camshaft: camshaft.intake_cam_1,
+            exhaust_camshaft: camshaft.exhaust_cam_1,
+            flip_display: true
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample( 0000 * units.rpm, 30 * units.deg)
+        .add_sample( 1000 * units.rpm, 37 * units.deg)
+        .add_sample( 2000 * units.rpm, 37 * units.deg)
+        .add_sample( 3000 * units.rpm, 37 * units.deg)
+        .add_sample( 4000 * units.rpm, 37 * units.deg)
+        .add_sample( 5000 * units.rpm, 37 * units.deg)
+        .add_sample( 6000 * units.rpm, 37 * units.deg)
+        .add_sample( 7000 * units.rpm, 37 * units.deg) // changed because breaking up at high RPM
+        .add_sample( 8000 * units.rpm, 37 * units.deg)
+        .add_sample( 9000 * units.rpm, 37 * units.deg)
+        .add_sample(10000 * units.rpm, 37 * units.deg)
+
+    engine.add_ignition_module(
+        lexus_1lrgue_distributor(
+            wires: wires,
+            timing_curve: timing_curve
+        )
+    )
+}
+
+// 2011 Lexus LFA
+public node lexus_lfa_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1480 * units.kg,
+            drag_coefficient: 0.31,
+            cross_sectional_area: 2 * (units.m * units.m),
+            diff_ratio: 4.3,
+            tire_radius: 345.44 * units.mm, // 305/30ZR20
+            rolling_resistance: 1480 * units.kg * 9.81 * (305.0/275.0) * 0.01
+        );
+}
+
+public node lexus_lfa_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 800 * units.lb_ft
+        )
+        .add_gear(3.231)
+        .add_gear(2.188)
+        .add_gear(1.609)
+        .add_gear(1.233)
+        .add_gear(0.970)
+        .add_gear(0.795);
+}
+
+public node main {
+    set_engine(lexus_1lrgue_engine())
+    set_vehicle(lexus_lfa_vehicle())
+    set_transmission(lexus_lfa_transmission())
+}
+
+main()

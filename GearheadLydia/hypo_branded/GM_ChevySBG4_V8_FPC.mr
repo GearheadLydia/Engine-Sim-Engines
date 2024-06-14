@@ -12,7 +12,7 @@ public node chevrolet_ls2_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6500 * units.rpm;
-	input limiter_duration: 0.09;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -61,7 +61,7 @@ public node chevrolet_ls2_lobe_profile_exh {
 
 public node chevrolet_ls2_camshaft_builder {
     input in_lobe_profile: chevrolet_ls2_lobe_profile_int();
-	input ex_lobe_profile: chevrolet_ls2_lobe_profile_exh();
+    input ex_lobe_profile: chevrolet_ls2_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 116.0 * units.deg;
@@ -88,7 +88,7 @@ public node chevrolet_ls2_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -133,9 +133,9 @@ public node chevrolet_ls2_head {
     input exhaust_camshaft;
     input chamber_volume: 65.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 1.0;
+    input flow_attenuation_ex: 1.0;
     input lift_scale: 50.0;
     alias output __out: head;
 
@@ -174,7 +174,7 @@ public node chevrolet_ls2_head {
         .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
         .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.43 * units.inch) * 8 * units.inch,
@@ -199,29 +199,29 @@ public node chevrolet_ls2 {
     engine engine(
         name: "Chevrolet LS2",
         starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_speed: 600 * units.rpm,
         redline: 6000 * units.rpm,
         throttle_gamma: 2.0,
-		// jitter: 0.7,
-		// hf_gain: 0.15
-		jitter: 0.6,
-		hf_gain: 0.1
-		// jitter: 0.1,
-		// hf_gain: 0.1
+        // jitter: 0.7,
+        // hf_gain: 0.15
+        jitter: 0.6,
+        hf_gain: 0.1
+        // jitter: 0.1,
+        // hf_gain: 0.1
     )
 
 
-	// source: https://help.summitracing.com/app/answers/detail/a_id/4874/~/chevy-ls2-engine-specs
+    // source: https://help.summitracing.com/app/answers/detail/a_id/4874/~/chevy-ls2-engine-specs
     label bore(4.000 * units.inch)
     label stroke(3.622 * units.inch)
     label rod_length(6.098 * units.inch)
     label rod_mass(464 * units.g)
     label compression_height(1.34 * units.inch)
-	label piston_mass(482 * units.g)
-	label piston_dome(0.00 * units.cc)
-	label deck_height(9.240 * units.inch)
+    label piston_mass(482 * units.g)
+    label piston_dome(0.00 * units.cc)
+    label deck_height(9.240 * units.inch)
     label crank_mass(57 * units.lb)
-    label flywheel_mass(57 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -246,16 +246,16 @@ public node chevrolet_ls2 {
         tdc: 45.0 * units.deg // 45 degrees back from right side
     )
 
-    rod_journal rj0(angle:  0.0  * units.deg)
-    rod_journal rj1(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:  0.0  * units.deg)
     rod_journal rj2(angle: 180.0 * units.deg)
-    rod_journal rj3(angle:  0.0  * units.deg)
+    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj4(angle:  0.0  * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -292,116 +292,116 @@ public node chevrolet_ls2 {
         runner_length: 12.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((4.0 * units.inch)/2)
+    
+    label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
         primary_tube_length: 20.0 * units.inch,
         primary_flow_rate: k_carb(320.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 700 * units.mm,
-		volume: 700 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 700 * units.mm,
+        volume: 700 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system exhaustL(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
+        es_params,
+        audio_volume: 1.0 * 0.01,
+        impulse_response: ir_lib.default_0
+    )
 
     exhaust_system exhaustR(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
+        es_params,
+        audio_volume: 1.0 * 0.01,
+        impulse_response: ir_lib.default_0
+    )
 
-	label bore_spacing(4.4 * units.inch)
-	
-	// lower grade LS headers //
-	label pipe_length_1(bore_spacing * 2.2)
-	label pipe_length_2(bore_spacing * 1.2)
-	label pipe_length_3(bore_spacing * 0.2)
-	label pipe_length_4(bore_spacing * 0.0)
-	label pipe_volume_1(0.6)
-	label pipe_volume_2(0.8)
-	label pipe_volume_3(1.0)
-	label pipe_volume_4(1.0)
-	
-	// GTO LS2 headers //
-	// label pipe_length_1(bore_spacing * 0.0)
-	// label pipe_length_2(bore_spacing * 0.1)
-	// label pipe_length_3(bore_spacing * 0.2)
-	// label pipe_length_4(bore_spacing * 0.3)
-	// label pipe_volume_1(1.0)
-	// label pipe_volume_2(1.0)
-	// label pipe_volume_3(1.0)
-	// label pipe_volume_4(1.0)
-	
-	// stock Z06 headers //
-	// label pipe_length_1(bore_spacing * 1.2)
-	// label pipe_length_2(bore_spacing * 0.8)
-	// label pipe_length_3(bore_spacing * 0.75)
-	// label pipe_length_4(bore_spacing * 1.15)
-	// label pipe_volume_1(0.8)
-	// label pipe_volume_2(1.0)
-	// label pipe_volume_3(1.0)
-	// label pipe_volume_4(0.8)
-	
-	// Kooks headers
-	// label pipe_length_1(bore_spacing * 1.0)
-	// label pipe_length_2(bore_spacing * 1.3)
-	// label pipe_length_3(bore_spacing * 1.0)
-	// label pipe_length_4(bore_spacing * 0.7)
-	// label pipe_volume_1(0.95)
-	// label pipe_volume_2(0.90)
-	// label pipe_volume_3(0.95)
-	// label pipe_volume_4(1.00)
-	
-	label exhaust_stagger(20 * units.mm)
+    label bore_spacing(4.4 * units.inch)
+    
+    // lower grade LS headers //
+    label pipe_length_1(bore_spacing * 2.2)
+    label pipe_length_2(bore_spacing * 1.2)
+    label pipe_length_3(bore_spacing * 0.2)
+    label pipe_length_4(bore_spacing * 0.0)
+    label pipe_volume_1(0.6)
+    label pipe_volume_2(0.8)
+    label pipe_volume_3(1.0)
+    label pipe_volume_4(1.0)
+    
+    // GTO LS2 headers //
+    // label pipe_length_1(bore_spacing * 0.0)
+    // label pipe_length_2(bore_spacing * 0.1)
+    // label pipe_length_3(bore_spacing * 0.2)
+    // label pipe_length_4(bore_spacing * 0.3)
+    // label pipe_volume_1(1.0)
+    // label pipe_volume_2(1.0)
+    // label pipe_volume_3(1.0)
+    // label pipe_volume_4(1.0)
+    
+    // stock Z06 headers //
+    // label pipe_length_1(bore_spacing * 1.2)
+    // label pipe_length_2(bore_spacing * 0.8)
+    // label pipe_length_3(bore_spacing * 0.75)
+    // label pipe_length_4(bore_spacing * 1.15)
+    // label pipe_volume_1(0.8)
+    // label pipe_volume_2(1.0)
+    // label pipe_volume_3(1.0)
+    // label pipe_volume_4(0.8)
+    
+    // Kooks headers
+    // label pipe_length_1(bore_spacing * 1.0)
+    // label pipe_length_2(bore_spacing * 1.3)
+    // label pipe_length_3(bore_spacing * 1.0)
+    // label pipe_length_4(bore_spacing * 0.7)
+    // label pipe_volume_1(0.95)
+    // label pipe_volume_2(0.90)
+    // label pipe_volume_3(0.95)
+    // label pipe_volume_4(1.00)
+    
+    label exhaust_stagger(20 * units.mm)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: pipe_volume_1
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire3,
-            intake: intake,
-            exhaust_system: exhaustR,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: pipe_volume_2
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: pipe_volume_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire5,
+            ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: pipe_volume_3
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: pipe_volume_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaustR,
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: pipe_volume_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaustR,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: pipe_volume_4
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: pipe_volume_4
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -409,42 +409,42 @@ public node chevrolet_ls2 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_1,
-			sound_attenuation: pipe_volume_1
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire4,
-            intake: intake,
-            exhaust_system: exhaustL,
-			primary_length: pipe_length_2,
-			sound_attenuation: pipe_volume_2
+            primary_length: pipe_length_1,
+            sound_attenuation: pipe_volume_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire6,
+            ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_3,
-			sound_attenuation: pipe_volume_3
+            primary_length: pipe_length_2,
+            sound_attenuation: pipe_volume_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire6,
+            intake: intake,
+            exhaust_system: exhaustL,
+            primary_length: pipe_length_3,
+            sound_attenuation: pipe_volume_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaustL,
-			primary_length: pipe_length_4,
-			sound_attenuation: pipe_volume_4
+            primary_length: pipe_length_4,
+            sound_attenuation: pipe_volume_4
         )
 
     engine
@@ -454,15 +454,15 @@ public node chevrolet_ls2 {
     engine.add_crankshaft(c0)
 
     chevrolet_ls2_camshaft_builder camshaft(
-	    in_lobe_profile: chevrolet_ls2_lobe_profile_int(),
-		ex_lobe_profile: chevrolet_ls2_lobe_profile_exh()
-	)
+        in_lobe_profile: chevrolet_ls2_lobe_profile_int(),
+        ex_lobe_profile: chevrolet_ls2_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         chevrolet_ls2_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: false
+            flip_display: false
         )
     )
     b1.set_cylinder_head (
@@ -482,8 +482,8 @@ public node chevrolet_ls2 {
         .add_sample(4000 * units.rpm, 35 * units.deg)
         .add_sample(5000 * units.rpm, 40 * units.deg)
         .add_sample(6000 * units.rpm, 48 * units.deg)
-		.add_sample(7000 * units.rpm, 52 * units.deg)
-		.add_sample(8000 * units.rpm, 55 * units.deg)
+        .add_sample(7000 * units.rpm, 52 * units.deg)
+        .add_sample(8000 * units.rpm, 55 * units.deg)
 
     engine.add_ignition_module(
         chevrolet_ls2_distributor(

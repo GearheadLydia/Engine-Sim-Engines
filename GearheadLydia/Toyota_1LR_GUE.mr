@@ -246,18 +246,18 @@ public node lexus_1lrgue_engine {
         tdc: 54.0 * units.deg // 36 degrees CW from vertical
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 144 * units.deg)
-    rod_journal rj2(angle: 216 * units.deg)
-    rod_journal rj3(angle: 288 * units.deg)
-    rod_journal rj4(angle:  72 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 144 * units.deg)
+    rod_journal rj3(angle: 216 * units.deg)
+    rod_journal rj4(angle: 288 * units.deg)
+    rod_journal rj5(angle:  72 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
 
     piston_parameters piston_params(
         mass: 487 * units.g,
@@ -332,7 +332,7 @@ public node lexus_1lrgue_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire02,
             intake: intake,
             exhaust_system: exhaust,
@@ -342,7 +342,7 @@ public node lexus_1lrgue_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire04,
             intake: intake,
             exhaust_system: exhaust,
@@ -352,7 +352,7 @@ public node lexus_1lrgue_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire06,
             intake: intake,
             exhaust_system: exhaust,
@@ -362,7 +362,7 @@ public node lexus_1lrgue_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire08,
             intake: intake,
             exhaust_system: exhaust,
@@ -372,7 +372,7 @@ public node lexus_1lrgue_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire10,
             intake: intake,
             exhaust_system: exhaust,
@@ -385,7 +385,7 @@ public node lexus_1lrgue_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire01,
             intake: intake,
             exhaust_system: exhaust,
@@ -395,7 +395,7 @@ public node lexus_1lrgue_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire03,
             intake: intake,
             exhaust_system: exhaust,
@@ -405,7 +405,7 @@ public node lexus_1lrgue_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire05,
             intake: intake,
             exhaust_system: exhaust,
@@ -415,7 +415,7 @@ public node lexus_1lrgue_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire07,
             intake: intake,
             exhaust_system: exhaust,
@@ -425,7 +425,7 @@ public node lexus_1lrgue_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire09,
             intake: intake,
             exhaust_system: exhaust,

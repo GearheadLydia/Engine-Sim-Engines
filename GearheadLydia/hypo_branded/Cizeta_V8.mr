@@ -18,7 +18,7 @@ public node cizeta_v16_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 8550 * units.rpm;
-	input limiter_duration: 0.10;
+    input limiter_duration: 0.10;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wireL1, ( 0.0 / 16.0) * cycle)
@@ -64,7 +64,7 @@ public node cizeta_v16_lobe_profile_exh {
 
 public node cizeta_v16_camshaft_builder {
     input in_lobe_profile: cizeta_v16_lobe_profile_int();
-	input ex_lobe_profile: cizeta_v16_lobe_profile_exh();
+    input ex_lobe_profile: cizeta_v16_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 110.0 * units.deg;
@@ -90,13 +90,13 @@ public node cizeta_v16_camshaft_builder {
 
     label rot30(30 * units.deg)
     label rot45(45 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-	// firing order: 15726348
+    // firing order: 15726348
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90) // #1
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90) // #2
@@ -136,9 +136,9 @@ public node cizeta_v16_head {
     input exhaust_camshaft;
     input chamber_volume: 51.0 * units.cc; // guess
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 1.0;
+    input flow_attenuation_ex: 1.0;
     input lift_scale: 50.0;
     alias output __out: head;
 
@@ -201,21 +201,21 @@ public node cizeta_v16 {
     engine engine(
         name: "Cizeta V16",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 8500 * units.rpm,
         throttle_gamma: 1.0,
-		simulation_frequency: 4000
+        simulation_frequency: 4000
     )
 
-	// most dimensions made up
+    // most dimensions made up
     label bore(86.0 * units.mm)
     label stroke(64.5 * units.mm)
     label rod_length(115.0 * units.mm)
     label rod_mass(621.5 * units.g)
-	label piston_mass(400 * units.g)
+    label piston_mass(400 * units.g)
     label compression_height(25.00 * units.mm)
-	label piston_dome(0.00 * units.cc)
-	label deck_clearance(0.5 * units.mm)
+    label piston_dome(0.00 * units.cc)
+    label deck_clearance(0.5 * units.mm)
     label crank_mass(41 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -230,8 +230,8 @@ public node cizeta_v16 {
         disk_moment_of_inertia(mass: 20 * units.kg, radius: 8.0 * units.cm)
     )
 
-	// for display purposes - unfold the stacked engine into two V8s
-	label engine_distance(0)
+    // for display purposes - unfold the stacked engine into two V8s
+    label engine_distance(0)
 
     crankshaft c0(
         throw: stroke / 2,
@@ -245,21 +245,21 @@ public node cizeta_v16 {
         tdc: 135.0 * units.deg // +45 degrees
     )
 
-	// https://gtspeed.us/wp-content/uploads/2016/02/cizeta_v16-640x359.jpg
-	
-	// left side bank, outside-in
-    rod_journal rj0(angle:   0.0 * units.deg)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle:  90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    // https://gtspeed.us/wp-content/uploads/2016/02/cizeta_v16-640x359.jpg
+    
+    // left side bank, outside-in
+    rod_journal rj1(angle:   0.0 * units.deg)
+    rod_journal rj2(angle: -90.0 * units.deg)
+    rod_journal rj3(angle:  90.0 * units.deg)
+    rod_journal rj4(angle: 180.0 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
-	// piston specs are guesses
+    // piston specs are guesses
     piston_parameters piston_params(
         mass: piston_mass,
         //blowby: 0,
@@ -294,65 +294,65 @@ public node cizeta_v16 {
         runner_length: 4.5 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((3.0 * units.inch)/2)
+    
+    label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 700 * units.mm,
-		volume: 700 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 700 * units.mm,
+        volume: 700 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(300 * units.mm)
-	label pipe_length_2(150 * units.mm)
-	label pipe_length_3(0 * units.mm)
-	label pipe_length_4(100 * units.mm)
-	
-	label exhaust_stagger(150 * units.mm)
+    
+    label pipe_length_1(300 * units.mm)
+    label pipe_length_2(150 * units.mm)
+    label pipe_length_3(0 * units.mm)
+    label pipe_length_4(100 * units.mm)
+    
+    label exhaust_stagger(150 * units.mm)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg, position_x: -engine_distance) // Front side of vehicle from left side of engine
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wireL1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wireL2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2
+            primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wireL3,
+            ignition_wire: wires.wireL2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wireL3,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wireL4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4
+            primary_length: pipe_length_4
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg, position_x: -engine_distance) // Rear side of vehicle from left side of engine
@@ -360,38 +360,38 @@ public node cizeta_v16 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wireL5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wireL6,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wireL7,
+            ignition_wire: wires.wireL6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wireL7,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wireL8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger
+            primary_length: pipe_length_4 + exhaust_stagger
         )
 
     engine
@@ -401,15 +401,15 @@ public node cizeta_v16 {
     engine.add_crankshaft(c0)
 
     cizeta_v16_camshaft_builder camshaft(
-	    in_lobe_profile: cizeta_v16_lobe_profile_int(),
-		ex_lobe_profile: cizeta_v16_lobe_profile_exh()
-	)
+        in_lobe_profile: cizeta_v16_lobe_profile_int(),
+        ex_lobe_profile: cizeta_v16_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         cizeta_v16_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
     b1.set_cylinder_head (
@@ -429,9 +429,9 @@ public node cizeta_v16 {
         .add_sample(4000 * units.rpm, 75 * units.deg)
         .add_sample(5000 * units.rpm, 75 * units.deg)
         .add_sample(6000 * units.rpm, 75 * units.deg)
-		.add_sample(7000 * units.rpm, 75 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
-		.add_sample(9000 * units.rpm, 72 * units.deg)
+        .add_sample(7000 * units.rpm, 75 * units.deg)
+        .add_sample(8000 * units.rpm, 75 * units.deg)
+        .add_sample(9000 * units.rpm, 72 * units.deg)
 
     engine.add_ignition_module(
         cizeta_v16_distributor(

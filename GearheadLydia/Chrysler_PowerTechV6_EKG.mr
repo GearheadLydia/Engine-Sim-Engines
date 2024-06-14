@@ -12,7 +12,7 @@ public node chrysler_powertech_v6_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6050 * units.rpm;
-	input limiter_duration: 0.09;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 6.0) * cycle)
@@ -33,15 +33,15 @@ private node wires {
 }
 
 // Wikipedia quoted specs:
-//  Valve Overlap 	25.7°
-// Intake 	
-// Opens (Before Top Dead Center) 	5.6°
-// Closes (After Top Dead Center) 	240.1°
-// Duration 	245.7°
-// Exhaust 	
-// Opens (Before Top Dead Center) 	241.5°
-// Closes (After Top Dead Center) 	20.1°
-// Duration 	261.6° 
+//  Valve Overlap     25.7°
+// Intake     
+// Opens (Before Top Dead Center)     5.6°
+// Closes (After Top Dead Center)     240.1°
+// Duration     245.7°
+// Exhaust     
+// Opens (Before Top Dead Center)     241.5°
+// Closes (After Top Dead Center)     20.1°
+// Duration     261.6° 
 
 // V8 specs:
 // http://www.dodgedakota.net/boards/per/4011.html
@@ -91,14 +91,14 @@ public node chrysler_powertech_v6_camshaft_builder {
     camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
     camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
 
-	label rot30(30 * units.deg)
-	label rot54(54 * units.deg)
-	label rot60(60 * units.deg)
-	label rot72(72 * units.deg)
+    label rot30(30 * units.deg)
+    label rot54(54 * units.deg)
+    label rot60(60 * units.deg)
+    label rot72(72 * units.deg)
     label rot90(90 * units.deg)
-	label rot120(120 * units.deg)
+    label rot120(120 * units.deg)
     label rot360(360 * units.deg)
-	
+    
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot120)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot120)
@@ -134,9 +134,9 @@ public node chrysler_powertech_v6_head {
     input exhaust_camshaft;
     input chamber_volume: 60.0 * units.cc; // calculated from 9.6:1 CR and known specs on V8
     input flip_display: false;
-	
-	input flow_attenuation_in: 0.8;
-	input flow_attenuation_ex: 0.8;
+    
+    input flow_attenuation_in: 0.8;
+    input flow_attenuation_ex: 0.8;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -175,7 +175,7 @@ public node chrysler_powertech_v6_head {
         .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
         .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 2 * units.inch,
@@ -200,22 +200,22 @@ public node chrysler_powertech_v6_37_engine {
     engine engine(
         name: "Chrysler PowerTech V6",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1000 * units.rpm,
+        starter_speed: 1000 * units.rpm,
         redline: 5800 * units.rpm,
         throttle_gamma: 1.0
     )
 
     label bore(93.0 * units.mm)
-	label bore_spacing(104 * units.mm) // 4.09"; not sure how rounded that is
+    label bore_spacing(104 * units.mm) // 4.09"; not sure how rounded that is
     label stroke(90.8 * units.mm)
     label rod_length(153.0 * units.mm) // calculated from 9.6:1 CR, assuming other specs the same
     label rod_mass(700 * units.g)
     label compression_height(31.8 * units.mm) // listed same as V8 by Mahle catalog
-	label piston_mass(400 * units.g)
-	label piston_dome(0 * units.cc) // confirmed flat by Mahle catalog
-	label deck_height((231 + 0.762) * units.mm)
+    label piston_mass(400 * units.g)
+    label piston_dome(0 * units.cc) // confirmed flat by Mahle catalog
+    label deck_height((231 + 0.762) * units.mm)
     label crank_mass(65 * units.lb)
-    label flywheel_mass(50 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -240,20 +240,20 @@ public node chrysler_powertech_v6_37_engine {
         tdc: 45.0 * units.deg // 45 degrees back from right side
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: -30 * units.deg)
-    rod_journal rj2(angle: 120 * units.deg)
-    rod_journal rj3(angle:  90 * units.deg)
-    rod_journal rj4(angle: 240 * units.deg)
-    rod_journal rj5(angle: 210 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: -30 * units.deg)
+    rod_journal rj3(angle: 120 * units.deg)
+    rod_journal rj4(angle:  90 * units.deg)
+    rod_journal rj5(angle: 240 * units.deg)
+    rod_journal rj6(angle: 210 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
         .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -289,55 +289,55 @@ public node chrysler_powertech_v6_37_engine {
         runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((3.0 * units.inch)/2)
+    
+    label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(320.0),
         primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(150.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2900 * units.mm,
-		volume: (2300 * units.mm * circle_area(exhaust_radius)) + (600 * units.mm * circle_area(exhaust_radius) * 2)
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2900 * units.mm,
+        volume: (2300 * units.mm * circle_area(exhaust_radius)) + (600 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(120 * units.mm)
-	label pipe_length_2( 60 * units.mm)
-	label pipe_length_3(  0 * units.mm)
+    
+    label pipe_length_1(120 * units.mm)
+    label pipe_length_2( 60 * units.mm)
+    label pipe_length_3(  0 * units.mm)
 
-	label exhaust_stagger(70 * units.mm)
+    label exhaust_stagger(70 * units.mm)
 
     cylinder_bank b0(bank_params, angle: -45 * units.deg) // R (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+            primary_length: pipe_length_3 + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -345,29 +345,29 @@ public node chrysler_powertech_v6_37_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
+            primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
+            rod_journal: rj6,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_3
         )
 
     engine
@@ -377,9 +377,9 @@ public node chrysler_powertech_v6_37_engine {
     engine.add_crankshaft(c0)
 
     chrysler_powertech_v6_camshaft_builder camshaft(
-		in_lobe_profile: chrysler_powertech_v6_lobe_profile_int(),
-		ex_lobe_profile: chrysler_powertech_v6_lobe_profile_exh()
-	)
+        in_lobe_profile: chrysler_powertech_v6_lobe_profile_int(),
+        ex_lobe_profile: chrysler_powertech_v6_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         chrysler_powertech_v6_head(

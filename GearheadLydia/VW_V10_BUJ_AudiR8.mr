@@ -243,18 +243,18 @@ public node audi_v10_fsi_buj_engine {
         tdc: 135.0 * units.deg // -45 degrees
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 288 * units.deg)
-    rod_journal rj2(angle: 72 * units.deg)
-    rod_journal rj3(angle: 216 * units.deg)
-    rod_journal rj4(angle: 144 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 288 * units.deg)
+    rod_journal rj3(angle:  72 * units.deg)
+    rod_journal rj4(angle: 216 * units.deg)
+    rod_journal rj5(angle: 144 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
 
 
     piston_parameters piston_params(
@@ -333,7 +333,7 @@ public node audi_v10_fsi_buj_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire01,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -343,7 +343,7 @@ public node audi_v10_fsi_buj_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire02,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -353,7 +353,7 @@ public node audi_v10_fsi_buj_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire03,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -363,7 +363,7 @@ public node audi_v10_fsi_buj_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire04,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -373,7 +373,7 @@ public node audi_v10_fsi_buj_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire05,
             intake: intakeL,
             exhaust_system: exhaust,
@@ -386,7 +386,7 @@ public node audi_v10_fsi_buj_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire06,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -396,7 +396,7 @@ public node audi_v10_fsi_buj_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire07,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -406,7 +406,7 @@ public node audi_v10_fsi_buj_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire08,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -416,7 +416,7 @@ public node audi_v10_fsi_buj_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire09,
             intake: intakeR,
             exhaust_system: exhaust,
@@ -426,7 +426,7 @@ public node audi_v10_fsi_buj_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire10,
             intake: intakeR,
             exhaust_system: exhaust,

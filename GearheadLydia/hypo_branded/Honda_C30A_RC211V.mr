@@ -12,14 +12,14 @@ public node honda_c30a_v5_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 8250 * units.rpm;
-	input limiter_duration: 0.09;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1,  0.0  * units.deg)
             .connect_wire(wires.wire2, 254.5 * units.deg)
-			.connect_wire(wires.wire5, 360.0 * units.deg)
-			.connect_wire(wires.wire3, 464.5 * units.deg)
-			.connect_wire(wires.wire4, 644.5 * units.deg);
+            .connect_wire(wires.wire5, 360.0 * units.deg)
+            .connect_wire(wires.wire3, 464.5 * units.deg)
+            .connect_wire(wires.wire4, 644.5 * units.deg);
 }
 
 private node wires {
@@ -72,7 +72,7 @@ public node honda_c30a_v5_lobe_profile_exh_hi {
 
 public node honda_c30a_v5_camshaft_builder {
     input in_lobe_profile_lo: honda_c30a_v5_lobe_profile_int_lo();
-	input ex_lobe_profile_lo: honda_c30a_v5_lobe_profile_exh_lo();
+    input ex_lobe_profile_lo: honda_c30a_v5_lobe_profile_exh_lo();
     input in_lobe_profile_hi: honda_c30a_v5_lobe_profile_int_hi();
     input ex_lobe_profile_hi: honda_c30a_v5_lobe_profile_exh_hi();
     input lobe_separation: 110.0 * units.deg;
@@ -82,8 +82,8 @@ public node honda_c30a_v5_camshaft_builder {
     input exhaust_lobe_center_hi: 104.0 * units.deg;
     input advance_in_lo: 0.0 * units.deg;
     input advance_ex_lo: 0.0 * units.deg;
-	input advance_in_hi: 0.0 * units.deg;
-	input advance_ex_hi: 0.0 * units.deg;
+    input advance_in_hi: 0.0 * units.deg;
+    input advance_ex_hi: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
     output intake_cam_F_lo: _intake_cam_F_lo;
@@ -115,7 +115,7 @@ public node honda_c30a_v5_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -123,39 +123,39 @@ public node honda_c30a_v5_camshaft_builder {
 
     _intake_cam_F_lo
         .add_lobe(rot360 + intake_lobe_center_lo +  0.0  * units.deg) // #1
-		.add_lobe(rot360 + intake_lobe_center_lo + 464.5 * units.deg) // #3
-		.add_lobe(rot360 + intake_lobe_center_lo + 360.0 * units.deg) // #5
+        .add_lobe(rot360 + intake_lobe_center_lo + 464.5 * units.deg) // #3
+        .add_lobe(rot360 + intake_lobe_center_lo + 360.0 * units.deg) // #5
 
     _intake_cam_R_lo
         .add_lobe(rot360 + intake_lobe_center_lo + 254.5 * units.deg) // #2
-		.add_lobe(rot360 + intake_lobe_center_lo + 644.5 * units.deg) // #4
+        .add_lobe(rot360 + intake_lobe_center_lo + 644.5 * units.deg) // #4
 
-	_exhaust_cam_F_lo
+    _exhaust_cam_F_lo
         .add_lobe(rot360 - exhaust_lobe_center_lo +  0.0  * units.deg) // #1
-		.add_lobe(rot360 - exhaust_lobe_center_lo + 464.5 * units.deg) // #3
-		.add_lobe(rot360 - exhaust_lobe_center_lo + 360.0 * units.deg) // #5
+        .add_lobe(rot360 - exhaust_lobe_center_lo + 464.5 * units.deg) // #3
+        .add_lobe(rot360 - exhaust_lobe_center_lo + 360.0 * units.deg) // #5
 
-	_exhaust_cam_R_lo
+    _exhaust_cam_R_lo
         .add_lobe(rot360 - exhaust_lobe_center_lo + 254.5 * units.deg) // #2
-		.add_lobe(rot360 - exhaust_lobe_center_lo + 644.5 * units.deg) // #4
+        .add_lobe(rot360 - exhaust_lobe_center_lo + 644.5 * units.deg) // #4
 
     _intake_cam_F_hi
         .add_lobe(rot360 + intake_lobe_center_hi +  0.0  * units.deg) // #1
-		.add_lobe(rot360 + intake_lobe_center_hi + 464.5 * units.deg) // #3
-		.add_lobe(rot360 + intake_lobe_center_hi + 360.0 * units.deg) // #5
+        .add_lobe(rot360 + intake_lobe_center_hi + 464.5 * units.deg) // #3
+        .add_lobe(rot360 + intake_lobe_center_hi + 360.0 * units.deg) // #5
 
     _intake_cam_R_hi
         .add_lobe(rot360 + intake_lobe_center_hi + 254.5 * units.deg) // #2
-		.add_lobe(rot360 + intake_lobe_center_hi + 644.5 * units.deg) // #4
+        .add_lobe(rot360 + intake_lobe_center_hi + 644.5 * units.deg) // #4
 
-	_exhaust_cam_F_hi
+    _exhaust_cam_F_hi
         .add_lobe(rot360 - exhaust_lobe_center_hi +  0.0  * units.deg) // #1
-		.add_lobe(rot360 - exhaust_lobe_center_hi + 464.5 * units.deg) // #3
-		.add_lobe(rot360 - exhaust_lobe_center_hi + 360.0 * units.deg) // #5
+        .add_lobe(rot360 - exhaust_lobe_center_hi + 464.5 * units.deg) // #3
+        .add_lobe(rot360 - exhaust_lobe_center_hi + 360.0 * units.deg) // #5
 
-	_exhaust_cam_R_hi
+    _exhaust_cam_R_hi
         .add_lobe(rot360 - exhaust_lobe_center_hi + 254.5 * units.deg) // #2
-		.add_lobe(rot360 - exhaust_lobe_center_hi + 644.5 * units.deg) // #4
+        .add_lobe(rot360 - exhaust_lobe_center_hi + 644.5 * units.deg) // #4
 }
 
 private node add_flow_sample {
@@ -169,13 +169,13 @@ private node add_flow_sample {
 
 public node honda_c30a_v5_head {
     input cam_in_lo;
-	input cam_ex_lo;
+    input cam_ex_lo;
     input cam_in_hi;
-	input cam_ex_hi;
+    input cam_ex_hi;
     input chamber_volume: 51.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation: 1.1;
+    
+    input flow_attenuation: 1.1;
     input lift_scale: 45.0;
     alias output __out: head;
 
@@ -215,7 +215,7 @@ public node honda_c30a_v5_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation)
 
-		
+        
     generic_cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: 30.0 * units.cc,
@@ -225,13 +225,13 @@ public node honda_c30a_v5_head {
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
-		valvetrain: vtec_valvetrain(
+        valvetrain: vtec_valvetrain(
             vtec_intake_camshaft: cam_in_hi,
             vtec_exhaust_camshaft: cam_ex_hi,
             intake_camshaft: cam_in_lo,
             exhaust_camshaft: cam_ex_lo,
             min_rpm: 5800 * units.rpm
-		),
+        ),
         flip_display: flip_display
     )
 }
@@ -246,10 +246,10 @@ public node c30a_v5 {
     label stroke(78.0 * units.mm)
     label rod_length(152.5 * units.mm)
     label rod_mass(350 * units.g) // guesstimate based on aftermarket chromoly rods - stock rods are titanium
-	label piston_mass(400 * units.g)
+    label piston_mass(400 * units.g)
     label compression_height(1.184 * units.inch)
-	label piston_dome(0.0 * units.cc)
-	label deck_height(8.715 * units.inch)
+    label piston_dome(0.0 * units.cc)
+    label deck_height(8.715 * units.inch)
     label crank_mass(45 * units.lb)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(5 * units.inch)
@@ -257,10 +257,10 @@ public node c30a_v5 {
     engine engine(
         name: "Honda C30A RC211V",
         starter_torque: 300 * units.lb_ft,
-		starter_speed: 600 * units.rpm,
+        starter_speed: 600 * units.rpm,
         redline: 8000 * units.rpm,
-        throttle_gamma: 2.0,
-		simulation_frequency: 7500
+        throttle_gamma: 1.0,
+        simulation_frequency: 7500
     )
 
     label crank_moment(
@@ -277,21 +277,21 @@ public node c30a_v5 {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
         tdc: 52.25 * units.deg
     )
 
-    rod_journal rj1(angle:  0.0  * units.deg)
-    rod_journal rj2(angle: 105.5 * units.deg) // 360 - 105.5
-    rod_journal rj3(angle:  0.0  * units.deg)
+    rod_journal rj2(angle:  0.0  * units.deg)
+    rod_journal rj3(angle: 105.5 * units.deg) // 360 - 105.5
+    rod_journal rj4(angle:  0.0  * units.deg)
 
     c0
-        .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -344,7 +344,7 @@ public node c30a_v5 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaustF
@@ -352,7 +352,7 @@ public node c30a_v5 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaustF
@@ -360,7 +360,7 @@ public node c30a_v5 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.2)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaustF
@@ -371,7 +371,7 @@ public node c30a_v5 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaustR
@@ -379,7 +379,7 @@ public node c30a_v5 {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaustR
@@ -396,18 +396,18 @@ public node c30a_v5 {
     bF.set_cylinder_head (
         honda_c30a_v5_head(
             cam_in_lo: camshaft.intake_cam_F_lo,
-			cam_in_hi: camshaft.intake_cam_F_hi,
+            cam_in_hi: camshaft.intake_cam_F_hi,
             cam_ex_lo: camshaft.exhaust_cam_F_lo,
-			cam_ex_hi: camshaft.exhaust_cam_F_hi,
+            cam_ex_hi: camshaft.exhaust_cam_F_hi,
             flip_display: false
         )
     )
     bR.set_cylinder_head (
         honda_c30a_v5_head(
             cam_in_lo: camshaft.intake_cam_R_lo,
-			cam_in_hi: camshaft.intake_cam_R_hi,
+            cam_in_hi: camshaft.intake_cam_R_hi,
             cam_ex_lo: camshaft.exhaust_cam_R_lo,
-			cam_ex_hi: camshaft.exhaust_cam_R_hi,
+            cam_ex_hi: camshaft.exhaust_cam_R_hi,
             flip_display: true
         )
     )
@@ -421,9 +421,9 @@ public node c30a_v5 {
         .add_sample(4000 * units.rpm, 55 * units.deg)
         .add_sample(5000 * units.rpm, 60 * units.deg)
         .add_sample(6000 * units.rpm, 65 * units.deg)
-		.add_sample(7000 * units.rpm, 70 * units.deg)
-		.add_sample(8000 * units.rpm, 75 * units.deg)
-		.add_sample(9000 * units.rpm, 75 * units.deg)
+        .add_sample(7000 * units.rpm, 70 * units.deg)
+        .add_sample(8000 * units.rpm, 75 * units.deg)
+        .add_sample(9000 * units.rpm, 75 * units.deg)
 
     engine.add_ignition_module(
         honda_c30a_v5_distributor(

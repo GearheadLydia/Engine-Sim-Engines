@@ -12,21 +12,21 @@ public node lamborghini_v12_diablo_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7750 * units.rpm;
-	input limiter_duration: 0.09;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, (0.0/12.0) * cycle)
             .connect_wire(wires.wire07, (1.0/12.0) * cycle)
-			.connect_wire(wires.wire04, (2.0/12.0) * cycle)
+            .connect_wire(wires.wire04, (2.0/12.0) * cycle)
             .connect_wire(wires.wire10, (3.0/12.0) * cycle)
             .connect_wire(wires.wire02, (4.0/12.0) * cycle)
-			.connect_wire(wires.wire08, (5.0/12.0) * cycle)
+            .connect_wire(wires.wire08, (5.0/12.0) * cycle)
             .connect_wire(wires.wire06, (6.0/12.0) * cycle)
             .connect_wire(wires.wire12, (7.0/12.0) * cycle)
-			.connect_wire(wires.wire03, (8.0/12.0) * cycle)
+            .connect_wire(wires.wire03, (8.0/12.0) * cycle)
             .connect_wire(wires.wire09, (9.0/12.0) * cycle)
             .connect_wire(wires.wire05, (10.0/12.0) * cycle)
-			.connect_wire(wires.wire11, (11.0/12.0) * cycle);
+            .connect_wire(wires.wire11, (11.0/12.0) * cycle);
 }
 
 private node wires {
@@ -42,16 +42,6 @@ private node wires {
     output wire10: ignition_wire();
     output wire11: ignition_wire();
     output wire12: ignition_wire();
-}
-
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
 public node lamborghini_v12_diablo_lobe_profile_int {
@@ -76,7 +66,7 @@ public node lamborghini_v12_diablo_lobe_profile_exh {
 
 public node lamborghini_v12_diablo_camshaft_builder {
     input in_lobe_profile: lamborghini_v12_diablo_lobe_profile_int();
-	input ex_lobe_profile: lamborghini_v12_diablo_lobe_profile_exh();
+    input ex_lobe_profile: lamborghini_v12_diablo_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 105.0 * units.deg;
@@ -106,39 +96,39 @@ public node lamborghini_v12_diablo_camshaft_builder {
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
-	
-	//firing order: 1 7 4 10 2 8 6 12 3 9 5 11
-	
+    
+    //firing order: 1 7 4 10 2 8 6 12 3 9 5 11
+    
     _intake_cam_0
-		.add_lobe(rot360 + intake_lobe_center +  7 * rot60) // #12
-		.add_lobe(rot360 + intake_lobe_center + 11 * rot60) // #11
-		.add_lobe(rot360 + intake_lobe_center +  3 * rot60) // #10
-		.add_lobe(rot360 + intake_lobe_center +  9 * rot60) //  #9
-		.add_lobe(rot360 + intake_lobe_center +  5 * rot60) //  #8
+        .add_lobe(rot360 + intake_lobe_center +  7 * rot60) // #12
+        .add_lobe(rot360 + intake_lobe_center + 11 * rot60) // #11
+        .add_lobe(rot360 + intake_lobe_center +  3 * rot60) // #10
+        .add_lobe(rot360 + intake_lobe_center +  9 * rot60) //  #9
+        .add_lobe(rot360 + intake_lobe_center +  5 * rot60) //  #8
         .add_lobe(rot360 + intake_lobe_center +  1 * rot60) //  #7
 
     _intake_cam_1
-		.add_lobe(rot360 + intake_lobe_center +  0 * rot60)  // #1
-		.add_lobe(rot360 + intake_lobe_center +  4 * rot60)  // #2
-		.add_lobe(rot360 + intake_lobe_center +  8 * rot60)  // #3
-		.add_lobe(rot360 + intake_lobe_center +  2 * rot60)  // #4
-		.add_lobe(rot360 + intake_lobe_center + 10 * rot60)  // #5
+        .add_lobe(rot360 + intake_lobe_center +  0 * rot60)  // #1
+        .add_lobe(rot360 + intake_lobe_center +  4 * rot60)  // #2
+        .add_lobe(rot360 + intake_lobe_center +  8 * rot60)  // #3
+        .add_lobe(rot360 + intake_lobe_center +  2 * rot60)  // #4
+        .add_lobe(rot360 + intake_lobe_center + 10 * rot60)  // #5
         .add_lobe(rot360 + intake_lobe_center +  6 * rot60)  // #6
 
     _exhaust_cam_0
-		.add_lobe(rot360 - exhaust_lobe_center +  7 * rot60) // #12
-		.add_lobe(rot360 - exhaust_lobe_center + 11 * rot60) // #11
-		.add_lobe(rot360 - exhaust_lobe_center +  3 * rot60) // #10
-		.add_lobe(rot360 - exhaust_lobe_center +  9 * rot60) //  #9
-		.add_lobe(rot360 - exhaust_lobe_center +  5 * rot60) //  #8
+        .add_lobe(rot360 - exhaust_lobe_center +  7 * rot60) // #12
+        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot60) // #11
+        .add_lobe(rot360 - exhaust_lobe_center +  3 * rot60) // #10
+        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot60) //  #9
+        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot60) //  #8
         .add_lobe(rot360 - exhaust_lobe_center +  1 * rot60) //  #7
 
     _exhaust_cam_1
-		.add_lobe(rot360 - exhaust_lobe_center +  0 * rot60)  // #1
-		.add_lobe(rot360 - exhaust_lobe_center +  4 * rot60)  // #2
-		.add_lobe(rot360 - exhaust_lobe_center +  8 * rot60)  // #3
-		.add_lobe(rot360 - exhaust_lobe_center +  2 * rot60)  // #4
-		.add_lobe(rot360 - exhaust_lobe_center + 10 * rot60)  // #5
+        .add_lobe(rot360 - exhaust_lobe_center +  0 * rot60)  // #1
+        .add_lobe(rot360 - exhaust_lobe_center +  4 * rot60)  // #2
+        .add_lobe(rot360 - exhaust_lobe_center +  8 * rot60)  // #3
+        .add_lobe(rot360 - exhaust_lobe_center +  2 * rot60)  // #4
+        .add_lobe(rot360 - exhaust_lobe_center + 10 * rot60)  // #5
         .add_lobe(rot360 - exhaust_lobe_center +  6 * rot60)  // #6
 }
 
@@ -156,8 +146,8 @@ public node lamborghini_v12_diablo_head {
     input exhaust_camshaft;
     input chamber_volume: 35.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation: 0.95;
+    
+    input flow_attenuation: 0.95;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -193,7 +183,7 @@ public node lamborghini_v12_diablo_head {
         .add_flow_sample(11 * lift_scale, 176 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 176 * flow_attenuation)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.2 * units.inch) * 9 * units.inch,
@@ -216,10 +206,10 @@ public node lamborghini_diablo_v12_60 {
     label stroke(84.0 * units.mm)
     label rod_length(132.0 * units.mm) // idk, fake
     label rod_mass(200 * units.g)
-	label piston_mass(250 * units.g)
+    label piston_mass(250 * units.g)
     label compression_height(30.00 * units.mm) // idk, fake
-	label piston_dome(15.0 * units.cc)
-	label deck_clearance(1.0 * units.mm) // idk, fake
+    label piston_dome(15.0 * units.cc)
+    label deck_clearance(1.0 * units.mm) // idk, fake
     label crank_mass(3.8 * units.kg)
     label flywheel_mass(16 * units.kg)
     label flywheel_radius(6 * units.inch)
@@ -230,8 +220,8 @@ public node lamborghini_diablo_v12_60 {
         starter_speed: 1500 * units.rpm,
         redline: 7500 * units.rpm,
         throttle_gamma: 1.0,
-		jitter: 0.8,
-		simulation_frequency: 6000
+        jitter: 0.8,
+        simulation_frequency: 6000
     )
 
     wires wires()
@@ -257,20 +247,20 @@ public node lamborghini_diablo_v12_60 {
         tdc: 120.0 * units.deg
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 240 * units.deg)
-    rod_journal rj2(angle: 120 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: 240 * units.deg)
     rod_journal rj3(angle: 120 * units.deg)
-    rod_journal rj4(angle: 240 * units.deg)
-    rod_journal rj5(angle:  0  * units.deg)
-	
+    rod_journal rj4(angle: 120 * units.deg)
+    rod_journal rj5(angle: 240 * units.deg)
+    rod_journal rj6(angle:  0  * units.deg)
+    
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
         .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -295,7 +285,7 @@ public node lamborghini_diablo_v12_60 {
         deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
-	intake intakeL(
+    intake intakeL(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(400.0),
@@ -305,9 +295,9 @@ public node lamborghini_diablo_v12_60 {
         runner_flow_rate: k_carb(300.0),
         runner_length: 8.5 * units.inch,
         velocity_decay: 0.1
-	)
+    )
 
-	intake intakeR(
+    intake intakeR(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(400.0),
@@ -317,143 +307,143 @@ public node lamborghini_diablo_v12_60 {
         runner_flow_rate: k_carb(300.0),
         runner_length: 8.5 * units.inch,
         velocity_decay: 0.1
-	)
+    )
 
-	label exhaust_radius((3.5 * units.inch)/2)
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1800.0),
         primary_tube_length: 18.0 * units.inch,
         primary_flow_rate: k_carb(430.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 4,
-		length: 450 * units.mm,
-		volume: 450 * units.mm * circle_area(exhaust_radius) * 2
+        collector_cross_section_area: circle_area(exhaust_radius) * 4,
+        length: 450 * units.mm,
+        volume: 450 * units.mm * circle_area(exhaust_radius) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(40 * units.mm)
-	label pipe_length_2(35 * units.mm)
-	label pipe_length_3(20 * units.mm)
-	label pipe_length_4(0 * units.mm)
-	label pipe_length_5(15 * units.mm)
-	label pipe_length_6(30 * units.mm)
-	
-	label exhaust_stagger_LR(20 * units.mm)
+    
+    label pipe_length_1(40 * units.mm)
+    label pipe_length_2(35 * units.mm)
+    label pipe_length_3(20 * units.mm)
+    label pipe_length_4(0 * units.mm)
+    label pipe_length_5(15 * units.mm)
+    label pipe_length_6(30 * units.mm)
+    
+    label exhaust_stagger_LR(20 * units.mm)
  
     cylinder_bank b0(bank_params, angle: -30 * units.deg) // R (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire12,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger_LR
+            primary_length: pipe_length_1 + exhaust_stagger_LR
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire11,
-            intake: intakeR,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger_LR
-        )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire10,
+            ignition_wire: wires.wire11,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger_LR
+            primary_length: pipe_length_2 + exhaust_stagger_LR
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            ignition_wire: wires.wire09,
+            ignition_wire: wires.wire10,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger_LR
+            primary_length: pipe_length_3 + exhaust_stagger_LR
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
-            ignition_wire: wires.wire08,
+            ignition_wire: wires.wire09,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5 + exhaust_stagger_LR
+            primary_length: pipe_length_4 + exhaust_stagger_LR
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
+            ignition_wire: wires.wire08,
+            intake: intakeR,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_5 + exhaust_stagger_LR
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj6,
             ignition_wire: wires.wire07,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_6 + exhaust_stagger_LR
+            primary_length: pipe_length_6 + exhaust_stagger_LR
         )
-		
+        
     cylinder_bank b1(bank_params, angle: 30 * units.deg) // L (second)
     b1
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire01,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
+            primary_length: pipe_length_1
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire02,
-            intake: intakeL,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2
-        )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire03,
+            ignition_wire: wires.wire02,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_2
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            ignition_wire: wires.wire04,
+            ignition_wire: wires.wire03,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4
+            primary_length: pipe_length_3
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
-            ignition_wire: wires.wire05,
+            ignition_wire: wires.wire04,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5
+            primary_length: pipe_length_4
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
+            ignition_wire: wires.wire05,
+            intake: intakeL,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_5
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj6,
             ignition_wire: wires.wire06,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_6
+            primary_length: pipe_length_6
         )
 
     engine
@@ -463,9 +453,9 @@ public node lamborghini_diablo_v12_60 {
     engine.add_crankshaft(c0)
 
     lamborghini_v12_diablo_camshaft_builder camshaft(
-	    in_lobe_profile: lamborghini_v12_diablo_lobe_profile_int(),
-		ex_lobe_profile: lamborghini_v12_diablo_lobe_profile_exh()
-	)
+        in_lobe_profile: lamborghini_v12_diablo_lobe_profile_int(),
+        ex_lobe_profile: lamborghini_v12_diablo_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         lamborghini_v12_diablo_head(
@@ -478,7 +468,7 @@ public node lamborghini_diablo_v12_60 {
         lamborghini_v12_diablo_head(
             intake_camshaft: camshaft.intake_cam_1,
             exhaust_camshaft: camshaft.exhaust_cam_1,
-			flip_display: true
+            flip_display: true
         )
     )
 

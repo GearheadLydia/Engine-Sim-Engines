@@ -13,7 +13,7 @@ public node ford_windsor_58cobra_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6250 * units.rpm;
-	input limiter_duration: 0.09;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -59,7 +59,7 @@ public node ford_windsor_58cobra_lobe_profile_exh {
 
 public node ford_windsor_58cobra_camshaft_builder {
     input in_lobe_profile: ford_windsor_58cobra_lobe_profile_int();
-	input ex_lobe_profile: ford_windsor_58cobra_lobe_profile_exh();
+    input ex_lobe_profile: ford_windsor_58cobra_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 112.0 * units.deg;
@@ -86,7 +86,7 @@ public node ford_windsor_58cobra_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -131,8 +131,8 @@ public node ford_windsor_58cobra_head {
     input exhaust_camshaft;
     input chamber_volume: 60.5 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation: 0.85;
+    
+    input flow_attenuation: 0.85;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -168,7 +168,7 @@ public node ford_windsor_58cobra_head {
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.05 * units.inch) * 5 * units.inch,
@@ -193,24 +193,24 @@ public node Windsor50Cobra {
     engine engine(
         name: "Ford Windsor Cobra",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 900 * units.rpm,
+        starter_speed: 900 * units.rpm,
         redline: 6000 * units.rpm,
         throttle_gamma: 1.0
-		//jitter: 0.3,
-		//hf_gain: 0.005
+        //jitter: 0.3,
+        //hf_gain: 0.005
     )
 
     label bore(4 * units.inch)
-	label bore_spacing(4.38 * units.inch)
+    label bore_spacing(4.38 * units.inch)
     label stroke(3.5 * units.inch)
     label rod_length(5.956 * units.inch)
     label rod_mass(618 * units.g) // carried over, incorrect
     label compression_height(1.769 * units.inch)
-	label piston_mass(361 * units.g) // carried over, incorrect
-	label piston_dome(5 * units.cc)
-	label deck_height((9.503 * units.inch) + (40 * units.thou))
+    label piston_mass(361 * units.g) // carried over, incorrect
+    label piston_dome(5 * units.cc)
+    label deck_height((9.503 * units.inch) + (40 * units.thou))
     label crank_mass(55 * units.lb)
-    label flywheel_mass(50 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -235,16 +235,16 @@ public node Windsor50Cobra {
         tdc: 135.0 * units.deg // -45 degrees
     )
 
-    rod_journal rj0(angle:   0.0 * units.deg)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle:  90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 270 * units.deg)
+    rod_journal rj3(angle:  90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -281,65 +281,65 @@ public node Windsor50Cobra {
         runner_length: 6.5 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((3.0 * units.inch)/2)
+    
+    label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 9.0 * units.inch,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2600 * units.mm,
-		volume: 2600 * units.mm * circle_area(exhaust_radius) * 2
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2600 * units.mm,
+        volume: 2600 * units.mm * circle_area(exhaust_radius) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 
-	label pipe_length_1(2.7 * bore_spacing)
-	label pipe_length_2(1.8 * bore_spacing)
-	label pipe_length_3(0.9 * bore_spacing)
-	label pipe_length_4(0.0 * bore_spacing)
-	
-	label exhaust_stagger(0.2 * bore_spacing)
+    label pipe_length_1(2.7 * bore_spacing)
+    label pipe_length_2(1.8 * bore_spacing)
+    label pipe_length_3(0.9 * bore_spacing)
+    label pipe_length_4(0.0 * bore_spacing)
+    
+    label exhaust_stagger(0.2 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger
+            primary_length: pipe_length_4 + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -347,38 +347,38 @@ public node Windsor50Cobra {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire6,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2
+            primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire7,
+            ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire7,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4
+            primary_length: pipe_length_4
         )
 
     engine
@@ -388,15 +388,15 @@ public node Windsor50Cobra {
     engine.add_crankshaft(c0)
 
     ford_windsor_58cobra_camshaft_builder camshaft(
-	    in_lobe_profile: ford_windsor_58cobra_lobe_profile_int(),
-		ex_lobe_profile: ford_windsor_58cobra_lobe_profile_exh()
-	)
+        in_lobe_profile: ford_windsor_58cobra_lobe_profile_int(),
+        ex_lobe_profile: ford_windsor_58cobra_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         ford_windsor_58cobra_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
     b1.set_cylinder_head (
@@ -416,7 +416,7 @@ public node Windsor50Cobra {
         .add_sample(4000 * units.rpm, 30 * units.deg)
         .add_sample(5000 * units.rpm, 26 * units.deg)
         .add_sample(6000 * units.rpm, 22 * units.deg)
-		.add_sample(7000 * units.rpm, 22 * units.deg)
+        .add_sample(7000 * units.rpm, 22 * units.deg)
 
     engine.add_ignition_module(
         ford_windsor_58cobra_distributor(

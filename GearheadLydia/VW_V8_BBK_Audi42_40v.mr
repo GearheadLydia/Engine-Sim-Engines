@@ -235,16 +235,16 @@ public node audi_v8_bbk_engine {
         tdc: 135.0 * units.deg // -45 degrees
     )
 
-    rod_journal rj0(angle: 0.0)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle: 90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 270 * units.deg)
+    rod_journal rj3(angle:  90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -308,7 +308,7 @@ public node audi_v8_bbk_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire1,
@@ -318,7 +318,7 @@ public node audi_v8_bbk_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire2,
@@ -328,7 +328,7 @@ public node audi_v8_bbk_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire3,
@@ -338,7 +338,7 @@ public node audi_v8_bbk_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire4,
@@ -351,7 +351,7 @@ public node audi_v8_bbk_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire5,
@@ -361,7 +361,7 @@ public node audi_v8_bbk_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire6,
@@ -371,7 +371,7 @@ public node audi_v8_bbk_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire7,
@@ -381,7 +381,7 @@ public node audi_v8_bbk_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             intake: intake,
             exhaust_system: exhaust,
             ignition_wire: wires.wire8,

@@ -26,16 +26,6 @@ private node wires {
     output wire4: ignition_wire();
 }
 
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
-}
-
 // http://www.jimwolftechnology.com/wolfpdf/CAM_SPEC_CARD_QR25DE_JWT.pdf
 // https://www.b15u.com/threads/all-qr25-cam-specs.3547/
 // https://www.briancrower.com/makes/nissan/qr25.shtml
@@ -186,7 +176,7 @@ public node nissan_qr25de_engine {
     label lean_angle(0 * units.deg)
 
     label bore(89.0 * units.mm)
-	label bore_spacing(96.5 * units.mm) // assumption - must be same as SR/KA; assumed same as RB
+    label bore_spacing(96.5 * units.mm) // assumption - must be same as SR/KA; assumed same as RB
     label stroke(100.0 * units.mm)
     label rod_length(143.0 * units.mm)
     label rod_mass(500 * units.g)
@@ -221,16 +211,16 @@ public node nissan_qr25de_engine {
         tdc: 90.0 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 180 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
     rod_journal rj2(angle: 180 * units.deg)
-    rod_journal rj3(angle:  0  * units.deg)
+    rod_journal rj3(angle: 180 * units.deg)
+    rod_journal rj4(angle:  0  * units.deg)
     
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -286,7 +276,7 @@ public node nissan_qr25de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
@@ -296,7 +286,7 @@ public node nissan_qr25de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
@@ -306,7 +296,7 @@ public node nissan_qr25de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
@@ -316,7 +306,7 @@ public node nissan_qr25de_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,

@@ -10,15 +10,15 @@ public node nissan_l24_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7300 * units.rpm;
-	input limiter_duration: 0.1;
+    input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/6.0) * cycle)
             .connect_wire(wires.wire5, (1.0/6.0) * cycle)
-			.connect_wire(wires.wire3, (2.0/6.0) * cycle)
-			.connect_wire(wires.wire6, (3.0/6.0) * cycle)
-			.connect_wire(wires.wire2, (4.0/6.0) * cycle)
-			.connect_wire(wires.wire4, (5.0/6.0) * cycle);
+            .connect_wire(wires.wire3, (2.0/6.0) * cycle)
+            .connect_wire(wires.wire6, (3.0/6.0) * cycle)
+            .connect_wire(wires.wire2, (4.0/6.0) * cycle)
+            .connect_wire(wires.wire4, (5.0/6.0) * cycle);
 }
 
 private node wires {
@@ -28,16 +28,6 @@ private node wires {
     output wire4: ignition_wire();
     output wire5: ignition_wire();
     output wire6: ignition_wire();
-}
-
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
 
@@ -65,10 +55,10 @@ public node nissan_l24_lobe_profile_exh {
 
 public node nissan_l24_camshaft_builder {
     input lobe_profile: nissan_l24_lobe_profile_int();
-	input ex_lobe_profile: nissan_l24_lobe_profile_exh();
+    input ex_lobe_profile: nissan_l24_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-	input lobe_separation: 109.0 * units.deg;
+    input lobe_separation: 109.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
     input advance: 1.0 * units.deg;
@@ -94,19 +84,19 @@ public node nissan_l24_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center)
-		.add_lobe(rot360 + intake_lobe_center + 4 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 2 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 5 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 1 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 3 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 4 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 5 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot120)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 5 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 3 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot120)
 }
 
 private node add_flow_sample {
@@ -123,15 +113,15 @@ public node nissan_l24_head {
     input exhaust_camshaft;
     input chamber_volume: 47.0 * units.cc; // 47cc for E88 head casting (1971+), 42.4 for E31 head casting (1970 only)
     input flip_display: false;
-	
-	// reference material: https://www.viczcar.com/forums/topic/4286-overview-of-l6-engine-heads/
+    
+    // reference material: https://www.viczcar.com/forums/topic/4286-overview-of-l6-engine-heads/
 
-	input flow_attenuation_in: 0.6; // astonishingly similar maximum flow to a ported E88
-	input flow_attenuation_ex: 0.6;
+    input flow_attenuation_in: 0.6; // astonishingly similar maximum flow to a ported E88
+    input flow_attenuation_ex: 0.6;
     input lift_scale: 1.0 / 1.429; // rocker ratio
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(1.0 * units.mm * lift_scale)
     intake_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
@@ -149,7 +139,7 @@ public node nissan_l24_head {
         .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
         .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(1.0 * units.mm * lift_scale)
     exhaust_flow
         .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
         .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
@@ -167,7 +157,7 @@ public node nissan_l24_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.1 * units.inch) * 3 * units.inch,
@@ -195,21 +185,21 @@ public node nissan_l24_engine {
         starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
         throttle_gamma: 1.0,
-		hf_gain: 0.1,
-		jitter: 0.5
+        hf_gain: 0.1,
+        jitter: 0.5
     )
-	
-	label lean_angle(0 * units.deg)
+    
+    label lean_angle(0 * units.deg)
 
     label bore(83.0 * units.mm)
-	label bore_spacing(96.5 * units.mm) // actually 98mm between 3-4, but 96.5mm everywhere else
+    label bore_spacing(96.5 * units.mm) // actually 98mm between 3-4, but 96.5mm everywhere else
     label stroke(73.7 * units.mm)
     label rod_length(132.97 * units.mm)
     label rod_mass(250 * units.g)
-	label piston_mass(347 * units.g)
+    label piston_mass(347 * units.g)
     label compression_height(38.10 * units.mm)
-	label deck_height((207.85 + 1.2) * units.mm)
-	label piston_dome(0 * units.cc) // guess
+    label deck_height((207.85 + 1.2) * units.mm)
+    label piston_dome(0 * units.cc) // guess
     label crank_mass(4.0 * units.kg)
     label flywheel_mass(8.5 * units.kg)
     label flywheel_radius(5.5 * units.inch)
@@ -237,20 +227,20 @@ public node nissan_l24_engine {
         tdc: 90.0 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 120 * units.deg)
-    rod_journal rj2(angle: 240 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: 120 * units.deg)
     rod_journal rj3(angle: 240 * units.deg)
-    rod_journal rj4(angle: 120 * units.deg)
-    rod_journal rj5(angle:  0  * units.deg)
-	
+    rod_journal rj4(angle: 240 * units.deg)
+    rod_journal rj5(angle: 120 * units.deg)
+    rod_journal rj6(angle:  0  * units.deg)
+    
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
         .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -275,8 +265,8 @@ public node nissan_l24_engine {
         deck_height: deck_height
     )
 
-	// could do triple Mikunis because we're already in fantasy land a little
-	// but let's do fuel injection
+    // could do triple Mikunis because we're already in fantasy land a little
+    // but let's do fuel injection
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
@@ -288,89 +278,89 @@ public node nissan_l24_engine {
         runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((2.5 * units.inch)/2)
+    
+    label exhaust_radius((2.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(320.0),
         primary_tube_length: 18 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2200 * units.mm,
-		volume: 2200 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2200 * units.mm,
+        volume: 2200 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(6.0 * units.inch)
-	label pipe_length_2(3.0 * units.inch)
-	label pipe_length_3(1.6 * units.inch)
-	label pipe_length_4(1.5 * units.inch)
-	label pipe_length_5(0.0 * units.inch)
-	label pipe_length_6(2.5 * units.inch)
+    
+    label pipe_length_1(6.0 * units.inch)
+    label pipe_length_2(3.0 * units.inch)
+    label pipe_length_3(1.6 * units.inch)
+    label pipe_length_4(1.5 * units.inch)
+    label pipe_length_5(0.0 * units.inch)
+    label pipe_length_6(2.5 * units.inch)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_1,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 1.0
-        )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_2,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            ignition_wire: wires.wire4,
+            ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_3,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
-            ignition_wire: wires.wire5,
+            ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_4,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_5,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj6,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_6,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_6,
+            sound_attenuation: 1.0
         )
 
     engine
@@ -379,15 +369,15 @@ public node nissan_l24_engine {
     engine.add_crankshaft(c0)
 
     nissan_l24_camshaft_builder camshaft(
-	    lobe_profile: nissan_l24_lobe_profile_int(),
-		ex_lobe_profile: nissan_l24_lobe_profile_exh()
-	)
+        lobe_profile: nissan_l24_lobe_profile_int(),
+        ex_lobe_profile: nissan_l24_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         nissan_l24_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: false // exhaust is always on the right, cross-flow heads put the intake on the left
+            flip_display: false // exhaust is always on the right, cross-flow heads put the intake on the left
         )
     )
 
@@ -439,7 +429,7 @@ public node nissan_fs5c71b_wr_transmission {
 }
 
 public node main {
-	set_engine(nissan_l24_engine())
+    set_engine(nissan_l24_engine())
     set_vehicle(datsun_240z_s30_vehicle())
     set_transmission(nissan_fs5c71b_wr_transmission())
 }

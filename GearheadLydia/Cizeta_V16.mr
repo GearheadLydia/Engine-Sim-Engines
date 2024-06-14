@@ -309,16 +309,16 @@ public node cizeta_v16_engine {
     // https://gtspeed.us/wp-content/uploads/2016/02/cizeta_v16-640x359.jpg
     
     // left side bank, outside-in
-    rod_journal rjL1(angle:   0.0 * units.deg)
-    rod_journal rjL2(angle: -90.0 * units.deg)
-    rod_journal rjL3(angle:  90.0 * units.deg)
-    rod_journal rjL4(angle: 180.0 * units.deg)
+    rod_journal rjL1(angle:   0 * units.deg)
+    rod_journal rjL2(angle: -90 * units.deg)
+    rod_journal rjL3(angle:  90 * units.deg)
+    rod_journal rjL4(angle: 180 * units.deg)
 
     // right side bank, outside-in, numbered correctly but to be reversed
-    rod_journal rjR1(angle:  45.0 * units.deg)
-    rod_journal rjR2(angle: -45.0 * units.deg)
-    rod_journal rjR3(angle: 135.0 * units.deg)
-    rod_journal rjR4(angle: 225.0 * units.deg)
+    rod_journal rjR1(angle:  45 * units.deg)
+    rod_journal rjR2(angle: -45 * units.deg)
+    rod_journal rjR3(angle: 135 * units.deg)
+    rod_journal rjR4(angle: 225 * units.deg)
 
     cL
         .add_rod_journal(rjL1)

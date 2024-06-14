@@ -10,14 +10,14 @@ public node audi_ea855_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7200 * units.rpm;
-	input limiter_duration: 0.06;
+    input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/5.0) * cycle)
             .connect_wire(wires.wire2, (1.0/5.0) * cycle)
-			.connect_wire(wires.wire4, (2.0/5.0) * cycle)
-			.connect_wire(wires.wire5, (3.0/5.0) * cycle)
-			.connect_wire(wires.wire3, (4.0/5.0) * cycle);
+            .connect_wire(wires.wire4, (2.0/5.0) * cycle)
+            .connect_wire(wires.wire5, (3.0/5.0) * cycle)
+            .connect_wire(wires.wire3, (4.0/5.0) * cycle);
 }
 
 private node wires {
@@ -52,7 +52,7 @@ public node audi_ea855_lobe_profile_exh {
 
 public node audi_ea855_camshaft_builder {
     input lobe_profile: audi_ea855_lobe_profile_int();
-	input ex_lobe_profile: audi_ea855_lobe_profile_exh();
+    input ex_lobe_profile: audi_ea855_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 110.0 * units.deg;
@@ -86,7 +86,7 @@ public node audi_ea855_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center + 2 * rot144)
         .add_lobe(rot360 + intake_lobe_center + 3 * rot144)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot144)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot144)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot144)
@@ -108,9 +108,9 @@ public node audi_ea855_head {
     input exhaust_camshaft;
     input chamber_volume: 43.0 * units.cc; // calculated from FCP Engineering aftermarket pistons; also same as VW EA111
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.1;
-	input flow_attenuation_ex: 1.1;
+    
+    input flow_attenuation_in: 1.1;
+    input flow_attenuation_ex: 1.1;
     input lift_scale: 1.1;
     alias output __out: head;
 
@@ -150,7 +150,7 @@ public node audi_ea855_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.18 * units.inch) * 6 * units.inch,
@@ -176,24 +176,24 @@ public node audi_ea855_engine {
         starter_speed: 1200 * units.rpm,
         fuel: fuel(max_burning_efficiency: 1.15), // free power to compensate for unavailable turbo
         redline: 7000 * units.rpm, // 7100
-		hf_gain: 0.05,
-		jitter: 0.55,
+        hf_gain: 0.05,
+        jitter: 0.55,
         throttle_gamma: 1.0
     )
-	
-	label lean_angle(7 * units.deg)
+    
+    label lean_angle(7 * units.deg)
 
     label bore(82.5 * units.mm)
-	label bore_spacing(88.0 * units.mm)
+    label bore_spacing(88.0 * units.mm)
     label stroke(92.8 * units.mm)
     label rod_length(144.0 * units.mm)
     label rod_mass(545 * units.g) // Hurricane aftermarket weight
-	label piston_mass(400 * units.g)
+    label piston_mass(400 * units.g)
     label compression_height(29.60 * units.mm)
-	label deck_height((220.0 + 1.4) * units.mm)
-	label piston_dome(-7.1 * units.cc) // FCP spec, seems to match stock 9.6:1 compression ratio
+    label deck_height((220.0 + 1.4) * units.mm)
+    label piston_dome(-7.1 * units.cc) // FCP spec, seems to match stock 9.6:1 compression ratio
     label crank_mass(40 * units.lb)
-    label flywheel_mass(30 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(5.0 * units.inch)
 
     label crank_moment(
@@ -219,18 +219,18 @@ public node audi_ea855_engine {
         tdc: 90.0 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle: (0.0 / 5.0) * 360 * units.deg)
-	rod_journal rj1(angle: (2.0 / 5.0) * 360 * units.deg)
-	rod_journal rj2(angle: (3.0 / 5.0) * 360 * units.deg)
-	rod_journal rj3(angle: (4.0 / 5.0) * 360 * units.deg)
-    rod_journal rj4(angle: (1.0 / 5.0) * 360 * units.deg)
-	
+    rod_journal rj1(angle: (0.0 / 5.0) * 360 * units.deg)
+    rod_journal rj2(angle: (2.0 / 5.0) * 360 * units.deg)
+    rod_journal rj3(angle: (3.0 / 5.0) * 360 * units.deg)
+    rod_journal rj4(angle: (4.0 / 5.0) * 360 * units.deg)
+    rod_journal rj5(angle: (1.0 / 5.0) * 360 * units.deg)
+    
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -266,76 +266,76 @@ public node audi_ea855_engine {
         runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((3.5 * units.inch)/2)
+    
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 7.0 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2300 * units.mm,
-		volume: 2300 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2300 * units.mm,
+        volume: 2300 * units.mm * circle_area(exhaust_radius)
     )
-	
+    
     exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.005,
-		impulse_response: ir_lib.default_0
-	)
+        es_params,
+        audio_volume: 1.0 * 0.005,
+        impulse_response: ir_lib.default_0
+    )
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 2.8,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 2.8,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: bore_spacing * 1.8,
-			sound_attenuation: 1.0
-        )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 0.8,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 1.8,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            ignition_wire: wires.wire4,
+            ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 0.0,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 0.8,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: bore_spacing * 0.0,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: bore_spacing * 1.0,
-			sound_attenuation: 1.0
+            primary_length: bore_spacing * 1.0,
+            sound_attenuation: 1.0
         )
 
     engine
@@ -344,15 +344,15 @@ public node audi_ea855_engine {
     engine.add_crankshaft(c0)
 
     audi_ea855_camshaft_builder camshaft(
-	    lobe_profile: audi_ea855_lobe_profile_int(),
-		ex_lobe_profile: audi_ea855_lobe_profile_exh()
-	)
+        lobe_profile: audi_ea855_lobe_profile_int(),
+        ex_lobe_profile: audi_ea855_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         audi_ea855_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
 
@@ -403,7 +403,7 @@ public node volkswagen_0a6_mq500_transmission {
 }
 
 public node main {
-	set_engine(audi_ea855_engine())
+    set_engine(audi_ea855_engine())
     set_vehicle(audi_tt_rs_8j_vehicle())
     set_transmission(volkswagen_0a6_mq500_transmission())
 }

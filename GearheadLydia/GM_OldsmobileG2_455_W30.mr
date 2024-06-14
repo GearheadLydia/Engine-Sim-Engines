@@ -12,7 +12,7 @@ public node oldsmobile_v8_455_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 5600 * units.rpm;
-	input limiter_duration: 0.11;
+    input limiter_duration: 0.11;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
@@ -60,7 +60,7 @@ public node oldsmobile_v8_455_w30_lobe_profile_exh {
 
 public node oldsmobile_v8_455_camshaft_builder {
     input in_lobe_profile: oldsmobile_v8_455_w30_lobe_profile_int();
-	input ex_lobe_profile: oldsmobile_v8_455_w30_lobe_profile_exh();
+    input ex_lobe_profile: oldsmobile_v8_455_w30_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 110.0 * units.deg;
@@ -87,7 +87,7 @@ public node oldsmobile_v8_455_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -132,9 +132,9 @@ public node oldsmobile_v8_455_head {
     input exhaust_camshaft;
     input chamber_volume: 77 * units.cc; // most apparently 80cc, but pre-emissions might be 77?
     input flip_display: false;
-	
-	input flow_attenuation_in: 0.8;
-	input flow_attenuation_ex: 0.8;
+    
+    input flow_attenuation_in: 0.8;
+    input flow_attenuation_ex: 0.8;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -171,7 +171,7 @@ public node oldsmobile_v8_455_head {
         .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
         .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.015 * units.inch) * 4 * units.inch,
@@ -196,24 +196,24 @@ public node oldsmobile_v8_455_w30_engine {
     engine engine(
         name: "Oldsmobile Rocket V8",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 800 * units.rpm,
+        starter_speed: 800 * units.rpm,
         redline: 5500 * units.rpm,
         throttle_gamma: 1.0
     )
 
 
-	// https://oldsjunction.classicoldsmobile.com/oldsfaq/ofpcr.htm
+    // https://oldsjunction.classicoldsmobile.com/oldsfaq/ofpcr.htm
     label bore(4.126 * units.inch)
-	label bore_spacing(4.625 * units.inch)
+    label bore_spacing(4.625 * units.inch)
     label stroke(4.25 * units.inch)
     label rod_length(6.735 * units.inch)
     label rod_mass(650 * units.g)
     label compression_height(1.720 * units.inch)
-	label piston_mass(500 * units.g)
-	label piston_dome(2.5 * units.cc) // for 10.5:1 CR
-	label deck_height((10.625 * units.inch) + (60 * units.thou))
+    label piston_mass(500 * units.g)
+    label piston_dome(2.5 * units.cc) // for 10.5:1 CR
+    label deck_height((10.625 * units.inch) + (60 * units.thou))
     label crank_mass(85 * units.lb)
-    label flywheel_mass(50 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(7 * units.inch)
 
     label crank_moment(
@@ -238,16 +238,16 @@ public node oldsmobile_v8_455_w30_engine {
         tdc: 45.0 * units.deg // 45 degrees CW from vertical
     )
 
-    rod_journal rj0(angle:   0.0 * units.deg)
-    rod_journal rj1(angle: -90.0 * units.deg)
-    rod_journal rj2(angle:  90.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle: 270 * units.deg)
+    rod_journal rj3(angle:  90 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
 
     piston_parameters piston_params(
@@ -284,65 +284,65 @@ public node oldsmobile_v8_455_w30_engine {
         runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((3.5 * units.inch)/2)
+    
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 5.0 * units.inch,
         primary_flow_rate: k_carb(220.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2800 * units.mm,
-		volume: 2800 * units.mm * circle_area(exhaust_radius) * 2
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2800 * units.mm,
+        volume: 2800 * units.mm * circle_area(exhaust_radius) * 2
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(3.0 * bore_spacing)
-	label pipe_length_2(1.7 * bore_spacing)
-	label pipe_length_3(1.3 * bore_spacing)
-	label pipe_length_4(0.0 * bore_spacing)
-	
-	label exhaust_stagger(0.6 * bore_spacing)
+    
+    label pipe_length_1(3.0 * bore_spacing)
+    label pipe_length_2(1.7 * bore_spacing)
+    label pipe_length_3(1.3 * bore_spacing)
+    label pipe_length_4(0.0 * bore_spacing)
+    
+    label exhaust_stagger(0.6 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire3,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire5,
+            ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3 + exhaust_stagger
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger
+            primary_length: pipe_length_4 + exhaust_stagger
         )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
@@ -350,38 +350,38 @@ public node oldsmobile_v8_455_w30_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire4,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2
+            primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire6,
+            ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire6,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4
+            primary_length: pipe_length_4
         )
 
     engine
@@ -391,15 +391,15 @@ public node oldsmobile_v8_455_w30_engine {
     engine.add_crankshaft(c0)
 
     oldsmobile_v8_455_camshaft_builder camshaft(
-	    in_lobe_profile: oldsmobile_v8_455_w30_lobe_profile_int(),
-		ex_lobe_profile: oldsmobile_v8_455_w30_lobe_profile_exh()
-	)
+        in_lobe_profile: oldsmobile_v8_455_w30_lobe_profile_int(),
+        ex_lobe_profile: oldsmobile_v8_455_w30_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         oldsmobile_v8_455_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: false
+            flip_display: false
         )
     )
     b1.set_cylinder_head (
@@ -420,7 +420,7 @@ public node oldsmobile_v8_455_w30_engine {
         .add_sample(5000 * units.rpm, 38 * units.deg)
         .add_sample(6000 * units.rpm, 38 * units.deg)
 
-	// (300/350) * 400 = 343 hp
+    // (300/350) * 400 = 343 hp
     function timing_curve_net(1000 * units.rpm)
     timing_curve_net
         .add_sample(0000 * units.rpm, 24.5 * units.deg)

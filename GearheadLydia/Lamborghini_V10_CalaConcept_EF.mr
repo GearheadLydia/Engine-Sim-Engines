@@ -13,18 +13,18 @@ public node lamborghini_v10_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7700 * units.rpm;
-	input limiter_duration: 0.09;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, (0.0/10.0) * cycle)
             .connect_wire(wires.wire06, (1.0/10.0) * cycle)
-			.connect_wire(wires.wire05, (2.0/10.0) * cycle)
+            .connect_wire(wires.wire05, (2.0/10.0) * cycle)
             .connect_wire(wires.wire10, (3.0/10.0) * cycle)
             .connect_wire(wires.wire02, (4.0/10.0) * cycle)
-			.connect_wire(wires.wire07, (5.0/10.0) * cycle)
+            .connect_wire(wires.wire07, (5.0/10.0) * cycle)
             .connect_wire(wires.wire03, (6.0/10.0) * cycle)
             .connect_wire(wires.wire08, (7.0/10.0) * cycle)
-			.connect_wire(wires.wire04, (8.0/10.0) * cycle)
+            .connect_wire(wires.wire04, (8.0/10.0) * cycle)
             .connect_wire(wires.wire09, (9.0/10.0) * cycle);
 }
 
@@ -63,7 +63,7 @@ public node lamborghini_v10_lobe_profile_exh {
 
 public node lamborghini_v10_camshaft_builder {
     input in_lobe_profile: lamborghini_v10_lobe_profile_int();
-	input ex_lobe_profile: lamborghini_v10_lobe_profile_exh();
+    input ex_lobe_profile: lamborghini_v10_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 110.0 * units.deg;
@@ -89,15 +89,15 @@ public node lamborghini_v10_camshaft_builder {
     camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
 
 
-	label rot18(18 * units.deg)
-	label rot30(30 * units.deg)
-	label rot54(54 * units.deg)
-	label rot60(60 * units.deg)
-	label rot72(72 * units.deg)
+    label rot18(18 * units.deg)
+    label rot30(30 * units.deg)
+    label rot54(54 * units.deg)
+    label rot60(60 * units.deg)
+    label rot72(72 * units.deg)
     label rot90(90 * units.deg)
-	label rot120(120 * units.deg)
+    label rot120(120 * units.deg)
     label rot360(360 * units.deg)
-	
+    
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot72) //  #1
         .add_lobe(rot360 + intake_lobe_center + 4 * rot72) //  #2
@@ -141,9 +141,9 @@ public node lamborghini_v10_head {
     input exhaust_camshaft;
     input chamber_volume: 46.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 1.0;
+    input flow_attenuation_ex: 1.0;
     input lift_scale: 50.0;
     alias output __out: head;
 
@@ -183,7 +183,7 @@ public node lamborghini_v10_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.4 * units.inch) * 9 * units.inch,
@@ -209,10 +209,10 @@ public node lamborghini_v10_concept_engine {
     label stroke(75.0 * units.mm) // deduced from 3961cc displacement & Gallardo descendant's 82.5mm bore 
     label rod_length(134.0 * units.mm)
     label rod_mass(434 * units.g)
-	label piston_mass(290 * units.g)
+    label piston_mass(290 * units.g)
     label compression_height(36.5 * units.mm)
-	label piston_dome(9.7 * units.cc)
-	label deck_height((208.5 + 0.85) * units.mm) // Gallardo minus about 20mm
+    label piston_dome(9.7 * units.cc)
+    label deck_height((208.5 + 0.85) * units.mm) // Gallardo minus about 20mm
     label crank_mass(75 * units.lb)
     label flywheel_mass(20 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -220,14 +220,10 @@ public node lamborghini_v10_concept_engine {
     engine engine(
         name: "Lamborghini Concept V10",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1500 * units.rpm,
+        starter_speed: 1500 * units.rpm,
         redline: 7500 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
         throttle_gamma: 1.0,
-		simulation_frequency: 7500
+        simulation_frequency: 7500
     )
 
     label crank_moment(
@@ -244,35 +240,35 @@ public node lamborghini_v10_concept_engine {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
         tdc: 135.0 * units.deg // +45 degrees
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: -18  * units.deg)
-    rod_journal rj2(angle: 288 * units.deg)
-    rod_journal rj3(angle: 270 * units.deg)
-    rod_journal rj4(angle: 72 * units.deg)
-    rod_journal rj5(angle: 54 * units.deg)
-	rod_journal rj6(angle: 216 * units.deg)
-	rod_journal rj7(angle: 198 * units.deg)
-    rod_journal rj8(angle: 144 * units.deg)
-    rod_journal rj9(angle: 126 * units.deg)
+    rod_journal rj01(angle:  0  * units.deg)
+    rod_journal rj02(angle: -18  * units.deg)
+    rod_journal rj03(angle: 288 * units.deg)
+    rod_journal rj04(angle: 270 * units.deg)
+    rod_journal rj05(angle: 72 * units.deg)
+    rod_journal rj06(angle: 54 * units.deg)
+    rod_journal rj07(angle: 216 * units.deg)
+    rod_journal rj08(angle: 198 * units.deg)
+    rod_journal rj09(angle: 144 * units.deg)
+    rod_journal rj10(angle: 126 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
-        .add_rod_journal(rj1)
-        .add_rod_journal(rj2)
-        .add_rod_journal(rj3)
-        .add_rod_journal(rj4)
-        .add_rod_journal(rj5)
-        .add_rod_journal(rj6)
-        .add_rod_journal(rj7)
-        .add_rod_journal(rj8)
-        .add_rod_journal(rj9)
+        .add_rod_journal(rj01)
+        .add_rod_journal(rj02)
+        .add_rod_journal(rj03)
+        .add_rod_journal(rj04)
+        .add_rod_journal(rj05)
+        .add_rod_journal(rj06)
+        .add_rod_journal(rj07)
+        .add_rod_journal(rj08)
+        .add_rod_journal(rj09)
+        .add_rod_journal(rj10)
 
 
     piston_parameters piston_params(
@@ -298,29 +294,29 @@ public node lamborghini_v10_concept_engine {
         deck_height: deck_height
     )
 
-	intake intakeL(
-		plenum_volume: 2.0 * units.L,
-		plenum_cross_section_area: 150.0 * units.cm2,
-		intake_flow_rate: k_carb(450.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.9935,
-		throttle_gamma: 2.0,
-		runner_flow_rate: k_carb(450.0),
-		runner_length: 12.0 * units.inch,
-		velocity_decay: 0.1
-	)
+    intake intakeL(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 150.0 * units.cm2,
+        intake_flow_rate: k_carb(450.0),
+        idle_flow_rate: k_carb(0.1),
+        idle_throttle_plate_position: 0.9935,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(450.0),
+        runner_length: 12.0 * units.inch,
+        velocity_decay: 0.1
+    )
 
-	intake intakeR(
-		plenum_volume: 2.0 * units.L,
-		plenum_cross_section_area: 150.0 * units.cm2,
-		intake_flow_rate: k_carb(450.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.9935,
-		throttle_gamma: 2.0,
-		runner_flow_rate: k_carb(450.0),
-		runner_length: 12.0 * units.inch,
-		velocity_decay: 0.1
-	)
+    intake intakeR(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 150.0 * units.cm2,
+        intake_flow_rate: k_carb(450.0),
+        idle_flow_rate: k_carb(0.1),
+        idle_throttle_plate_position: 0.9935,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(450.0),
+        runner_length: 12.0 * units.inch,
+        velocity_decay: 0.1
+    )
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1000.0),
@@ -331,76 +327,76 @@ public node lamborghini_v10_concept_engine {
     )
 
     exhaust_system exhaust(
-		es_params,
+        es_params,
         length: 500 * units.mm,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
-	
-	label pipe_length_1(4.0 * units.inch)
-	label pipe_length_2(3.0 * units.inch)
-	label pipe_length_3(2.0 * units.inch)
-	label pipe_length_4(1.0 * units.inch)
-	label pipe_length_5(0.0 * units.inch)
-	
-	label exhaust_stagger(40 * units.mm)
-	
-	label exh_vol_L1(0.8)
-	label exh_vol_L3(1.0)
-	label exh_vol_R1(0.64)
-	label exh_vol_R3(0.8)
+        audio_volume: 1.0 * 0.01,
+        impulse_response: ir_lib.default_0
+    )
+    
+    label pipe_length_1(4.0 * units.inch)
+    label pipe_length_2(3.0 * units.inch)
+    label pipe_length_3(2.0 * units.inch)
+    label pipe_length_4(1.0 * units.inch)
+    label pipe_length_5(0.0 * units.inch)
+    
+    label exhaust_stagger(40 * units.mm)
+    
+    label exh_vol_L1(0.8)
+    label exh_vol_L3(1.0)
+    label exh_vol_R1(0.64)
+    label exh_vol_R3(0.8)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj01,
             ignition_wire: wires.wire01,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: exh_vol_L1
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj03,
             ignition_wire: wires.wire02,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: exh_vol_L1
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj05,
             ignition_wire: wires.wire03,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: exh_vol_L3
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: exh_vol_L3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj6,
+            rod_journal: rj07,
             ignition_wire: wires.wire04,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: exh_vol_L3
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: exh_vol_L3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj8,
+            rod_journal: rj09,
             ignition_wire: wires.wire05,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5 + exhaust_stagger,
-			sound_attenuation: exh_vol_L3
+            primary_length: pipe_length_5 + exhaust_stagger,
+            sound_attenuation: exh_vol_L3
         )
 
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
@@ -408,52 +404,52 @@ public node lamborghini_v10_concept_engine {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj02,
             ignition_wire: wires.wire06,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: exh_vol_R1
+            primary_length: pipe_length_1,
+            sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj04,
             ignition_wire: wires.wire07,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: exh_vol_R1
+            primary_length: pipe_length_2,
+            sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
+            rod_journal: rj06,
             ignition_wire: wires.wire08,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: exh_vol_R3
+            primary_length: pipe_length_3,
+            sound_attenuation: exh_vol_R3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj7,
+            rod_journal: rj08,
             ignition_wire: wires.wire09,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: exh_vol_R3
+            primary_length: pipe_length_4,
+            sound_attenuation: exh_vol_R3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.5)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj9,
+            rod_journal: rj10,
             ignition_wire: wires.wire10,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5,
-			sound_attenuation: exh_vol_R3
+            primary_length: pipe_length_5,
+            sound_attenuation: exh_vol_R3
         )
 
     engine
@@ -463,9 +459,9 @@ public node lamborghini_v10_concept_engine {
     engine.add_crankshaft(c0)
 
     lamborghini_v10_camshaft_builder camshaft(
-	    in_lobe_profile: lamborghini_v10_lobe_profile_int(),
-		ex_lobe_profile: lamborghini_v10_lobe_profile_exh()
-	)
+        in_lobe_profile: lamborghini_v10_lobe_profile_int(),
+        ex_lobe_profile: lamborghini_v10_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         lamborghini_v10_head(
@@ -491,8 +487,8 @@ public node lamborghini_v10_concept_engine {
         .add_sample(4000  * units.rpm, 58 * units.deg)
         .add_sample(5000  * units.rpm, 62 * units.deg)
         .add_sample(6000  * units.rpm, 65 * units.deg)
-		.add_sample(7000  * units.rpm, 65 * units.deg)
-		.add_sample(8000  * units.rpm, 65 * units.deg)
+        .add_sample(7000  * units.rpm, 65 * units.deg)
+        .add_sample(8000  * units.rpm, 65 * units.deg)
 
     engine.add_ignition_module(
         lamborghini_v10_distributor(

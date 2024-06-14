@@ -10,13 +10,13 @@ public node bmw_m42b18_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6800 * units.rpm;
-	input limiter_duration: 0.08;
+    input limiter_duration: 0.08;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
             .connect_wire(wires.wire3, (1.0/4.0) * cycle)
-			.connect_wire(wires.wire4, (2.0/4.0) * cycle)
-			.connect_wire(wires.wire2, (3.0/4.0) * cycle);
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (3.0/4.0) * cycle);
 }
 
 private node wires {
@@ -24,16 +24,6 @@ private node wires {
     output wire2: ignition_wire();
     output wire3: ignition_wire();
     output wire4: ignition_wire();
-}
-
-private node add_sym_sample {
-    input angle;
-    input lift;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(angle * units.deg, lift * units.thou)
-    this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
 
@@ -61,7 +51,7 @@ public node bmw_m42b18_lobe_profile_exh {
 
 public node bmw_m42b18_camshaft_builder {
     input lobe_profile: bmw_m42b18_lobe_profile_int();
-	input ex_lobe_profile: bmw_m42b18_lobe_profile_exh();
+    input ex_lobe_profile: bmw_m42b18_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 110.0 * units.deg;
@@ -89,15 +79,15 @@ public node bmw_m42b18_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 3 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 1 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 2 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot180)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot180)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
 }
 
 private node add_flow_sample {
@@ -114,9 +104,9 @@ public node bmw_m42b18_head {
     input exhaust_camshaft;
     input chamber_volume: 33.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 1.0;
+    input flow_attenuation_ex: 1.0;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -156,7 +146,7 @@ public node bmw_m42b18_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.2 * units.inch) * 0.5 * units.inch,
@@ -181,20 +171,20 @@ public node M42B18 {
         starter_speed: 1200 * units.rpm,
         redline: 6500 * units.rpm,
         throttle_gamma: 1.0,
-		hf_gain: 0.02,
-		jitter: 0.6
+        hf_gain: 0.02,
+        jitter: 0.6
     )
-	
-	label lean_angle(30 * units.deg)
+    
+    label lean_angle(30 * units.deg)
 
     label bore(84.0 * units.mm)
     label stroke(81.0 * units.mm)
     label rod_length(140.0 * units.mm)
     label rod_mass(511 * units.g)
-	label piston_mass(347 * units.g)
+    label piston_mass(347 * units.g)
     label compression_height(31.65 * units.mm)
-	label deck_height((212.0 + 3.05) * units.mm) // should be exact
-	label piston_dome(0.0 * units.cc) // close enough to correct
+    label deck_height((212.0 + 3.05) * units.mm) // should be exact
+    label piston_dome(0.0 * units.cc) // close enough to correct
     label crank_mass(4.0 * units.kg)
     label flywheel_mass(7.5 * units.kg)
     label flywheel_radius(5.5 * units.inch)
@@ -222,16 +212,16 @@ public node M42B18 {
         tdc: 90.0 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 180 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
     rod_journal rj2(angle: 180 * units.deg)
-    rod_journal rj3(angle:  0  * units.deg)
-	
+    rod_journal rj3(angle: 180 * units.deg)
+    rod_journal rj4(angle:  0  * units.deg)
+    
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -267,67 +257,67 @@ public node M42B18 {
         runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((2.5 * units.inch)/2)
+    
+    label exhaust_radius((2.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(350.0),
         primary_tube_length: 12.0 * units.inch,
         primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 2300 * units.mm,
-		volume: (2300 * units.mm * circle_area(exhaust_radius))
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2300 * units.mm,
+        volume: (2300 * units.mm * circle_area(exhaust_radius))
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.03, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(3.1 * units.inch)
-	label pipe_length_2(3.0 * units.inch)
-	label pipe_length_3(0.1 * units.inch)
-	label pipe_length_4(0.0 * units.inch)
+    
+    label pipe_length_1(3.1 * units.inch)
+    label pipe_length_2(3.0 * units.inch)
+    label pipe_length_3(0.1 * units.inch)
+    label pipe_length_4(0.0 * units.inch)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_1,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 1.0
-        )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_2,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_4,
+            sound_attenuation: 1.0
         )
 
     engine
@@ -336,15 +326,15 @@ public node M42B18 {
     engine.add_crankshaft(c0)
 
     bmw_m42b18_camshaft_builder camshaft(
-	    lobe_profile: bmw_m42b18_lobe_profile_int(),
-		ex_lobe_profile: bmw_m42b18_lobe_profile_exh()
-	)
+        lobe_profile: bmw_m42b18_lobe_profile_int(),
+        ex_lobe_profile: bmw_m42b18_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         bmw_m42b18_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
 
@@ -393,7 +383,7 @@ public node getrag_250_transmission {
 }
 
 public node main {
-	set_engine(M42B18())
+    set_engine(M42B18())
     set_vehicle(bmw_318ti_e36_vehicle())
     set_transmission(getrag_250_transmission())
 }

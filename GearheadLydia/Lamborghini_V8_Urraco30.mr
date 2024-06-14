@@ -242,10 +242,10 @@ public node lamborghini_v8_p300_engine {
 
     // https://gtspeed.us/wp-content/uploads/2016/02/lamborghini_v8-640x359.jpg
     
-    rod_journal rj1(angle:   0.0 * units.deg)
-    rod_journal rj2(angle:  90.0 * units.deg)
-    rod_journal rj3(angle: -90.0 * units.deg)
-    rod_journal rj4(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg)
+    rod_journal rj2(angle:  90 * units.deg)
+    rod_journal rj3(angle: 270 * units.deg)
+    rod_journal rj4(angle: 180 * units.deg)
 
     c0
         .add_rod_journal(rj1)

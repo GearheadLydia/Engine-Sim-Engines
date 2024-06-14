@@ -12,7 +12,7 @@ public node toyota_7m_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7400 * units.rpm;
-	input limiter_duration: 0.1;
+    input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 5.0) * cycle)
@@ -54,7 +54,7 @@ public node toyota_7m_lobe_profile_exh {
 
 public node toyota_7m_camshaft_builder {
     input lobe_profile: toyota_7m_lobe_profile_int();
-	input ex_lobe_profile: toyota_7m_lobe_profile_exh();
+    input ex_lobe_profile: toyota_7m_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 123.75 * units.deg;
@@ -84,17 +84,17 @@ public node toyota_7m_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot144)
-		.add_lobe(rot360 + intake_lobe_center + 1 * rot144)
-		.add_lobe(rot360 + intake_lobe_center + 4 * rot144)
-		.add_lobe(rot360 + intake_lobe_center + 2 * rot144)
-		.add_lobe(rot360 + intake_lobe_center + 3 * rot144)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot144)
+        .add_lobe(rot360 + intake_lobe_center + 4 * rot144)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot144)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot144)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot144)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot144)
-		.add_lobe(rot360 - exhaust_lobe_center + 4 * rot144)
-		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot144)
-		.add_lobe(rot360 - exhaust_lobe_center + 3 * rot144)
+        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot144)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot144)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot144)
 }
 
 private node add_flow_sample {
@@ -111,8 +111,8 @@ public node toyota_7m_head {
     input exhaust_camshaft;
     input chamber_volume: 40.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation: 1.0;
+    
+    input flow_attenuation: 1.0;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -148,7 +148,7 @@ public node toyota_7m_head {
         .add_flow_sample(11 * lift_scale, 176 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 176 * flow_attenuation)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: 30.0 * units.cc,
@@ -170,24 +170,19 @@ public node toyota_7mge {
         starter_torque: 100 * units.lb_ft,
         starter_speed: 600 * units.rpm,
         redline: 7000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85
-        ),
         throttle_gamma: 2.0
     )
-	
-	label lean_angle(0 * units.deg)
+    
+    label lean_angle(0 * units.deg)
 
     label bore(83.0 * units.mm)
     label stroke(91.0 * units.mm)
     label rod_length(151.89 * units.mm)
     label rod_mass(450 * units.g)
-	label piston_mass(300 * units.g)
+    label piston_mass(300 * units.g)
     label compression_height(32.75 * units.mm)
-	label piston_dome(-12.0 * units.cc) // -18.5 for turbo
-	label deck_height((230.5 + 0.5) * units.mm)
+    label piston_dome(-12.0 * units.cc) // -18.5 for turbo
+    label deck_height((230.5 + 0.5) * units.mm)
     label crank_mass(5 * units.kg)
     label flywheel_mass(25 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -215,18 +210,18 @@ public node toyota_7mge {
         tdc: 90 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle: (0.0 / 5.0) * 360 * units.deg)
-	rod_journal rj1(angle: (2.0 / 5.0) * 360 * units.deg)
-	rod_journal rj2(angle: (3.0 / 5.0) * 360 * units.deg)
-	rod_journal rj3(angle: (4.0 / 5.0) * 360 * units.deg)
-    rod_journal rj4(angle: (1.0 / 5.0) * 360 * units.deg)
+    rod_journal rj1(angle: (0.0 / 5.0) * 360 * units.deg)
+    rod_journal rj2(angle: (2.0 / 5.0) * 360 * units.deg)
+    rod_journal rj3(angle: (3.0 / 5.0) * 360 * units.deg)
+    rod_journal rj4(angle: (4.0 / 5.0) * 360 * units.deg)
+    rod_journal rj5(angle: (1.0 / 5.0) * 360 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -256,86 +251,86 @@ public node toyota_7mge {
         idle_flow_rate_cfm: 0.1,
         idle_throttle_plate_position: 0.994
     )
-	
-	label exhaust_radius((3.0 * units.inch)/2)
+    
+    label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 25.0 * units.inch,
         primary_flow_rate: k_carb(350.0),
         velocity_decay: 0.4, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius),
-		length: 500 * units.mm,
-		volume: 500 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 500 * units.mm,
+        volume: 500 * units.mm * circle_area(exhaust_radius)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-	
-	// 7M-GE stock
-	label pipe_length_1(45 * units.mm)
-	label pipe_length_2(30 * units.mm)
-	label pipe_length_3(15 * units.mm)
-	label pipe_length_4(5 * units.mm)
-	label pipe_length_5(15 * units.mm)
-	
-	// 7M-GTE stock
-	// label pipe_length_2(40 * units.mm)
-	// label pipe_length_1(60 * units.mm)
-	// label pipe_length_3(20 * units.mm)
-	// label pipe_length_4(5 * units.mm)
-	// label pipe_length_5(15 * units.mm)
-	
+    
+    // 7M-GE stock
+    label pipe_length_1(45 * units.mm)
+    label pipe_length_2(30 * units.mm)
+    label pipe_length_3(15 * units.mm)
+    label pipe_length_4(5 * units.mm)
+    label pipe_length_5(15 * units.mm)
+    
+    // 7M-GTE stock
+    // label pipe_length_2(40 * units.mm)
+    // label pipe_length_1(60 * units.mm)
+    // label pipe_length_3(20 * units.mm)
+    // label pipe_length_4(5 * units.mm)
+    // label pipe_length_5(15 * units.mm)
+    
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 0.8
+            primary_length: pipe_length_1,
+            sound_attenuation: 0.8
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 1.0
-        )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_2,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            ignition_wire: wires.wire4,
+            ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_3,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_4,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_5,
+            sound_attenuation: 1.0
         )
 
     engine
@@ -344,15 +339,15 @@ public node toyota_7mge {
     engine.add_crankshaft(c0)
 
     toyota_7m_camshaft_builder camshaft(
-	    lobe_profile: toyota_7m_lobe_profile_int(),
-		ex_lobe_profile: toyota_7m_lobe_profile_exh()
-	)
+        lobe_profile: toyota_7m_lobe_profile_int(),
+        ex_lobe_profile: toyota_7m_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         toyota_7m_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: true
+            flip_display: true
         )
     )
 
@@ -403,7 +398,7 @@ public node toyota_r154_transmission {
 }
 
 public node main {
-	set_engine(toyota_7mge())
+    set_engine(toyota_7mge())
     set_vehicle(toyota_supra_ma70_vehicle())
     set_transmission(toyota_r154_transmission())
 }

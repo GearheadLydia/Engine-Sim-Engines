@@ -15,15 +15,15 @@ public node daewoo_xk6_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6100 * units.rpm;
-	input limiter_duration: 0.09;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/6.0) * cycle)
             .connect_wire(wires.wire5, (1.0/6.0) * cycle)
-			.connect_wire(wires.wire3, (2.0/6.0) * cycle)
-			.connect_wire(wires.wire6, (3.0/6.0) * cycle)
-			.connect_wire(wires.wire2, (4.0/6.0) * cycle)
-			.connect_wire(wires.wire4, (5.0/6.0) * cycle);
+            .connect_wire(wires.wire3, (2.0/6.0) * cycle)
+            .connect_wire(wires.wire6, (3.0/6.0) * cycle)
+            .connect_wire(wires.wire2, (4.0/6.0) * cycle)
+            .connect_wire(wires.wire4, (5.0/6.0) * cycle);
 }
 
 private node wires {
@@ -58,7 +58,7 @@ public node daewoo_xk6_lobe_profile_exh {
 
 public node daewoo_xk6_camshaft_builder {
     input lobe_profile: daewoo_xk6_lobe_profile_int();
-	input ex_lobe_profile: daewoo_xk6_lobe_profile_exh();
+    input ex_lobe_profile: daewoo_xk6_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 120.0 * units.deg;
@@ -86,19 +86,19 @@ public node daewoo_xk6_camshaft_builder {
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center)
-		.add_lobe(rot360 + intake_lobe_center + 4 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 2 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 5 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 1 * rot120)
-		.add_lobe(rot360 + intake_lobe_center + 3 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 4 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 5 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot120)
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center)
-		.add_lobe(rot360 - exhaust_lobe_center + 4 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 5 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot120)
-		.add_lobe(rot360 - exhaust_lobe_center + 3 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot120)
 }
 
 private node add_flow_sample {
@@ -115,9 +115,9 @@ public node daewoo_xk6_head {
     input exhaust_camshaft;
     input chamber_volume: 40.0 * units.cc; // educated guess - very Porsche-like
     input flip_display: false;
-	
-	input flow_attenuation_in: 0.85;
-	input flow_attenuation_ex: 0.9;
+    
+    input flow_attenuation_in: 0.7;
+    input flow_attenuation_ex: 0.7;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -136,8 +136,6 @@ public node daewoo_xk6_head {
         .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
         .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
         .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
 
     function exhaust_flow(1.0 * units.mm)
     exhaust_flow
@@ -154,10 +152,8 @@ public node daewoo_xk6_head {
         .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(0.9 * units.inch) * 3 * units.inch,
@@ -182,22 +178,22 @@ public node daewoo_xk6_25_engine {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 900 * units.rpm,
         redline: 6000 * units.rpm,
-		hf_gain: 0.01,
-		jitter: 0.5,
+        hf_gain: 0.01,
+        jitter: 0.5,
         throttle_gamma: 1.0
     )
-	
-	label lean_angle(-5 * units.deg)
+    
+    label lean_angle(-5 * units.deg)
 
     label bore(77.0 * units.mm)
     label bore_spacing(83.0 * units.mm)
     label stroke(89.2 * units.mm)
     label rod_length(151.0 * units.mm)
     label rod_mass(350 * units.g)
-	label piston_mass(347 * units.g)
+    label piston_mass(347 * units.g)
     label compression_height(29.4 * units.mm) // guess - zero deck clearance
-	label deck_height((225.0 + 1.0) * units.mm) // gasket thickness is a guess
-	label piston_dome(-0.4 * units.cc) // for 10.2:1 CR; piston is nearly flat in images
+    label deck_height((225.0 + 1.0) * units.mm) // gasket thickness is a guess
+    label piston_dome(-0.4 * units.cc) // for 10.2:1 CR; piston is nearly flat in images
     label crank_mass(4.0 * units.kg)
     label flywheel_mass(5.0 * units.kg)
     label flywheel_radius(5.0 * units.inch)
@@ -225,20 +221,20 @@ public node daewoo_xk6_25_engine {
         tdc: 90.0 * units.deg + lean_angle
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle: 120 * units.deg)
-    rod_journal rj2(angle: 240 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: 120 * units.deg)
     rod_journal rj3(angle: 240 * units.deg)
-    rod_journal rj4(angle: 120 * units.deg)
-    rod_journal rj5(angle:  0  * units.deg)
-	
+    rod_journal rj4(angle: 240 * units.deg)
+    rod_journal rj5(angle: 120 * units.deg)
+    rod_journal rj6(angle:  0  * units.deg)
+    
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
         .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
 
     piston_parameters piston_params(
         mass: piston_mass,
@@ -274,88 +270,88 @@ public node daewoo_xk6_25_engine {
         runner_length: 14.0 * units.inch,
         velocity_decay: 0.1
     )
-	
-	label exhaust_radius((2.5 * units.inch)/2)
+    
+    label exhaust_radius((2.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(200.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(150.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2600 * units.mm,
-		volume: 2600 * units.mm * circle_area(exhaust_radius)
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2600 * units.mm,
+        volume: 2600 * units.mm * circle_area(exhaust_radius)
     )
-	
+    
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(0.8 * bore_spacing)
-	label pipe_length_2(0.0 * bore_spacing)
-	label pipe_length_3(0.3 * bore_spacing)
-	
-	label exhaust_stagger(0.2 * bore_spacing)
-	
+    
+    label pipe_length_1(0.8 * bore_spacing)
+    label pipe_length_2(0.0 * bore_spacing)
+    label pipe_length_3(0.3 * bore_spacing)
+    
+    label exhaust_stagger(0.2 * bore_spacing)
+    
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: 1.0
         )
-		.add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intake,
-            exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 0.7
-        )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire3,
+            ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.9
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: 0.7
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            ignition_wire: wires.wire4,
+            ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 0.9 * 0.9
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: 0.9
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
-            ignition_wire: wires.wire5,
+            ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 0.7 * 0.9
+            primary_length: pipe_length_3,
+            sound_attenuation: 0.9 * 0.9
         )
-		.add_cylinder(
+        .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_2,
+            sound_attenuation: 0.7 * 0.9
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj6,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 1.0 * 0.9
+            primary_length: pipe_length_1,
+            sound_attenuation: 1.0 * 0.9
         )
 
     engine
@@ -364,15 +360,15 @@ public node daewoo_xk6_25_engine {
     engine.add_crankshaft(c0)
 
     daewoo_xk6_camshaft_builder camshaft(
-	    lobe_profile: daewoo_xk6_lobe_profile_int(),
-		ex_lobe_profile: daewoo_xk6_lobe_profile_exh()
-	)
+        lobe_profile: daewoo_xk6_lobe_profile_int(),
+        ex_lobe_profile: daewoo_xk6_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         daewoo_xk6_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0,
-			flip_display: false
+            flip_display: false
         )
     )
 
@@ -410,7 +406,7 @@ public node daewoo_magnus_l6_25_vehicle {
 public node daewoo_magnus_l6_25_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 350 * units.lb_ft
+            max_clutch_torque: 250 * units.lb_ft
         )
         .add_gear(2.719)
         .add_gear(1.487)
@@ -419,7 +415,7 @@ public node daewoo_magnus_l6_25_transmission {
 }
 
 public node main {
-	set_engine(daewoo_xk6_25_engine())
+    set_engine(daewoo_xk6_25_engine())
     set_vehicle(daewoo_magnus_l6_25_vehicle())
     set_transmission(daewoo_magnus_l6_25_transmission())
 }

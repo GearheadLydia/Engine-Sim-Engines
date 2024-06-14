@@ -10,15 +10,15 @@ public node gm_highfeature_32ar_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7200 * units.rpm;
-	input limiter_duration: 0.1;
+    input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/6.0) * cycle)
             .connect_wire(wires.wire2, (1.0/6.0) * cycle)
-			.connect_wire(wires.wire3, (2.0/6.0) * cycle)
-			.connect_wire(wires.wire4, (3.0/6.0) * cycle)
-			.connect_wire(wires.wire5, (4.0/6.0) * cycle)
-			.connect_wire(wires.wire6, (5.0/6.0) * cycle);
+            .connect_wire(wires.wire3, (2.0/6.0) * cycle)
+            .connect_wire(wires.wire4, (3.0/6.0) * cycle)
+            .connect_wire(wires.wire5, (4.0/6.0) * cycle)
+            .connect_wire(wires.wire6, (5.0/6.0) * cycle);
 }
 
 private node wires {
@@ -54,7 +54,7 @@ public node gm_highfeature_32ar_lobe_profile_exh {
 
 public node gm_highfeature_32ar_camshaft_builder {
     input in_lobe_profile: gm_highfeature_32ar_lobe_profile_int();
-	input ex_lobe_profile: gm_highfeature_32ar_lobe_profile_exh();
+    input ex_lobe_profile: gm_highfeature_32ar_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 116.5 * units.deg;
@@ -80,7 +80,7 @@ public node gm_highfeature_32ar_camshaft_builder {
 
 
     label rot30(30 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
@@ -88,23 +88,23 @@ public node gm_highfeature_32ar_camshaft_builder {
 
     _intake_cam_1
         .add_lobe(rot360 + intake_lobe_center + (1 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (3 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (5 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (3 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (5 * rot120))
 
-	_exhaust_cam_1
+    _exhaust_cam_1
         .add_lobe(rot360 - exhaust_lobe_center + (1 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + (0 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (2 * rot120))
-		.add_lobe(rot360 + intake_lobe_center + (4 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (2 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (4 * rot120))
 
-	_exhaust_cam_0
+    _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center + (0 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
-		.add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
 }
 
 private node add_flow_sample {
@@ -121,8 +121,8 @@ public node gm_highfeature_32ar_head {
     input exhaust_camshaft;
     input chamber_volume: 50.0 * units.cc; // taken from LLT calculation
     input flip_display: false;
-	
-	input flow_attenuation: 1.0;
+    
+    input flow_attenuation: 1.0;
     input lift_scale: 1.0 / 1.4; // fake/unknown rocker ratio - guess
     alias output __out: head;
 
@@ -158,7 +158,7 @@ public node gm_highfeature_32ar_head {
         .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
         .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 7 * units.inch,
@@ -183,24 +183,24 @@ public node gm_highfeature_32ar {
     engine engine(
         name: "Alfa Romeo JTS V6",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
+        starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
         throttle_gamma: 1.0,
-		hf_gain: 0.05,
-		jitter: 0.5
+        hf_gain: 0.05,
+        jitter: 0.5
     )
 
     label bore(89.0 * units.mm)
-	label bore_spacing(103 * units.mm)
+    label bore_spacing(103 * units.mm)
     label stroke(85.6 * units.mm)
     label rod_length(150.4 * units.mm)
     label rod_mass(400 * units.g)
-	label piston_mass(400 * units.g)
+    label piston_mass(400 * units.g)
     label compression_height(32.15 * units.mm)
-	label deck_height((225.2 + 1.1) * units.mm)
-	label piston_dome(-1 * units.cc) // makes compression ratio work out
+    label deck_height((225.2 + 1.1) * units.mm)
+    label piston_dome(-1 * units.cc) // makes compression ratio work out
     label crank_mass(60 * units.lb)
-    label flywheel_mass(40 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -224,20 +224,20 @@ public node gm_highfeature_32ar {
         tdc: 120.0 * units.deg
     )
 
-    rod_journal rj0(angle:  0  * units.deg)
-    rod_journal rj1(angle:  60 * units.deg)
-    rod_journal rj2(angle: 240 * units.deg)
-    rod_journal rj3(angle: 300 * units.deg)
-    rod_journal rj4(angle: 120 * units.deg)
-    rod_journal rj5(angle: 180 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle:  60 * units.deg)
+    rod_journal rj3(angle: 240 * units.deg)
+    rod_journal rj4(angle: 300 * units.deg)
+    rod_journal rj5(angle: 120 * units.deg)
+    rod_journal rj6(angle: 180 * units.deg)
 
     c0
-        .add_rod_journal(rj0)
         .add_rod_journal(rj1)
         .add_rod_journal(rj2)
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
         .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
 
 
     piston_parameters piston_params(
@@ -263,69 +263,69 @@ public node gm_highfeature_32ar {
         deck_height: deck_height
     )
 
-	intake intake (
-		plenum_volume: 2.0 * units.L,
-		plenum_cross_section_area: 100.0 * units.cm2,
-		intake_flow_rate: k_carb(400.0),
-		idle_flow_rate: k_carb(0.001),
-		idle_throttle_plate_position: 0.995,
-		throttle_gamma: 1.0,
-		runner_flow_rate: k_carb(300.0),
-		runner_length: 7.0 * units.inch,
-		velocity_decay: 0.1
-	)
-	
-	label exhaust_radius((3.5 * units.inch)/2)
+    intake intake (
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(400.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.995,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(300.0),
+        runner_length: 7.0 * units.inch,
+        velocity_decay: 0.1
+    )
+    
+    label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(400.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(450.0),
         velocity_decay: 1.0, //0.5
-		collector_cross_section_area: circle_area(exhaust_radius) * 2,
-		length: 2000 * units.mm,
-		volume: (1700 * units.mm * circle_area(exhaust_radius)) + (300 * units.mm * circle_area(exhaust_radius) * 2)
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2000 * units.mm,
+        volume: (1700 * units.mm * circle_area(exhaust_radius)) + (300 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
-	
-	label pipe_length_1(2.0 * units.inch)
-	label pipe_length_2(0.0 * units.inch)
-	label pipe_length_3(1.5 * units.inch)
-	
-	label exhaust_stagger(4.0 * units.inch)
+    
+    label pipe_length_1(2.0 * units.inch)
+    label pipe_length_2(0.0 * units.inch)
+    label pipe_length_3(1.5 * units.inch)
+    
+    label exhaust_stagger(4.0 * units.inch)
 
     cylinder_bank b0(bank_params, angle: 30.0 * units.deg) // L (first)
     b0
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj0,
+            rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: 0.8
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: 0.8
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
+            rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
+            rod_journal: rj5,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: 0.4
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: 0.4
         )
 
     cylinder_bank b1(bank_params, angle: -30.0 * units.deg) // R (second)
@@ -333,32 +333,32 @@ public node gm_highfeature_32ar {
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
+            rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: 0.5
+            primary_length: pipe_length_1,
+            sound_attenuation: 0.5
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
+            rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: 1.0
+            primary_length: pipe_length_2,
+            sound_attenuation: 1.0
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
+            rod_journal: rj6,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: 0.8
+            primary_length: pipe_length_3,
+            sound_attenuation: 0.8
         )
 
     engine
@@ -368,9 +368,9 @@ public node gm_highfeature_32ar {
     engine.add_crankshaft(c0)
 
     gm_highfeature_32ar_camshaft_builder camshaft(
-	    in_lobe_profile: gm_highfeature_32ar_lobe_profile_int(),
-		ex_lobe_profile: gm_highfeature_32ar_lobe_profile_exh()
-	)
+        in_lobe_profile: gm_highfeature_32ar_lobe_profile_int(),
+        ex_lobe_profile: gm_highfeature_32ar_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         gm_highfeature_32ar_head(
@@ -396,8 +396,8 @@ public node gm_highfeature_32ar {
         .add_sample(4000 * units.rpm, 56 * units.deg)
         .add_sample(5000 * units.rpm, 52 * units.deg)
         .add_sample(6000 * units.rpm, 48 * units.deg)
-		.add_sample(7000 * units.rpm, 45 * units.deg)
-		.add_sample(8000 * units.rpm, 45 * units.deg)
+        .add_sample(7000 * units.rpm, 45 * units.deg)
+        .add_sample(8000 * units.rpm, 45 * units.deg)
 
     engine.add_ignition_module(
         gm_highfeature_32ar_distributor(
