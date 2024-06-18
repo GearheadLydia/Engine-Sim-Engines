@@ -112,41 +112,42 @@ public node random_midengine_flatsix_head {
     input chamber_volume: 46.0 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation: 1.0;
-    input lift_scale: 1.0;
+    input flow_intake: 330.0;
+    input flow_exhaust: 290.0;
+    input lift_max: 10.0 * units.mm;
     alias output __out: head;
 
-    function intake_flow(1 * units.mm)
+    function intake_flow(lift_max / 10.0)
     intake_flow
-        .add_flow_sample(0.0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1.0 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2.0 * lift_scale, 60 * flow_attenuation)
-        .add_flow_sample(3.0 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(4.0 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5.0 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(6.0 * lift_scale, 195 * flow_attenuation)
-        .add_flow_sample(7.0 * lift_scale, 210 * flow_attenuation)
-        .add_flow_sample(8.0 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9.0 * lift_scale, 270 * flow_attenuation)
-        .add_flow_sample(10.0 * lift_scale, 305 * flow_attenuation)
-        .add_flow_sample(11.0 * lift_scale, 320 * flow_attenuation)
-        .add_flow_sample(12.0 * lift_scale, 335 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1 * units.mm)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
-        .add_flow_sample(0.0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1.0 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2.0 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(3.0 * lift_scale, 85 * flow_attenuation)
-        .add_flow_sample(4.0 * lift_scale, 115 * flow_attenuation)
-        .add_flow_sample(5.0 * lift_scale, 140 * flow_attenuation)
-        .add_flow_sample(6.0 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(7.0 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(8.0 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(9.0 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(10.0 * lift_scale, 240 * flow_attenuation)
-        .add_flow_sample(11.0 * lift_scale, 260 * flow_attenuation)
-        .add_flow_sample(12.0 * lift_scale, 280 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
         
     cylinder_head head(
