@@ -69,56 +69,47 @@ public node mugen_mf408s_camshaft_builder {
     input advance: 10.0 * units.deg;
     input base_radius: 15 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_L: _intake_cam_L;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_L: _exhaust_cam_L;
+    output exhaust_cam_R: _exhaust_cam_R;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
     label rot90(90 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_1
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
 
-    _intake_cam_0
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
 
-    _exhaust_cam_1
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
 
-    _exhaust_cam_0
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
-}
-
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node mugen_mf408s_head {
@@ -127,46 +118,42 @@ public node mugen_mf408s_head {
     input chamber_volume: 30.0 * units.cc; // guess
     input flip_display: false;
     
-    input flow_attenuation_in: 1.0;
-    input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.0;
+    input flow_intake: 330.0;
+    input flow_exhaust: 270.0;
+    input lift_max: 12.0 * units.mm;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(lift_max / 10.0)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
     cylinder_head head(
         chamber_volume: chamber_volume,
@@ -220,14 +207,18 @@ public node mugen_mf408s_engine {
     label bore(97.0 * units.mm)
     label stroke(67.0 * units.mm)
     label rod_length(150.0 * units.mm) // guess
-    label rod_mass(550.0 * units.g)
-    label piston_mass(400 * units.g)
     label compression_height(30.00 * units.mm) // guess
-    label piston_dome(0 * units.cc)
-    label deck_clearance(1.0 * units.mm)
-    label crank_mass(41 * units.lb)
-    label flywheel_mass(15 * units.lb)
+    label piston_dome(0.0 * units.cc) // guess
+    label chamber_volume(30.0 * units.cc) // guess
+    
+    label crank_mass(60 * units.lb)
+    label rod_mass(550 * units.g)
+    label piston_mass(400 * units.g)
+    label flywheel_mass(10 * units.lb)
     label flywheel_radius(6 * units.inch)
+    
+    label compression_ratio(11.0) // guess; this is a more important variable
+    label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
 
     label crank_moment(
         disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
@@ -251,10 +242,10 @@ public node mugen_mf408s_engine {
         tdc: 135.0 * units.deg // 45 degrees
     )
 
-    rod_journal rj1(angle:   0 * units.deg)
-    rod_journal rj2(angle: 180.0 * units.deg)
-    rod_journal rj3(angle: 180.0 * units.deg)
-    rod_journal rj4(angle: 0.0 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: 180 * units.deg)
+    rod_journal rj3(angle: 180 * units.deg)
+    rod_journal rj4(angle:  0  * units.deg)
 
     c0
         .add_rod_journal(rj1)
@@ -286,25 +277,31 @@ public node mugen_mf408s_engine {
         deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
-    mugen_mf408s_itb itb1()
-    mugen_mf408s_itb itb2()
-    mugen_mf408s_itb itb3()
-    mugen_mf408s_itb itb4()
-    mugen_mf408s_itb itb5()
-    mugen_mf408s_itb itb6()
-    mugen_mf408s_itb itb7()
-    mugen_mf408s_itb itb8()
-
+    intake intake(
+        plenum_volume: 2.0 * units.L,
+        plenum_cross_section_area: 100.0 * units.cm2,
+        intake_flow_rate: k_carb(1500.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.999,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(350.0),
+        runner_length: 5.0 * units.inch,
+        velocity_decay: 0.1
+    )
+    
+    label exhaust_radius((3.5 * units.inch)/2)
+    
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1200.0),
+        outlet_flow_rate: k_carb(1500.0),
         primary_tube_length: 12.0 * units.inch,
-        primary_flow_rate: k_carb(400.0),
-        velocity_decay: 0.2,
-        volume: 3.0 * units.L,
-        length: 500 * units.mm
+        primary_flow_rate: k_carb(300.0),
+        velocity_decay: 0.8,
+        collector_cross_section_area: circle_area(exhaust_radius) * 2,
+        length: 2700 * units.mm,
+        volume: 2700 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
     
     label pipe_length_1( 0 * units.mm)
     label pipe_length_2(15 * units.mm)
@@ -316,14 +313,14 @@ public node mugen_mf408s_engine {
     label exh_vol_L(1.0)
     label exh_vol_R(1.0)
 
-    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
-    b0
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
+    bL
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
-            intake: itb1,
+            intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_1 + exhaust_stagger,
             sound_attenuation: exh_vol_L * 0.85
@@ -333,7 +330,7 @@ public node mugen_mf408s_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
-            intake: itb2,
+            intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_2 + exhaust_stagger,
             sound_attenuation: exh_vol_L * 0.9
@@ -343,7 +340,7 @@ public node mugen_mf408s_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
-            intake: itb3,
+            intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_3 + exhaust_stagger,
             sound_attenuation: exh_vol_L * 0.95
@@ -353,20 +350,20 @@ public node mugen_mf408s_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,
-            intake: itb4,
+            intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_4 + exhaust_stagger,
             sound_attenuation: exh_vol_L * 1.0
         )
 
-    cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (second)
-    b1
+    cylinder_bank bR(bank_params, angle: -45 * units.deg) // R (second)
+    bR
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire5,
-            intake: itb5,
+            intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_1,
             sound_attenuation: exh_vol_R * 0.85
@@ -376,7 +373,7 @@ public node mugen_mf408s_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire6,
-            intake: itb6,
+            intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_2,
             sound_attenuation: exh_vol_R * 0.9
@@ -386,7 +383,7 @@ public node mugen_mf408s_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire7,
-            intake: itb7,
+            intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_3,
             sound_attenuation: exh_vol_R * 0.95
@@ -396,15 +393,15 @@ public node mugen_mf408s_engine {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire8,
-            intake: itb8,
+            intake: intake,
             exhaust_system: exhaust,
             primary_length: pipe_length_4,
             sound_attenuation: exh_vol_R * 1.0
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bL)
+        .add_cylinder_bank(bR)
 
     engine.add_crankshaft(c0)
 
@@ -413,17 +410,17 @@ public node mugen_mf408s_engine {
         ex_lobe_profile: mugen_mf408s_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         mugen_mf408s_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         mugen_mf408s_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
@@ -450,36 +447,37 @@ public node mugen_mf408s_engine {
     )
 }
 
-// 2000 Ferrari 360 Modena (Type F131)
-public node ferrari_360_vehicle {
+// 2005 Mugen Legend MAX Concept
+public node mugen_legend_max_concept_vehicle {
     alias output __out:
         vehicle(
-            mass: 1450 * units.kg,
-            drag_coefficient: 0.33,
-            cross_sectional_area: 1.94 * (units.m * units.m),
-            diff_ratio: 4.44,
-            tire_radius: 341.5 * units.mm, // 295/35ZR20
-            rolling_resistance: 550 * units.N
+            mass: 1750 * units.kg, // my guess
+            drag_coefficient: 0.29,
+            cross_sectional_area: 2.3 * (units.m * units.m), // adjusted A-C estimate
+            diff_ratio: 4.4, // guess
+            tire_radius: 325 * units.mm, // 275/35ZR18
+            rolling_resistance: 1750 * units.kg * 9.81 * (275.0/275.0) * 0.01
         );
 }
 
-public node ferrari_360_transmission {
+// S2000 ratios
+public node mugen_legend_max_concept_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1000 * units.lb_ft
+            max_clutch_torque: 500 * units.lb_ft
         )
-        .add_gear(3.286)
-        .add_gear(2.158)
-        .add_gear(1.609)
-        .add_gear(1.269)
-        .add_gear(1.034)
-        .add_gear(0.848);
+        .add_gear(3.133)
+        .add_gear(2.045)
+        .add_gear(1.481)
+        .add_gear(1.161)
+        .add_gear(0.971)
+        .add_gear(0.811);
 }
 
 public node main {
     set_engine(mugen_mf408s_engine())
-    set_vehicle(ferrari_360_vehicle())
-    set_transmission(ferrari_360_transmission())
+    set_vehicle(mugen_legend_max_concept_vehicle())
+    set_transmission(mugen_legend_max_concept_transmission())
 }
 
 main()
