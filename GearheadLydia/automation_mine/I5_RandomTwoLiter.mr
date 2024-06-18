@@ -6,7 +6,7 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-public node honda_b16b_distributor {
+public node i5_randomtwoliter_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 8550 * units.rpm;
@@ -39,7 +39,7 @@ private node add_sym_sample {
 }
 
 
-public node honda_b16b_lobe_profile_int_lo {
+public node i5_randomtwoliter_lobe_profile_int_lo {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 180.0 * units.deg,
@@ -49,7 +49,7 @@ public node honda_b16b_lobe_profile_int_lo {
         );
 }
 
-public node honda_b16b_lobe_profile_exh_lo {
+public node i5_randomtwoliter_lobe_profile_exh_lo {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 180.0 * units.deg,
@@ -59,7 +59,7 @@ public node honda_b16b_lobe_profile_exh_lo {
         );
 }
 
-public node honda_b16b_lobe_profile_int_hi {
+public node i5_randomtwoliter_lobe_profile_int_hi {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 240.0 * units.deg,
@@ -69,7 +69,7 @@ public node honda_b16b_lobe_profile_int_hi {
         );
 }
 
-public node honda_b16b_lobe_profile_exh_hi {
+public node i5_randomtwoliter_lobe_profile_exh_hi {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 240.0 * units.deg,
@@ -79,11 +79,11 @@ public node honda_b16b_lobe_profile_exh_hi {
         );
 }
 
-public node honda_b16b_camshaft_builder {
-    input in_lobe_profile_lo: honda_b16b_lobe_profile_int_lo();
-    input ex_lobe_profile_lo: honda_b16b_lobe_profile_exh_lo();
-    input in_lobe_profile_hi: honda_b16b_lobe_profile_int_hi();
-    input ex_lobe_profile_hi: honda_b16b_lobe_profile_exh_hi();
+public node i5_randomtwoliter_camshaft_builder {
+    input in_lobe_profile_lo: i5_randomtwoliter_lobe_profile_int_lo();
+    input ex_lobe_profile_lo: i5_randomtwoliter_lobe_profile_exh_lo();
+    input in_lobe_profile_hi: i5_randomtwoliter_lobe_profile_int_hi();
+    input ex_lobe_profile_hi: i5_randomtwoliter_lobe_profile_exh_hi();
     input intake_lobe_center_lo: 125.0 * units.deg;
     input exhaust_lobe_center_lo: 125.0 * units.deg;
     input intake_lobe_center_hi: 110.0 * units.deg;
@@ -148,16 +148,7 @@ public node honda_b16b_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center_hi + 3 * rot144)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
-public node honda_b16b_head {
+public node i5_randomtwoliter_head {
     input cam_in_lo;
     input cam_ex_lo;
     input cam_in_hi;
@@ -165,42 +156,42 @@ public node honda_b16b_head {
     input chamber_volume: 42.7 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation_in: 0.8;
-    input flow_attenuation_ex: 0.8;
-    input lift_scale: 1.0;
+    input flow_intake: 335.0;
+    input flow_exhaust: 280.0;
+    input lift_max: 12.0 * units.mm;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(lift_max / 10.0)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
         
     generic_cylinder_head head(
@@ -223,7 +214,7 @@ public node honda_b16b_head {
     )
 }
 
-public node honda_b16b_engine {
+public node i5_randomtwoliter_engine {
     alias output __out: engine;
 
     engine engine(
@@ -399,10 +390,10 @@ public node honda_b16b_engine {
 
     engine.add_crankshaft(c0)
 
-    honda_b16b_camshaft_builder camshaft()
+    i5_randomtwoliter_camshaft_builder camshaft()
 
     b0.set_cylinder_head (
-        honda_b16b_head(
+        i5_randomtwoliter_head(
             cam_in_lo: camshaft.intake_cam_0_lo,
             cam_in_hi: camshaft.intake_cam_0_hi,
             cam_ex_lo: camshaft.exhaust_cam_0_lo,
@@ -426,7 +417,7 @@ public node honda_b16b_engine {
         .add_sample(9000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
-        honda_b16b_distributor(
+        i5_randomtwoliter_distributor(
             wires: wires,
             timing_curve: timing_curve
         ))
@@ -458,7 +449,7 @@ public node honda_s4c_transmission {
 }
 
 public node main {
-    set_engine(honda_b16b_engine())
+    set_engine(i5_randomtwoliter_engine())
     set_vehicle(honda_civic_type_r_ek9_vehicle())
     set_transmission(honda_s4c_transmission())
 }

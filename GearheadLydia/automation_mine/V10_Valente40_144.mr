@@ -126,15 +126,6 @@ public node valente_v10_144_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot72) // # 10
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 public node valente_v10_144_head {
     input intake_camshaft;
     input exhaust_camshaft;

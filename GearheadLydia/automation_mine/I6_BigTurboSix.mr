@@ -96,15 +96,6 @@ public node i6_bigturbosix_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot120)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 public node i6_bigturbosix_head {
     input intake_camshaft;
     input exhaust_camshaft;

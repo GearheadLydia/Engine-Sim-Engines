@@ -130,15 +130,6 @@ public node scimitar_gt1_v12_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center +  7 * rot60 + anglesplay) // # 12
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 public node scimitar_gt1_v12_head {
     input intake_camshaft;
     input exhaust_camshaft;

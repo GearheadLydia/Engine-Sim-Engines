@@ -92,15 +92,6 @@ public node i5_bigturbofive_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot144)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 public node i5_bigturbofive_head {
     input intake_camshaft;
     input exhaust_camshaft;
