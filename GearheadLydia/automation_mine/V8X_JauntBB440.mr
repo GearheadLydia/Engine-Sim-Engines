@@ -286,8 +286,8 @@ public node jaunt_bigblock_440_engine {
         volume: 2600 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
     
     label pipe_length_1(bore_spacing * 3.2)
     label pipe_length_2(bore_spacing * 1.7)

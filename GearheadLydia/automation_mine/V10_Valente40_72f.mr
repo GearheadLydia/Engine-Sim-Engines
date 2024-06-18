@@ -14,7 +14,7 @@ label anglesplay(vee_angle - (72 * units.deg))
 public node valente_v10_72_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 9150 * units.rpm;
+    input rev_limit: 9650 * units.rpm;
     input limiter_duration: 0.05;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -226,9 +226,9 @@ public node valente_v10_72_engine {
         name: "Valente V10",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
-        redline: 9000 * units.rpm,
+        redline: 9500 * units.rpm,
         throttle_gamma: 1.0,
-        simulation_frequency: 6500
+        simulation_frequency: 10000
     )
 
     label crank_moment(
@@ -245,7 +245,7 @@ public node valente_v10_72_engine {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -497,37 +497,37 @@ public node valente_v10_72_engine {
     )
 }
 
-// 2010 Ferrari 458 Italia
-public node ferrari_458_italia_vehicle {
+// Valente Kestrel Targa 400
+public node valente_kestrel_targa_400_vehicle {
     alias output __out:
         vehicle(
-            mass: 3285 * units.lb,
-            drag_coefficient: 0.33,
-            cross_sectional_area: 1.95 * (units.m * units.m),
-            diff_ratio: 4.44,
-            tire_radius: 356.87 * units.mm, // 295/35ZR20
-            rolling_resistance: 550 * units.N
+            mass: 1380 * units.kg,
+            drag_coefficient: 0.32,
+            cross_sectional_area: 1.9 * (units.m * units.m),
+            diff_ratio: 4.03,
+            tire_radius: 350 * units.mm,
+            rolling_resistance: 1380 * units.kg * 9.81 * (275.0/275.0) * 0.01 // F:255/35R19 | R:315/30R20
         );
 }
 
-public node ferrari_458_italia_transmission {
+public node valente_kestrel_targa_400_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1500 * units.lb_ft
+            max_clutch_torque: 600 * units.lb_ft
         )
-        .add_gear(3.08)
+        .add_gear(3.00)
         .add_gear(2.19)
-        .add_gear(1.63)
-        .add_gear(1.29)
-        .add_gear(1.03)
-        .add_gear(0.84)
-        .add_gear(0.69);
+        .add_gear(1.62)
+        .add_gear(1.26)
+        .add_gear(1.00)
+        .add_gear(0.83)
+        .add_gear(0.70);
 }
 
 public node main {
     set_engine(valente_v10_72_engine())
-    set_vehicle(ferrari_458_italia_vehicle())
-    set_transmission(ferrari_458_italia_transmission())
+    set_vehicle(valente_kestrel_targa_400_vehicle())
+    set_transmission(valente_kestrel_targa_400_transmission())
 }
 
 main()

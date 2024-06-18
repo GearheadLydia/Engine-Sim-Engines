@@ -301,8 +301,8 @@ public node jaunt_v10_550_engine {
         volume: 2600 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
     
     label pipe_length_1(bore_spacing * 4.0)
     label pipe_length_2(bore_spacing * 3.0)

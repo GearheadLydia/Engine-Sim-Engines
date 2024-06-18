@@ -10,10 +10,10 @@ label cycle(2 * 360 * units.deg)
 // also works: 14768523
 // should also work: 15238476
 
-public node hypo_flat8_distributor {
+public node valente_flat8_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 10150 * units.rpm;
+    input rev_limit: 9650 * units.rpm;
     input limiter_duration: 0.05;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -38,7 +38,7 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-public node hypo_flat8_lobe_profile_int {
+public node valente_flat8_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 245 * units.deg,
@@ -48,7 +48,7 @@ public node hypo_flat8_lobe_profile_int {
         );
 }
 
-public node hypo_flat8_lobe_profile_exh {
+public node valente_flat8_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 240 * units.deg,
@@ -58,9 +58,9 @@ public node hypo_flat8_lobe_profile_exh {
         );
 }
 
-public node hypo_flat8_camshaft_builder {
-    input in_lobe_profile: hypo_flat8_lobe_profile_int();
-    input ex_lobe_profile: hypo_flat8_lobe_profile_exh();
+public node valente_flat8_camshaft_builder {
+    input in_lobe_profile: valente_flat8_lobe_profile_int();
+    input ex_lobe_profile: valente_flat8_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 100.0 * units.deg;
@@ -126,7 +126,7 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node hypo_flat8_head {
+public node valente_flat8_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 45.0 * units.cc;
@@ -212,7 +212,7 @@ public node valente_flat8_engine {
         name: "Valente Flat-8",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1500 * units.rpm,
-        redline: 10000 * units.rpm,
+        redline: 9500 * units.rpm,
         throttle_gamma: 1.0
     )
 
@@ -406,13 +406,13 @@ public node valente_flat8_engine {
 
     engine.add_crankshaft(c0)
 
-    hypo_flat8_camshaft_builder camshaft(
-        in_lobe_profile: hypo_flat8_lobe_profile_int(),
-        ex_lobe_profile: hypo_flat8_lobe_profile_exh()
+    valente_flat8_camshaft_builder camshaft(
+        in_lobe_profile: valente_flat8_lobe_profile_int(),
+        ex_lobe_profile: valente_flat8_lobe_profile_exh()
     )
 
     bL.set_cylinder_head (
-        hypo_flat8_head(
+        valente_flat8_head(
             intake_camshaft: camshaft.intake_cam_L,
             exhaust_camshaft: camshaft.exhaust_cam_L,
             chamber_volume: chamber_volume,
@@ -420,7 +420,7 @@ public node valente_flat8_engine {
         )
     )
     bR.set_cylinder_head (
-        hypo_flat8_head(
+        valente_flat8_head(
             intake_camshaft: camshaft.intake_cam_R,
             exhaust_camshaft: camshaft.exhaust_cam_R,
             chamber_volume: chamber_volume,
@@ -444,7 +444,7 @@ public node valente_flat8_engine {
         .add_sample(11000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
-        hypo_flat8_distributor(
+        valente_flat8_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
@@ -455,26 +455,27 @@ public node valente_flat8_engine {
 public node valente_kestrel_targa_400_vehicle {
     alias output __out:
         vehicle(
-            mass: 1400 * units.kg,
-            drag_coefficient: 0.35,
+            mass: 1380 * units.kg,
+            drag_coefficient: 0.32,
             cross_sectional_area: 1.9 * (units.m * units.m),
-            diff_ratio: 5.00,
-            tire_radius: 330 * units.mm,
-            rolling_resistance: 550 * units.N
+            diff_ratio: 4.03,
+            tire_radius: 350 * units.mm,
+            rolling_resistance: 1380 * units.kg * 9.81 * (275.0/275.0) * 0.01 // F:255/35R19 | R:315/30R20
         );
 }
 
 public node valente_kestrel_targa_400_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1200 * units.lb_ft
+            max_clutch_torque: 600 * units.lb_ft
         )
-        .add_gear(2.60)
-        .add_gear(1.80)
-        .add_gear(1.30)
+        .add_gear(3.00)
+        .add_gear(2.19)
+        .add_gear(1.62)
+        .add_gear(1.26)
         .add_gear(1.00)
-        .add_gear(0.80)
-        .add_gear(0.65);
+        .add_gear(0.83)
+        .add_gear(0.70);
 }
 
 public node main {

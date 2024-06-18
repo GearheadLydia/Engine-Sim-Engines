@@ -11,7 +11,7 @@ label cycle(2 * 360 * units.deg)
 public node valente_flat10_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 9150 * units.rpm;
+    input rev_limit: 9650 * units.rpm;
     input limiter_duration: 0.05;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -223,9 +223,9 @@ public node valente_flat10_engine {
         name: "Valente Flat-10",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 900 * units.rpm,
-        redline: 9000 * units.rpm,
+        redline: 9500 * units.rpm,
         throttle_gamma: 1.0,
-        simulation_frequency: 6500
+        simulation_frequency: 10000
     )
 
     label crank_moment(
@@ -242,7 +242,7 @@ public node valente_flat10_engine {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -498,26 +498,27 @@ public node valente_flat10_engine {
 public node valente_kestrel_targa_400_vehicle {
     alias output __out:
         vehicle(
-            mass: 1400 * units.kg,
-            drag_coefficient: 0.35,
+            mass: 1380 * units.kg,
+            drag_coefficient: 0.32,
             cross_sectional_area: 1.9 * (units.m * units.m),
-            diff_ratio: 5.00,
-            tire_radius: 330 * units.mm,
-            rolling_resistance: 550 * units.N
+            diff_ratio: 4.03,
+            tire_radius: 350 * units.mm,
+            rolling_resistance: 1380 * units.kg * 9.81 * (275.0/275.0) * 0.01 // F:255/35R19 | R:315/30R20
         );
 }
 
 public node valente_kestrel_targa_400_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1200 * units.lb_ft
+            max_clutch_torque: 600 * units.lb_ft
         )
-        .add_gear(2.60)
-        .add_gear(1.80)
-        .add_gear(1.30)
+        .add_gear(3.00)
+        .add_gear(2.19)
+        .add_gear(1.62)
+        .add_gear(1.26)
         .add_gear(1.00)
-        .add_gear(0.80)
-        .add_gear(0.65);
+        .add_gear(0.83)
+        .add_gear(0.70);
 }
 
 public node main {

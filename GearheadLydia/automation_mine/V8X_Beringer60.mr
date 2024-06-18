@@ -285,7 +285,7 @@ public node beringer_v8_60_engine {
         volume: 2600 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
     
     label pipe_length_1(bore_spacing * 3.0)
     label pipe_length_2(bore_spacing * 2.0)

@@ -242,7 +242,6 @@ public node v8f_random_engine {
         .add_rod_journal(rj3)
         .add_rod_journal(rj4)
 
-    // piston specs are guesses
     piston_parameters piston_params(
         mass: piston_mass,
         blowby: k_28inH2O(0.1),

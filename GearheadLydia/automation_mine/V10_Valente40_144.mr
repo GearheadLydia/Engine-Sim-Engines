@@ -9,8 +9,8 @@ label cycle(2 * 360 * units.deg)
 public node valente_v10_144_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 9150 * units.rpm;
-	input limiter_duration: 0.05;
+    input rev_limit: 9650 * units.rpm;
+    input limiter_duration: 0.05;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, (0.0 / 10.0) * cycle)
@@ -60,7 +60,7 @@ public node valente_v10_144_lobe_profile_exh {
 
 public node valente_v10_144_camshaft_builder {
     input in_lobe_profile: valente_v10_144_lobe_profile_int();
-	input ex_lobe_profile: valente_v10_144_lobe_profile_exh();
+    input ex_lobe_profile: valente_v10_144_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 100.0 * units.deg;
@@ -85,17 +85,17 @@ public node valente_v10_144_camshaft_builder {
     camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
 
 
-	label rot18(18 * units.deg)
-	label rot30(30 * units.deg)
-	label rot36(36 * units.deg)
-	label rot54(54 * units.deg)
-	label rot60(60 * units.deg)
-	label rot72(72 * units.deg)
+    label rot18(18 * units.deg)
+    label rot30(30 * units.deg)
+    label rot36(36 * units.deg)
+    label rot54(54 * units.deg)
+    label rot60(60 * units.deg)
+    label rot72(72 * units.deg)
     label rot90(90 * units.deg)
-	label rot120(120 * units.deg)
+    label rot120(120 * units.deg)
     label rot360(360 * units.deg)
-	
-	// firing order: 1-6-3-2-7-4-9-8-5-10
+    
+    // firing order: 1-6-3-2-7-4-9-8-5-10
 
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center + 0 * rot72) // # 1
@@ -140,9 +140,9 @@ public node valente_v10_144_head {
     input exhaust_camshaft;
     input chamber_volume: 46.0 * units.cc;
     input flip_display: false;
-	
-	input flow_attenuation_in: 1.0;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 1.0;
+    input flow_attenuation_ex: 1.0;
     input lift_scale: 1.0;
     alias output __out: head;
 
@@ -182,7 +182,7 @@ public node valente_v10_144_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.2 * units.inch) * 6 * units.inch,
@@ -208,10 +208,10 @@ public node valente_v10_144_engine {
     label stroke(68.5 * units.mm)
     label rod_length(120.0 * units.mm)
     label rod_mass(434 * units.g)
-	label piston_mass(290 * units.g)
+    label piston_mass(290 * units.g)
     label compression_height(28.0 * units.mm)
-	label piston_dome(0.0 * units.cc)
-	label deck_clearance(0.5 * units.mm)
+    label piston_dome(0.0 * units.cc)
+    label deck_clearance(0.5 * units.mm)
     label crank_mass(75 * units.lb)
     label flywheel_mass(20 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -219,10 +219,10 @@ public node valente_v10_144_engine {
     engine engine(
         name: "Valente V10",
         starter_torque: 150 * units.lb_ft,
-		starter_speed: 1200 * units.rpm,
-        redline: 9000 * units.rpm,
+        starter_speed: 1200 * units.rpm,
+        redline: 9500 * units.rpm,
         throttle_gamma: 1.0,
-		simulation_frequency: 6500
+        simulation_frequency: 10000
     )
 
     label crank_moment(
@@ -239,7 +239,7 @@ public node valente_v10_144_engine {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -247,10 +247,10 @@ public node valente_v10_144_engine {
     )
 
     rod_journal rj01(angle:  0  * units.deg)
-	rod_journal rj03(angle: 288 * units.deg)
+    rod_journal rj03(angle: 288 * units.deg)
     rod_journal rj05(angle:  72 * units.deg)
-	rod_journal rj07(angle: 216 * units.deg)
-	rod_journal rj09(angle: 144 * units.deg)
+    rod_journal rj07(angle: 216 * units.deg)
+    rod_journal rj09(angle: 144 * units.deg)
 
     c0
         .add_rod_journal(rj01)
@@ -282,29 +282,29 @@ public node valente_v10_144_engine {
         deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
-	intake intakeL(
-		plenum_volume: 1.0 * units.L,
-		plenum_cross_section_area: 50.0 * units.cm2,
-		intake_flow_rate: k_carb(750.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.998,
-		throttle_gamma: 2.0,
-		runner_flow_rate: k_carb(550.0),
-		runner_length: 12.0 * units.inch,
-		velocity_decay: 0.1
-	)
+    intake intakeL(
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 50.0 * units.cm2,
+        intake_flow_rate: k_carb(750.0),
+        idle_flow_rate: k_carb(0.1),
+        idle_throttle_plate_position: 0.998,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(550.0),
+        runner_length: 12.0 * units.inch,
+        velocity_decay: 0.1
+    )
 
-	intake intakeR(
-		plenum_volume: 1.0 * units.L,
-		plenum_cross_section_area: 50.0 * units.cm2,
-		intake_flow_rate: k_carb(750.0),
-		idle_flow_rate: k_carb(0.1),
-		idle_throttle_plate_position: 0.998,
-		throttle_gamma: 2.0,
-		runner_flow_rate: k_carb(550.0),
-		runner_length: 12.0 * units.inch,
-		velocity_decay: 0.1
-	)
+    intake intakeR(
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 50.0 * units.cm2,
+        intake_flow_rate: k_carb(750.0),
+        idle_flow_rate: k_carb(0.1),
+        idle_throttle_plate_position: 0.998,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(550.0),
+        runner_length: 12.0 * units.inch,
+        velocity_decay: 0.1
+    )
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1300.0),
@@ -316,23 +316,23 @@ public node valente_v10_144_engine {
     )
 
     exhaust_system exhaust(
-		es_params,
-		audio_volume: 1.0 * 0.01,
-		impulse_response: ir_lib.default_0
-	)
-	
-	label pipe_length_1(2.0 * units.inch)
-	label pipe_length_2(1.5 * units.inch)
-	label pipe_length_3(1.0 * units.inch)
-	label pipe_length_4(0.5 * units.inch)
-	label pipe_length_5(0.0 * units.inch)
-	
-	label exhaust_stagger(10 * units.mm)
-	
-	label exh_vol_L1(1.0)
-	label exh_vol_L3(1.0)
-	label exh_vol_R1(1.0)
-	label exh_vol_R3(1.0)
+        es_params,
+        audio_volume: 1.0 * 0.01,
+        impulse_response: ir_lib.default_0
+    )
+    
+    label pipe_length_1(2.0 * units.inch)
+    label pipe_length_2(1.5 * units.inch)
+    label pipe_length_3(1.0 * units.inch)
+    label pipe_length_4(0.5 * units.inch)
+    label pipe_length_5(0.0 * units.inch)
+    
+    label exhaust_stagger(10 * units.mm)
+    
+    label exh_vol_L1(1.0)
+    label exh_vol_L3(1.0)
+    label exh_vol_R1(1.0)
+    label exh_vol_R3(1.0)
 
     cylinder_bank b0(bank_params, angle: -72.0 * units.deg) // R (first)
     b0
@@ -343,8 +343,8 @@ public node valente_v10_144_engine {
             ignition_wire: wires.wire01,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1 + exhaust_stagger,
-			sound_attenuation: exh_vol_R1
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -353,8 +353,8 @@ public node valente_v10_144_engine {
             ignition_wire: wires.wire03,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2 + exhaust_stagger,
-			sound_attenuation: exh_vol_R1
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -363,8 +363,8 @@ public node valente_v10_144_engine {
             ignition_wire: wires.wire05,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3 + exhaust_stagger,
-			sound_attenuation: exh_vol_R3
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: exh_vol_R3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -373,8 +373,8 @@ public node valente_v10_144_engine {
             ignition_wire: wires.wire07,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4 + exhaust_stagger,
-			sound_attenuation: exh_vol_R3
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: exh_vol_R3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -383,8 +383,8 @@ public node valente_v10_144_engine {
             ignition_wire: wires.wire09,
             intake: intakeR,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5 + exhaust_stagger,
-			sound_attenuation: exh_vol_R3
+            primary_length: pipe_length_5 + exhaust_stagger,
+            sound_attenuation: exh_vol_R3
         )
 
     cylinder_bank b1(bank_params, angle: 72.0 * units.deg) // L (second)
@@ -396,8 +396,8 @@ public node valente_v10_144_engine {
             ignition_wire: wires.wire02,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_1,
-			sound_attenuation: exh_vol_L1
+            primary_length: pipe_length_1,
+            sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -406,8 +406,8 @@ public node valente_v10_144_engine {
             ignition_wire: wires.wire04,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_2,
-			sound_attenuation: exh_vol_L1
+            primary_length: pipe_length_2,
+            sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -416,8 +416,8 @@ public node valente_v10_144_engine {
             ignition_wire: wires.wire06,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_3,
-			sound_attenuation: exh_vol_L3
+            primary_length: pipe_length_3,
+            sound_attenuation: exh_vol_L3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -426,8 +426,8 @@ public node valente_v10_144_engine {
             ignition_wire: wires.wire08,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_4,
-			sound_attenuation: exh_vol_L3
+            primary_length: pipe_length_4,
+            sound_attenuation: exh_vol_L3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -436,8 +436,8 @@ public node valente_v10_144_engine {
             ignition_wire: wires.wire10,
             intake: intakeL,
             exhaust_system: exhaust,
-			primary_length: pipe_length_5,
-			sound_attenuation: exh_vol_L3
+            primary_length: pipe_length_5,
+            sound_attenuation: exh_vol_L3
         )
 
     engine
@@ -447,9 +447,9 @@ public node valente_v10_144_engine {
     engine.add_crankshaft(c0)
 
     valente_v10_144_camshaft_builder camshaft(
-	    in_lobe_profile: valente_v10_144_lobe_profile_int(),
-		ex_lobe_profile: valente_v10_144_lobe_profile_exh()
-	)
+        in_lobe_profile: valente_v10_144_lobe_profile_int(),
+        ex_lobe_profile: valente_v10_144_lobe_profile_exh()
+    )
 
     b0.set_cylinder_head (
         valente_v10_144_head(
@@ -475,11 +475,11 @@ public node valente_v10_144_engine {
         .add_sample(04000 * units.rpm, 60 * units.deg)
         .add_sample(05000 * units.rpm, 60 * units.deg)
         .add_sample(06000 * units.rpm, 60 * units.deg)
-		.add_sample(07000 * units.rpm, 60 * units.deg)
-		.add_sample(08000 * units.rpm, 60 * units.deg)
-		.add_sample(09000 * units.rpm, 60 * units.deg)
-		.add_sample(10000 * units.rpm, 60 * units.deg)
-		.add_sample(11000 * units.rpm, 60 * units.deg)
+        .add_sample(07000 * units.rpm, 60 * units.deg)
+        .add_sample(08000 * units.rpm, 60 * units.deg)
+        .add_sample(09000 * units.rpm, 60 * units.deg)
+        .add_sample(10000 * units.rpm, 60 * units.deg)
+        .add_sample(11000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
         valente_v10_144_distributor(
@@ -489,37 +489,37 @@ public node valente_v10_144_engine {
     )
 }
 
-// 2010 Ferrari 458 Italia
-public node ferrari_458_italia_vehicle {
+// Valente Kestrel Targa 400
+public node valente_kestrel_targa_400_vehicle {
     alias output __out:
         vehicle(
-            mass: 3285 * units.lb,
-            drag_coefficient: 0.33,
-            cross_sectional_area: 1.95 * (units.m * units.m),
-            diff_ratio: 4.44,
-            tire_radius: 356.87 * units.mm, // 295/35ZR20
-            rolling_resistance: 550 * units.N
+            mass: 1380 * units.kg,
+            drag_coefficient: 0.32,
+            cross_sectional_area: 1.9 * (units.m * units.m),
+            diff_ratio: 4.03,
+            tire_radius: 350 * units.mm,
+            rolling_resistance: 1380 * units.kg * 9.81 * (275.0/275.0) * 0.01 // F:255/35R19 | R:315/30R20
         );
 }
 
-public node ferrari_458_italia_transmission {
+public node valente_kestrel_targa_400_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1500 * units.lb_ft
+            max_clutch_torque: 600 * units.lb_ft
         )
-        .add_gear(3.08)
+        .add_gear(3.00)
         .add_gear(2.19)
-        .add_gear(1.63)
-        .add_gear(1.29)
-        .add_gear(1.03)
-        .add_gear(0.84)
-        .add_gear(0.69);
+        .add_gear(1.62)
+        .add_gear(1.26)
+        .add_gear(1.00)
+        .add_gear(0.83)
+        .add_gear(0.70);
 }
 
 public node main {
     set_engine(valente_v10_144_engine())
-    set_vehicle(ferrari_458_italia_vehicle())
-    set_transmission(ferrari_458_italia_transmission())
+    set_vehicle(valente_kestrel_targa_400_vehicle())
+    set_transmission(valente_kestrel_targa_400_transmission())
 }
 
 main()

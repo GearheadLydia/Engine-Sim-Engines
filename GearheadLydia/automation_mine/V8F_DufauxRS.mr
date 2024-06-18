@@ -6,25 +6,23 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-// firing order: 14738526
-// also works: 14768523
-// should also work: 15238476
+// firing order: 12637548
 
-public node valente_flat8_distributor {
+public node dufaux_rsv8_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 9650 * units.rpm;
+    input rev_limit: 8250 * units.rpm;
     input limiter_duration: 0.05;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
-            .connect_wire(wires.wire4, (1.0 / 8.0) * cycle)
-            .connect_wire(wires.wire7, (2.0 / 8.0) * cycle)
-            .connect_wire(wires.wire3, (3.0 / 8.0) * cycle)
-            .connect_wire(wires.wire8, (4.0 / 8.0) * cycle)
-            .connect_wire(wires.wire5, (5.0 / 8.0) * cycle)
-            .connect_wire(wires.wire2, (6.0 / 8.0) * cycle)
-            .connect_wire(wires.wire6, (7.0 / 8.0) * cycle);
+            .connect_wire(wires.wire5, (1.0 / 8.0) * cycle)
+            .connect_wire(wires.wire2, (2.0 / 8.0) * cycle)
+            .connect_wire(wires.wire6, (3.0 / 8.0) * cycle)
+            .connect_wire(wires.wire4, (4.0 / 8.0) * cycle)
+            .connect_wire(wires.wire8, (5.0 / 8.0) * cycle)
+            .connect_wire(wires.wire3, (6.0 / 8.0) * cycle)
+            .connect_wire(wires.wire7, (7.0 / 8.0) * cycle);
 }
 
 private node wires {
@@ -38,35 +36,35 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-public node valente_flat8_lobe_profile_int {
+public node dufaux_rsv8_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 245 * units.deg,
+            duration_at_50_thou: 250 * units.deg,
             gamma: 1.0,
             lift: 12.0 * units.mm,
             steps: 100
         );
 }
 
-public node valente_flat8_lobe_profile_exh {
+public node dufaux_rsv8_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 240 * units.deg,
+            duration_at_50_thou: 230 * units.deg,
             gamma: 1.0,
-            lift: 12.0 * units.mm,
+            lift: 11.0 * units.mm,
             steps: 100
         );
 }
 
-public node valente_flat8_camshaft_builder {
-    input in_lobe_profile: valente_flat8_lobe_profile_int();
-    input ex_lobe_profile: valente_flat8_lobe_profile_exh();
+public node dufaux_rsv8_camshaft_builder {
+    input in_lobe_profile: dufaux_rsv8_lobe_profile_int();
+    input ex_lobe_profile: dufaux_rsv8_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input intake_lobe_center: 100.0 * units.deg;
-    input exhaust_lobe_center: 100.0 * units.deg;
+    input intake_lobe_center: 125.0 * units.deg;
+    input exhaust_lobe_center: 115.0 * units.deg;
     input advance: 0.0 * units.deg;
-    input base_radius: 15 * units.mm;
+    input base_radius: 30.0 / 2.0 * units.mm;
 
     output intake_cam_R: _intake_cam_R;
     output exhaust_cam_R: _exhaust_cam_R;
@@ -92,48 +90,39 @@ public node valente_flat8_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_R
-        .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
-
     _intake_cam_L
-        .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot90) // #1
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot90) // #2
+        .add_lobe(rot360 + intake_lobe_center + 6 * rot90) // #3
+        .add_lobe(rot360 + intake_lobe_center + 4 * rot90) // #4
 
-    _exhaust_cam_R
-        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
+    _intake_cam_R
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot90) // #5
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot90) // #6
+        .add_lobe(rot360 + intake_lobe_center + 7 * rot90) // #7
+        .add_lobe(rot360 + intake_lobe_center + 5 * rot90) // #8
 
     _exhaust_cam_L
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
+
+    _exhaust_cam_R
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
-public node valente_flat8_head {
+public node dufaux_rsv8_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 45.0 * units.cc;
+    input chamber_volume: 35.0 * units.cc;
     input flip_display: false;
     
-    input flow_intake: 335.0;
-    input flow_exhaust: 280.0;
+    input flow_intake: 350.0;
+    input flow_exhaust: 300.0;
     input lift_max: 12.0 * units.mm;
     alias output __out: head;
 
@@ -168,14 +157,13 @@ public node valente_flat8_head {
         .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
         .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
         .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
-
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.2 * units.inch) * 6 * units.inch,
+        intake_runner_volume: circle_area(1.2 * units.inch) * 3 * units.inch,
         intake_runner_cross_section_area: circle_area(1.2 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 6 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -186,35 +174,35 @@ public node valente_flat8_head {
 }
 
 
-public node valente_flat8_engine {
+public node dufaux_rsv8_engine {
     alias output __out: engine;
 
     wires wires()
 
+    engine engine(
+        name: "Dufaux RS",
+        starter_torque: 150 * units.lb_ft,
+        starter_speed: 1200 * units.rpm,
+        redline: 8000 * units.rpm,
+        throttle_gamma: 1.0
+    )
+
     label bore(90.0 * units.mm)
-    label bore_spacing(98.0 * units.mm)
-    label stroke(78.5 * units.mm)
-    label rod_length(125.0 * units.mm)
-    label compression_height(25.0 * units.mm)
+    label bore_spacing(100.0 * units.mm)
+    label stroke(82.5 * units.mm)
+    label rod_length(140.0 * units.mm)
+    label compression_height(28.0 * units.mm)
     label piston_dome(0.0 * units.cc)
-    label chamber_volume(45.0 * units.cc)
+    label chamber_volume(35.0 * units.cc)
     
-    label crank_mass(75 * units.lb)
-    label rod_mass(434 * units.g)
-    label piston_mass(290 * units.g)
+    label crank_mass(35 * units.kg)
+    label rod_mass(550 * units.g)
+    label piston_mass(480 * units.g)
     label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
     
-    label compression_ratio(11.0)
+    label compression_ratio(12.0)
     label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
-
-    engine engine(
-        name: "Flat-8 Crossplane",
-        starter_torque: 150 * units.lb_ft,
-        starter_speed: 1500 * units.rpm,
-        redline: 9500 * units.rpm,
-        throttle_gamma: 1.0
-    )
 
     label crank_moment(
         disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
@@ -223,7 +211,7 @@ public node valente_flat8_engine {
         disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
     )
     label other_moment( // Moment from cams, pulleys, etc [estimated]
-        disk_moment_of_inertia(mass: 15 * units.kg, radius: 8.0 * units.cm)
+        disk_moment_of_inertia(mass: 20 * units.kg, radius: 8.0 * units.cm)
     )
 
     crankshaft c0(
@@ -231,16 +219,17 @@ public node valente_flat8_engine {
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
         friction_torque: 5.0 * units.lb_ft,
-        moment_of_inertia: crank_moment + flywheel_moment + other_moment,
+        moment_of_inertia:
+            crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: 0.0 * units.deg
+        tdc: 135.0 * units.deg // 45 degrees back from vertical
     )
 
-    rod_journal rj1(angle:  0.0  * units.deg)
-    rod_journal rj2(angle: -90.0 * units.deg)
-    rod_journal rj3(angle:  90.0 * units.deg)
-    rod_journal rj4(angle: 180.0 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: 180 * units.deg)
+    rod_journal rj3(angle: 180 * units.deg)
+    rod_journal rj4(angle:  0  * units.deg)
 
     c0
         .add_rod_journal(rj1)
@@ -253,7 +242,7 @@ public node valente_flat8_engine {
         mass: piston_mass,
         blowby: k_28inH2O(0.1),
         compression_height: compression_height,
-        wrist_pin_position: 0.0,
+        wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
     )
 
@@ -272,139 +261,142 @@ public node valente_flat8_engine {
         deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
-    intake intakeL(
-        plenum_volume: 1.0 * units.L,
-        plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(550.0),
-        idle_flow_rate: k_carb(0.1),
+    intake intake(
+        plenum_volume: 0.3 * units.L,
+        plenum_cross_section_area: circle_area(45 * units.mm),
+        intake_flow_rate: k_carb(950.0),
+        idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.998,
-        throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(550.0),
-        runner_length: 12.0 * units.inch,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(300.0),
+        runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
-
-    intake intakeR(
-        plenum_volume: 1.0 * units.L,
-        plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(550.0),
-        idle_flow_rate: k_carb(0.1),
-        idle_throttle_plate_position: 0.998,
-        throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(550.0),
-        runner_length: 12.0 * units.inch,
-        velocity_decay: 0.1
-    )
+    
+    label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1000.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
+        outlet_flow_rate: k_carb(1200.0),
+        primary_tube_length: 12.0 * units.inch,
+        primary_flow_rate: k_carb(450.0),
         velocity_decay: 1.0, //0.5
-        volume: 5.0 * units.L,
-        length: 500 * units.mm
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2600 * units.mm,
+        volume: 2600 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
     
-    label pipe_length_1(0.8 * bore_spacing)
-    label pipe_length_2(0.2 * bore_spacing)
-    label pipe_length_3(0.0 * bore_spacing)
-    label pipe_length_4(0.4 * bore_spacing)
+    label pipe_length_1(bore_spacing * 1.8)
+    label pipe_length_2(bore_spacing * 1.2)
+    label pipe_length_3(bore_spacing * 0.0)
+    label pipe_length_4(bore_spacing * 0.6)
+    label pipe_volume_1(1.00)
+    label pipe_volume_2(0.95)
+    label pipe_volume_3(0.90)
+    label pipe_volume_4(0.85)
     
-    label exhaust_stagger(0.5 * bore_spacing)
+    label exhaust_stagger(50 * units.mm)
 
-    cylinder_bank bR(bank_params, angle: -90.0 * units.deg) // R (first)
-    bR
-        .add_cylinder(
-            piston: piston(piston_params),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire1,
-            intake: intakeR,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_1 + exhaust_stagger
-        )
-        .add_cylinder(
-            piston: piston(piston_params),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
-            ignition_wire: wires.wire3,
-            intake: intakeR,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_2 + exhaust_stagger
-        )
-        .add_cylinder(
-            piston: piston(piston_params),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
-            ignition_wire: wires.wire5,
-            intake: intakeR,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_3 + exhaust_stagger
-        )
-        .add_cylinder(
-            piston: piston(piston_params),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
-            ignition_wire: wires.wire7,
-            intake: intakeR,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_4 + exhaust_stagger
-        )
-
-    cylinder_bank bL(bank_params, angle: 90.0 * units.deg) // L (second)
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
     bL
         .add_cylinder(
             piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
-            ignition_wire: wires.wire2,
-            intake: intakeL,
+            ignition_wire: wires.wire1,
+            intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: pipe_volume_1
         )
         .add_cylinder(
             piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
-            ignition_wire: wires.wire4,
-            intake: intakeL,
+            ignition_wire: wires.wire2,
+            intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: pipe_volume_2
         )
         .add_cylinder(
             piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
-            ignition_wire: wires.wire6,
-            intake: intakeL,
+            ignition_wire: wires.wire3,
+            intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: pipe_volume_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: pipe_volume_4
+        )
+
+    cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (second)
+    bR
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_1,
+            sound_attenuation: pipe_volume_1
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire6,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_2,
+            sound_attenuation: pipe_volume_2
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire7,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3,
+            sound_attenuation: pipe_volume_3
         )
         .add_cylinder(
             piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire8,
-            intake: intakeL,
+            intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_4
+            primary_length: pipe_length_4,
+            sound_attenuation: pipe_volume_4
         )
 
     engine
-        .add_cylinder_bank(bR)
         .add_cylinder_bank(bL)
+        .add_cylinder_bank(bR)
 
     engine.add_crankshaft(c0)
 
-    valente_flat8_camshaft_builder camshaft(
-        in_lobe_profile: valente_flat8_lobe_profile_int(),
-        ex_lobe_profile: valente_flat8_lobe_profile_exh()
+    dufaux_rsv8_camshaft_builder camshaft(
+        in_lobe_profile: dufaux_rsv8_lobe_profile_int(),
+        ex_lobe_profile: dufaux_rsv8_lobe_profile_exh()
     )
 
     bL.set_cylinder_head (
-        valente_flat8_head(
+        dufaux_rsv8_head(
             intake_camshaft: camshaft.intake_cam_L,
             exhaust_camshaft: camshaft.exhaust_cam_L,
             chamber_volume: chamber_volume,
@@ -412,7 +404,7 @@ public node valente_flat8_engine {
         )
     )
     bR.set_cylinder_head (
-        valente_flat8_head(
+        dufaux_rsv8_head(
             intake_camshaft: camshaft.intake_cam_R,
             exhaust_camshaft: camshaft.exhaust_cam_R,
             chamber_volume: chamber_volume,
@@ -422,58 +414,55 @@ public node valente_flat8_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(00000 * units.rpm, 30 * units.deg)
-        .add_sample(01000 * units.rpm, 55 * units.deg)
-        .add_sample(02000 * units.rpm, 65 * units.deg)
-        .add_sample(03000 * units.rpm, 65 * units.deg)
-        .add_sample(04000 * units.rpm, 65 * units.deg)
-        .add_sample(05000 * units.rpm, 65 * units.deg)
-        .add_sample(06000 * units.rpm, 65 * units.deg)
-        .add_sample(07000 * units.rpm, 65 * units.deg)
-        .add_sample(08000 * units.rpm, 65 * units.deg)
-        .add_sample(09000 * units.rpm, 65 * units.deg)
-        .add_sample(10000 * units.rpm, 63 * units.deg)
-        .add_sample(11000 * units.rpm, 60 * units.deg)
+        .add_sample(0000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 55 * units.deg)
+        .add_sample(2000 * units.rpm, 60 * units.deg)
+        .add_sample(3000 * units.rpm, 60 * units.deg)
+        .add_sample(4000 * units.rpm, 60 * units.deg)
+        .add_sample(5000 * units.rpm, 60 * units.deg)
+        .add_sample(6000 * units.rpm, 60 * units.deg)
+        .add_sample(7000 * units.rpm, 60 * units.deg)
+        .add_sample(8000 * units.rpm, 60 * units.deg)
+        .add_sample(9000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
-        valente_flat8_distributor(
+        dufaux_rsv8_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
     )
 }
 
-// Valente Kestrel Targa 400
-public node valente_kestrel_targa_400_vehicle {
+// 2004 Chevrolet Corvette Coupe (C5)
+public node chevrolet_corvette_coupe_c5_vehicle {
     alias output __out:
         vehicle(
-            mass: 1380 * units.kg,
-            drag_coefficient: 0.32,
-            cross_sectional_area: 1.9 * (units.m * units.m),
-            diff_ratio: 4.03,
-            tire_radius: 350 * units.mm,
-            rolling_resistance: 1380 * units.kg * 9.81 * (275.0/275.0) * 0.01 // F:255/35R19 | R:315/30R20
+            mass: 3225 * units.lb,
+            drag_coefficient: 0.29,
+            cross_sectional_area: 1.88 * (units.m) * (units.m),
+            diff_ratio: 3.42,
+            tire_radius: 339.0 * units.mm, // 275/40ZR18
+            rolling_resistance: 580 * units.N
         );
 }
 
-public node valente_kestrel_targa_400_transmission {
+public node tremec_t56_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 600 * units.lb_ft
+            max_clutch_torque: 1000 * units.lb_ft
         )
-        .add_gear(3.00)
-        .add_gear(2.19)
-        .add_gear(1.62)
-        .add_gear(1.26)
+        .add_gear(2.97)
+        .add_gear(2.07)
+        .add_gear(1.43)
         .add_gear(1.00)
-        .add_gear(0.83)
-        .add_gear(0.70);
+        .add_gear(0.84)
+        .add_gear(0.56);
 }
 
 public node main {
-    set_engine(valente_flat8_engine())
-    set_vehicle(valente_kestrel_targa_400_vehicle())
-    set_transmission(valente_kestrel_targa_400_transmission())
+    set_engine(dufaux_rsv8_engine())
+    set_vehicle(chevrolet_corvette_coupe_c5_vehicle())
+    set_transmission(tremec_t56_transmission())
 }
 
 main()

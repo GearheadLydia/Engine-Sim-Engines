@@ -185,9 +185,7 @@ public node aegis_smallblock_305_engine {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1100 * units.rpm,
         redline: 7000 * units.rpm,
-        throttle_gamma: 1.0,
-        jitter: 0.5,
-        hf_gain: 0.05
+        throttle_gamma: 1.0
     )
 
     label bore(93.0 * units.mm)
@@ -288,8 +286,8 @@ public node aegis_smallblock_305_engine {
         volume: 2200 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
     
     // lower grade LS headers //
     label pipe_length_1(bore_spacing * 2.4)

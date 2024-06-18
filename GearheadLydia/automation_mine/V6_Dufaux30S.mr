@@ -276,14 +276,14 @@ public node dufaux_v6_30s_engine {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(700.0),
         primary_tube_length: 12.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        primary_flow_rate: k_carb(450.0),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
         length: 2600 * units.mm,
         volume: 2600 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
     
     label pipe_length_1(bore_spacing * 1.2)
     label pipe_length_2(bore_spacing * 0.6)
