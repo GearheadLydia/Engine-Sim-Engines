@@ -94,61 +94,34 @@ public node chrysler_neon_420a_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 public node chrysler_neon_420a_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 50.2 * units.cc; // various readings are are "50.2" and "52-53"; former might be for SRT
     input flip_display: false;
     
-    input flow_attenuation_in: 1.0;
-    input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.0;
     alias output __out: head;
-
-    function intake_flow(1.0 * units.mm)
+    
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#Chrysler
+    // assumption: similar to ECC, borne out by the following
+    // https://www.dsmtuners.com/threads/420a-head-flow-numbers.462042/
+    function intake_flow(100 * units.thou)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  86)
+        .add_flow_sample(200, 167)
+        .add_flow_sample(300, 225)
+        .add_flow_sample(400, 245)
+        .add_flow_sample(500, 253)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(100 * units.thou)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  84)
+        .add_flow_sample(200, 150)
+        .add_flow_sample(300, 165)
+        .add_flow_sample(400, 169)
+        .add_flow_sample(500, 170)
 
         
     cylinder_head head(
@@ -231,7 +204,7 @@ public node chrysler_neon_420a {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: k_28inH2O(0.1),
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -285,7 +258,7 @@ public node chrysler_neon_420a {
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -295,7 +268,7 @@ public node chrysler_neon_420a {
             sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
@@ -305,7 +278,7 @@ public node chrysler_neon_420a {
             sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
@@ -315,7 +288,7 @@ public node chrysler_neon_420a {
             sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,
