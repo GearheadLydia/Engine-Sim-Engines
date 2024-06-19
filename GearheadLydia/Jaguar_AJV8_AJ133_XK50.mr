@@ -12,7 +12,7 @@ label cycle(2 * 360 * units.deg)
 public node jaguar_aj133_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7300 * units.rpm;
+    input rev_limit: 6600 * units.rpm;
     input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -37,12 +37,31 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-public node jaguar_aj133_lobe_profile_int {
+// http://jagrepair.com/images/Training%20Guides/NP10%20Complete%20Manual%204-15-09.pdf
+// "The CPS system controls the lifting height of the intake valves. At engine speeds from idle up to the range of 2,800 –
+// 4,825 rpm (load dependent), the intake valves have a lifting height of 5.5mm. At speeds and loads outside of this
+// range, the high lift cam (10.53mm) is used.
+// Lifting Height Valve Opens Valve Closes
+// Intake – 5.5 mm lifting height 27° BTDC to 35° ATDC 187° ATDC to 249° ATDC
+// Intake – 10.53 mm lifting height 37° BTDC to 25° ATDC 213° ATDC to 275° ATDC
+// Exhaust – 9.36 mm lifting height 244° BTDC or 194° BTDC 6° ATDC to 56° ATDC
+
+public node jaguar_aj133_lobe_profile_int_lo {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 263 * units.deg,
+            duration_at_50_thou: 224 * units.deg,
             gamma: 1.0,
-            lift: 10.0 * units.mm,
+            lift: 5.5 * units.mm,
+            steps: 100
+        );
+}
+
+public node jaguar_aj133_lobe_profile_int_hi {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 238 * units.deg,
+            gamma: 1.0,
+            lift: 10.5 * units.mm,
             steps: 100
         );
 }
@@ -50,130 +69,148 @@ public node jaguar_aj133_lobe_profile_int {
 public node jaguar_aj133_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 263 * units.deg,
+            duration_at_50_thou: 250 * units.deg,
             gamma: 1.0,
-            lift: 10.0 * units.mm,
+            lift: 9.36 * units.mm,
             steps: 100
         );
 }
 
 public node jaguar_aj133_camshaft_builder {
-    input in_lobe_profile: jaguar_aj133_lobe_profile_int();
+    input in_lobe_profile_lo: jaguar_aj133_lobe_profile_int_lo();
+    input in_lobe_profile_hi: jaguar_aj133_lobe_profile_int_hi();
     input ex_lobe_profile: jaguar_aj133_lobe_profile_exh();
-    input intake_lobe_profile: in_lobe_profile;
+    input intake_lobe_profile_lo: in_lobe_profile_lo;
+    input intake_lobe_profile_hi: in_lobe_profile_hi;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input intake_lobe_center: 110.0 * units.deg;
-    input exhaust_lobe_center: 105.0 * units.deg;
+    input intake_lobe_center_lo: 107.0 * units.deg; // mean of range: 106.0; +/- 31 deg
+    input intake_lobe_center_hi: 110.0 * units.deg; // mean of range: 125.0; +/- 31 deg
+    input exhaust_lobe_center: 109.0 * units.deg;    // mean of range:  94.0; +/- 31 deg
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_L_lo: _intake_cam_L_lo;
+    output intake_cam_R_lo: _intake_cam_R_lo;
+    output intake_cam_L_hi: _intake_cam_L_hi;
+    output intake_cam_R_hi: _intake_cam_R_hi;
+    output exhaust_cam_L: _exhaust_cam_L;
+    output exhaust_cam_R: _exhaust_cam_R;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L_lo(params, lobe_profile: intake_lobe_profile_lo)
+    camshaft _intake_cam_R_lo(params, lobe_profile: intake_lobe_profile_lo)
+    camshaft _intake_cam_L_hi(params, lobe_profile: intake_lobe_profile_hi)
+    camshaft _intake_cam_R_hi(params, lobe_profile: intake_lobe_profile_hi)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot360(360 * units.deg)
 
     // firing order: 15426378
-    _intake_cam_0
-        .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
+    _intake_cam_L_lo
+        .add_lobe(rot360 + intake_lobe_center_lo + 0 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_lo + 3 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_lo + 5 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_lo + 2 * rot90)
 
-    _intake_cam_1
-        .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
+    _intake_cam_R_lo
+        .add_lobe(rot360 + intake_lobe_center_lo + 1 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_lo + 4 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_lo + 6 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_lo + 7 * rot90)
 
-    _exhaust_cam_0
+    _intake_cam_L_hi
+        .add_lobe(rot360 + intake_lobe_center_hi + 0 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_hi + 3 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_hi + 5 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_hi + 2 * rot90)
+
+    _intake_cam_R_hi
+        .add_lobe(rot360 + intake_lobe_center_hi + 1 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_hi + 4 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_hi + 6 * rot90)
+        .add_lobe(rot360 + intake_lobe_center_hi + 7 * rot90)
+
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
 
-    _exhaust_cam_1
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 public node jaguar_aj133_head {
-    input intake_camshaft;
-    input exhaust_camshaft;
-    input chamber_volume: 40.0 * units.cc; // guess
+    input cam_in_lo;
+    input cam_in_hi;
+    input cam_ex;
+    input chamber_volume: 43.1 * units.cc; // totally wild guess: same as AM14/AJ34???
     input flip_display: false;
     
-    input flow_attenuation: 1.0;
-    input lift_scale: 1.0;
+    // guesses
+    input flow_intake: 270.0;
+    input flow_exhaust: 220.0;
+    input lift_max: 9.0 * units.mm;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(lift_max / 10.0)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
-    cylinder_head head(
+    generic_cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.2 * units.inch) * 3 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.2 * units.inch),
-        exhaust_runner_volume: circle_area(0.95 * units.inch) * 3 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.95 * units.inch),
+        intake_runner_volume: circle_area(1.1 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
-        intake_camshaft: intake_camshaft,
-        exhaust_camshaft: exhaust_camshaft,
+        valvetrain: vtec_valvetrain(
+            vtec_intake_camshaft: cam_in_hi,
+            vtec_exhaust_camshaft: cam_ex,
+            intake_camshaft: cam_in_lo,
+            exhaust_camshaft: cam_ex,
+            min_rpm: 2800 * units.rpm // 2800-4400
+        ),
         flip_display: flip_display
     )
 }
@@ -187,7 +224,7 @@ public node jaguar_aj133_engine {
         name: "Jaguar AJ133",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
-        redline: 7000 * units.rpm,
+        redline: 6500 * units.rpm,
         throttle_gamma: 1.0
     )
 
@@ -198,7 +235,7 @@ public node jaguar_aj133_engine {
     label rod_mass(600 * units.g) // guess
     label piston_mass(400 * units.g) // guess
     label compression_height(28.1 * units.mm)
-    label piston_dome(0.00 * units.cc) // guess
+    label piston_dome(0.5 * units.cc) // for 11.5:1 CR
     label deck_height((230.55 + 0.6) * units.mm) // deck height is a guess; gasket should be right
     label crank_mass(41 * units.lb)
     label flywheel_mass(15 * units.lb)
@@ -240,7 +277,7 @@ public node jaguar_aj133_engine {
     // piston specs are guesses
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -266,158 +303,155 @@ public node jaguar_aj133_engine {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(900),
-        idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.998,
+        intake_flow_rate: k_carb(600.0),
+        idle_flow_rate: k_carb(0.01),
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(350.0),
-        runner_length: 6.5 * units.inch,
+        runner_flow_rate: k_carb(200.0),
+        runner_length: 8.5 * units.inch,
         velocity_decay: 0.1
     )
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(900.0),
-        primary_tube_length: 50 * units.mm,
-        primary_flow_rate: k_carb(350.0),
+        outlet_flow_rate: k_carb(550.0),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius) * 2,
         length: 2400 * units.mm,
         volume: (400 * units.mm * circle_area(exhaust_radius)) + (2000 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(
-        es_params,
-        audio_volume: 1.0 * 0.1,
-        impulse_response: ir_lib.default_0
-    )
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
 
     label pipe_length_1(2.4 * bore_spacing)
     label pipe_length_2(1.6 * bore_spacing)
     label pipe_length_3(0.8 * bore_spacing)
     label pipe_length_4(0.0 * bore_spacing)
     
-    label exhaust_stagger(50 * units.mm)
+    label exhaust_stagger(0.4 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
-    b0
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1 + exhaust_stagger,
-            sound_attenuation: 0.3
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2 + exhaust_stagger,
-            sound_attenuation: 0.3
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3 + exhaust_stagger,
-            sound_attenuation: 0.3
+            primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_4 + exhaust_stagger,
-            sound_attenuation: 0.3
+            primary_length: pipe_length_4 + exhaust_stagger
         )
 
-    cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (second)
-    b1
+    cylinder_bank bR(bank_params, angle: -45 * units.deg) // R (second)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1
+            primary_length: pipe_length_1,
+            sound_attenuation: 0.8
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2
+            primary_length: pipe_length_2,
+            sound_attenuation: 0.8
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire7,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3
+            primary_length: pipe_length_3,
+            sound_attenuation: 0.8
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_4
+            primary_length: pipe_length_4,
+            sound_attenuation: 0.8
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bL)
+        .add_cylinder_bank(bR)
 
     engine.add_crankshaft(c0)
 
     jaguar_aj133_camshaft_builder camshaft(
-        in_lobe_profile: jaguar_aj133_lobe_profile_int(),
+        in_lobe_profile_lo: jaguar_aj133_lobe_profile_int_lo(),
+        in_lobe_profile_hi: jaguar_aj133_lobe_profile_int_hi(),
         ex_lobe_profile: jaguar_aj133_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         jaguar_aj133_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            cam_in_lo: camshaft.intake_cam_L_lo,
+            cam_in_hi: camshaft.intake_cam_L_hi,
+            cam_ex: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         jaguar_aj133_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            cam_in_lo: camshaft.intake_cam_R_lo,
+            cam_in_hi: camshaft.intake_cam_R_hi,
+            cam_ex: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 35 * units.deg)
-        .add_sample(1000 * units.rpm, 45 * units.deg)
-        .add_sample(2000 * units.rpm, 50 * units.deg)
-        .add_sample(3000 * units.rpm, 50 * units.deg)
-        .add_sample(4000 * units.rpm, 50 * units.deg)
-        .add_sample(5000 * units.rpm, 50 * units.deg)
-        .add_sample(6000 * units.rpm, 50 * units.deg)
-        .add_sample(7000 * units.rpm, 50 * units.deg)
-        .add_sample(8000 * units.rpm, 50 * units.deg)
-        .add_sample(9000 * units.rpm, 50 * units.deg)
+        .add_sample(0000 * units.rpm, 68 * units.deg)
+        .add_sample(1000 * units.rpm, 78 * units.deg)
+        .add_sample(2000 * units.rpm, 78 * units.deg)
+        .add_sample(3000 * units.rpm, 78 * units.deg)
+        .add_sample(4000 * units.rpm, 78 * units.deg)
+        .add_sample(5000 * units.rpm, 78 * units.deg)
+        .add_sample(6000 * units.rpm, 78 * units.deg)
+        .add_sample(7000 * units.rpm, 78 * units.deg)
 
     engine.add_ignition_module(
         jaguar_aj133_distributor(
@@ -427,36 +461,23 @@ public node jaguar_aj133_engine {
     )
 }
 
-// 2004 Jaguar XK8 (X100)
-public node jaguar_xk8_x100_vehicle {
+// 2010 Jaguar XK 5.0 (X150)
+public node jaguar_xk_50_x150_vehicle {
     alias output __out:
         vehicle(
-            mass: 1685 * units.kg,
-            drag_coefficient: 0.35,
-            cross_sectional_area: 1.97 * (units.m * units.m),
-            diff_ratio: 3.31,
-            tire_radius: 338 * units.mm, // 245/50ZR17
-            rolling_resistance: 550 * units.N
-        );
-}
-
-// 2006 Jaguar XK 4.2 (X150)
-public node jaguar_xk_42_x150_vehicle {
-    alias output __out:
-        vehicle(
-            mass: 1720 * units.kg,
-            drag_coefficient: 0.359,
+            mass: 1660 * units.kg,
+            drag_coefficient: 0.33,
             cross_sectional_area: 2.08 * (units.m * units.m),
             diff_ratio: 3.31,
             tire_radius: 339 * units.mm, // 275/40ZR18
-            rolling_resistance: 600 * units.N
+            rolling_resistance: 1660 * units.kg * 9.81 * (275.0/275.0) * 0.01
         );
 }
 
 public node zf_6hp26_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1000 * units.lb_ft
+            max_clutch_torque: 600 * units.lb_ft
         )
         .add_gear(4.171)
         .add_gear(2.340)
@@ -468,7 +489,7 @@ public node zf_6hp26_transmission {
 
 public node main {
     set_engine(jaguar_aj133_engine())
-    set_vehicle(jaguar_xk8_x100_vehicle())
+    set_vehicle(jaguar_xk_50_x150_vehicle())
     set_transmission(zf_6hp26_transmission())
 }
 
