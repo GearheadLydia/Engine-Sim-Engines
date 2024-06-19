@@ -119,15 +119,6 @@ public node ford_fe_v8_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 // https://www.erareplicas.com/427man/engine/fe_specs.htm
 public node ford_fe_v8_428_cobra_jet_head {
     input intake_camshaft;
@@ -135,44 +126,30 @@ public node ford_fe_v8_428_cobra_jet_head {
     input chamber_volume: 74.3 * units.cc; // specs vary a lot
     input flip_display: false;
     
-    input flow_attenuation_in: 0.8;
-    input flow_attenuation_ex: 0.8;
-    input lift_scale: 1.0;
     alias output __out: head;
-
-    function intake_flow(1 * units.mm)
+    
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#Ford_Big_Block
+    function intake_flow(100 * units.thou)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  76 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 146 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 175 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 212 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 230 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 255 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 275 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 294 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 300 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 314 * flow_attenuation_in)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  76)
+        .add_flow_sample(200, 150)
+        .add_flow_sample(300, 202)
+        .add_flow_sample(400, 228)
+        .add_flow_sample(500, 236)
+        .add_flow_sample(600, 243)
+        .add_flow_sample(700, 244)
 
-    function exhaust_flow(1 * units.mm)
+    function exhaust_flow(100 * units.thou)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  70 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 132 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 156 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 170 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 181 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 191 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 207 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 214 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  46)
+        .add_flow_sample(200,  85)
+        .add_flow_sample(300, 118)
+        .add_flow_sample(400, 145)
+        .add_flow_sample(500, 163)
+        .add_flow_sample(600, 174)
+        .add_flow_sample(700, 181)
         
     cylinder_head head(
         chamber_volume: chamber_volume,
@@ -281,7 +258,7 @@ public node ford_fe_v8_428_cobra_jet_engine {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9965,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(250.0),
+        runner_flow_rate: k_carb(280.0),
         runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -289,9 +266,9 @@ public node ford_fe_v8_428_cobra_jet_engine {
     label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(550.0),
+        outlet_flow_rate: k_carb(600.0),
         primary_tube_length: 5.0 * units.inch,
-        primary_flow_rate: k_carb(250.0),
+        primary_flow_rate: k_carb(280.0),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius) * 2,
         length: 2700 * units.mm,

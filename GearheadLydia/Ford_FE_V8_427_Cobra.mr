@@ -121,15 +121,6 @@ public node ford_fe_v8_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 // https://www.erareplicas.com/427man/engine/fe_specs.htm
 public node ford_fe_v8_427_cobra_head {
     input intake_camshaft;
@@ -137,44 +128,30 @@ public node ford_fe_v8_427_cobra_head {
     input chamber_volume: 74.3 * units.cc; // specs vary a lot
     input flip_display: false;
     
-    input flow_attenuation_in: 0.8;
-    input flow_attenuation_ex: 0.8;
-    input lift_scale: 1.0;
     alias output __out: head;
-
-    function intake_flow(1 * units.mm)
+    
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#Ford_Big_Block
+    // https://www.fordfe.com/427-lr-mr-and-hr-flow-numbers-t52247.html
+    // assumed: C5AE-F casting
+    function intake_flow(100 * units.thou)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  76 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 146 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 175 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 212 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 230 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 255 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 275 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 294 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 300 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 314 * flow_attenuation_in)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  84)
+        .add_flow_sample(200, 162)
+        .add_flow_sample(300, 207)
+        .add_flow_sample(400, 244)
+        .add_flow_sample(500, 263)
+        .add_flow_sample(600, 276) // extrapolated, questionable
 
-    function exhaust_flow(1 * units.mm)
+    function exhaust_flow(100 * units.thou)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  70 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 132 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 156 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 170 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 181 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 191 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 207 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 214 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 228 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 228 * flow_attenuation_ex)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  52)
+        .add_flow_sample(200,  99)
+        .add_flow_sample(300, 144)
+        .add_flow_sample(400, 177)
+        .add_flow_sample(500, 186)
+        .add_flow_sample(600, 194) // extrapolated, questionable
         
     cylinder_head head(
         chamber_volume: chamber_volume,
@@ -200,7 +177,7 @@ public node ford_fe_v8_427_cobra_engine {
     engine engine(
         name: "Ford FE V8 Shelby Cobra",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 800 * units.rpm,
+        starter_speed: 1000 * units.rpm,
         redline: 6000 * units.rpm,
         throttle_gamma: 1.0
     )
@@ -255,7 +232,7 @@ public node ford_fe_v8_427_cobra_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -279,7 +256,7 @@ public node ford_fe_v8_427_cobra_engine {
     intake intake(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(750), // actual spec: 750cfm
+        intake_flow_rate: k_carb(750.0), // actual spec: 750cfm
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9965,
         throttle_gamma: 1.0,
@@ -292,8 +269,8 @@ public node ford_fe_v8_427_cobra_engine {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
+        primary_tube_length: 15.0 * units.inch,
+        primary_flow_rate: k_carb(250.0),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius) * 2,
         length: 2200 * units.mm,
@@ -305,14 +282,14 @@ public node ford_fe_v8_427_cobra_engine {
     label pipe_length_1(1.6 * bore_spacing)
     label pipe_length_2(0.8 * bore_spacing)
     label pipe_length_3(0.0 * bore_spacing)
-    label pipe_length_4(0.8 * bore_spacing)
+    label pipe_length_4(0.3 * bore_spacing)
     
-    label exhaust_stagger(0.3 * bore_spacing)
+    label exhaust_stagger(0.4 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -321,7 +298,7 @@ public node ford_fe_v8_427_cobra_engine {
             primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
@@ -330,7 +307,7 @@ public node ford_fe_v8_427_cobra_engine {
             primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
@@ -339,7 +316,7 @@ public node ford_fe_v8_427_cobra_engine {
             primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,
@@ -351,7 +328,7 @@ public node ford_fe_v8_427_cobra_engine {
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
     b1
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire5,
@@ -360,7 +337,7 @@ public node ford_fe_v8_427_cobra_engine {
             primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire6,
@@ -369,7 +346,7 @@ public node ford_fe_v8_427_cobra_engine {
             primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire7,
@@ -378,7 +355,7 @@ public node ford_fe_v8_427_cobra_engine {
             primary_length: pipe_length_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire8,
@@ -426,13 +403,13 @@ public node ford_fe_v8_427_cobra_engine {
     // guess; approximately 15% reduction in horsepower
     function timing_curve_net(1000 * units.rpm)
     timing_curve_net
-        .add_sample(0000 * units.rpm, 17.8 * units.deg)
-        .add_sample(1000 * units.rpm, 22.8 * units.deg)
-        .add_sample(2000 * units.rpm, 22.8 * units.deg)
-        .add_sample(3000 * units.rpm, 22.8 * units.deg)
-        .add_sample(4000 * units.rpm, 22.8 * units.deg)
-        .add_sample(5000 * units.rpm, 22.8 * units.deg)
-        .add_sample(6000 * units.rpm, 22.8 * units.deg)
+        .add_sample(0000 * units.rpm, 18 * units.deg)
+        .add_sample(1000 * units.rpm, 23 * units.deg)
+        .add_sample(2000 * units.rpm, 23 * units.deg)
+        .add_sample(3000 * units.rpm, 23 * units.deg)
+        .add_sample(4000 * units.rpm, 23 * units.deg)
+        .add_sample(5000 * units.rpm, 23 * units.deg)
+        .add_sample(6000 * units.rpm, 23 * units.deg)
 
     engine.add_ignition_module(
         ford_fe_v8_distributor(
