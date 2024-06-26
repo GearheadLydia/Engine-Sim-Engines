@@ -302,7 +302,7 @@ public node nissan_rb26dett_engine {
         volume: (245 * units.cm * circle_area(exhaust_radius)) + (50 * units.cm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.1, impulse_response: ir_lib.default_0)
     
     label exhaust_scale(0.5)
     
@@ -352,7 +352,7 @@ public node nissan_rb26dett_engine {
             intake: intake,
             exhaust_system: exhaust,
             primary_length: manifold_length_1,
-            sound_attenuation: 1.0 * 0.85
+            sound_attenuation: 1.0 * 0.9
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -362,7 +362,7 @@ public node nissan_rb26dett_engine {
             intake: intake,
             exhaust_system: exhaust,
             primary_length: manifold_length_2,
-            sound_attenuation: 0.9 * 0.85
+            sound_attenuation: 0.9 * 0.9
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -372,7 +372,7 @@ public node nissan_rb26dett_engine {
             intake: intake,
             exhaust_system: exhaust,
             primary_length: manifold_length_3,
-            sound_attenuation: 1.0 * 0.85
+            sound_attenuation: 1.0 * 0.9
         )
 
     engine
