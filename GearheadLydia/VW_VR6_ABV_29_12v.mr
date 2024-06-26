@@ -230,6 +230,7 @@ public node volkswagen_vr6_abv_engine {
         tdc: 90 * units.deg + lean_angle
     )
 
+    // 7 deg additional offset
     rod_journal rj1(angle:  0  * units.deg + (bank_angle + 3.5 * units.deg))
     rod_journal rj2(angle: 120 * units.deg - (bank_angle + 3.5 * units.deg))
     rod_journal rj3(angle: 240 * units.deg + (bank_angle + 3.5 * units.deg))
