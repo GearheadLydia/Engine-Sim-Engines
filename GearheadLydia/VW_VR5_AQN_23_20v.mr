@@ -123,46 +123,44 @@ public node volkswagen_vr5_head {
     input exhaust_runner_cross_section_area: circle_area(0.85 * units.inch);
     input flip_display: false;
     
-    input flow_attenuation: 0.9;
-    input lift_scale: 50.0;
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#VW
+    // approximated
+    input flow_intake: 240.0;
+    input flow_exhaust: 165.0;
+    input lift_max: 500 * units.thou;
     alias output __out: head;
 
-    function intake_flow(50 * units.thou)
+    function intake_flow(lift_max / 10.0)
     intake_flow
-        .add_flow_sample(0,    0  * flow_attenuation)
-        .add_flow_sample(50,   25 * flow_attenuation)
-        .add_flow_sample(100,  76 * flow_attenuation)
-        .add_flow_sample(150, 100 * flow_attenuation)
-        .add_flow_sample(200, 146 * flow_attenuation)
-        .add_flow_sample(250, 175 * flow_attenuation)
-        .add_flow_sample(300, 212 * flow_attenuation)
-        .add_flow_sample(350, 230 * flow_attenuation)
-        .add_flow_sample(400, 255 * flow_attenuation)
-        .add_flow_sample(450, 275 * flow_attenuation)
-        .add_flow_sample(500, 294 * flow_attenuation)
-        .add_flow_sample(550, 300 * flow_attenuation)
-        .add_flow_sample(600, 314 * flow_attenuation)
-        .add_flow_sample(650, 314 * flow_attenuation)
-        .add_flow_sample(700, 314 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(50 * units.thou)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
-        .add_flow_sample(0,    0  * flow_attenuation)
-        .add_flow_sample(50,   25 * flow_attenuation)
-        .add_flow_sample(100,  70 * flow_attenuation)
-        .add_flow_sample(150, 100 * flow_attenuation)
-        .add_flow_sample(200, 132 * flow_attenuation)
-        .add_flow_sample(250, 140 * flow_attenuation)
-        .add_flow_sample(300, 156 * flow_attenuation)
-        .add_flow_sample(350, 170 * flow_attenuation)
-        .add_flow_sample(400, 181 * flow_attenuation)
-        .add_flow_sample(450, 191 * flow_attenuation)
-        .add_flow_sample(500, 207 * flow_attenuation)
-        .add_flow_sample(550, 214 * flow_attenuation)
-        .add_flow_sample(600, 228 * flow_attenuation)
-        .add_flow_sample(650, 228 * flow_attenuation)
-        .add_flow_sample(700, 228 * flow_attenuation)
-
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
         
     cylinder_head head(
@@ -180,7 +178,7 @@ public node volkswagen_vr5_head {
     )
 }
 
-public node vr5_23 {
+public node volkswagen_vr5_aqn_engine {
     alias output __out: engine;
 
     wires wires()
@@ -229,11 +227,12 @@ public node vr5_23 {
         tdc: 90 * units.deg + lean_angle
     )
 
-    rod_journal rj1(angle: (((0.0 / 5.0) * 360 * units.deg) - bank_angle))
-    rod_journal rj2(angle: (((2.0 / 5.0) * 360 * units.deg) + bank_angle))
-    rod_journal rj3(angle: (((3.0 / 5.0) * 360 * units.deg) - bank_angle))
-    rod_journal rj4(angle: (((4.0 / 5.0) * 360 * units.deg) + bank_angle))
-    rod_journal rj5(angle: (((1.0 / 5.0) * 360 * units.deg) - bank_angle))
+    // 7 deg additional offset
+    rod_journal rj1(angle: (((0.0 / 5.0) * 360 * units.deg) - (bank_angle + 3.5 * units.deg)))
+    rod_journal rj2(angle: (((2.0 / 5.0) * 360 * units.deg) + (bank_angle + 3.5 * units.deg)))
+    rod_journal rj3(angle: (((3.0 / 5.0) * 360 * units.deg) - (bank_angle + 3.5 * units.deg)))
+    rod_journal rj4(angle: (((4.0 / 5.0) * 360 * units.deg) + (bank_angle + 3.5 * units.deg)))
+    rod_journal rj5(angle: (((1.0 / 5.0) * 360 * units.deg) - (bank_angle + 3.5 * units.deg)))
 
     c0
         .add_rod_journal(rj1)
@@ -292,18 +291,17 @@ public node vr5_23 {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0*0.05, impulse_response: ir_lib.default_0)
     
-    label position_x_offset(deck_height * 0.13052619222005159154840622789549)  // sin(7.5)
-    label position_y_offset(deck_height * -0.00855513862618958885544247307144) // 1-cos(7.5)
+    // 12.5mm offset
+    label position_x_offset(6.25 * units.mm *  0.99144486137381041114455752692856) // sin(82.5)
+    label position_y_offset(6.25 * units.mm * -0.13052619222005159154840622789549) // cos(82.5)
     
     label pipe_length_1(40 * units.mm)
     label pipe_length_2(20 * units.mm)
     label pipe_length_3(00 * units.mm)
     label pipe_length_4(10 * units.mm)
     label pipe_length_5(30 * units.mm)
-    label exhaust_stagger(40 * units.mm)
 
-    cylinder_bank bL(bank_params, angle: bank_angle + lean_angle) // L (second)
-    //cylinder_bank bL(bank_params, angle: 0, position_x: -position_x_offset, position_y: position_y_offset) // L (second) | angle: 7.5
+    cylinder_bank bL(bank_params, angle: bank_angle + lean_angle, position_x: -position_x_offset, position_y: position_y_offset) // L (first) | angle: -7.5
     bL
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -312,8 +310,7 @@ public node vr5_23 {
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -322,12 +319,10 @@ public node vr5_23 {
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_4,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_4
         )
 
-    cylinder_bank bR(bank_params, angle: -bank_angle + lean_angle) // R (first) | angle: 7.5
-    //cylinder_bank bR(bank_params, angle: 0, position_x: position_x_offset, position_y: position_y_offset) // R (first) | angle: -7.5
+    cylinder_bank bR(bank_params, angle: -bank_angle + lean_angle, position_x: position_x_offset, position_y: position_y_offset) // R (second) | angle: 7.5
     bR
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -336,8 +331,7 @@ public node vr5_23 {
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1 + exhaust_stagger,
-            sound_attenuation: 0.7
+            primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -346,8 +340,7 @@ public node vr5_23 {
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3 + exhaust_stagger,
-            sound_attenuation: 0.9
+            primary_length: pipe_length_3
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
@@ -356,8 +349,7 @@ public node vr5_23 {
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_5 + exhaust_stagger,
-            sound_attenuation: 0.7
+            primary_length: pipe_length_5
         )
 
     engine
@@ -375,10 +367,9 @@ public node vr5_23 {
         volkswagen_vr5_head(
             intake_camshaft: camshaft.intake_cam_R,
             exhaust_camshaft: camshaft.exhaust_cam_R,
-            flow_attenuation: 0.65,
-            intake_runner_volume: circle_area(0.9 * units.inch) * 2 * units.inch,
-            intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-            exhaust_runner_volume: circle_area(0.68 * units.inch) * 6 * units.inch,
+            intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch,
+            intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+            exhaust_runner_volume: circle_area(0.68 * units.inch) * 4 * units.inch,
             exhaust_runner_cross_section_area: circle_area(0.48 * units.inch),
             flip_display: true
         )
@@ -387,9 +378,8 @@ public node vr5_23 {
         volkswagen_vr5_head(
             intake_camshaft: camshaft.intake_cam_L,
             exhaust_camshaft: camshaft.exhaust_cam_L,
-            flow_attenuation: 0.65,
-            intake_runner_volume: circle_area(0.9 * units.inch) * 6 * units.inch,
-            intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+            intake_runner_volume: circle_area(1.1 * units.inch) * 4 * units.inch,
+            intake_runner_cross_section_area: circle_area(1.1 * units.inch),
             exhaust_runner_volume: circle_area(0.68 * units.inch) * 2 * units.inch,
             exhaust_runner_cross_section_area: circle_area(0.48 * units.inch),
             flip_display: true
@@ -398,14 +388,14 @@ public node vr5_23 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm,  5 * units.deg)
-        .add_sample(1000 * units.rpm, 15 * units.deg)
-        .add_sample(2000 * units.rpm, 22 * units.deg)
-        .add_sample(3000 * units.rpm, 28 * units.deg)
-        .add_sample(4000 * units.rpm, 34 * units.deg)
-        .add_sample(5000 * units.rpm, 39 * units.deg)
-        .add_sample(6000 * units.rpm, 42 * units.deg)
-        .add_sample(7000 * units.rpm, 42 * units.deg)
+        .add_sample(0000 * units.rpm, 27 * units.deg)
+        .add_sample(1000 * units.rpm, 37 * units.deg)
+        .add_sample(2000 * units.rpm, 37 * units.deg)
+        .add_sample(3000 * units.rpm, 37 * units.deg)
+        .add_sample(4000 * units.rpm, 37 * units.deg)
+        .add_sample(5000 * units.rpm, 37 * units.deg)
+        .add_sample(6000 * units.rpm, 37 * units.deg)
+        .add_sample(7000 * units.rpm, 37 * units.deg)
 
     engine.add_ignition_module(
         volkswagen_vr5_distributor(
@@ -442,7 +432,7 @@ public node volkswagen_golf_vr5_mkiv_transmission {
 }
 
 public node main {
-    set_engine(vr5_23())
+    set_engine(volkswagen_vr5_aqn_engine())
     set_vehicle(volkswagen_golf_vr5_mkiv_vehicle())
     set_transmission(volkswagen_golf_vr5_mkiv_transmission())
 }
