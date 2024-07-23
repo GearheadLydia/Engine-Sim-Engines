@@ -11,7 +11,7 @@ label cycle(2 * 360 * units.deg)
 public node garner_smallblock_383_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 6600 * units.rpm;
+    input rev_limit: 6200 * units.rpm;
     input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -163,8 +163,8 @@ public node garner_smallblock_383_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch,
         intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 3 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        exhaust_runner_volume: circle_area(0.75 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -181,17 +181,17 @@ public node garner_smallblock_383_engine {
     wires wires()
 
     engine engine(
-        name: "Garner 383",
+        name: "Garner 350",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1100 * units.rpm,
-        redline: 6500 * units.rpm,
+        redline: 6000 * units.rpm,
         throttle_gamma: 1.0
     )
 
-    label bore(4.000 * units.inch)
+    label bore(3.900 * units.inch)
     label bore_spacing(4.400 * units.inch)
-    label stroke(3.800 * units.inch)
-    label rod_length(6.000 * units.inch)
+    label stroke(3.650 * units.inch)
+    label rod_length(6.075 * units.inch)
     label compression_height(1.300 * units.inch)
     label piston_dome(0.0 * units.cc)
     label chamber_volume(65.0 * units.cc)

@@ -6,7 +6,7 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-label vee_angle(72 * units.deg)
+label vee_angle(90 * units.deg)
 label anglesplay(vee_angle - (72 * units.deg))
 
 // firing order: 1-6-5-10-2-7-3-8-4-9
@@ -15,8 +15,8 @@ label anglesplay(vee_angle - (72 * units.deg))
 public node regent_caracal_v10_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 8800 * units.rpm;
-    input limiter_duration: 0.07;
+    input rev_limit: 13100 * units.rpm;
+    input limiter_duration: 0.04;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, (0.0/10.0) * cycle)
@@ -47,9 +47,9 @@ private node wires {
 public node regent_caracal_v10_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 240 * units.deg,
+            duration_at_50_thou: 210 * units.deg,
             gamma: 1.0,
-            lift: 9.0 * units.mm,
+            lift: 12.0 * units.mm,
             steps: 100
         );
 }
@@ -57,9 +57,9 @@ public node regent_caracal_v10_lobe_profile_int {
 public node regent_caracal_v10_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 240 * units.deg,
+            duration_at_50_thou: 210 * units.deg,
             gamma: 1.0,
-            lift: 9.0 * units.mm,
+            lift: 12.0 * units.mm,
             steps: 100
         );
 }
@@ -69,11 +69,10 @@ public node regent_caracal_v10_camshaft_builder {
     input ex_lobe_profile: regent_caracal_v10_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 110.0 * units.deg;
-    input intake_lobe_center: lobe_separation;
-    input exhaust_lobe_center: lobe_separation;
-    input advance: -4 * units.deg;
-    input base_radius: 15.0 * units.mm;
+    input intake_lobe_center: 90.0 * units.deg;
+    input exhaust_lobe_center: 90.0 * units.deg;
+    input advance: -6.0 * units.deg;
+    input base_radius: 12.5 * units.mm;
 
     output intake_cam_R: _intake_cam_R;
     output intake_cam_L: _intake_cam_L;
@@ -138,9 +137,9 @@ public node regent_caracal_v10_head {
     input chamber_volume: 45.0 * units.cc;
     input flip_display: false;
     
-    input flow_intake: 230.0;
-    input flow_exhaust: 170.0;
-    input lift_max: 8.5 * units.mm;
+    input flow_intake: 600.0;
+    input flow_exhaust: 440.0;
+    input lift_max: 11.5 * units.mm;
     alias output __out: head;
 
     function intake_flow(lift_max / 10.0)
@@ -177,10 +176,10 @@ public node regent_caracal_v10_head {
 
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(0.8 * units.inch) * 4 * units.inch,
-        intake_runner_cross_section_area: circle_area(0.8 * units.inch),
-        exhaust_runner_volume: circle_area(0.6 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
+        intake_runner_volume: circle_area(1.1 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.9 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -196,29 +195,29 @@ public node regent_caracal_v10_36_engine {
     wires wires()
 
     engine engine(
-        name: "Regent Caracal V10",
+        name: "Formula 1 V10",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1500 * units.rpm,
-        redline: 8500 * units.rpm,
+        redline: 13000 * units.rpm,
         throttle_gamma: 1.0,
         simulation_frequency: 10000
     )
 
-    label bore(80.0 * units.mm)
-    label bore_spacing(90.0 * units.mm)
-    label stroke(71.0 * units.mm)
-    label rod_length(130.0 * units.mm)
-    label compression_height(25.00 * units.mm)
+    label bore(85.0 * units.mm)
+    label bore_spacing(95.0 * units.mm)
+    label stroke(62.0 * units.mm)
+    label rod_length(120.0 * units.mm)
+    label compression_height(30.00 * units.mm)
     label piston_dome(0.0 * units.cc)
     label chamber_volume(45.0 * units.cc)
     
-    label crank_mass(65 * units.lb)
-    label rod_mass(450 * units.g)
-    label piston_mass(350 * units.g)
-    label flywheel_mass(10 * units.lb)
-    label flywheel_radius(4 * units.inch)
+    label crank_mass(90 * units.lb)
+    label rod_mass(600 * units.g)
+    label piston_mass(400 * units.g)
+    label flywheel_mass(15 * units.lb)
+    label flywheel_radius(6 * units.inch)
     
-    label compression_ratio(11.0)
+    label compression_ratio(14.0)
     label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
 
     label crank_moment(
@@ -279,25 +278,25 @@ public node regent_caracal_v10_36_engine {
     )
 
     intake intakeL(
-        plenum_volume: 3.0 * units.L,
+        plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(600.0),
+        intake_flow_rate: k_carb(2000.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.998,
+        idle_throttle_plate_position: 0.9995,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(150.0),
+        runner_flow_rate: k_carb(400.0),
         runner_length: 12.0 * units.inch,
         velocity_decay: 0.1
     )
 
     intake intakeR(
-        plenum_volume: 3.0 * units.L,
+        plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(600.0),
+        intake_flow_rate: k_carb(2000.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.998,
+        idle_throttle_plate_position: 0.9995,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(150.0),
+        runner_flow_rate: k_carb(400.0),
         runner_length: 12.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -305,9 +304,9 @@ public node regent_caracal_v10_36_engine {
     label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(1000.0),
-        primary_tube_length: 15.0 * units.inch,
-        primary_flow_rate: k_carb(250.0),
+        outlet_flow_rate: k_carb(3000.0),
+        primary_tube_length: 18.0 * units.inch,
+        primary_flow_rate: k_carb(650.0),
         velocity_decay: 0.9, //0.5
         collector_cross_section_area: circle_area(exhaust_radius) * 2,
         length: 2050 * units.mm,
@@ -316,7 +315,7 @@ public node regent_caracal_v10_36_engine {
 
     exhaust_system exhaust(
         es_params,
-        audio_volume: 1.0 * 0.2,
+        audio_volume: 1.0 * 0.02,
         impulse_response: ir_lib.default_0
     )
     
@@ -326,12 +325,12 @@ public node regent_caracal_v10_36_engine {
     label pipe_length_4(20 * units.mm)
     label pipe_length_5(00 * units.mm)
     
-    label exhaust_stagger(25 * units.mm)
+    label exhaust_stagger(15 * units.mm)
     
-    label exh_vol_L1(0.6)
+    label exh_vol_L1(1.0)
     label exh_vol_L2(1.0)
     label exh_vol_R1(1.0)
-    label exh_vol_R2(0.6)
+    label exh_vol_R2(1.0)
 
     cylinder_bank bL(bank_params, angle: vee_angle / 2.0) // L (second)
     bL
@@ -342,7 +341,7 @@ public node regent_caracal_v10_36_engine {
             ignition_wire: wires.wire01,
             intake: intakeR,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1,
+            primary_length: pipe_length_1 + exhaust_stagger,
             sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
@@ -352,7 +351,7 @@ public node regent_caracal_v10_36_engine {
             ignition_wire: wires.wire02,
             intake: intakeR,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2,
+            primary_length: pipe_length_2 + exhaust_stagger,
             sound_attenuation: exh_vol_L2
         )
         .add_cylinder(
@@ -362,7 +361,7 @@ public node regent_caracal_v10_36_engine {
             ignition_wire: wires.wire03,
             intake: intakeR,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3,
+            primary_length: pipe_length_3 + exhaust_stagger,
             sound_attenuation: exh_vol_L1
         )
         .add_cylinder(
@@ -372,7 +371,7 @@ public node regent_caracal_v10_36_engine {
             ignition_wire: wires.wire04,
             intake: intakeR,
             exhaust_system: exhaust,
-            primary_length: pipe_length_4,
+            primary_length: pipe_length_4 + exhaust_stagger,
             sound_attenuation: exh_vol_L2
         )
         .add_cylinder(
@@ -382,7 +381,7 @@ public node regent_caracal_v10_36_engine {
             ignition_wire: wires.wire05,
             intake: intakeR,
             exhaust_system: exhaust,
-            primary_length: pipe_length_5,
+            primary_length: pipe_length_5 + exhaust_stagger,
             sound_attenuation: exh_vol_L1
         )
 
@@ -395,7 +394,7 @@ public node regent_caracal_v10_36_engine {
             ignition_wire: wires.wire06,
             intake: intakeL,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1 + exhaust_stagger,
+            primary_length: pipe_length_1,
             sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
@@ -405,7 +404,7 @@ public node regent_caracal_v10_36_engine {
             ignition_wire: wires.wire07,
             intake: intakeL,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2 + exhaust_stagger,
+            primary_length: pipe_length_2,
             sound_attenuation: exh_vol_R2
         )
         .add_cylinder(
@@ -415,7 +414,7 @@ public node regent_caracal_v10_36_engine {
             ignition_wire: wires.wire08,
             intake: intakeL,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3 + exhaust_stagger,
+            primary_length: pipe_length_3,
             sound_attenuation: exh_vol_R1
         )
         .add_cylinder(
@@ -425,7 +424,7 @@ public node regent_caracal_v10_36_engine {
             ignition_wire: wires.wire09,
             intake: intakeL,
             exhaust_system: exhaust,
-            primary_length: pipe_length_4 + exhaust_stagger,
+            primary_length: pipe_length_4,
             sound_attenuation: exh_vol_R2
         )
         .add_cylinder(
@@ -435,7 +434,7 @@ public node regent_caracal_v10_36_engine {
             ignition_wire: wires.wire10,
             intake: intakeL,
             exhaust_system: exhaust,
-            primary_length: pipe_length_5 + exhaust_stagger,
+            primary_length: pipe_length_5,
             sound_attenuation: exh_vol_R1
         )
 
@@ -466,16 +465,16 @@ public node regent_caracal_v10_36_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 50 * units.deg)
-        .add_sample(1000 * units.rpm, 55 * units.deg)
-        .add_sample(2000 * units.rpm, 58 * units.deg)
-        .add_sample(3000 * units.rpm, 60 * units.deg)
-        .add_sample(4000 * units.rpm, 60 * units.deg)
-        .add_sample(5000 * units.rpm, 60 * units.deg)
-        .add_sample(6000 * units.rpm, 60 * units.deg)
-        .add_sample(7000 * units.rpm, 60 * units.deg)
-        .add_sample(8000 * units.rpm, 60 * units.deg)
-        .add_sample(9000 * units.rpm, 60 * units.deg)
+        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(1000 * units.rpm, 35 * units.deg)
+        .add_sample(2000 * units.rpm, 38 * units.deg)
+        .add_sample(3000 * units.rpm, 40 * units.deg)
+        .add_sample(4000 * units.rpm, 40 * units.deg)
+        .add_sample(5000 * units.rpm, 40 * units.deg)
+        .add_sample(6000 * units.rpm, 40 * units.deg)
+        .add_sample(7000 * units.rpm, 40 * units.deg)
+        .add_sample(8000 * units.rpm, 40 * units.deg)
+        .add_sample(9000 * units.rpm, 40 * units.deg)
 
     engine.add_ignition_module(
         regent_caracal_v10_distributor(
@@ -492,7 +491,7 @@ public node regent_caracal_v10_vehicle {
             mass: 1121 * units.kg,
             drag_coefficient: 0.38,
             cross_sectional_area: 1.65 * (units.m * units.m),
-            diff_ratio: 5.0,
+            diff_ratio: 3.0,
             tire_radius: 310 * units.mm,
             rolling_resistance: 1121 * units.kg * 9.81 * (275.0/275.0) * 0.01
         );
@@ -501,7 +500,7 @@ public node regent_caracal_v10_vehicle {
 public node regent_caracal_v10_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 500 * units.lb_ft
+            max_clutch_torque: 800 * units.lb_ft
         )
         .add_gear(2.60)
         .add_gear(1.80)
