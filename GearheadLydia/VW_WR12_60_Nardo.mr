@@ -6,10 +6,10 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-label bank_angle(72 * units.deg / 2)
-label vee_angle(15 * units.deg / 2)
+label bank_angle_major(72 * units.deg / 2)
+label bank_angle_minor(15 * units.deg / 2)
 
-label bank_offset(bank_angle * 2 - (60 * units.deg))
+label bank_timing_offset(bank_angle_major * 2 - (60 * units.deg))
 
 // firing order: 1 12 5 8 3 10 6 7 2 11 4 9
 
@@ -21,17 +21,17 @@ public node audi_w12_distributor {
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01,  (0.0/12.0) * cycle)
-            .connect_wire(wires.wire12,  (1.0/12.0) * cycle + bank_offset)
+            .connect_wire(wires.wire12,  (1.0/12.0) * cycle + bank_timing_offset)
             .connect_wire(wires.wire05,  (2.0/12.0) * cycle)
-            .connect_wire(wires.wire08,  (3.0/12.0) * cycle + bank_offset)
+            .connect_wire(wires.wire08,  (3.0/12.0) * cycle + bank_timing_offset)
             .connect_wire(wires.wire03,  (4.0/12.0) * cycle)
-            .connect_wire(wires.wire10,  (5.0/12.0) * cycle + bank_offset)
+            .connect_wire(wires.wire10,  (5.0/12.0) * cycle + bank_timing_offset)
             .connect_wire(wires.wire06,  (6.0/12.0) * cycle)
-            .connect_wire(wires.wire07,  (7.0/12.0) * cycle + bank_offset)
+            .connect_wire(wires.wire07,  (7.0/12.0) * cycle + bank_timing_offset)
             .connect_wire(wires.wire02,  (8.0/12.0) * cycle)
-            .connect_wire(wires.wire11,  (9.0/12.0) * cycle + bank_offset)
+            .connect_wire(wires.wire11,  (9.0/12.0) * cycle + bank_timing_offset)
             .connect_wire(wires.wire04, (10.0/12.0) * cycle)
-            .connect_wire(wires.wire09, (11.0/12.0) * cycle + bank_offset);
+            .connect_wire(wires.wire09, (11.0/12.0) * cycle + bank_timing_offset);
 }
 
 private node wires {
@@ -129,14 +129,14 @@ public node audi_w12_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center + ( 6 * rot60)) //  #6
 
     _intake_cam_RI
-        .add_lobe(rot360 + intake_lobe_center + ( 7 * rot60) + bank_offset) //  #7
-        .add_lobe(rot360 + intake_lobe_center + (11 * rot60) + bank_offset) //  #9
-        .add_lobe(rot360 + intake_lobe_center + ( 9 * rot60) + bank_offset) // #11
+        .add_lobe(rot360 + intake_lobe_center + ( 7 * rot60) + bank_timing_offset) //  #7
+        .add_lobe(rot360 + intake_lobe_center + (11 * rot60) + bank_timing_offset) //  #9
+        .add_lobe(rot360 + intake_lobe_center + ( 9 * rot60) + bank_timing_offset) // #11
 
     _intake_cam_RO
-        .add_lobe(rot360 + intake_lobe_center + ( 3 * rot60) + bank_offset) //  #8
-        .add_lobe(rot360 + intake_lobe_center + ( 5 * rot60) + bank_offset) // #10
-        .add_lobe(rot360 + intake_lobe_center + ( 1 * rot60) + bank_offset) // #12
+        .add_lobe(rot360 + intake_lobe_center + ( 3 * rot60) + bank_timing_offset) //  #8
+        .add_lobe(rot360 + intake_lobe_center + ( 5 * rot60) + bank_timing_offset) // #10
+        .add_lobe(rot360 + intake_lobe_center + ( 1 * rot60) + bank_timing_offset) // #12
 
     _exhaust_cam_LO
         .add_lobe(rot360 - exhaust_lobe_center + ( 0 * rot60)) //  #1
@@ -149,14 +149,14 @@ public node audi_w12_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + ( 6 * rot60)) //  #6
 
     _exhaust_cam_RI
-        .add_lobe(rot360 - exhaust_lobe_center + ( 7 * rot60) + bank_offset) //  #7
-        .add_lobe(rot360 - exhaust_lobe_center + (11 * rot60) + bank_offset) //  #9
-        .add_lobe(rot360 - exhaust_lobe_center + ( 9 * rot60) + bank_offset) // #11
+        .add_lobe(rot360 - exhaust_lobe_center + ( 7 * rot60) + bank_timing_offset) //  #7
+        .add_lobe(rot360 - exhaust_lobe_center + (11 * rot60) + bank_timing_offset) //  #9
+        .add_lobe(rot360 - exhaust_lobe_center + ( 9 * rot60) + bank_timing_offset) // #11
 
     _exhaust_cam_RO
-        .add_lobe(rot360 - exhaust_lobe_center + ( 3 * rot60) + bank_offset) //  #8
-        .add_lobe(rot360 - exhaust_lobe_center + ( 5 * rot60) + bank_offset) // #10
-        .add_lobe(rot360 - exhaust_lobe_center + ( 1 * rot60) + bank_offset) // #12
+        .add_lobe(rot360 - exhaust_lobe_center + ( 3 * rot60) + bank_timing_offset) //  #8
+        .add_lobe(rot360 - exhaust_lobe_center + ( 5 * rot60) + bank_timing_offset) // #10
+        .add_lobe(rot360 - exhaust_lobe_center + ( 1 * rot60) + bank_timing_offset) // #12
 }
 
 private node add_flow_sample {
@@ -249,7 +249,7 @@ public node volkswagen_w12_nardo_engine {
     label piston_dome(10.0 * units.cc)
     label deck_height(248.00 * units.mm)
     label crank_mass(55 * units.lb)
-    label flywheel_mass(25 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     engine engine(
@@ -258,7 +258,7 @@ public node volkswagen_w12_nardo_engine {
         starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
         throttle_gamma: 1.0,
-        simulation_frequency: 6000
+        simulation_frequency: 10000
     )
 
     label crank_moment(
@@ -279,15 +279,19 @@ public node volkswagen_w12_nardo_engine {
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: (bank_angle) + (90 * units.deg)
+        tdc: (bank_angle_major) + (90 * units.deg)
     )
 
-    rod_journal rj1(angle: (  0 * units.deg) + vee_angle)
-    rod_journal rj2(angle: (120 * units.deg) - vee_angle)
-    rod_journal rj3(angle: (240 * units.deg) + vee_angle)
-    rod_journal rj4(angle: (240 * units.deg) - vee_angle)
-    rod_journal rj5(angle: (120 * units.deg) + vee_angle)
-    rod_journal rj6(angle: (  0 * units.deg) - vee_angle)
+    // additional offset
+    // allegedly total of 22 degrees on the VR6, but trigonometry supports about 20.77 degrees for true evenness
+    // went for 20.75 degrees to make it a round number
+    label crank_pin_offset(bank_angle_minor + 2.875 * units.deg)
+    rod_journal rj1(angle: (  0 * units.deg) + crank_pin_offset)
+    rod_journal rj2(angle: (120 * units.deg) - crank_pin_offset)
+    rod_journal rj3(angle: (240 * units.deg) + crank_pin_offset)
+    rod_journal rj4(angle: (240 * units.deg) - crank_pin_offset)
+    rod_journal rj5(angle: (120 * units.deg) + crank_pin_offset)
+    rod_journal rj6(angle: (  0 * units.deg) - crank_pin_offset)
 
     c0
         .add_rod_journal(rj1)
@@ -328,7 +332,7 @@ public node volkswagen_w12_nardo_engine {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9987,
         throttle_gamma: 2.0,
-        runner_flow_rate: k_carb(800.0),
+        runner_flow_rate: k_carb(600.0),
         runner_length: 7.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -355,18 +359,18 @@ public node volkswagen_w12_nardo_engine {
     )
     exhaust_system exhaust(es_params, audio_volume:  1.0*0.006, impulse_response: ir_lib.default_0)
     
+    //12.5mm offset
+    label bore_center_offset(12.5 * units.mm)
+    // these values do NOT auto-update when bank_angle_major or bank_angle_minor is changed!!
+    label position_xO_offset(bore_center_offset *  0.72537437101228763799328411118973) // cos(43.5)
+    label position_yO_offset(bore_center_offset * -0.68835457569375398438925614341961) // sin(43.5)
+    label position_xI_offset(bore_center_offset * -0.87881711266196537412999514368452) // cos(28.5)
+    label position_yI_offset(bore_center_offset *  0.47715876025960841504886300818939) // sin(28.5)
     
-    label position_xO_offset(deck_height * 0.10056932340128085522055018878054)  // sin(43.5)-sin(36)
-    label position_yO_offset(deck_height * -0.08364262336265978610900930599309) // (1-cos(43.5))-(1-cos(36))
-    label position_xI_offset(deck_height * -0.11062649203286471411984294644969)  // sin(28.5)-sin(36)
-    label position_yI_offset(deck_height * 0.06980011828701795002770172650171) // (1-cos(28.5))-(1-cos(36))
-    
-    label exhaust_length_stagger_IO(10 * units.mm)
     label exhaust_length_stagger_LR(25 * units.mm)
     label exhaust_bore_spacing(20 * units.mm)
 
-    cylinder_bank bLO(bank_params, angle: bank_angle + vee_angle) // LO (first)
-    //cylinder_bank bLO(bank_params, angle: 36 * units.deg, position_x: -position_xO_offset, position_y: position_yO_offset) // LO (first)
+    cylinder_bank bLO(bank_params, angle:  bank_angle_major + bank_angle_minor, position_x: -position_xO_offset, position_y: position_yO_offset) // LO (first)
     bLO
         .add_cylinder(
             piston: piston(piston_params),
@@ -375,7 +379,7 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire01,
             intake: intake_L,
             exhaust_system: exhaust,
-            primary_length: exhaust_bore_spacing * 4
+            primary_length: exhaust_bore_spacing * 5 + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -384,7 +388,7 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire03,
             intake: intake_L,
             exhaust_system: exhaust,
-            primary_length: exhaust_bore_spacing * 2
+            primary_length: exhaust_bore_spacing * 3 + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -393,11 +397,10 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire05,
             intake: intake_L,
             exhaust_system: exhaust,
-            primary_length: exhaust_bore_spacing * 0
+            primary_length: exhaust_bore_spacing * 1 + exhaust_length_stagger_LR
         )
 
-    cylinder_bank bRI(bank_params, angle: -bank_angle + vee_angle) // RI (second)
-    //cylinder_bank bRI(bank_params, angle: -36 * units.deg, position_x: position_xI_offset, position_y: position_yI_offset) // RI (second)
+    cylinder_bank bRI(bank_params, angle: -bank_angle_major + bank_angle_minor, position_x: position_xI_offset, position_y: position_yI_offset) // RI (second)
     bRI
         .add_cylinder(
             piston: piston(piston_params),
@@ -406,7 +409,7 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire07,
             intake: intake_R,
             exhaust_system: exhaust,
-            primary_length: (exhaust_bore_spacing * 4) + exhaust_length_stagger_IO + exhaust_length_stagger_LR
+            primary_length: exhaust_bore_spacing * 5
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -415,7 +418,7 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire09,
             intake: intake_R,
             exhaust_system: exhaust,
-            primary_length: (exhaust_bore_spacing * 2) + exhaust_length_stagger_IO + exhaust_length_stagger_LR
+            primary_length: exhaust_bore_spacing * 3
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -424,11 +427,10 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire11,
             intake: intake_R,
             exhaust_system: exhaust,
-            primary_length: (exhaust_bore_spacing * 0) + exhaust_length_stagger_IO + exhaust_length_stagger_LR
+            primary_length: exhaust_bore_spacing * 1
         )
     
-    cylinder_bank bLI(bank_params, angle: bank_angle - vee_angle) // LI (third)
-    //cylinder_bank bLI(bank_params, angle: 36 * units.deg, position_x: -position_xI_offset, position_y: position_yI_offset) // LI (third)
+    cylinder_bank bLI(bank_params, angle:  bank_angle_major - bank_angle_minor, position_x: -position_xI_offset, position_y: position_yI_offset) // LI (third)
     bLI
         .add_cylinder(
             piston: piston(piston_params),
@@ -437,7 +439,7 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire02,
             intake: intake_L,
             exhaust_system: exhaust,
-            primary_length: (exhaust_bore_spacing * 5) + exhaust_length_stagger_IO
+            primary_length: exhaust_bore_spacing * 4 + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -446,7 +448,7 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire04,
             intake: intake_L,
             exhaust_system: exhaust,
-            primary_length: (exhaust_bore_spacing * 3) + exhaust_length_stagger_IO
+            primary_length: exhaust_bore_spacing * 2 + exhaust_length_stagger_LR
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -455,11 +457,10 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire06,
             intake: intake_L,
             exhaust_system: exhaust,
-            primary_length: (exhaust_bore_spacing * 1) + exhaust_length_stagger_IO
+            primary_length: exhaust_bore_spacing * 0 + exhaust_length_stagger_LR
         )
 
-    cylinder_bank bRO(bank_params, angle: -bank_angle - vee_angle) // RO (fourth)
-    //cylinder_bank bRO(bank_params, angle: -36 * units.deg, position_x: position_xO_offset, position_y: position_yO_offset) // LO (first)
+    cylinder_bank bRO(bank_params, angle: -bank_angle_major - bank_angle_minor, position_x: position_xO_offset, position_y: position_yO_offset) // RO (fourth)
     bRO
         .add_cylinder(
             piston: piston(piston_params),
@@ -468,7 +469,7 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire08,
             intake: intake_R,
             exhaust_system: exhaust,
-            primary_length: exhaust_bore_spacing * 5 + exhaust_length_stagger_LR
+            primary_length: exhaust_bore_spacing * 4
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -477,7 +478,7 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire10,
             intake: intake_R,
             exhaust_system: exhaust,
-            primary_length: exhaust_bore_spacing * 3 + exhaust_length_stagger_LR
+            primary_length: exhaust_bore_spacing * 2
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -486,7 +487,7 @@ public node volkswagen_w12_nardo_engine {
             ignition_wire: wires.wire12,
             intake: intake_R,
             exhaust_system: exhaust,
-            primary_length: exhaust_bore_spacing * 1 + exhaust_length_stagger_LR
+            primary_length: exhaust_bore_spacing * 0
         )
 
     engine
@@ -505,8 +506,8 @@ public node volkswagen_w12_nardo_engine {
     label intake_runner_radius(1.2 * units.inch)
     label exhaust_runner_radius(0.85 * units.inch)
     
-    label runner_length_shrt(2.0 * units.inch)
-    label runner_length_long(5.0 * units.inch)
+    label runner_length_shrt(2.75 * units.inch)
+    label runner_length_long(4.25 * units.inch)
 
     bLO.set_cylinder_head (
         audi_w12_head(

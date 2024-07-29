@@ -1,13 +1,15 @@
 import "engine_sim.mr"
 
-// Bugatti W16 by GearheadLydia
-// 2022-10-18 | revision 2.1 | original 2022-09-20
-
 units units()
 constants constants()
 impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
+
+label bank_angle_major(90 * units.deg / 2)
+label bank_angle_minor(15 * units.deg / 2)
+
+label bank_timing_offset(bank_angle_major * 2 - (90 * units.deg))
 
 // firing order: 1-14-9-4-7-12-15-6-13-8-3-16-11-2-5-10
 
@@ -15,25 +17,25 @@ public node bugatti_w16_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7300 * units.rpm;
-	input limiter_duration: 0.06;
+    input limiter_duration: 0.06;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01,  (0.0/16.0) * cycle)
-            .connect_wire(wires.wire14,  (1.0/16.0) * cycle)
-			.connect_wire(wires.wire09,  (2.0/16.0) * cycle)
-			.connect_wire(wires.wire04,  (3.0/16.0) * cycle)
-			.connect_wire(wires.wire07,  (4.0/16.0) * cycle)
-			.connect_wire(wires.wire12,  (5.0/16.0) * cycle)
-			.connect_wire(wires.wire15,  (6.0/16.0) * cycle)
-			.connect_wire(wires.wire06,  (7.0/16.0) * cycle)
-			.connect_wire(wires.wire13,  (8.0/16.0) * cycle)
-			.connect_wire(wires.wire08,  (9.0/16.0) * cycle)
-			.connect_wire(wires.wire03, (10.0/16.0) * cycle)
-			.connect_wire(wires.wire16, (11.0/16.0) * cycle)
-			.connect_wire(wires.wire11, (12.0/16.0) * cycle)
-			.connect_wire(wires.wire02, (13.0/16.0) * cycle)
-			.connect_wire(wires.wire05, (14.0/16.0) * cycle)
-			.connect_wire(wires.wire10, (15.0/16.0) * cycle);
+            .connect_wire(wires.wire14,  (1.0/16.0) * cycle + bank_timing_offset)
+            .connect_wire(wires.wire09,  (2.0/16.0) * cycle + bank_timing_offset)
+            .connect_wire(wires.wire04,  (3.0/16.0) * cycle)
+            .connect_wire(wires.wire07,  (4.0/16.0) * cycle)
+            .connect_wire(wires.wire12,  (5.0/16.0) * cycle + bank_timing_offset)
+            .connect_wire(wires.wire15,  (6.0/16.0) * cycle + bank_timing_offset)
+            .connect_wire(wires.wire06,  (7.0/16.0) * cycle)
+            .connect_wire(wires.wire13,  (8.0/16.0) * cycle + bank_timing_offset)
+            .connect_wire(wires.wire08,  (9.0/16.0) * cycle)
+            .connect_wire(wires.wire03, (10.0/16.0) * cycle)
+            .connect_wire(wires.wire16, (11.0/16.0) * cycle + bank_timing_offset)
+            .connect_wire(wires.wire11, (12.0/16.0) * cycle + bank_timing_offset)
+            .connect_wire(wires.wire02, (13.0/16.0) * cycle)
+            .connect_wire(wires.wire05, (14.0/16.0) * cycle)
+            .connect_wire(wires.wire10, (15.0/16.0) * cycle + bank_timing_offset);
 }
 
 private node wires {
@@ -79,7 +81,7 @@ public node bugatti_w16_lobe_profile_exh {
 
 public node bugatti_w16_camshaft_builder {
     input in_lobe_profile: bugatti_w16_lobe_profile_int();
-	input ex_lobe_profile: bugatti_w16_lobe_profile_exh();
+    input ex_lobe_profile: bugatti_w16_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input lobe_separation: 86.5 * units.deg;
@@ -117,61 +119,61 @@ public node bugatti_w16_camshaft_builder {
 
     label rot30(30 * units.deg)
     label rot45(45 * units.deg)
-	label rot60(60 * units.deg)
+    label rot60(60 * units.deg)
     label rot90(90 * units.deg)
     label rot120(120 * units.deg)
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
-	
-	// firing order: 1-14-9-4-7-12-15-6-13-8-3-16-11-2-5-10
+    
+    // firing order: 1-14-9-4-7-12-15-6-13-8-3-16-11-2-5-10
 
     _intake_cam_LO
         .add_lobe(rot360 + intake_lobe_center + ( 0 * rot45)) //  #1
-		.add_lobe(rot360 + intake_lobe_center + (10 * rot45)) //  #3
+        .add_lobe(rot360 + intake_lobe_center + (10 * rot45)) //  #3
         .add_lobe(rot360 + intake_lobe_center + (14 * rot45)) //  #5
-		.add_lobe(rot360 + intake_lobe_center + ( 4 * rot45)) //  #7
+        .add_lobe(rot360 + intake_lobe_center + ( 4 * rot45)) //  #7
 
     _intake_cam_LI
         .add_lobe(rot360 + intake_lobe_center + (13 * rot45)) //  #2
-		.add_lobe(rot360 + intake_lobe_center + ( 3 * rot45)) //  #4
+        .add_lobe(rot360 + intake_lobe_center + ( 3 * rot45)) //  #4
         .add_lobe(rot360 + intake_lobe_center + ( 7 * rot45)) //  #6
-		.add_lobe(rot360 + intake_lobe_center + ( 9 * rot45)) //  #8
+        .add_lobe(rot360 + intake_lobe_center + ( 9 * rot45)) //  #8
 
     _intake_cam_RI
-        .add_lobe(rot360 + intake_lobe_center + ( 2 * rot45)) //  #9
-		.add_lobe(rot360 + intake_lobe_center + (12 * rot45)) // #11
-        .add_lobe(rot360 + intake_lobe_center + ( 8 * rot45)) // #13
-		.add_lobe(rot360 + intake_lobe_center + ( 6 * rot45)) // #15
+        .add_lobe(rot360 + intake_lobe_center + ( 2 * rot45) + bank_timing_offset) //  #9
+        .add_lobe(rot360 + intake_lobe_center + (12 * rot45) + bank_timing_offset) // #11
+        .add_lobe(rot360 + intake_lobe_center + ( 8 * rot45) + bank_timing_offset) // #13
+        .add_lobe(rot360 + intake_lobe_center + ( 6 * rot45) + bank_timing_offset) // #15
 
     _intake_cam_RO
-        .add_lobe(rot360 + intake_lobe_center + (15 * rot45)) // #10
-		.add_lobe(rot360 + intake_lobe_center + ( 5 * rot45)) // #12
-        .add_lobe(rot360 + intake_lobe_center + ( 1 * rot45)) // #14
-		.add_lobe(rot360 + intake_lobe_center + (11 * rot45)) // #16
+        .add_lobe(rot360 + intake_lobe_center + (15 * rot45) + bank_timing_offset) // #10
+        .add_lobe(rot360 + intake_lobe_center + ( 5 * rot45) + bank_timing_offset) // #12
+        .add_lobe(rot360 + intake_lobe_center + ( 1 * rot45) + bank_timing_offset) // #14
+        .add_lobe(rot360 + intake_lobe_center + (11 * rot45) + bank_timing_offset) // #16
 
     _exhaust_cam_LO
         .add_lobe(rot360 - exhaust_lobe_center + ( 0 * rot45)) //  #1
-		.add_lobe(rot360 - exhaust_lobe_center + (10 * rot45)) //  #3
+        .add_lobe(rot360 - exhaust_lobe_center + (10 * rot45)) //  #3
         .add_lobe(rot360 - exhaust_lobe_center + (14 * rot45)) //  #5
-		.add_lobe(rot360 - exhaust_lobe_center + ( 4 * rot45)) //  #7
+        .add_lobe(rot360 - exhaust_lobe_center + ( 4 * rot45)) //  #7
 
     _exhaust_cam_LI
         .add_lobe(rot360 - exhaust_lobe_center + (13 * rot45)) //  #2
-		.add_lobe(rot360 - exhaust_lobe_center + ( 3 * rot45)) //  #4
+        .add_lobe(rot360 - exhaust_lobe_center + ( 3 * rot45)) //  #4
         .add_lobe(rot360 - exhaust_lobe_center + ( 7 * rot45)) //  #6
-		.add_lobe(rot360 - exhaust_lobe_center + ( 9 * rot45)) //  #8
+        .add_lobe(rot360 - exhaust_lobe_center + ( 9 * rot45)) //  #8
 
     _exhaust_cam_RI
-        .add_lobe(rot360 - exhaust_lobe_center + ( 2 * rot45)) //  #9
-		.add_lobe(rot360 - exhaust_lobe_center + (12 * rot45)) // #11
-        .add_lobe(rot360 - exhaust_lobe_center + ( 8 * rot45)) // #13
-		.add_lobe(rot360 - exhaust_lobe_center + ( 6 * rot45)) // #15
+        .add_lobe(rot360 - exhaust_lobe_center + ( 2 * rot45) + bank_timing_offset) //  #9
+        .add_lobe(rot360 - exhaust_lobe_center + (12 * rot45) + bank_timing_offset) // #11
+        .add_lobe(rot360 - exhaust_lobe_center + ( 8 * rot45) + bank_timing_offset) // #13
+        .add_lobe(rot360 - exhaust_lobe_center + ( 6 * rot45) + bank_timing_offset) // #15
 
     _exhaust_cam_RO
-        .add_lobe(rot360 - exhaust_lobe_center + (15 * rot45)) // #10
-		.add_lobe(rot360 - exhaust_lobe_center + ( 5 * rot45)) // #12
-        .add_lobe(rot360 - exhaust_lobe_center + ( 1 * rot45)) // #14
-		.add_lobe(rot360 - exhaust_lobe_center + (11 * rot45)) // #16
+        .add_lobe(rot360 - exhaust_lobe_center + (15 * rot45) + bank_timing_offset) // #10
+        .add_lobe(rot360 - exhaust_lobe_center + ( 5 * rot45) + bank_timing_offset) // #12
+        .add_lobe(rot360 - exhaust_lobe_center + ( 1 * rot45) + bank_timing_offset) // #14
+        .add_lobe(rot360 - exhaust_lobe_center + (11 * rot45) + bank_timing_offset) // #16
 }
 
 private node add_flow_sample {
@@ -187,14 +189,14 @@ public node bugatti_w16_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 45.0 * units.cc;
-	input intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch;
-	input intake_runner_cross_section_area: circle_area(1.1 * units.inch);
-	input exhaust_runner_volume: circle_area(0.85 * units.inch) * 2 * units.inch;
-	input exhaust_runner_cross_section_area: circle_area(0.85 * units.inch);
+    input intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch;
+    input intake_runner_cross_section_area: circle_area(1.1 * units.inch);
+    input exhaust_runner_volume: circle_area(0.85 * units.inch) * 2 * units.inch;
+    input exhaust_runner_cross_section_area: circle_area(0.85 * units.inch);
     input flip_display: false;
-	
-	input flow_attenuation_in: 0.9;
-	input flow_attenuation_ex: 1.0;
+    
+    input flow_attenuation_in: 0.9;
+    input flow_attenuation_ex: 1.0;
     input lift_scale: 50.0;
     alias output __out: head;
 
@@ -234,7 +236,7 @@ public node bugatti_w16_head {
         .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
         .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
 
-		
+        
     cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: intake_runner_volume,
@@ -251,7 +253,7 @@ public node bugatti_w16_head {
 }
 
 
-public node w16 {
+public node bugatti_chiron_w16_engine {
     alias output __out: engine;
 
     wires wires()
@@ -260,10 +262,10 @@ public node w16 {
     label stroke(86.0 * units.mm)
     label rod_length(168.95 * units.mm)
     label rod_mass(434 * units.g)
-	label piston_mass(400 * units.g)
+    label piston_mass(400 * units.g)
     label compression_height(34.5 * units.mm)
-	label piston_dome(10.0 * units.cc)
-	label deck_height(248.00 * units.mm)
+    label piston_dome(10.0 * units.cc)
+    label deck_height(248.00 * units.mm)
     label crank_mass(85 * units.lb)
     label flywheel_mass(35 * units.lb)
     label flywheel_radius(6 * units.inch)
@@ -271,11 +273,11 @@ public node w16 {
     engine engine(
         name: "Bugatti Chiron W16",
         starter_torque: 450 * units.lb_ft,
-		starter_speed: 950 * units.rpm,
+        starter_speed: 950 * units.rpm,
         redline: 6800 * units.rpm,
         fuel: fuel(max_burning_efficiency: 1.3), // free power to replace unavailable turbos
         throttle_gamma: 1.0,
-		simulation_frequency: 4250
+        simulation_frequency: 7200
     )
 
     label crank_moment(
@@ -296,40 +298,36 @@ public node w16 {
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: (90+45+7.5) * units.deg
+        tdc: (90 * units.deg) + bank_angle_major
     )
 
-    rod_journal rj01(angle:   (0 - 0)  * units.deg)
-    rod_journal rj02(angle:   (0 - 0)  * units.deg)
-    rod_journal rj03(angle: (225 - 15) * units.deg)
-    rod_journal rj04(angle: (225 - 15) * units.deg)
-    rod_journal rj05(angle:  (90 - 0)  * units.deg)
-    rod_journal rj06(angle:  (90 - 0)  * units.deg)
-    rod_journal rj07(angle: (135 - 15) * units.deg)
-    rod_journal rj08(angle: (135 - 15) * units.deg)
-    rod_journal rj09(angle: (270 - 0)  * units.deg)
-    rod_journal rj10(angle: (270 - 0)  * units.deg)
-    rod_journal rj11(angle: (315 - 15) * units.deg)
-    rod_journal rj12(angle: (315 - 15) * units.deg)
-    rod_journal rj13(angle: (180 - 0)  * units.deg)
-    rod_journal rj14(angle: (180 - 0)  * units.deg)
-    rod_journal rj15(angle:  (45 - 15) * units.deg)
-    rod_journal rj16(angle:  (45 - 15) * units.deg)
+    // additional offset
+    // allegedly total of 22 degrees on the VR6, but trigonometry supports about 20.77 degrees for true evenness
+    // went for 20.75 degrees to make it a round number
+    label crank_pin_offset(bank_angle_minor + 2.875 * units.deg)
+    rod_journal rj1(angle:   0 * units.deg + crank_pin_offset)
+    rod_journal rj2(angle: 225 * units.deg - crank_pin_offset)
+    rod_journal rj3(angle:  90 * units.deg + crank_pin_offset)
+    rod_journal rj4(angle: 135 * units.deg - crank_pin_offset)
+    rod_journal rj5(angle: 270 * units.deg + crank_pin_offset)
+    rod_journal rj6(angle: 315 * units.deg - crank_pin_offset)
+    rod_journal rj7(angle: 180 * units.deg + crank_pin_offset)
+    rod_journal rj8(angle:  45 * units.deg - crank_pin_offset)
 
     c0
-        .add_rod_journal(rj02)
-        .add_rod_journal(rj04)
-        .add_rod_journal(rj06)
-        .add_rod_journal(rj08)
-        .add_rod_journal(rj10)
-        .add_rod_journal(rj12)
-        .add_rod_journal(rj14)
-        .add_rod_journal(rj16)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
+        .add_rod_journal(rj6)
+        .add_rod_journal(rj7)
+        .add_rod_journal(rj8)
 
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -355,7 +353,7 @@ public node w16 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(1000.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9983,
+        idle_throttle_plate_position: 0.9987,
         throttle_gamma: 2.0,
         runner_flow_rate: k_carb(300.0),
         runner_length: 8.0 * units.inch,
@@ -367,7 +365,7 @@ public node w16 {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(1000.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9983,
+        idle_throttle_plate_position: 0.9987,
         throttle_gamma: 2.0,
         runner_flow_rate: k_carb(300.0),
         runner_length: 8.0 * units.inch,
@@ -378,185 +376,185 @@ public node w16 {
         outlet_flow_rate: k_carb(2000.0),
         primary_tube_length: 10.0 * units.inch,
         primary_flow_rate: k_carb(380.0),
-        velocity_decay: 0.2, //0.5
+        velocity_decay: 0.2,
         volume: 5.0 * units.L,
-		length: 500 * units.mm
+        length: 500 * units.mm
     )
-	
+    
     exhaust_system exhaust(es_params, audio_volume: 1.00 * 0.002, impulse_response: ir_lib.default_0)
-	
-	label position_xO_offset(deck_height * 0.08624655910468764017893259939645)  // sin(52.5)-sin(45)
-	label position_yO_offset(deck_height * 0.09834535217782688498474681920669) // (1-cos(52.5))-(1-cos(45))
-	label position_xI_offset(deck_height * -0.09834535217782688498474681920669)  // sin(37.5)-sin(45)
-	label position_yI_offset(deck_height * -0.08624655910468764017893259939645) // (1-cos(37.5))-(1-cos(45))
-	
+    
+    //assuming the same 12.5mm offset as the VR6 / W12
+    label bore_center_offset(12.5 * units.mm)
+    // these values do NOT auto-update when bank_angle_major or bank_angle_minor is changed!!
+    label position_xO_offset(bore_center_offset *  0.6087614290087206394160975428981) // cos(52.5)
+    label position_yO_offset(bore_center_offset * -0.7933533402912351645797769615013) // sin(52.5)
+    label position_xI_offset(bore_center_offset * -0.7933533402912351645797769615013) // cos(37.5)
+    label position_yI_offset(bore_center_offset *  0.6087614290087206394160975428981) // sin(37.5)
+    
+    label exhaust_stagger_LR(2.0 * units.inch)
+    label pipe_length_1(80.0 * units.mm)
+    label pipe_length_2(64.0 * units.mm)
+    label pipe_length_3(48.0 * units.mm)
+    label pipe_length_4(32.0 * units.mm)
+    label pipe_length_5(16.0 * units.mm)
+    label pipe_length_6(0.0 * units.mm)
+    label pipe_length_7(8.0 * units.mm)
+    label pipe_length_8(24.0 * units.mm)
 
-	label exhaust_stagger_FR(1.5 * units.inch)
-	label exhaust_stagger_LR(0.5 * units.inch)
-	label exhaust_stagger_IO(0.2 * units.inch)
-	label pipe_length_1(24.0 * units.mm)
-	label pipe_length_2(08.0 * units.mm)
-	label pipe_length_3(00.0 * units.mm)
-	label pipe_length_4(10.0 * units.mm)
-
-    cylinder_bank bLO(bank_params, angle: 52.5 * units.deg) // LO (first)
-	//cylinder_bank bLO(bank_params, angle: 45 * units.deg, position_x: -position_xO_offset, position_y: position_yO_offset) // LO (first)
+    cylinder_bank bLO(bank_params, angle:  bank_angle_major + bank_angle_minor, position_x: -position_xO_offset, position_y: position_yO_offset) // LO (first)
     bLO
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj02,
+            rod_journal: rj1,
             intake: intake_L,
             exhaust_system: exhaust,
             ignition_wire: wires.wire01,
-			primary_length: pipe_length_1 + exhaust_stagger_FR
+            primary_length: pipe_length_1 + exhaust_stagger_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj06,
+            rod_journal: rj3,
             intake: intake_L,
             exhaust_system: exhaust,
             ignition_wire: wires.wire03,
-			primary_length: pipe_length_3 + exhaust_stagger_FR
+            primary_length: pipe_length_3 + exhaust_stagger_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj10,
+            rod_journal: rj5,
             intake: intake_L,
             exhaust_system: exhaust,
             ignition_wire: wires.wire05,
-			primary_length: pipe_length_4
+            primary_length: pipe_length_5 + exhaust_stagger_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj14,
+            rod_journal: rj7,
             intake: intake_L,
             exhaust_system: exhaust,
             ignition_wire: wires.wire07,
-			primary_length: pipe_length_2
+            primary_length: pipe_length_7 + exhaust_stagger_LR
         )
 
-    cylinder_bank bRI(bank_params, angle: -37.5 * units.deg) // RI (second)
-	//cylinder_bank bRI(bank_params, angle: -45 * units.deg, position_x: position_xI_offset, position_y: position_yI_offset) // RI (second)
+    cylinder_bank bRI(bank_params, angle: -bank_angle_major + bank_angle_minor, position_x: position_xI_offset, position_y: position_yI_offset) // RI (second)
     bRI
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj02,
+            rod_journal: rj1,
             intake: intake_R,
             exhaust_system: exhaust,
             ignition_wire: wires.wire09,
-			primary_length: pipe_length_1 + exhaust_stagger_IO + exhaust_stagger_FR + exhaust_stagger_LR
+            primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj06,
+            rod_journal: rj3,
             intake: intake_R,
             exhaust_system: exhaust,
             ignition_wire: wires.wire11,
-			primary_length: pipe_length_3 + exhaust_stagger_IO + exhaust_stagger_FR + exhaust_stagger_LR
+            primary_length: pipe_length_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj10,
+            rod_journal: rj5,
             intake: intake_R,
             exhaust_system: exhaust,
             ignition_wire: wires.wire13,
-			primary_length: pipe_length_4 + exhaust_stagger_IO + exhaust_stagger_LR
+            primary_length: pipe_length_5
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj14,
+            rod_journal: rj7,
             intake: intake_R,
             exhaust_system: exhaust,
             ignition_wire: wires.wire15,
-			primary_length: pipe_length_2 + exhaust_stagger_IO + exhaust_stagger_LR
+            primary_length: pipe_length_7
         )
-	
-    cylinder_bank bLI(bank_params, angle: 37.5 * units.deg) // LI (third)
-	//cylinder_bank bLI(bank_params, angle: 45 * units.deg, position_x: -position_xI_offset, position_y: position_yI_offset) // LI (third)
+    
+    cylinder_bank bLI(bank_params, angle:  bank_angle_major - bank_angle_minor, position_x: -position_xI_offset, position_y: position_yI_offset) // LI (third)
     bLI
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj04,
+            rod_journal: rj2,
             intake: intake_L,
             exhaust_system: exhaust,
             ignition_wire: wires.wire02,
-			primary_length: pipe_length_2 + exhaust_stagger_IO + exhaust_stagger_FR + exhaust_stagger_LR
+            primary_length: pipe_length_2 + exhaust_stagger_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj08,
+            rod_journal: rj4,
             intake: intake_L,
             exhaust_system: exhaust,
             ignition_wire: wires.wire04,
-			primary_length: pipe_length_4 + exhaust_stagger_IO + exhaust_stagger_FR + exhaust_stagger_LR
+            primary_length: pipe_length_4 + exhaust_stagger_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj12,
+            rod_journal: rj6,
             intake: intake_L,
             exhaust_system: exhaust,
             ignition_wire: wires.wire06,
-			primary_length: pipe_length_3 + exhaust_stagger_IO + exhaust_stagger_LR
+            primary_length: pipe_length_6 + exhaust_stagger_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj16,
+            rod_journal: rj8,
             intake: intake_L,
             exhaust_system: exhaust,
             ignition_wire: wires.wire08,
-			primary_length: pipe_length_1 + exhaust_stagger_IO + exhaust_stagger_LR
+            primary_length: pipe_length_8 + exhaust_stagger_LR
         )
 
-    cylinder_bank bRO(bank_params, angle: -52.5 * units.deg) // RO (fourth)
-	//cylinder_bank bRO(bank_params, angle: -45 * units.deg, position_x: position_xO_offset, position_y: position_yO_offset) // LO (first)
+    cylinder_bank bRO(bank_params, angle: -bank_angle_major - bank_angle_minor, position_x: position_xO_offset, position_y: position_yO_offset) // RO (fourth)
     bRO
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj04,
+            rod_journal: rj2,
             intake: intake_R,
             exhaust_system: exhaust,
             ignition_wire: wires.wire10,
-			primary_length: pipe_length_2 + exhaust_stagger_FR
+            primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj08,
+            rod_journal: rj4,
             intake: intake_R,
             exhaust_system: exhaust,
             ignition_wire: wires.wire12,
-			primary_length: pipe_length_4 + exhaust_stagger_FR
+            primary_length: pipe_length_4
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj12,
+            rod_journal: rj6,
             intake: intake_R,
             exhaust_system: exhaust,
             ignition_wire: wires.wire14,
-			primary_length: pipe_length_3
+            primary_length: pipe_length_6
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj16,
+            rod_journal: rj8,
             intake: intake_R,
             exhaust_system: exhaust,
             ignition_wire: wires.wire16,
-			primary_length: pipe_length_1
+            primary_length: pipe_length_8
         )
 
     engine
@@ -568,24 +566,24 @@ public node w16 {
     engine.add_crankshaft(c0)
 
     bugatti_w16_camshaft_builder camshaft(
-	    in_lobe_profile: bugatti_w16_lobe_profile_int(),
-		ex_lobe_profile: bugatti_w16_lobe_profile_exh()
-	)
+        in_lobe_profile: bugatti_w16_lobe_profile_int(),
+        ex_lobe_profile: bugatti_w16_lobe_profile_exh()
+    )
 
-	label intake_runner_radius(1.0 * units.inch)
-	label exhaust_runner_radius(0.8 * units.inch)
-	
-	label runner_length_shrt(2.0 * units.inch)
-	label runner_length_long(4.5 * units.inch)
+    label intake_runner_radius(1.0 * units.inch)
+    label exhaust_runner_radius(0.8 * units.inch)
+    
+    label runner_length_shrt(2.75 * units.inch)
+    label runner_length_long(4.25 * units.inch)
 
     bLO.set_cylinder_head (
         bugatti_w16_head(
             intake_camshaft: camshaft.intake_cam_LO,
             exhaust_camshaft: camshaft.exhaust_cam_LO,
-			intake_runner_volume: circle_area(intake_runner_radius) * runner_length_long,
-			intake_runner_cross_section_area: circle_area(intake_runner_radius),
-			exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_shrt,
-			exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
+            intake_runner_volume: circle_area(intake_runner_radius) * runner_length_long,
+            intake_runner_cross_section_area: circle_area(intake_runner_radius),
+            exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_shrt,
+            exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
             flip_display: true
         )
     )
@@ -593,10 +591,10 @@ public node w16 {
         bugatti_w16_head(
             intake_camshaft: camshaft.intake_cam_RI,
             exhaust_camshaft: camshaft.exhaust_cam_RI,
-			intake_runner_volume: circle_area(intake_runner_radius) * runner_length_shrt,
-			intake_runner_cross_section_area: circle_area(intake_runner_radius),
-			exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_long,
-			exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
+            intake_runner_volume: circle_area(intake_runner_radius) * runner_length_shrt,
+            intake_runner_cross_section_area: circle_area(intake_runner_radius),
+            exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_long,
+            exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
             flip_display: false
         )
     )
@@ -604,10 +602,10 @@ public node w16 {
         bugatti_w16_head(
             intake_camshaft: camshaft.intake_cam_LI,
             exhaust_camshaft: camshaft.exhaust_cam_LI,
-			intake_runner_volume: circle_area(intake_runner_radius) * runner_length_shrt,
-			intake_runner_cross_section_area: circle_area(intake_runner_radius),
-			exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_long,
-			exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
+            intake_runner_volume: circle_area(intake_runner_radius) * runner_length_shrt,
+            intake_runner_cross_section_area: circle_area(intake_runner_radius),
+            exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_long,
+            exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
             flip_display: true
         )
     )
@@ -615,10 +613,10 @@ public node w16 {
         bugatti_w16_head(
             intake_camshaft: camshaft.intake_cam_RO,
             exhaust_camshaft: camshaft.exhaust_cam_RO,
-			intake_runner_volume: circle_area(intake_runner_radius) * runner_length_long,
-			intake_runner_cross_section_area: circle_area(intake_runner_radius),
-			exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_shrt,
-			exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
+            intake_runner_volume: circle_area(intake_runner_radius) * runner_length_long,
+            intake_runner_cross_section_area: circle_area(intake_runner_radius),
+            exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_shrt,
+            exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
             flip_display: false
         )
     )
@@ -632,9 +630,9 @@ public node w16 {
         .add_sample(4000 * units.rpm, 65 * units.deg)
         .add_sample(5000 * units.rpm, 61 * units.deg)
         .add_sample(6000 * units.rpm, 57 * units.deg)
-		.add_sample(7000 * units.rpm, 55 * units.deg)
-		.add_sample(8000 * units.rpm, 53 * units.deg)
-		.add_sample(9000 * units.rpm, 53 * units.deg)
+        .add_sample(7000 * units.rpm, 55 * units.deg)
+        .add_sample(8000 * units.rpm, 53 * units.deg)
+        .add_sample(9000 * units.rpm, 53 * units.deg)
 
     engine.add_ignition_module(
         bugatti_w16_distributor(
@@ -672,7 +670,7 @@ public node bugatti_chiron_transmission {
 }
 
 public node main {
-    set_engine(w16())
+    set_engine(bugatti_chiron_w16_engine())
     set_vehicle(bugatti_chiron_vehicle())
     set_transmission(bugatti_chiron_transmission())
 }

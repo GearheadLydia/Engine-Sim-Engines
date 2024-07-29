@@ -193,13 +193,13 @@ public node volkswagen_vr6_head {
     )
 }
 
-public node vr6_r36 {
+public node volkswagen_vr6_bws_engine {
     alias output __out: engine;
 
     wires wires()
     
     label lean_angle(0.0 * units.deg)
-    label bank_angle(10.5 * units.deg / 2)
+    label bank_angle_minor(10.6 * units.deg / 2)
 
     label bore(89.0 * units.mm)
     label stroke(96.4 * units.mm)
@@ -210,7 +210,7 @@ public node vr6_r36 {
     label piston_dome(10.0 * units.cc)
     label deck_height(248.00 * units.mm)
     label crank_mass(55 * units.lb)
-    label flywheel_mass(25 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     engine engine(
@@ -242,12 +242,16 @@ public node vr6_r36 {
         tdc: 90 * units.deg + lean_angle
     )
 
-    rod_journal rj1(angle:  0  * units.deg + bank_angle)
-    rod_journal rj2(angle: 120 * units.deg - bank_angle)
-    rod_journal rj3(angle: 240 * units.deg + bank_angle)
-    rod_journal rj4(angle: 240 * units.deg - bank_angle)
-    rod_journal rj5(angle: 120 * units.deg + bank_angle)
-    rod_journal rj6(angle:  0  * units.deg - bank_angle)
+    // additional offset
+    // visually looks like 24 degrees, but trigonometry supports about 20.76 degrees for true evenness
+    // went for 20.75 degrees to make it a round number
+    label crank_pin_offset(bank_angle_minor + 7.725 * units.deg)
+    rod_journal rj1(angle:  0  * units.deg + crank_pin_offset)
+    rod_journal rj2(angle: 120 * units.deg - crank_pin_offset)
+    rod_journal rj3(angle: 240 * units.deg + crank_pin_offset)
+    rod_journal rj4(angle: 240 * units.deg - crank_pin_offset)
+    rod_journal rj5(angle: 120 * units.deg + crank_pin_offset)
+    rod_journal rj6(angle:  0  * units.deg - crank_pin_offset)
 
     c0
         .add_rod_journal(rj1)
@@ -307,56 +311,56 @@ public node vr6_r36 {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
     
-    label position_x_offset(deck_height * 0.09237058744656158234409132412227)  // sin(7.5)
-    label position_y_offset(deck_height * -0.00427530181541789787915499833799) // cos(7.5)-1
+    // 22.0mm offset
+    label bore_center_offset(22.0 * units.mm)
+    // these values do NOT auto-update when bank_angle_minor is changed!!
+    label position_x_offset(bore_center_offset *  0.99572469818458210212084500166201) // sin(84.7)
+    label position_y_offset(bore_center_offset * -0.09237058744656158234409132412227) // cos(84.7)
     
-    label pipe_length_1(70 * units.mm)
-    label pipe_length_2(40 * units.mm)
-    label pipe_length_3(10 * units.mm)
+    label pipe_length_1(95 * units.mm)
+    label pipe_length_2(55 * units.mm)
+    label pipe_length_3(15 * units.mm)
     label pipe_length_4(00 * units.mm)
-    label pipe_length_5(30 * units.mm)
-    label pipe_length_6(60 * units.mm)
-    label exhaust_stagger(50 * units.mm)
+    label pipe_length_5(40 * units.mm)
+    label pipe_length_6(80 * units.mm)
 
-    cylinder_bank bL(bank_params, angle: bank_angle + lean_angle) // L (first) | angle: 7.5
-    //cylinder_bank bL(bank_params, angle: 0, position_x: -position_x_offset, position_y: position_y_offset) // L (first) | angle: -7.5
+    cylinder_bank bL(bank_params, angle: bank_angle_minor + lean_angle, position_x: -position_x_offset, position_y: position_y_offset) // L (first) | angle: -7.5
     bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1 + exhaust_stagger,
-            sound_attenuation: 0.56
+            primary_length: pipe_length_1,
+            sound_attenuation: 0.72
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3 + exhaust_stagger,
-            sound_attenuation: 0.7
+            primary_length: pipe_length_3,
+            sound_attenuation: 0.9
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_5 + exhaust_stagger,
-            sound_attenuation: 0.63
+            primary_length: pipe_length_5,
+            sound_attenuation: 0.81
         )
 
-    cylinder_bank bR(bank_params, angle: -bank_angle + lean_angle) // R (second)
-    //cylinder_bank bR(bank_params, angle: 0, position_x: position_x_offset, position_y: position_y_offset) // R (second) | angle: 7.5
+    cylinder_bank bR(bank_params, angle: -bank_angle_minor + lean_angle, position_x: position_x_offset, position_y: position_y_offset) // R (second) | angle: 7.5
     bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
@@ -366,7 +370,7 @@ public node vr6_r36 {
             sound_attenuation: 0.9
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,
@@ -376,7 +380,7 @@ public node vr6_r36 {
             sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire6,
@@ -397,14 +401,20 @@ public node vr6_r36 {
         ex_lobe_profile: volkswagen_vr6_lobe_profile_exh()
     )
 
+    label intake_runner_radius(1.0 * units.inch)
+    label exhaust_runner_radius(0.85 * units.inch)
+    
+    label runner_length_shrt(2.75 * units.inch)
+    label runner_length_long(4.25 * units.inch)
+
     bL.set_cylinder_head (
         volkswagen_vr6_head(
             intake_camshaft: camshaft.intake_cam_L,
-            exhaust_camshaft: camshaft.exhaust_cam_L,            
-            intake_runner_volume: circle_area(1.0 * units.inch) * 5 * units.inch,
-            intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-            exhaust_runner_volume: circle_area(0.85 * units.inch) * 2 * units.inch,
-            exhaust_runner_cross_section_area: circle_area(0.85 * units.inch),
+            exhaust_camshaft: camshaft.exhaust_cam_L,
+            intake_runner_volume: circle_area(intake_runner_radius) * runner_length_long,
+            intake_runner_cross_section_area: circle_area(intake_runner_radius),
+            exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_shrt,
+            exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
             flip_display: true
         )
     )
@@ -412,10 +422,10 @@ public node vr6_r36 {
         volkswagen_vr6_head(
             intake_camshaft: camshaft.intake_cam_R,
             exhaust_camshaft: camshaft.exhaust_cam_R,
-            intake_runner_volume: circle_area(1.0 * units.inch) * 2 * units.inch,
-            intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-            exhaust_runner_volume: circle_area(0.85 * units.inch) * 5 * units.inch,
-            exhaust_runner_cross_section_area: circle_area(0.85 * units.inch),
+            intake_runner_volume: circle_area(intake_runner_radius) * runner_length_shrt,
+            intake_runner_cross_section_area: circle_area(intake_runner_radius),
+            exhaust_runner_volume: circle_area(exhaust_runner_radius) * runner_length_long,
+            exhaust_runner_cross_section_area: circle_area(exhaust_runner_radius),
             flip_display: true
         )
     )
@@ -467,7 +477,7 @@ public node volkswagen_passat_r36_b6_transmission {
 }
 
 public node main {
-    set_engine(vr6_r36())
+    set_engine(volkswagen_vr6_bws_engine())
     set_vehicle(volkswagen_passat_r36_b6_vehicle())
     set_transmission(volkswagen_passat_r36_b6_transmission())
 }
