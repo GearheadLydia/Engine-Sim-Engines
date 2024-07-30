@@ -196,10 +196,10 @@ public node tantalo_v12_50_engine {
     wires wires()
 
     label bore(83.0 * units.mm)
-    label bore_spacing(87.0 * units.mm)
+    label bore_spacing(95.0 * units.mm)
     label stroke(77.0 * units.mm)
-    label rod_length(130.0 * units.mm)
-    label compression_height(32.0 * units.mm)
+    label rod_length(147.25 * units.mm)
+    label compression_height(30.0 * units.mm)
     label piston_dome(0.0 * units.cc)
     label chamber_volume(45.0 * units.cc)
     

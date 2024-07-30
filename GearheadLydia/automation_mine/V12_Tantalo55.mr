@@ -8,7 +8,7 @@ label cycle(2 * 360 * units.deg)
 
 label anglesplay(0 * units.deg)
 
-public node tantalo_v12_70_distributor {
+public node tantalo_v12_50_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 9200 * units.rpm;
@@ -16,17 +16,17 @@ public node tantalo_v12_70_distributor {
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, ( 0.0 / 12.0) * cycle)
-            .connect_wire(wires.wire07, ( 1.0 / 12.0) * cycle + anglesplay)
+            .connect_wire(wires.wire12, ( 1.0 / 12.0) * cycle + anglesplay)
             .connect_wire(wires.wire05, ( 2.0 / 12.0) * cycle)
-            .connect_wire(wires.wire11, ( 3.0 / 12.0) * cycle + anglesplay)
+            .connect_wire(wires.wire08, ( 3.0 / 12.0) * cycle + anglesplay)
             .connect_wire(wires.wire03, ( 4.0 / 12.0) * cycle)
-            .connect_wire(wires.wire09, ( 5.0 / 12.0) * cycle + anglesplay)
+            .connect_wire(wires.wire10, ( 5.0 / 12.0) * cycle + anglesplay)
             .connect_wire(wires.wire06, ( 6.0 / 12.0) * cycle)
-            .connect_wire(wires.wire12, ( 7.0 / 12.0) * cycle + anglesplay)
+            .connect_wire(wires.wire07, ( 7.0 / 12.0) * cycle + anglesplay)
             .connect_wire(wires.wire02, ( 8.0 / 12.0) * cycle)
-            .connect_wire(wires.wire08, ( 9.0 / 12.0) * cycle + anglesplay)
+            .connect_wire(wires.wire11, ( 9.0 / 12.0) * cycle + anglesplay)
             .connect_wire(wires.wire04, (10.0 / 12.0) * cycle)
-            .connect_wire(wires.wire10, (11.0 / 12.0) * cycle + anglesplay);
+            .connect_wire(wires.wire09, (11.0 / 12.0) * cycle + anglesplay);
 }
 
 private node wires {
@@ -44,7 +44,7 @@ private node wires {
     output wire12: ignition_wire();
 }
 
-public node tantalo_v12_70_lobe_profile_int {
+public node tantalo_v12_50_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 245 * units.deg,
@@ -54,7 +54,7 @@ public node tantalo_v12_70_lobe_profile_int {
         );
 }
 
-public node tantalo_v12_70_lobe_profile_exh {
+public node tantalo_v12_50_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 240 * units.deg,
@@ -64,9 +64,9 @@ public node tantalo_v12_70_lobe_profile_exh {
         );
 }
 
-public node tantalo_v12_70_camshaft_builder {
-    input in_lobe_profile: tantalo_v12_70_lobe_profile_int();
-    input ex_lobe_profile: tantalo_v12_70_lobe_profile_exh();
+public node tantalo_v12_50_camshaft_builder {
+    input in_lobe_profile: tantalo_v12_50_lobe_profile_int();
+    input ex_lobe_profile: tantalo_v12_50_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
     input intake_lobe_center: 110.0 * units.deg;
@@ -106,12 +106,12 @@ public node tantalo_v12_70_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center +  6 * rot60) // # 6
 
     _intake_cam_R
-        .add_lobe(rot360 + intake_lobe_center +  1 * rot60 + anglesplay) // # 7
-        .add_lobe(rot360 + intake_lobe_center +  9 * rot60 + anglesplay) // # 8
-        .add_lobe(rot360 + intake_lobe_center +  5 * rot60 + anglesplay) // # 9
-        .add_lobe(rot360 + intake_lobe_center + 11 * rot60 + anglesplay) // # 10
-        .add_lobe(rot360 + intake_lobe_center +  3 * rot60 + anglesplay) // # 11
-        .add_lobe(rot360 + intake_lobe_center +  7 * rot60 + anglesplay) // # 12
+        .add_lobe(rot360 + intake_lobe_center +  7 * rot60 + anglesplay) // # 7
+        .add_lobe(rot360 + intake_lobe_center +  3 * rot60 + anglesplay) // # 8
+        .add_lobe(rot360 + intake_lobe_center + 11 * rot60 + anglesplay) // # 9
+        .add_lobe(rot360 + intake_lobe_center +  5 * rot60 + anglesplay) // # 10
+        .add_lobe(rot360 + intake_lobe_center +  9 * rot60 + anglesplay) // # 11
+        .add_lobe(rot360 + intake_lobe_center +  1 * rot60 + anglesplay) // # 12
 
     _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center +  0 * rot60) // # 1
@@ -122,15 +122,15 @@ public node tantalo_v12_70_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center +  6 * rot60) // # 6
 
     _exhaust_cam_R
-        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot60 + anglesplay) // # 7
-        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot60 + anglesplay) // # 8
-        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot60 + anglesplay) // # 9
-        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot60 + anglesplay) // # 10
-        .add_lobe(rot360 - exhaust_lobe_center +  3 * rot60 + anglesplay) // # 11
-        .add_lobe(rot360 - exhaust_lobe_center +  7 * rot60 + anglesplay) // # 12
+        .add_lobe(rot360 - exhaust_lobe_center +  7 * rot60 + anglesplay) // # 7
+        .add_lobe(rot360 - exhaust_lobe_center +  3 * rot60 + anglesplay) // # 8
+        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot60 + anglesplay) // # 9
+        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot60 + anglesplay) // # 10
+        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot60 + anglesplay) // # 11
+        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot60 + anglesplay) // # 12
 }
 
-public node tantalo_v12_70_head {
+public node tantalo_v12_50_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 40.0 * units.cc;
@@ -178,8 +178,8 @@ public node tantalo_v12_70_head {
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
         intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -190,15 +190,15 @@ public node tantalo_v12_70_head {
 }
 
 
-public node tantalo_v12_70_engine {
+public node tantalo_v12_50_engine {
     alias output __out: engine;
 
     wires wires()
 
-    label bore(90.0 * units.mm)
+    label bore(83.0 * units.mm)
     label bore_spacing(95.0 * units.mm)
-    label stroke(91.5 * units.mm)
-    label rod_length(140.0 * units.mm)
+    label stroke(84.5 * units.mm)
+    label rod_length(143.5 * units.mm)
     label compression_height(30.0 * units.mm)
     label piston_dome(0.0 * units.cc)
     label chamber_volume(45.0 * units.cc)
@@ -209,7 +209,7 @@ public node tantalo_v12_70_engine {
     label flywheel_mass(10 * units.lb)
     label flywheel_radius(4.5 * units.inch)
     
-    label compression_ratio(11.0)
+    label compression_ratio(10.0)
     label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
 
     engine engine(
@@ -301,29 +301,36 @@ public node tantalo_v12_70_engine {
         idle_throttle_plate_position: 0.998,
         throttle_gamma: 2.0,
         runner_flow_rate: k_carb(300.0),
-        runner_length: 6.0 * units.inch,
+        runner_length: 5.0 * units.inch,
         velocity_decay: 0.1
     )
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1000.0),
-        primary_tube_length: 18.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
-        velocity_decay: 0.2, //0.5
+        primary_tube_length: 16.0 * units.inch,
+        primary_flow_rate: k_carb(280.0),
+        velocity_decay: 0.4, //0.5
         volume: 3.0 * units.L,
         length: 500 * units.mm
     )
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
     
-    label pipe_length_1(40 * units.mm)
-    label pipe_length_2(32 * units.mm)
-    label pipe_length_3(24 * units.mm)
-    label pipe_length_4(00 * units.mm)
-    label pipe_length_5(08 * units.mm)
-    label pipe_length_6(16 * units.mm)
+    //label pipe_length_1(5.0 * units.cm)
+    //label pipe_length_2(4.5 * units.cm)
+    //label pipe_length_3(4.0 * units.cm)
+    //label pipe_length_4(3.5 * units.cm)
+    //label pipe_length_5(3.0 * units.cm)
+    //label pipe_length_6(2.5 * units.cm)
     
-    label pipe_stagger(30 * units.mm)
+    label pipe_length_1(38 * units.mm)
+    label pipe_length_2(08 * units.mm)
+    label pipe_length_3(23 * units.mm)
+    label pipe_length_4(15 * units.mm)
+    label pipe_length_5(00 * units.mm)
+    label pipe_length_6(30 * units.mm)
+    
+    label pipe_stagger(5 * units.mm)
 
     cylinder_bank bL(bank_params, angle: (30 * units.deg  + (anglesplay / 2.0))) // L (first)
     bL
@@ -445,13 +452,13 @@ public node tantalo_v12_70_engine {
 
     engine.add_crankshaft(c0)
 
-    tantalo_v12_70_camshaft_builder camshaft(
-        in_lobe_profile: tantalo_v12_70_lobe_profile_int(),
-        ex_lobe_profile: tantalo_v12_70_lobe_profile_exh()
+    tantalo_v12_50_camshaft_builder camshaft(
+        in_lobe_profile: tantalo_v12_50_lobe_profile_int(),
+        ex_lobe_profile: tantalo_v12_50_lobe_profile_exh()
     )
 
     bL.set_cylinder_head (
-        tantalo_v12_70_head(
+        tantalo_v12_50_head(
             intake_camshaft: camshaft.intake_cam_L,
             exhaust_camshaft: camshaft.exhaust_cam_L,
             chamber_volume: chamber_volume,
@@ -459,7 +466,7 @@ public node tantalo_v12_70_engine {
         )
     )
     bR.set_cylinder_head (
-        tantalo_v12_70_head(
+        tantalo_v12_50_head(
             intake_camshaft: camshaft.intake_cam_R,
             exhaust_camshaft: camshaft.exhaust_cam_R,
             chamber_volume: chamber_volume,
@@ -469,38 +476,38 @@ public node tantalo_v12_70_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 25 * units.deg)
-        .add_sample(1000 * units.rpm, 35 * units.deg)
-        .add_sample(2000 * units.rpm, 40 * units.deg)
-        .add_sample(3000 * units.rpm, 40 * units.deg)
-        .add_sample(4000 * units.rpm, 40 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 40 * units.deg)
-        .add_sample(7000 * units.rpm, 40 * units.deg)
-        .add_sample(8000 * units.rpm, 40 * units.deg)
-        .add_sample(9000 * units.rpm, 40 * units.deg)
+        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(1000 * units.rpm, 40 * units.deg)
+        .add_sample(2000 * units.rpm, 45 * units.deg)
+        .add_sample(3000 * units.rpm, 45 * units.deg)
+        .add_sample(4000 * units.rpm, 45 * units.deg)
+        .add_sample(5000 * units.rpm, 45 * units.deg)
+        .add_sample(6000 * units.rpm, 45 * units.deg)
+        .add_sample(7000 * units.rpm, 45 * units.deg)
+        .add_sample(8000 * units.rpm, 45 * units.deg)
+        .add_sample(9000 * units.rpm, 45 * units.deg)
 
     engine.add_ignition_module(
-        tantalo_v12_70_distributor(
+        tantalo_v12_50_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
     )
 }
 
-public node tantalo_pantheon_zr700_vehicle {
+public node tantalo_demone_zr500_vehicle {
     alias output __out:
         vehicle(
-            mass: 1200 * units.kg,
+            mass: 1350 * units.kg,
             drag_coefficient: 0.35,
             cross_sectional_area: 2.16 * (units.m * units.m),
             diff_ratio: 4.181,
-            tire_radius: 348.00 * units.mm, // 325/30ZR20
-            rolling_resistance: 1200 * units.kg * 9.81 * (325.0/275.0) * 0.01
+            tire_radius: 348.00 * units.mm, // 315/30ZR20
+            rolling_resistance: 580 * units.N
         );
 }
 
-public node tantalo_pantheon_zr700_transmission {
+public node tantalo_demone_zr500_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 1500 * units.lb_ft
@@ -514,9 +521,9 @@ public node tantalo_pantheon_zr700_transmission {
 }
 
 public node main {
-    set_engine(tantalo_v12_70_engine())
-    set_vehicle(tantalo_pantheon_zr700_vehicle())
-    set_transmission(tantalo_pantheon_zr700_transmission())
+    set_engine(tantalo_v12_50_engine())
+    set_vehicle(tantalo_demone_zr500_vehicle())
+    set_transmission(tantalo_demone_zr500_transmission())
 }
 
 main()
