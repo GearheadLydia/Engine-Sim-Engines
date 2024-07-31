@@ -9,6 +9,11 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
+label bank_angle_major(72 * units.deg / 2)
+label bank_angle_minor(15 * units.deg / 2)
+
+label bank_timing_offset(bank_angle_major * 2 - (72 * units.deg))
+
 // firing order: 1-6-2-7-4-9-5-10-3-8
 
 public node audi_w12_distributor {
@@ -19,15 +24,15 @@ public node audi_w12_distributor {
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01,  (0.0/10.0) * cycle)
-            .connect_wire(wires.wire06,  (1.0/10.0) * cycle)
+            .connect_wire(wires.wire06,  (1.0/10.0) * cycle + bank_timing_offset)
             .connect_wire(wires.wire02,  (2.0/10.0) * cycle)
-            .connect_wire(wires.wire07,  (3.0/10.0) * cycle)
+            .connect_wire(wires.wire07,  (3.0/10.0) * cycle + bank_timing_offset)
             .connect_wire(wires.wire04,  (4.0/10.0) * cycle)
-            .connect_wire(wires.wire09,  (5.0/10.0) * cycle)
+            .connect_wire(wires.wire09,  (5.0/10.0) * cycle + bank_timing_offset)
             .connect_wire(wires.wire05,  (6.0/10.0) * cycle)
-            .connect_wire(wires.wire10,  (7.0/10.0) * cycle)
+            .connect_wire(wires.wire10,  (7.0/10.0) * cycle + bank_timing_offset)
             .connect_wire(wires.wire03,  (8.0/10.0) * cycle)
-            .connect_wire(wires.wire08,  (9.0/10.0) * cycle);
+            .connect_wire(wires.wire08,  (9.0/10.0) * cycle + bank_timing_offset);
 }
 
 private node wires {
@@ -114,40 +119,40 @@ public node audi_w12_camshaft_builder {
     label rot360(360 * units.deg)
 
     _intake_cam_LO
+        .add_lobe(rot360 + intake_lobe_center + (2 * rot72)) //  #2
+        .add_lobe(rot360 + intake_lobe_center + (4 * rot72)) //  #4
+
+    _intake_cam_LI
         .add_lobe(rot360 + intake_lobe_center + (0 * rot72)) //  #1
         .add_lobe(rot360 + intake_lobe_center + (8 * rot72)) //  #3
         .add_lobe(rot360 + intake_lobe_center + (6 * rot72)) //  #5
 
-    _intake_cam_LI
-        .add_lobe(rot360 + intake_lobe_center + (2 * rot72)) //  #2
-        .add_lobe(rot360 + intake_lobe_center + (4 * rot72)) //  #4
-
     _intake_cam_RI
+        .add_lobe(rot360 + intake_lobe_center + (3 * rot72)) //  #7
+        .add_lobe(rot360 + intake_lobe_center + (5 * rot72)) //  #9
+
+    _intake_cam_RO
         .add_lobe(rot360 + intake_lobe_center + (1 * rot72)) //  #6
         .add_lobe(rot360 + intake_lobe_center + (9 * rot72)) //  #8
         .add_lobe(rot360 + intake_lobe_center + (7 * rot72)) // #10
 
-    _intake_cam_RO
-        .add_lobe(rot360 + intake_lobe_center + (3 * rot72)) //  #7
-        .add_lobe(rot360 + intake_lobe_center + (5 * rot72)) //  #9
-
     _exhaust_cam_LO
+        .add_lobe(rot360 - exhaust_lobe_center + (2 * rot72)) //  #2
+        .add_lobe(rot360 - exhaust_lobe_center + (4 * rot72)) //  #4
+
+    _exhaust_cam_LI
         .add_lobe(rot360 - exhaust_lobe_center + (0 * rot72)) //  #1
         .add_lobe(rot360 - exhaust_lobe_center + (8 * rot72)) //  #3
         .add_lobe(rot360 - exhaust_lobe_center + (6 * rot72)) //  #5
 
-    _exhaust_cam_LI
-        .add_lobe(rot360 - exhaust_lobe_center + (2 * rot72)) //  #2
-        .add_lobe(rot360 - exhaust_lobe_center + (4 * rot72)) //  #4
-
     _exhaust_cam_RI
+        .add_lobe(rot360 - exhaust_lobe_center + (3 * rot72)) //  #7
+        .add_lobe(rot360 - exhaust_lobe_center + (5 * rot72)) //  #9
+
+    _exhaust_cam_RO
         .add_lobe(rot360 - exhaust_lobe_center + (1 * rot72)) //  #6
         .add_lobe(rot360 - exhaust_lobe_center + (9 * rot72)) //  #8
         .add_lobe(rot360 - exhaust_lobe_center + (7 * rot72)) // #10
-
-    _exhaust_cam_RO
-        .add_lobe(rot360 - exhaust_lobe_center + (3 * rot72)) //  #7
-        .add_lobe(rot360 - exhaust_lobe_center + (5 * rot72)) //  #9
 }
 
 private node add_flow_sample {
@@ -226,7 +231,7 @@ public node audi_w12_head {
 }
 
 
-public node w12 {
+public node vw_wr10_hypothetical_engine {
     alias output __out: engine;
 
     wires wires()
@@ -249,7 +254,7 @@ public node w12 {
         starter_speed: 1000 * units.rpm,
         redline: 6800 * units.rpm,
         throttle_gamma: 1.0,
-        simulation_frequency: 6400
+        simulation_frequency: 10000
     )
 
     label crank_moment(
@@ -270,14 +275,18 @@ public node w12 {
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: 132.5 * units.deg
+        tdc: (bank_angle_major) + (90 * units.deg)
     )
 
-    rod_journal rj1(angle: (((0.0 / 5.0) * 360)) * units.deg)
-    rod_journal rj2(angle: (((2.0 / 5.0) * 360) - 15) * units.deg)
-    rod_journal rj3(angle: (((3.0 / 5.0) * 360)) * units.deg)
-    rod_journal rj4(angle: (((4.0 / 5.0) * 360) - 15) * units.deg)
-    rod_journal rj5(angle: (((1.0 / 5.0) * 360)) * units.deg)
+    // additional offset
+    // allegedly total of 22 degrees on the VR6, but trigonometry supports about 20.77 degrees for true evenness
+    // went for 20.75 degrees to make it a round number
+    label crank_pin_offset(bank_angle_minor + 2.875 * units.deg)
+    rod_journal rj1(angle: (((0.0 / 5.0) * 360)) * units.deg - crank_pin_offset)
+    rod_journal rj2(angle: (((2.0 / 5.0) * 360)) * units.deg + crank_pin_offset)
+    rod_journal rj3(angle: (((3.0 / 5.0) * 360)) * units.deg - crank_pin_offset)
+    rod_journal rj4(angle: (((4.0 / 5.0) * 360)) * units.deg + crank_pin_offset)
+    rod_journal rj5(angle: (((1.0 / 5.0) * 360)) * units.deg - crank_pin_offset)
 
     c0
         .add_rod_journal(rj1)
@@ -289,7 +298,7 @@ public node w12 {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -349,132 +358,128 @@ public node w12 {
     exhaust_system exhaustL(es_params, audio_volume:  1.0*0.05, impulse_response: ir_lib.default_0)
     exhaust_system exhaustR(es_params, audio_volume:  1.0*0.05, impulse_response: ir_lib.default_0)
     
+    //12.5mm offset
+    label bore_center_offset(12.5 * units.mm)
+    label position_xO_offset(bore_center_offset *  0.72537437101228763799328411118973) // cos(43.5)
+    label position_yO_offset(bore_center_offset * -0.68835457569375398438925614341961) // sin(43.5)
+    label position_xI_offset(bore_center_offset * -0.87881711266196537412999514368452) // cos(28.5)
+    label position_yI_offset(bore_center_offset *  0.47715876025960841504886300818939) // sin(28.5)
     
-    label position_xO_offset(deck_height * 0.10056932340128085522055018878054)  // sin(43.5)-sin(36)
-    label position_yO_offset(deck_height * -0.08364262336265978610900930599309) // (1-cos(43.5))-(1-cos(36))
-    label position_xI_offset(deck_height * -0.11062649203286471411984294644969)  // sin(28.5)-sin(36)
-    label position_yI_offset(deck_height * 0.06980011828701795002770172650171) // (1-cos(28.5))-(1-cos(36))
-    
-    label exhaust_length_stagger_IO(2.0 * units.inch)
-    label exhaust_length_stagger_LR(1.0 * units.inch)
-    label exhaust_bore_spacing(45 * units.mm)
+    label exhaust_length_stagger_LR(30 * units.mm)
+    label exhaust_bore_spacing(40 * units.mm)
     
     label sound_attenuation_penalty(0.02)
 
-    cylinder_bank bLO(bank_params, angle: 43.5 * units.deg) // LO (first)
-    //cylinder_bank bLO(bank_params, angle: 36 * units.deg, position_x: -position_xO_offset, position_y: position_yO_offset) // LO (first)
+    cylinder_bank bLO(bank_params, angle:  bank_angle_major + bank_angle_minor, position_x: -position_xO_offset, position_y: position_yO_offset) // LO (first)
     bLO
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire01,
-            intake: intake_L,
-            exhaust_system: exhaustL,
-            primary_length: exhaust_bore_spacing * 4,
-            sound_attenuation: (1.0 - (sound_attenuation_penalty * 4))
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
-            ignition_wire: wires.wire03,
-            intake: intake_L,
-            exhaust_system: exhaustL,
-            primary_length: exhaust_bore_spacing * 2,
-            sound_attenuation: (1.0 - (sound_attenuation_penalty * 2))
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
-            ignition_wire: wires.wire05,
-            intake: intake_L,
-            exhaust_system: exhaustL,
-            primary_length: exhaust_bore_spacing * 0,
-            sound_attenuation: (1.0 - (sound_attenuation_penalty * 0))
-        )
-
-    cylinder_bank bRI(bank_params, angle: -28.5 * units.deg) // RI (second)
-    //cylinder_bank bRI(bank_params, angle: -36 * units.deg, position_x: position_xI_offset, position_y: position_yI_offset) // RI (second)
-    bRI
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire06,
-            intake: intake_R,
-            exhaust_system: exhaustR,
-            primary_length: (exhaust_bore_spacing * 4) + exhaust_length_stagger_IO + exhaust_length_stagger_LR,
-            sound_attenuation: (1.0 - (sound_attenuation_penalty * 4))
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
-            ignition_wire: wires.wire08,
-            intake: intake_R,
-            exhaust_system: exhaustR,
-            primary_length: (exhaust_bore_spacing * 2) + exhaust_length_stagger_IO + exhaust_length_stagger_LR,
-            sound_attenuation: (1.0 - (sound_attenuation_penalty * 2))
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
-            ignition_wire: wires.wire10,
-            intake: intake_R,
-            exhaust_system: exhaustR,
-            primary_length: (exhaust_bore_spacing * 0) + exhaust_length_stagger_IO + exhaust_length_stagger_LR,
-            sound_attenuation: (1.0 - (sound_attenuation_penalty * 0))
-        )
-    
-    cylinder_bank bLI(bank_params, angle: 28.5 * units.deg) // LI (third)
-    //cylinder_bank bLI(bank_params, angle: 36 * units.deg, position_x: -position_xI_offset, position_y: position_yI_offset) // LI (third)
-    bLI
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire02,
             intake: intake_L,
             exhaust_system: exhaustL,
-            primary_length: (exhaust_bore_spacing * 3) + exhaust_length_stagger_IO,
+            primary_length: exhaust_bore_spacing * 3 + exhaust_length_stagger_LR,
             sound_attenuation: (1.0 - (sound_attenuation_penalty * 3))
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire04,
             intake: intake_L,
             exhaust_system: exhaustL,
-            primary_length: (exhaust_bore_spacing * 1) + exhaust_length_stagger_IO,
+            primary_length: exhaust_bore_spacing * 1 + exhaust_length_stagger_LR,
             sound_attenuation: (1.0 - (sound_attenuation_penalty * 1))
         )
 
-    cylinder_bank bRO(bank_params, angle: -43.5 * units.deg) // RO (fourth)
-    //cylinder_bank bRO(bank_params, angle: -36 * units.deg, position_x: position_xO_offset, position_y: position_yO_offset) // LO (first)
-    bRO
+    cylinder_bank bRI(bank_params, angle: -bank_angle_major + bank_angle_minor, position_x: position_xI_offset, position_y: position_yI_offset) // RI (second)
+    bRI
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire07,
             intake: intake_R,
             exhaust_system: exhaustR,
-            primary_length: exhaust_bore_spacing * 3 + exhaust_length_stagger_LR,
+            primary_length: exhaust_bore_spacing * 3,
             sound_attenuation: (1.0 - (sound_attenuation_penalty * 3))
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire09,
             intake: intake_R,
             exhaust_system: exhaustR,
-            primary_length: exhaust_bore_spacing * 1 + exhaust_length_stagger_LR,
+            primary_length: exhaust_bore_spacing * 1,
             sound_attenuation: (1.0 - (sound_attenuation_penalty * 1))
+        )
+    
+    cylinder_bank bLI(bank_params, angle:  bank_angle_major - bank_angle_minor, position_x: -position_xI_offset, position_y: position_yI_offset) // LI (third)
+    bLI
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire01,
+            intake: intake_L,
+            exhaust_system: exhaustL,
+            primary_length: exhaust_bore_spacing * 4 + exhaust_length_stagger_LR,
+            sound_attenuation: (1.0 - (sound_attenuation_penalty * 4))
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire03,
+            intake: intake_L,
+            exhaust_system: exhaustL,
+            primary_length: exhaust_bore_spacing * 2 + exhaust_length_stagger_LR,
+            sound_attenuation: (1.0 - (sound_attenuation_penalty * 2))
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire05,
+            intake: intake_L,
+            exhaust_system: exhaustL,
+            primary_length: exhaust_bore_spacing * 0 + exhaust_length_stagger_LR,
+            sound_attenuation: (1.0 - (sound_attenuation_penalty * 0))
+        )
+
+    cylinder_bank bRO(bank_params, angle: -bank_angle_major - bank_angle_minor, position_x: position_xO_offset, position_y: position_yO_offset) // RO (fourth)
+    bRO
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire06,
+            intake: intake_R,
+            exhaust_system: exhaustR,
+            primary_length: exhaust_bore_spacing * 4,
+            sound_attenuation: (1.0 - (sound_attenuation_penalty * 4))
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire08,
+            intake: intake_R,
+            exhaust_system: exhaustR,
+            primary_length: exhaust_bore_spacing * 2,
+            sound_attenuation: (1.0 - (sound_attenuation_penalty * 2))
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire10,
+            intake: intake_R,
+            exhaust_system: exhaustR,
+            primary_length: exhaust_bore_spacing * 0,
+            sound_attenuation: (1.0 - (sound_attenuation_penalty * 0))
         )
 
     engine
@@ -493,8 +498,8 @@ public node w12 {
     label intake_runner_radius(1.2 * units.inch)
     label exhaust_runner_radius(0.85 * units.inch)
     
-    label runner_length_shrt(2.0 * units.inch)
-    label runner_length_long(5.0 * units.inch)
+    label runner_length_shrt(2.75 * units.inch)
+    label runner_length_long(4.25 * units.inch)
 
     bLO.set_cylinder_head (
         audi_w12_head(
@@ -590,7 +595,7 @@ public node volkswagen_w12_roadster_concept_transmission {
 }
 
 public node main {
-    set_engine(w12())
+    set_engine(vw_wr10_hypothetical_engine())
     set_vehicle(volkswagen_w12_roadster_concept_vehicle())
     set_transmission(volkswagen_w12_roadster_concept_transmission())
 }
