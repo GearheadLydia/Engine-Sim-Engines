@@ -331,7 +331,7 @@ public node ferrari_f130_b_engine {
     
     label pipe_stagger(20 * units.mm)
 
-    cylinder_bank bL(bank_params, angle: 32.5 * units.deg) // L (first)
+    cylinder_bank bL(bank_params, angle: 32.5 * units.deg) // L (second)
     bL
         .add_cylinder(
             piston: piston(piston_params),
@@ -340,7 +340,7 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire01,
             intake: intakeL,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1 + pipe_stagger
+            primary_length: pipe_length_1
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -349,7 +349,7 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire02,
             intake: intakeL,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2 + pipe_stagger
+            primary_length: pipe_length_2
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -358,7 +358,7 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire03,
             intake: intakeL,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3 + pipe_stagger
+            primary_length: pipe_length_3
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -367,7 +367,7 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire04,
             intake: intakeL,
             exhaust_system: exhaust,
-            primary_length: pipe_length_4 + pipe_stagger
+            primary_length: pipe_length_4
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -376,7 +376,7 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire05,
             intake: intakeL,
             exhaust_system: exhaust,
-            primary_length: pipe_length_5 + pipe_stagger
+            primary_length: pipe_length_5
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -385,10 +385,10 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire06,
             intake: intakeL,
             exhaust_system: exhaust,
-            primary_length: pipe_length_6 + pipe_stagger
+            primary_length: pipe_length_6
         )
 
-    cylinder_bank bR(bank_params, angle: -32.5 * units.deg) // R (second)
+    cylinder_bank bR(bank_params, angle: -32.5 * units.deg) // R (first)
     bR
         .add_cylinder(
             piston: piston(piston_params),
@@ -397,7 +397,7 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire12,
             intake: intakeR,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1
+            primary_length: pipe_length_1 + pipe_stagger
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -406,7 +406,7 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire11,
             intake: intakeR,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2
+            primary_length: pipe_length_2 + pipe_stagger
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -415,7 +415,7 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire10,
             intake: intakeR,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3
+            primary_length: pipe_length_3 + pipe_stagger
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -424,7 +424,7 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire09,
             intake: intakeR,
             exhaust_system: exhaust,
-            primary_length: pipe_length_4
+            primary_length: pipe_length_4 + pipe_stagger
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -433,7 +433,7 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire08,
             intake: intakeR,
             exhaust_system: exhaust,
-            primary_length: pipe_length_5
+            primary_length: pipe_length_5 + pipe_stagger
         )
         .add_cylinder(
             piston: piston(piston_params),
@@ -442,7 +442,7 @@ public node ferrari_f130_b_engine {
             ignition_wire: wires.wire07,
             intake: intakeR,
             exhaust_system: exhaust,
-            primary_length: pipe_length_6
+            primary_length: pipe_length_6 + pipe_stagger
         )
 
     engine
