@@ -18,17 +18,17 @@ public node ford_modular_v12_gt90_distributor {
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire01, ( 0.0/12.0) * cycle)
-            .connect_wire(wires.wire12, ( 1.0/12.0) * cycle + rot30)
+            .connect_wire(wires.wire07, ( 1.0/12.0) * cycle + rot30)
             .connect_wire(wires.wire05, ( 2.0/12.0) * cycle)
-            .connect_wire(wires.wire08, ( 3.0/12.0) * cycle + rot30)
+            .connect_wire(wires.wire11, ( 3.0/12.0) * cycle + rot30)
             .connect_wire(wires.wire03, ( 4.0/12.0) * cycle)
-            .connect_wire(wires.wire10, ( 5.0/12.0) * cycle + rot30)
+            .connect_wire(wires.wire09, ( 5.0/12.0) * cycle + rot30)
             .connect_wire(wires.wire06, ( 6.0/12.0) * cycle)
-            .connect_wire(wires.wire07, ( 7.0/12.0) * cycle + rot30)
+            .connect_wire(wires.wire12, ( 7.0/12.0) * cycle + rot30)
             .connect_wire(wires.wire02, ( 8.0/12.0) * cycle)
-            .connect_wire(wires.wire11, ( 9.0/12.0) * cycle + rot30)
+            .connect_wire(wires.wire08, ( 9.0/12.0) * cycle + rot30)
             .connect_wire(wires.wire04, (10.0/12.0) * cycle)
-            .connect_wire(wires.wire09, (11.0/12.0) * cycle + rot30);
+            .connect_wire(wires.wire10, (11.0/12.0) * cycle + rot30);
 }
 
 private node wires {
@@ -110,12 +110,12 @@ public node ford_modular_v12_gt90_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center +  6 * rot60) // # 6
 
     _intake_cam_1
-        .add_lobe(rot360 + intake_lobe_center +  7 * rot60 + rot30) // # 7
-        .add_lobe(rot360 + intake_lobe_center +  3 * rot60 + rot30) // # 8
-        .add_lobe(rot360 + intake_lobe_center + 11 * rot60 + rot30) // # 9
-        .add_lobe(rot360 + intake_lobe_center +  5 * rot60 + rot30) // # 10
-        .add_lobe(rot360 + intake_lobe_center +  9 * rot60 + rot30) // # 11
-        .add_lobe(rot360 + intake_lobe_center +  1 * rot60 + rot30) // # 12
+        .add_lobe(rot360 + intake_lobe_center +  1 * rot60 + rot30) // # 7
+        .add_lobe(rot360 + intake_lobe_center +  9 * rot60 + rot30) // # 8
+        .add_lobe(rot360 + intake_lobe_center +  5 * rot60 + rot30) // # 9
+        .add_lobe(rot360 + intake_lobe_center + 11 * rot60 + rot30) // # 10
+        .add_lobe(rot360 + intake_lobe_center +  3 * rot60 + rot30) // # 11
+        .add_lobe(rot360 + intake_lobe_center +  7 * rot60 + rot30) // # 12
 
     _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center +  0 * rot60) // # 1
@@ -126,12 +126,12 @@ public node ford_modular_v12_gt90_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center +  6 * rot60) // # 6
 
     _exhaust_cam_1
-        .add_lobe(rot360 - exhaust_lobe_center +  7 * rot60 + rot30) // # 7
-        .add_lobe(rot360 - exhaust_lobe_center +  3 * rot60 + rot30) // # 8
-        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot60 + rot30) // # 9
-        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot60 + rot30) // # 10
-        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot60 + rot30) // # 11
-        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot60 + rot30) // # 12
+        .add_lobe(rot360 - exhaust_lobe_center +  1 * rot60 + rot30) // # 7
+        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot60 + rot30) // # 8
+        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot60 + rot30) // # 9
+        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot60 + rot30) // # 10
+        .add_lobe(rot360 - exhaust_lobe_center +  3 * rot60 + rot30) // # 11
+        .add_lobe(rot360 - exhaust_lobe_center +  7 * rot60 + rot30) // # 12
 }
 
 private node add_flow_sample {
@@ -214,9 +214,9 @@ public node ford_modular_v12_engine {
         redline: 6500 * units.rpm,
         fuel: fuel(max_burning_efficiency: 1.15),
         throttle_gamma: 1.0,
-        simulation_frequency: 6000,
         jitter: 0.75,
-        hf_gain: 0.05
+        hf_gain: 0.05,
+        simulation_frequency: 10000
     )
 
     // https://fordauthority.com/fmc/ford-motor-company-engines/ford-modular-family/ford-4-6l-engine/
@@ -224,13 +224,13 @@ public node ford_modular_v12_engine {
     label bore_spacing(100.0 * units.mm)
     label stroke(77.2 * units.mm)
     label rod_length(157.1 * units.mm)
-    label rod_mass(618 * units.g)
+    label rod_mass(650 * units.g)
     label compression_height(31.01 * units.mm)
-    label piston_mass(361 * units.g)
+    label piston_mass(450 * units.g)
     label piston_dome(4.451 * units.cc)
     label deck_height((227.0 + 0.2) * units.mm)
-    label crank_mass(70 * units.lb)
-    label flywheel_mass(45 * units.lb)
+    label crank_mass(140 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -273,7 +273,7 @@ public node ford_modular_v12_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -330,7 +330,7 @@ public node ford_modular_v12_engine {
         volume: 480 * units.mm * circle_area(exhaust_radius) * 4
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.001, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.0005, impulse_response: ir_lib.default_0)
 
     label pipe_length_1(2.3 * bore_spacing)
     label pipe_length_2(1.5 * bore_spacing)
@@ -339,12 +339,12 @@ public node ford_modular_v12_engine {
     label pipe_length_5(0.0 * bore_spacing)
     label pipe_length_6(1.2 * bore_spacing)
     
-    label exhaust_offset_LR(0.75 * bore_spacing)
+    label exhaust_offset_LR(0.35 * bore_spacing)
 
     cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire01,
@@ -353,7 +353,7 @@ public node ford_modular_v12_engine {
             primary_length: pipe_length_1 + exhaust_offset_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire02,
@@ -362,7 +362,7 @@ public node ford_modular_v12_engine {
             primary_length: pipe_length_2 + exhaust_offset_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire03,
@@ -371,7 +371,7 @@ public node ford_modular_v12_engine {
             primary_length: pipe_length_3 + exhaust_offset_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire04,
@@ -380,7 +380,7 @@ public node ford_modular_v12_engine {
             primary_length: pipe_length_4 + exhaust_offset_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire05,
@@ -389,7 +389,7 @@ public node ford_modular_v12_engine {
             primary_length: pipe_length_5 + exhaust_offset_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire06,
@@ -401,7 +401,7 @@ public node ford_modular_v12_engine {
     cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
     b1
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire07,
@@ -410,7 +410,7 @@ public node ford_modular_v12_engine {
             primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire08,
@@ -419,7 +419,7 @@ public node ford_modular_v12_engine {
             primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire09,
@@ -428,7 +428,7 @@ public node ford_modular_v12_engine {
             primary_length: pipe_length_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.3)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire10,
@@ -437,7 +437,7 @@ public node ford_modular_v12_engine {
             primary_length: pipe_length_4
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire11,
@@ -446,7 +446,7 @@ public node ford_modular_v12_engine {
             primary_length: pipe_length_5
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.5)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire12,
