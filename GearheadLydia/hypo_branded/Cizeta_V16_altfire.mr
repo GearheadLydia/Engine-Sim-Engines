@@ -7,11 +7,14 @@ impulse_response_library ir_lib()
 label cycle(2 * 360 * units.deg)
 
 // thanks to oror on the Engine Sim Discord server for a lot of photographs and info
-// this version supposedly has one doubled flat plane crankshaft?
+// has two counter-rotating half-engines, the right half of which I have mirrored
+// because Engine Sim can't do two engines spinning at different speeds at once
 
 // firing order is based on camshafts
 
-// firing order: L1-R1-L3-R3-L4-R4-L2-R2-L6-R6-L5-R5-L7-R7-L8-R8
+// firing order: L1-R1-L5-R5-L7-R7-L2-R2-L6-R6-L3-R3-L4-R4-L8-R8
+
+// 15726348
 
 public node cizeta_v16_distributor {
     input wires;
@@ -24,18 +27,18 @@ public node cizeta_v16_distributor {
             .connect_wire(wires.wireR1, ( 1.0 / 16.0) * cycle)
             .connect_wire(wires.wireL5, ( 2.0 / 16.0) * cycle)
             .connect_wire(wires.wireR5, ( 3.0 / 16.0) * cycle)
-            .connect_wire(wires.wireL3, ( 4.0 / 16.0) * cycle)
-            .connect_wire(wires.wireR3, ( 5.0 / 16.0) * cycle)
-            .connect_wire(wires.wireL7, ( 6.0 / 16.0) * cycle)
-            .connect_wire(wires.wireR7, ( 7.0 / 16.0) * cycle)
-            .connect_wire(wires.wireL4, ( 8.0 / 16.0) * cycle)
-            .connect_wire(wires.wireR4, ( 9.0 / 16.0) * cycle)
-            .connect_wire(wires.wireL8, (10.0 / 16.0) * cycle)
-            .connect_wire(wires.wireR8, (11.0 / 16.0) * cycle)
-            .connect_wire(wires.wireL2, (12.0 / 16.0) * cycle)
-            .connect_wire(wires.wireR2, (13.0 / 16.0) * cycle)
-            .connect_wire(wires.wireL6, (14.0 / 16.0) * cycle)
-            .connect_wire(wires.wireR6, (15.0 / 16.0) * cycle);
+            .connect_wire(wires.wireL7, ( 4.0 / 16.0) * cycle)
+            .connect_wire(wires.wireR7, ( 5.0 / 16.0) * cycle)
+            .connect_wire(wires.wireL2, ( 6.0 / 16.0) * cycle)
+            .connect_wire(wires.wireR2, ( 7.0 / 16.0) * cycle)
+            .connect_wire(wires.wireL6, ( 8.0 / 16.0) * cycle)
+            .connect_wire(wires.wireR6, ( 9.0 / 16.0) * cycle)
+            .connect_wire(wires.wireL3, (10.0 / 16.0) * cycle)
+            .connect_wire(wires.wireR3, (11.0 / 16.0) * cycle)
+            .connect_wire(wires.wireL4, (12.0 / 16.0) * cycle)
+            .connect_wire(wires.wireR4, (13.0 / 16.0) * cycle)
+            .connect_wire(wires.wireL8, (14.0 / 16.0) * cycle)
+            .connect_wire(wires.wireR8, (15.0 / 16.0) * cycle);
 }
 
 private node wires {
@@ -123,51 +126,51 @@ public node cizeta_v16_camshaft_builder {
 
     _intake_cam_LF
         .add_lobe(rot360 + intake_lobe_center +  0 * rot45) // #L1
-        .add_lobe(rot360 + intake_lobe_center + 12 * rot45) // #L2
-        .add_lobe(rot360 + intake_lobe_center +  4 * rot45) // #L3
-        .add_lobe(rot360 + intake_lobe_center +  8 * rot45) // #L4
+        .add_lobe(rot360 + intake_lobe_center +  6 * rot45) // #L2
+        .add_lobe(rot360 + intake_lobe_center + 10 * rot45) // #L3
+        .add_lobe(rot360 + intake_lobe_center + 12 * rot45) // #L4
         
     //_intake_cam_RR
         .add_lobe(rot360 + intake_lobe_center +  1 * rot45) // #R1
-        .add_lobe(rot360 + intake_lobe_center + 13 * rot45) // #R2
-        .add_lobe(rot360 + intake_lobe_center +  5 * rot45) // #R3
-        .add_lobe(rot360 + intake_lobe_center +  9 * rot45) // #R4
+        .add_lobe(rot360 + intake_lobe_center +  7 * rot45) // #R2
+        .add_lobe(rot360 + intake_lobe_center + 11 * rot45) // #R3
+        .add_lobe(rot360 + intake_lobe_center + 13 * rot45) // #R4
 
     _intake_cam_LR
         .add_lobe(rot360 + intake_lobe_center +  2 * rot45) // #L5
-        .add_lobe(rot360 + intake_lobe_center + 14 * rot45) // #L6
-        .add_lobe(rot360 + intake_lobe_center +  6 * rot45) // #L7
-        .add_lobe(rot360 + intake_lobe_center + 10 * rot45) // #L8
+        .add_lobe(rot360 + intake_lobe_center +  8 * rot45) // #L6
+        .add_lobe(rot360 + intake_lobe_center +  4 * rot45) // #L7
+        .add_lobe(rot360 + intake_lobe_center + 14 * rot45) // #L8
     
     //_intake_cam_RF
         .add_lobe(rot360 + intake_lobe_center +  3 * rot45) // #R5
-        .add_lobe(rot360 + intake_lobe_center + 15 * rot45) // #R6
-        .add_lobe(rot360 + intake_lobe_center +  7 * rot45) // #R7
-        .add_lobe(rot360 + intake_lobe_center + 11 * rot45) // #R8
+        .add_lobe(rot360 + intake_lobe_center +  9 * rot45) // #R6
+        .add_lobe(rot360 + intake_lobe_center +  5 * rot45) // #R7
+        .add_lobe(rot360 + intake_lobe_center + 15 * rot45) // #R8
 
     _exhaust_cam_LF
         .add_lobe(rot360 - exhaust_lobe_center +  0 * rot45) // #L1
-        .add_lobe(rot360 - exhaust_lobe_center + 12 * rot45) // #L2
-        .add_lobe(rot360 - exhaust_lobe_center +  4 * rot45) // #L3
-        .add_lobe(rot360 - exhaust_lobe_center +  8 * rot45) // #L4
+        .add_lobe(rot360 - exhaust_lobe_center +  6 * rot45) // #L2
+        .add_lobe(rot360 - exhaust_lobe_center + 10 * rot45) // #L3
+        .add_lobe(rot360 - exhaust_lobe_center + 12 * rot45) // #L4
         
     //_exhaust_cam_RR
         .add_lobe(rot360 - exhaust_lobe_center +  1 * rot45) // #R1
-        .add_lobe(rot360 - exhaust_lobe_center + 13 * rot45) // #R2
-        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot45) // #R3
-        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot45) // #R4
+        .add_lobe(rot360 - exhaust_lobe_center +  7 * rot45) // #R2
+        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot45) // #R3
+        .add_lobe(rot360 - exhaust_lobe_center + 13 * rot45) // #R4
 
     _exhaust_cam_LR
         .add_lobe(rot360 - exhaust_lobe_center +  2 * rot45) // #L5
-        .add_lobe(rot360 - exhaust_lobe_center + 14 * rot45) // #L6
-        .add_lobe(rot360 - exhaust_lobe_center +  6 * rot45) // #L7
-        .add_lobe(rot360 - exhaust_lobe_center + 10 * rot45) // #L8
+        .add_lobe(rot360 - exhaust_lobe_center +  8 * rot45) // #L6
+        .add_lobe(rot360 - exhaust_lobe_center +  4 * rot45) // #L7
+        .add_lobe(rot360 - exhaust_lobe_center + 14 * rot45) // #L8
     
     //_exhaust_cam_RF
         .add_lobe(rot360 - exhaust_lobe_center +  3 * rot45) // #R5
-        .add_lobe(rot360 - exhaust_lobe_center + 15 * rot45) // #R6
-        .add_lobe(rot360 - exhaust_lobe_center +  7 * rot45) // #R7
-        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot45) // #R8
+        .add_lobe(rot360 - exhaust_lobe_center +  9 * rot45) // #R6
+        .add_lobe(rot360 - exhaust_lobe_center +  5 * rot45) // #R7
+        .add_lobe(rot360 - exhaust_lobe_center + 15 * rot45) // #R8
 }
 
 public node cizeta_v16_head {
@@ -297,15 +300,15 @@ public node cizeta_v16_engine {
     
     // left side bank, outside-in
     rod_journal rjL1(angle:   0 * units.deg)
-    rod_journal rjL2(angle: 180 * units.deg)
-    rod_journal rjL3(angle: 180 * units.deg)
-    rod_journal rjL4(angle:   0 * units.deg)
+    rod_journal rjL2(angle: -90 * units.deg)
+    rod_journal rjL3(angle:  90 * units.deg)
+    rod_journal rjL4(angle: 180 * units.deg)
 
-    // right side bank, outside-in, numbered correctly to be reversed
+    // right side bank, outside-in, numbered correctly but to be reversed
     rod_journal rjR1(angle:  45 * units.deg)
-    rod_journal rjR2(angle: 225 * units.deg)
-    rod_journal rjR3(angle: 225 * units.deg)
-    rod_journal rjR4(angle:  45 * units.deg)
+    rod_journal rjR2(angle: -45 * units.deg)
+    rod_journal rjR3(angle: 135 * units.deg)
+    rod_journal rjR4(angle: 225 * units.deg)
 
     cL
         .add_rod_journal(rjL1)
