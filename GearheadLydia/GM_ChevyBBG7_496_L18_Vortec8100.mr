@@ -69,21 +69,21 @@ public node chevrolet_bigblock_camshaft_builder {
     input advance: 5.0 * units.deg;
     input base_radius: 1.5 / 2 * units.inch; // guess
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
 
     label rot30(30 * units.deg)
@@ -93,38 +93,29 @@ public node chevrolet_bigblock_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_0
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
 
-    _intake_cam_1
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
 
-    _exhaust_cam_0
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
 
-    _exhaust_cam_1
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
-}
-
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.thou, k_28inH2O(flow))
 }
 
 // https://www.minuit10.net/EngineCode/chevy/BBChevyCylinderHead.htm
@@ -134,47 +125,45 @@ public node chevrolet_bigblock_head {
     input chamber_volume: 114.0 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation_in: 1.13;
-    input flow_attenuation_ex: 1.13;
-    input lift_scale: 50.0;
     alias output __out: head;
-
+    
+    // https://youtu.be/4BhNua62Iww?t=2184
     function intake_flow(50 * units.thou)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  76 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 146 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 175 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 212 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 230 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 255 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 275 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 294 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 300 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 314 * flow_attenuation_in)
+        .add_flow_sample(  0,   0.0)
+        .add_flow_sample( 50,  46.7)
+        .add_flow_sample(100,  93.4)
+        .add_flow_sample(150, 127.5)
+        .add_flow_sample(200, 161.5)
+        .add_flow_sample(250, 190.9)
+        .add_flow_sample(300, 220.2)
+        .add_flow_sample(350, 234.6)
+        .add_flow_sample(400, 248.9)
+        .add_flow_sample(450, 262.4)
+        .add_flow_sample(500, 275.8)
+        .add_flow_sample(550, 280.1)
+        .add_flow_sample(600, 284.3)
 
     function exhaust_flow(50 * units.thou)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  70 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale, 100 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 132 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 156 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 170 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 181 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 191 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 207 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 214 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
+        .add_flow_sample(  0,   0.0)
+        .add_flow_sample( 50,  33.7)
+        .add_flow_sample(100,  67.4)
+        .add_flow_sample(150, 102.1)
+        .add_flow_sample(200, 136.7)
+        .add_flow_sample(250, 154.7)
+        .add_flow_sample(300, 172.6)
+        .add_flow_sample(350, 180.5)
+        .add_flow_sample(400, 188.3)
+        .add_flow_sample(450, 193.8)
+        .add_flow_sample(500, 199.2)
+        .add_flow_sample(550, 200.0)
+        .add_flow_sample(600, 200.5)
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.4 * units.inch) * 8 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.4 * units.inch),
+        intake_runner_volume: circle_area(1.2 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.2 * units.inch),
         exhaust_runner_volume: circle_area(0.75 * units.inch) * 4 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
@@ -202,7 +191,7 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
 
     // various sources
     label bore(4.250 * units.inch)
-    label bore_spacing(4.84 * units.inch)
+    label bore_spacing(4.840 * units.inch)
     label stroke(4.370 * units.inch)
     label rod_length(6.693 * units.inch)
     label rod_mass(600 * units.g)
@@ -250,7 +239,7 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -274,11 +263,11 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(800),
+        intake_flow_rate: k_carb(800.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9955,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(900.0),
+        runner_flow_rate: k_carb(500.0),
         runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -308,10 +297,10 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
     
     label exhaust_stagger(bore_spacing * 0.3)
 
-    cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
-    b0
+    cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (first)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -321,7 +310,7 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
             sound_attenuation: pipe_volume_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
@@ -331,7 +320,7 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
             sound_attenuation: pipe_volume_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire5,
@@ -341,7 +330,7 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
             sound_attenuation: pipe_volume_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire7,
@@ -351,10 +340,10 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
             sound_attenuation: pipe_volume_4
         )
 
-    cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
-    b1
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (second)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
@@ -364,7 +353,7 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
             sound_attenuation: pipe_volume_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire4,
@@ -374,7 +363,7 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
             sound_attenuation: pipe_volume_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire6,
@@ -384,7 +373,7 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
             sound_attenuation: pipe_volume_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire8,
@@ -395,8 +384,8 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bR)
+        .add_cylinder_bank(bL)
 
     engine.add_crankshaft(c0)
 
@@ -405,17 +394,17 @@ public node chevrolet_bigblock_gen7_496_l18_engine {
         ex_lobe_profile: chevrolet_vortec_8100_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bR.set_cylinder_head (
         chevrolet_bigblock_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
-    b1.set_cylinder_head (
+    bL.set_cylinder_head (
         chevrolet_bigblock_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
