@@ -97,15 +97,6 @@ public node nissan_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot120)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 // https://forums.hybridz.org/topic/71420-rb30-piston-saga/
 public node nissan_rb30_head {
     input intake_camshaft;
@@ -113,49 +104,38 @@ public node nissan_rb30_head {
     input chamber_volume: 66.0 * units.cc; // real
     input flip_display: false;
     
-    input flow_attenuation: 0.9;
-    input lift_scale: 1.2; // ignoring rocker ratio
+    // DOHC head flows "30% more" than SOHC head
+    input flow_intake: 195.0;
+    input flow_exhaust: 115.0;
+    input lift_max: 450 * units.thou; // similar to RB26
     alias output __out: head;
 
-    function intake_flow(1 * units.mm * lift_scale)
+    function intake_flow(lift_max / 5.0)
     intake_flow
-        .add_flow_sample(0.0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1.0 * lift_scale, 65 * flow_attenuation)
-        .add_flow_sample(2.0 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(3.0 * lift_scale, 120 * flow_attenuation)
-        .add_flow_sample(4.0 * lift_scale, 155 * flow_attenuation)
-        .add_flow_sample(5.0 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(6.0 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(7.0 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(8.0 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9.0 * lift_scale, 245 * flow_attenuation)
-        .add_flow_sample(10.0 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(11.0 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(12.0 * lift_scale, 255 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1 * units.mm * lift_scale)
+    function exhaust_flow(lift_max / 5.0)
     exhaust_flow
-        .add_flow_sample(0.0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1.0 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(2.0 * lift_scale, 75 * flow_attenuation)
-        .add_flow_sample(3.0 * lift_scale, 105 * flow_attenuation)
-        .add_flow_sample(4.0 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5.0 * lift_scale, 130 * flow_attenuation)
-        .add_flow_sample(6.0 * lift_scale, 150 * flow_attenuation)
-        .add_flow_sample(7.0 * lift_scale, 158 * flow_attenuation)
-        .add_flow_sample(8.0 * lift_scale, 164 * flow_attenuation)
-        .add_flow_sample(9.0 * lift_scale, 168 * flow_attenuation)
-        .add_flow_sample(10.0 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(11.0 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(12.0 * lift_scale, 176 * flow_attenuation)
-
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.1 * units.inch) * 4 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        intake_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -188,7 +168,7 @@ public node nissan_rb30e_engine {
     label deck_height((228.5 + 1.3) * units.mm) // not 100% sure on the deck height
     label piston_dome(8.0 * units.cc)
     label crank_mass(50 * units.lb)
-    label flywheel_mass(20 * units.lb)
+    label flywheel_mass(12 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
@@ -231,7 +211,7 @@ public node nissan_rb30e_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: k_28inH2O(0.1),
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -259,7 +239,7 @@ public node nissan_rb30e_engine {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(300.0),
+        runner_flow_rate: k_carb(220),
         runner_length: 4.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -267,9 +247,9 @@ public node nissan_rb30e_engine {
     label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(450.0),
+        outlet_flow_rate: k_carb(450),
         primary_tube_length: 12.0 * units.inch,
-        primary_flow_rate: k_carb(250.0),
+        primary_flow_rate: k_carb(200),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
         length: 2500 * units.mm,
@@ -281,54 +261,49 @@ public node nissan_rb30e_engine {
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: 12.0 * units.inch,
-            sound_attenuation: 0.6
+            primary_length: 9.0 * units.inch
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: 8.0 * units.inch,
-            sound_attenuation: 0.7
+            primary_length: 6.0 * units.inch
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: 4.0 * units.inch,
-            sound_attenuation: 0.9
+            primary_length: 3.0 * units.inch
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: 0.0 * units.inch,
-            sound_attenuation: 1.0
+            primary_length: 0.0 * units.inch
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: 1.0 * units.inch,
-            sound_attenuation: 1.0
+            primary_length: 1.0 * units.inch
         )
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.3)),
@@ -337,8 +312,7 @@ public node nissan_rb30e_engine {
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: 5.0 * units.inch,
-            sound_attenuation: 0.8
+            primary_length: 4.0 * units.inch
         )
 
 
@@ -361,14 +335,14 @@ public node nissan_rb30e_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 45 * units.deg)
-        .add_sample(1000 * units.rpm, 55 * units.deg)
-        .add_sample(2000 * units.rpm, 55 * units.deg)
-        .add_sample(3000 * units.rpm, 55 * units.deg)
-        .add_sample(4000 * units.rpm, 55 * units.deg)
-        .add_sample(5000 * units.rpm, 55 * units.deg)
-        .add_sample(6000 * units.rpm, 55 * units.deg)
-        .add_sample(7000 * units.rpm, 55 * units.deg)
+        .add_sample(0000 * units.rpm, 35 * units.deg)
+        .add_sample(1000 * units.rpm, 45 * units.deg)
+        .add_sample(2000 * units.rpm, 45 * units.deg)
+        .add_sample(3000 * units.rpm, 45 * units.deg)
+        .add_sample(4000 * units.rpm, 45 * units.deg)
+        .add_sample(5000 * units.rpm, 45 * units.deg)
+        .add_sample(6000 * units.rpm, 45 * units.deg)
+        .add_sample(7000 * units.rpm, 45 * units.deg)
 
     engine.add_ignition_module(
         nissan_rb30_distributor(
