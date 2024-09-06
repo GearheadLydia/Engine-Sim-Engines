@@ -51,7 +51,7 @@ public node ferrari_f113_d_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 248 * units.deg,
-            gamma: 1.5,
+            gamma: 1.0,
             lift: 11.0 * units.mm,
             steps: 100
         );
@@ -61,7 +61,7 @@ public node ferrari_f113_d_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 244 * units.deg,
-            gamma: 1.5,
+            gamma: 1.0,
             lift: 10.0 * units.mm,
             steps: 100
         );
@@ -78,21 +78,21 @@ public node ferrari_f113_d_camshaft_builder {
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
     label rot30(30 * units.deg)
     label rot60(60 * units.deg)
@@ -103,7 +103,7 @@ public node ferrari_f113_d_camshaft_builder {
     
     // firing order: 1-10-5-7-3-11-6-9-2-12-4-8
 
-    _intake_cam_0
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center +  0 * rot60) // # 1
         .add_lobe(rot360 + intake_lobe_center +  8 * rot60) // # 2
         .add_lobe(rot360 + intake_lobe_center +  4 * rot60) // # 3
@@ -111,7 +111,7 @@ public node ferrari_f113_d_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center +  2 * rot60) // # 5
         .add_lobe(rot360 + intake_lobe_center +  6 * rot60) // # 6
 
-    _intake_cam_1
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center +  9 * rot60) // # 12
         .add_lobe(rot360 + intake_lobe_center +  5 * rot60) // # 11
         .add_lobe(rot360 + intake_lobe_center +  1 * rot60) // # 10
@@ -119,7 +119,7 @@ public node ferrari_f113_d_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center + 11 * rot60) // # 8
         .add_lobe(rot360 + intake_lobe_center +  3 * rot60) // # 7
 
-    _exhaust_cam_0
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center +  0 * rot60) // # 1
         .add_lobe(rot360 - exhaust_lobe_center +  8 * rot60) // # 2
         .add_lobe(rot360 - exhaust_lobe_center +  4 * rot60) // # 3
@@ -127,7 +127,7 @@ public node ferrari_f113_d_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center +  2 * rot60) // # 5
         .add_lobe(rot360 - exhaust_lobe_center +  6 * rot60) // # 6
 
-    _exhaust_cam_1
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center +  9 * rot60) // # 12
         .add_lobe(rot360 - exhaust_lobe_center +  5 * rot60) // # 11
         .add_lobe(rot360 - exhaust_lobe_center +  1 * rot60) // # 10
@@ -148,44 +148,45 @@ private node add_flow_sample {
 public node ferrari_f113_d_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 51.0 * units.cc;
+    input chamber_volume: 35.0 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation: 1.1;
-    input lift_scale: 50.0;
+    input flow_intake: 300.0;
+    input flow_exhaust: 260.0;
+    input lift_max: 12.0 * units.mm;
     alias output __out: head;
 
-    function intake_flow(1 * units.mm)
+    function intake_flow(lift_max / 10.0)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1 * units.mm)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
         
     cylinder_head head(
@@ -204,7 +205,7 @@ public node ferrari_f113_d_head {
 }
 
 
-public node flat10_scf {
+public node ferrari_f113_d_engine {
     alias output __out: engine;
 
     wires wires()
@@ -218,20 +219,16 @@ public node flat10_scf {
     label piston_dome(-11 * units.cc)
     label deck_clearance(1.0 * units.mm)
     label crank_mass(45 * units.lb)
-    label flywheel_mass(35 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     engine engine(
         name: "Ferrari F113 D",
-        starter_torque: 300 * units.lb_ft,
-        starter_speed: 600 * units.rpm,
+        starter_torque: 150 * units.lb_ft,
+        starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
-        fuel: fuel(
-            max_turbulence_effect: 4.0,
-            burning_efficiency_randomness: 0.2,
-            max_burning_efficiency: 0.85),
-        throttle_gamma: 2.0,
-        simulation_frequency: 7500
+        throttle_gamma: 1.0,
+        simulation_frequency: 10000
     )
 
     label crank_moment(
@@ -248,7 +245,7 @@ public node flat10_scf {
         throw: stroke / 2,
         flywheel_mass: flywheel_mass,
         mass: crank_mass,
-        friction_torque: 10.0 * units.lb_ft,
+        friction_torque: 5.0 * units.lb_ft,
         moment_of_inertia: crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
@@ -273,7 +270,7 @@ public node flat10_scf {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -299,7 +296,7 @@ public node flat10_scf {
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(650),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.994,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(650.0),
         runner_length: 24 * units.inch,
@@ -308,149 +305,141 @@ public node flat10_scf {
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(800.0),
-        primary_tube_length: 30.0 * units.inch,
+        primary_tube_length: 12.0 * units.inch,
         primary_flow_rate: k_carb(550.0),
         velocity_decay: 1.0, //0.5
-        volume: 60.0 * units.L
+        volume: 3.0 * units.L,
+        length: 500 * units.mm
     )
 
-    exhaust_system exhaustL(
-        es_params,
-        length: 530 * units.mm,
-        audio_volume: 1.0 * 0.01,
-        impulse_response: ir_lib.default_0
-    )
-    exhaust_system exhaustR(
-        es_params,
-        length: 500 * units.mm,
-        audio_volume: 1.0 * 0.01,
-        impulse_response: ir_lib.default_0
-    )
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
     
-    label pipe_length_1(10.0 * units.inch)
-    label pipe_length_2(9.5 * units.inch)
-    label pipe_length_3(9.0 * units.inch)
-    label pipe_length_4(8.5 * units.inch)
-    label pipe_length_5(8.0 * units.inch)
-    label pipe_length_6(7.5 * units.inch)
+    label pipe_length_1(2.5 * units.inch)
+    label pipe_length_2(2.0 * units.inch)
+    label pipe_length_3(1.5 * units.inch)
+    label pipe_length_4(1.0 * units.inch)
+    label pipe_length_5(0.5 * units.inch)
+    label pipe_length_6(0.0 * units.inch)
 
-    cylinder_bank b0(bank_params, angle: 90.0 * units.deg) // L (first)
-    b0
+    label exhaust_stagger(30 * units.mm)
+
+    cylinder_bank bL(bank_params, angle: 90.0 * units.deg) // L (first)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire01,
             intake: intake,
-            exhaust_system: exhaustR,
-            primary_length: pipe_length_1
+            exhaust_system: exhaust,
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire02,
             intake: intake,
-            exhaust_system: exhaustR,
-            primary_length: pipe_length_2
+            exhaust_system: exhaust,
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire03,
             intake: intake,
-            exhaust_system: exhaustR,
-            primary_length: pipe_length_3
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire04,
             intake: intake,
-            exhaust_system: exhaustR,
-            primary_length: pipe_length_4
+            exhaust_system: exhaust,
+            primary_length: pipe_length_4 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire05,
             intake: intake,
-            exhaust_system: exhaustR,
-            primary_length: pipe_length_5
+            exhaust_system: exhaust,
+            primary_length: pipe_length_5 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire06,
             intake: intake,
-            exhaust_system: exhaustR,
-            primary_length: pipe_length_6
+            exhaust_system: exhaust,
+            primary_length: pipe_length_6 + exhaust_stagger
         )
 
-    cylinder_bank b1(bank_params, angle: -90.0 * units.deg) // R (second)
-    b1
+    cylinder_bank bR(bank_params, angle: -90.0 * units.deg) // R (second)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire12,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
             primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire11,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
             primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire10,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
             primary_length: pipe_length_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire09,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
             primary_length: pipe_length_4
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire08,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
             primary_length: pipe_length_5
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire07,
             intake: intake,
-            exhaust_system: exhaustL,
+            exhaust_system: exhaust,
             primary_length: pipe_length_6
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bL)
+        .add_cylinder_bank(bR)
 
     engine.add_crankshaft(c0)
 
@@ -459,17 +448,17 @@ public node flat10_scf {
         ex_lobe_profile: ferrari_f113_d_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         ferrari_f113_d_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         ferrari_f113_d_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R
         )
     )
 
@@ -521,7 +510,7 @@ public node ferrari_512tr_transmission {
 }
 
 public node main {
-    set_engine(flat10_scf())
+    set_engine(ferrari_f113_d_engine())
     set_vehicle(ferrari_512tr_vehicle())
     set_transmission(ferrari_512tr_transmission())
 }
