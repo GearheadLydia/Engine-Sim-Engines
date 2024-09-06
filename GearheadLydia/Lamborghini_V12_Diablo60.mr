@@ -132,56 +132,49 @@ public node lamborghini_v12_diablo_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center +  6 * rot60)  // #6
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 public node lamborghini_v12_diablo_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 35.0 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation: 0.95;
-    input lift_scale: 1.0;
+    // guesses
+    input flow_intake: 335.0;
+    input flow_exhaust: 280.0;
+    input lift_max: 12.0 * units.mm;
     alias output __out: head;
 
-    function intake_flow(1 * units.mm)
+    function intake_flow(lift_max / 10.0)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 65 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 120 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 155 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 245 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 255 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 255 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1 * units.mm)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 75 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 105 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 130 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 150 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 158 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 164 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 168 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 176 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 176 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
         
     cylinder_head head(
@@ -221,7 +214,7 @@ public node lamborghini_diablo_v12_60 {
         redline: 7500 * units.rpm,
         throttle_gamma: 1.0,
         jitter: 0.8,
-        simulation_frequency: 6000
+        simulation_frequency: 10000
     )
 
     wires wires()
@@ -321,7 +314,7 @@ public node lamborghini_diablo_v12_60 {
         volume: 450 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.005, impulse_response: ir_lib.default_0)
     
     label pipe_length_1(40 * units.mm)
     label pipe_length_2(35 * units.mm)
