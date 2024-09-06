@@ -161,7 +161,7 @@ public node mazda_bp_head {
     )
 }
 
-public node mazda_bp_ze {
+public node mazda_bp_ze_engine {
     alias output __out: engine;
 
     engine engine(
@@ -351,8 +351,7 @@ public node mazda_bp_ze {
     engine.add_ignition_module(
         mazda_bp_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7050 * units.rpm
+            timing_curve: timing_curve
         ))
 }
 
@@ -382,7 +381,7 @@ public node mazda_m526_transmission {
 }
 
 public node main {
-    set_engine(mazda_bp_ze())
+    set_engine(mazda_bp_ze_engine())
     set_vehicle(mazda_mx5_na8c_vehicle())
     set_transmission(mazda_m526_transmission())
 }
