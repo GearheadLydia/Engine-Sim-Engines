@@ -2,7 +2,6 @@ import "engine_sim.mr"
 
 // TVR Cerbera Speed Eight AJP8 by GearheadLydia
 // with support from /u/pdm8
-// revision 3 | 2023-03-21
 
 units units()
 constants constants()
@@ -13,7 +12,8 @@ label cycle(2 * 360 * units.deg)
 // firing order: 14527638
 // confirmed here: https://www.msextra.com/forums/viewtopic.php?t=66213
 
-label rot15(15 * units.deg)
+label vee_angle(75 * units.deg)
+label anglesplay(vee_angle - (90 * units.deg))
 
 public node tvr_ajp8_distributor {
     input wires;
@@ -23,13 +23,13 @@ public node tvr_ajp8_distributor {
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
-            .connect_wire(wires.wire4, (1.0 / 8.0) * cycle + rot15)
+            .connect_wire(wires.wire4, (1.0 / 8.0) * cycle - anglesplay)
             .connect_wire(wires.wire5, (2.0 / 8.0) * cycle)
-            .connect_wire(wires.wire2, (3.0 / 8.0) * cycle + rot15)
+            .connect_wire(wires.wire2, (3.0 / 8.0) * cycle - anglesplay)
             .connect_wire(wires.wire7, (4.0 / 8.0) * cycle)
-            .connect_wire(wires.wire6, (5.0 / 8.0) * cycle + rot15)
+            .connect_wire(wires.wire6, (5.0 / 8.0) * cycle - anglesplay)
             .connect_wire(wires.wire3, (6.0 / 8.0) * cycle)
-            .connect_wire(wires.wire8, (7.0 / 8.0) * cycle + rot15);
+            .connect_wire(wires.wire8, (7.0 / 8.0) * cycle - anglesplay);
 }
 
 private node wires {
@@ -74,58 +74,49 @@ public node tvr_ajp8_camshaft_builder {
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_R: _intake_cam_R;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_R: _exhaust_cam_R;
+    output exhaust_cam_L: _exhaust_cam_L;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
     label rot90(90 * units.deg)
     label rot360(360 * units.deg)
     
     // firing order: 14527638 (deduced from engine rebuild manual)
 
-    _intake_cam_0
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
 
-    _intake_cam_1
-        .add_lobe(rot360 + intake_lobe_center + 3 * rot90 + rot15)
-        .add_lobe(rot360 + intake_lobe_center + 1 * rot90 + rot15)
-        .add_lobe(rot360 + intake_lobe_center + 5 * rot90 + rot15)
-        .add_lobe(rot360 + intake_lobe_center + 7 * rot90 + rot15)
+    _intake_cam_L
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot90 - anglesplay)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot90 - anglesplay)
+        .add_lobe(rot360 + intake_lobe_center + 5 * rot90 - anglesplay)
+        .add_lobe(rot360 + intake_lobe_center + 7 * rot90 - anglesplay)
 
-    _exhaust_cam_0
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
 
-    _exhaust_cam_1
-        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90 + rot15)
-        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90 + rot15)
-        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90 + rot15)
-        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90 + rot15)
-}
-
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
+    _exhaust_cam_L
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90 - anglesplay)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90 - anglesplay)
+        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90 - anglesplay)
+        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90 - anglesplay)
 }
 
 public node tvr_ajp8_head {
@@ -134,48 +125,36 @@ public node tvr_ajp8_head {
     input chamber_volume: 57.0 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation_in: 0.84;
-    input flow_attenuation_ex: 0.84;
-    input lift_scale: 1.25;
+    input flow_intake: 280.0;
+    input flow_exhaust: 235.0;
+    input lift_max: 11.0 * units.mm;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(lift_max / 5.0)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(lift_max / 5.0)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(0.9 * units.inch) * 9 * units.inch,
-        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
-        exhaust_runner_volume: circle_area(0.8 * units.inch) * 6 * units.inch,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 5 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.8 * units.inch) * 3 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.8 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -186,28 +165,7 @@ public node tvr_ajp8_head {
     )
 }
 
-public node tvr_speed_eight_itb {
-    input throttlebody_cfm: 450;
-    input idle_flow_rate_cfm: 0.001;
-    input idle_throttle_plate_position: 0.9995;
-    input throttle_gamma: 8.0;
-
-    alias output __out: intake;
-
-    intake intake(
-        plenum_volume: (circle_area(1.5 * units.inch) * 12 * units.inch) / 4,
-        plenum_cross_section_area: circle_area(1.5 * units.inch),
-        intake_flow_rate: k_carb(throttlebody_cfm),
-        idle_flow_rate: k_carb(idle_flow_rate_cfm),
-        idle_throttle_plate_position: idle_throttle_plate_position,
-        throttle_gamma: throttle_gamma,
-        runner_flow_rate: k_carb(550.0),
-        runner_length: 9 * units.inch,
-        velocity_decay: 0.1
-    )
-}
-
-public node ajp8 {
+public node tvr_ajp8_45_engine {
     alias output __out: engine;
 
     wires wires()
@@ -218,9 +176,9 @@ public node ajp8 {
         starter_speed: 1200 * units.rpm,
         redline: 8000 * units.rpm,
         throttle_gamma: 1.0,
-        simulation_frequency: 9000,
         hf_gain: 0.3,
-        jitter: 0.9
+        jitter: 0.9,
+        simulation_frequency: 10000
     )
 
     label bore(91.0 * units.mm)
@@ -254,7 +212,7 @@ public node ajp8 {
             crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: 52.5 * units.deg // -37.5 degrees
+        tdc: 45 * units.deg - (anglesplay / 2) // -37.5 degrees
     )
 
     rod_journal rj1(angle:  0  * units.deg)
@@ -271,7 +229,7 @@ public node ajp8 {
     // piston specs are guesses
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -292,21 +250,36 @@ public node ajp8 {
         deck_height: stroke / 2 + rod_length + compression_height + deck_clearance
     )
 
-    tvr_speed_eight_itb itb1()
-    tvr_speed_eight_itb itb2()
-    tvr_speed_eight_itb itb3()
-    tvr_speed_eight_itb itb4()
-    tvr_speed_eight_itb itb5()
-    tvr_speed_eight_itb itb6()
-    tvr_speed_eight_itb itb7()
-    tvr_speed_eight_itb itb8()
+    intake intake_L(
+        plenum_volume: (circle_area(1.5 * units.inch) * 12 * units.inch),
+        plenum_cross_section_area: circle_area(1.5 * units.inch) * 4,
+        intake_flow_rate: k_carb(600),
+        idle_flow_rate: k_carb(0.00001),
+        idle_throttle_plate_position: 0.9975,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(250),
+        runner_length: 9 * units.inch,
+        velocity_decay: 0.1
+    )
+
+    intake intake_R(
+        plenum_volume: (circle_area(1.5 * units.inch) * 12 * units.inch),
+        plenum_cross_section_area: circle_area(1.5 * units.inch) * 4,
+        intake_flow_rate: k_carb(600),
+        idle_flow_rate: k_carb(0.00001),
+        idle_throttle_plate_position: 0.9975,
+        throttle_gamma: 2.0,
+        runner_flow_rate: k_carb(250),
+        runner_length: 9 * units.inch,
+        velocity_decay: 0.1
+    )
     
     label exhaust_radius((3.5 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(600.0),
-        primary_tube_length: 5.0 * units.inch,
-        primary_flow_rate: k_carb(450.0),
+        outlet_flow_rate: k_carb(900),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(300),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
         length: 2000 * units.mm,
@@ -316,102 +289,94 @@ public node ajp8 {
     exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
     exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
     
-    label pipe_length_1(90 * units.mm)
-    label pipe_length_2(75 * units.mm)
+    label pipe_length_1(60 * units.mm)
+    label pipe_length_2(45 * units.mm)
     label pipe_length_3( 0  * units.mm)
-    label pipe_length_4(60 * units.mm)
+    label pipe_length_4(30 * units.mm)
     
-    label exhaust_stagger(150 * units.mm)
+    label exhaust_stagger(30 * units.mm)
 
-    cylinder_bank b0(bank_params, angle: -37.5 * units.deg) // R (first)
-    b0
+    cylinder_bank bR(bank_params, angle: -45 * units.deg - (anglesplay / 2)) // R (first)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
-            intake: itb1,
+            intake: intake_R,
             exhaust_system: exhaustR,
-            primary_length: pipe_length_1,
-            sound_attenuation: 0.4
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
-            intake: itb3,
+            intake: intake_R,
             exhaust_system: exhaustR,
-            primary_length: pipe_length_2,
-            sound_attenuation: 0.6
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire5,
-            intake: itb5,
+            intake: intake_R,
             exhaust_system: exhaustR,
-            primary_length: pipe_length_3,
-            sound_attenuation: 0.6
+            primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire7,
-            intake: itb7,
+            intake: intake_R,
             exhaust_system: exhaustR,
-            primary_length: pipe_length_4,
-            sound_attenuation: 0.4
+            primary_length: pipe_length_4 + exhaust_stagger
         )
 
-    cylinder_bank b1(bank_params, angle: 37.5 * units.deg) // L (second) - stagger on this side for sound reasons
-    b1
+    cylinder_bank bL(bank_params, angle: 45 * units.deg + (anglesplay / 2)) // L (second)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
-            intake: itb2,
+            intake: intake_L,
             exhaust_system: exhaustL,
-            primary_length: pipe_length_1 + exhaust_stagger,
-            sound_attenuation: 0.3
+            primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire4,
-            intake: itb4,
+            intake: intake_L,
             exhaust_system: exhaustL,
-            primary_length: pipe_length_2 + exhaust_stagger,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire6,
-            intake: itb6,
+            intake: intake_L,
             exhaust_system: exhaustL,
-            primary_length: pipe_length_3 + exhaust_stagger,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire8,
-            intake: itb8,
+            intake: intake_L,
             exhaust_system: exhaustL,
-            primary_length: pipe_length_4 + exhaust_stagger,
-            sound_attenuation: 0.3
+            primary_length: pipe_length_4
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bR)
+        .add_cylinder_bank(bL)
 
     engine.add_crankshaft(c0)
 
@@ -420,18 +385,18 @@ public node ajp8 {
         ex_lobe_profile: tvr_ajp8_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         tvr_ajp8_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
-            flip_display: false
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
+            flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         tvr_ajp8_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
-            flip_display: true
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
+            flip_display: false
         )
     )
 
@@ -451,8 +416,7 @@ public node ajp8 {
     engine.add_ignition_module(
         tvr_ajp8_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 8250 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -483,7 +447,7 @@ public node borgwarner_t5_transmission {
 }
 
 public node main {
-    set_engine(ajp8())
+    set_engine(tvr_ajp8_45_engine())
     set_vehicle(tvr_cerbera_speed_eight_vehicle())
     set_transmission(borgwarner_t5_transmission())
 }

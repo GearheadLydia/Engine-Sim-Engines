@@ -83,7 +83,7 @@ public node tvr_speed_six_camshaft_builder {
     label rot360(360 * units.deg)
 
     _intake_cam_0
-        .add_lobe(rot360 + intake_lobe_center)
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot120)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot120)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot120)
         .add_lobe(rot360 + intake_lobe_center + 5 * rot120)
@@ -91,21 +91,12 @@ public node tvr_speed_six_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center + 3 * rot120)
 
     _exhaust_cam_0
-        .add_lobe(rot360 - exhaust_lobe_center)
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot120)
-}
-
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node tvr_speed_six_head {
@@ -114,81 +105,44 @@ public node tvr_speed_six_head {
     input chamber_volume: 44.0 * units.cc; // unknown; guess (makes compression ratio come out right)
     input flip_display: false;
     
-    input flow_attenuation_in: 1.0;
-    input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.0;
+    input flow_intake: 280.0;
+    input flow_exhaust: 250.0;
+    input lift_max: 10.0 * units.mm;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(lift_max / 5.0)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(lift_max / 5.0)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.0 * units.inch) * 9 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 6 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        intake_runner_volume: circle_area(1.1 * units.inch) * 6 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.85 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.85 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
         intake_camshaft: intake_camshaft,
         exhaust_camshaft: exhaust_camshaft,
         flip_display: flip_display
-    )
-}
-
-public node tvr_speed_six_itb {
-    input throttlebody_cfm: 250;
-    input idle_flow_rate_cfm: 0.001;
-    input idle_throttle_plate_position: 0.9991;
-    input throttle_gamma: 6.0;
-
-    alias output __out: intake;
-
-    intake intake(
-        plenum_volume: (circle_area(1.5 * units.inch) * 12 * units.inch) / 6,
-        plenum_cross_section_area: circle_area(1.5 * units.inch),
-        intake_flow_rate: k_carb(throttlebody_cfm),
-        idle_flow_rate: k_carb(idle_flow_rate_cfm),
-        idle_throttle_plate_position: idle_throttle_plate_position,
-        throttle_gamma: throttle_gamma,
-        runner_flow_rate: k_carb(475.0),
-        runner_length: 4 * units.inch,
-        velocity_decay: 0.1
     )
 }
 
@@ -199,7 +153,7 @@ public node speedsix {
     engine engine(
         name: "TVR Speed Six",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 1800 * units.rpm,
+        starter_speed: 1500 * units.rpm,
         redline: 7500 * units.rpm,
         throttle_gamma: 1.0,
         hf_gain: 0.05,
@@ -260,7 +214,7 @@ public node speedsix {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: k_28inH2O(0.1),
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -280,20 +234,25 @@ public node speedsix {
         bore: bore,
         deck_height: deck_height
     )
-
-    tvr_speed_six_itb itb1()
-    tvr_speed_six_itb itb2()
-    tvr_speed_six_itb itb3()
-    tvr_speed_six_itb itb4()
-    tvr_speed_six_itb itb5()
-    tvr_speed_six_itb itb6()
+    
+    intake intake(
+        plenum_volume: 2 * units.L,
+        plenum_cross_section_area: 100 * units.cm2,
+        intake_flow_rate: k_carb(1000),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.9977,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(300),
+        runner_length: 8 * units.inch,
+        velocity_decay: 0.1
+    )
     
     label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(900.0),
-        primary_tube_length: 20.0 * units.inch,
-        primary_flow_rate: k_carb(375.0),
+        outlet_flow_rate: k_carb(900),
+        primary_tube_length: 12 * units.inch,
+        primary_flow_rate: k_carb(500),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
         length: 2000 * units.mm,
@@ -302,74 +261,68 @@ public node speedsix {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.04, impulse_response: ir_lib.default_0)
     
-    label pipe_length_1(70 * units.mm)
-    label pipe_length_2(15 * units.mm)
-    label pipe_length_3(30 * units.mm)
-    label pipe_length_4(55 * units.mm)
-    label pipe_length_5(0 * units.mm)
-    label pipe_length_6(0 * units.mm)
+    label pipe_length_1(35 * units.mm)
+    label pipe_length_2(00 * units.mm)
+    label pipe_length_3(20 * units.mm)
+    label pipe_length_4(85 * units.mm)
+    label pipe_length_5(50 * units.mm)
+    label pipe_length_6(70 * units.mm)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
-            intake: itb1,
+            intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1,
-            sound_attenuation: 0.8
+            primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
-            intake: itb2,
+            intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
-            intake: itb3,
+            intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,
-            intake: itb4,
+            intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_4,
-            sound_attenuation: 0.8
+            primary_length: pipe_length_4
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire5,
-            intake: itb5,
+            intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_5,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_5
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire6,
-            intake: itb6,
+            intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_6,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_6
         )
 
     engine
@@ -392,21 +345,20 @@ public node speedsix {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
+        .add_sample(0000 * units.rpm, 50 * units.deg)
         .add_sample(1000 * units.rpm, 65 * units.deg)
         .add_sample(2000 * units.rpm, 70 * units.deg)
-        .add_sample(3000 * units.rpm, 64 * units.deg)
-        .add_sample(4000 * units.rpm, 58 * units.deg)
-        .add_sample(5000 * units.rpm, 52 * units.deg)
-        .add_sample(6000 * units.rpm, 46 * units.deg)
-        .add_sample(7000 * units.rpm, 40 * units.deg)
-        .add_sample(8000 * units.rpm, 40 * units.deg)
+        .add_sample(3000 * units.rpm, 70 * units.deg)
+        .add_sample(4000 * units.rpm, 70 * units.deg)
+        .add_sample(5000 * units.rpm, 70 * units.deg)
+        .add_sample(6000 * units.rpm, 70 * units.deg)
+        .add_sample(7000 * units.rpm, 70 * units.deg)
+        .add_sample(8000 * units.rpm, 70 * units.deg)
 
     engine.add_ignition_module(
         tvr_speed_six_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 7550 * units.rpm
+            timing_curve: timing_curve
         ))
 }
 
