@@ -361,7 +361,7 @@ public node bugatti_v16_concept_engine {
     cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
     bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             intake: intake_L,
@@ -370,7 +370,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_1 + exhaust_stagger_LR + exhaust_stagger_FR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             intake: intake_L,
@@ -379,7 +379,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_2 + exhaust_stagger_LR + exhaust_stagger_FR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             intake: intake_L,
@@ -388,7 +388,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_3 + exhaust_stagger_LR + exhaust_stagger_FR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             intake: intake_L,
@@ -397,7 +397,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_4 + exhaust_stagger_LR + exhaust_stagger_FR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             intake: intake_L,
@@ -406,7 +406,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_4 + exhaust_stagger_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             intake: intake_L,
@@ -415,7 +415,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_3 + exhaust_stagger_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj7,
             intake: intake_L,
@@ -424,7 +424,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_2 + exhaust_stagger_LR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj8,
             intake: intake_L,
@@ -436,7 +436,7 @@ public node bugatti_v16_concept_engine {
     cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (second)
     bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             intake: intake_R,
@@ -445,7 +445,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_1 + exhaust_stagger_FR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             intake: intake_R,
@@ -454,7 +454,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_2 + exhaust_stagger_FR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             intake: intake_R,
@@ -463,7 +463,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_3 + exhaust_stagger_FR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             intake: intake_R,
@@ -472,7 +472,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_4 + exhaust_stagger_FR
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             intake: intake_R,
@@ -481,7 +481,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_4
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             intake: intake_R,
@@ -490,7 +490,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj7,
             intake: intake_R,
@@ -499,7 +499,7 @@ public node bugatti_v16_concept_engine {
             primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj8,
             intake: intake_R,
