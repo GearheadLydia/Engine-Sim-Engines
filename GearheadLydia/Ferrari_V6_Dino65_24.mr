@@ -35,9 +35,9 @@ private node wires {
 public node ferrari_dino_v6_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 263 * units.deg,
+            duration_at_50_thou: 233 * units.deg, // catalog says 263 for aftermarket
             gamma: 1.0,
-            lift: 9.22 * units.mm,
+            lift: 9.0 * units.mm, // catalog says 9.22 for aftermarket
             steps: 100
         );
 }
@@ -45,9 +45,9 @@ public node ferrari_dino_v6_lobe_profile_int {
 public node ferrari_dino_v6_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 263 * units.deg,
+            duration_at_50_thou: 233 * units.deg, // catalog says 263 for aftermarket
             gamma: 1.0,
-            lift: 9.22 * units.mm,
+            lift: 9.0 * units.mm, // catalog says 9.22 for aftermarket
             steps: 100
         );
 }
@@ -62,21 +62,21 @@ public node ferrari_dino_v6_camshaft_builder {
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
 
     label rot30(30 * units.deg)
@@ -86,34 +86,25 @@ public node ferrari_dino_v6_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_1
-        .add_lobe(rot360 + intake_lobe_center + (1 * rot120))
-        .add_lobe(rot360 + intake_lobe_center + (3 * rot120))
-        .add_lobe(rot360 + intake_lobe_center + (5 * rot120))
-
-    _exhaust_cam_1
-        .add_lobe(rot360 - exhaust_lobe_center + (1 * rot120))
-        .add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
-        .add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
-
-    _intake_cam_0
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + (0 * rot120))
         .add_lobe(rot360 + intake_lobe_center + (2 * rot120))
         .add_lobe(rot360 + intake_lobe_center + (4 * rot120))
 
-    _exhaust_cam_0
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + (0 * rot120))
         .add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
         .add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
-}
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
+    _intake_cam_R
+        .add_lobe(rot360 + intake_lobe_center + (1 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (3 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (5 * rot120))
 
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
+    _exhaust_cam_R
+        .add_lobe(rot360 - exhaust_lobe_center + (1 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
 }
 
 public node ferrari_dino_v6_head {
@@ -122,49 +113,39 @@ public node ferrari_dino_v6_head {
     input chamber_volume: 43.0 * units.cc; // vague guess based on compression ratio
     input flip_display: false;
     
-    input flow_attenuation: 0.75;
-    input lift_scale: 1.15; // purely for sound purposes
+    // guesses
+    input flow_intake: 210.0;
+    input flow_exhaust: 180.0;
+    input lift_max: 9.0 * units.mm;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(lift_max / 5.0)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(lift_max / 5.0)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(0.7 * units.inch) * 2 * units.inch,
-        intake_runner_cross_section_area: circle_area(0.7 * units.inch),
-        exhaust_runner_volume: circle_area(0.5 * units.inch) * 3 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.5 * units.inch),
+        intake_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.75 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -191,14 +172,14 @@ public node ferrari_dino_v6_24_engine {
     label bore(92.5 * units.mm)
     label stroke(60.0 * units.mm)
     label rod_length(118.0 * units.mm)
-    label rod_mass(434.0 * units.g)
+    label rod_mass(500 * units.g)
     label piston_mass(400 * units.g)
     label compression_height(30.0 * units.mm)
     label deck_height((180.0 + 1.0) * units.mm) // guess based on JE pistons
     label piston_dome(13.0 * units.cc)
-    label crank_mass(55 * units.lb)
-    label flywheel_mass(15 * units.lb)
-    label flywheel_radius(6 * units.inch)
+    label crank_mass(75 * units.lb)
+    label flywheel_mass(10 * units.lb)
+    label flywheel_radius(5 * units.inch)
 
     label crank_moment(
         disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
@@ -239,7 +220,7 @@ public node ferrari_dino_v6_24_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: k_28inH2O(0.1),
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -263,52 +244,52 @@ public node ferrari_dino_v6_24_engine {
     intake carb1 (
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(200.0),
+        intake_flow_rate: k_carb(250.0),
         idle_flow_rate: k_carb(0.01),
-        idle_throttle_plate_position: 0.9978,
+        idle_throttle_plate_position: 0.9984,
         throttle_gamma: 3.0,
-        runner_flow_rate: k_carb(150.0),
-        runner_length: 2.0 * units.inch,
+        runner_flow_rate: k_carb(180.0),
+        runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
 
     intake carb2 (
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(200.0),
+        intake_flow_rate: k_carb(250.0),
         idle_flow_rate: k_carb(0.01),
-        idle_throttle_plate_position: 0.9978,
+        idle_throttle_plate_position: 0.9984,
         throttle_gamma: 3.0,
-        runner_flow_rate: k_carb(150.0),
-        runner_length: 2.0 * units.inch,
+        runner_flow_rate: k_carb(180.0),
+        runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
 
     intake carb3 (
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(200.0),
+        intake_flow_rate: k_carb(250.0),
         idle_flow_rate: k_carb(0.01),
-        idle_throttle_plate_position: 0.9978,
+        idle_throttle_plate_position: 0.9984,
         throttle_gamma: 3.0,
-        runner_flow_rate: k_carb(150.0),
-        runner_length: 2.0 * units.inch,
+        runner_flow_rate: k_carb(180.0),
+        runner_length: 6.0 * units.inch,
         velocity_decay: 0.1
     )
     
     label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(700.0),
-        primary_tube_length: 3.0 * units.inch,
-        primary_flow_rate: k_carb(100.0),
+        outlet_flow_rate: k_carb(650.0),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(300.0),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius) * 2,
         length: 1200 * units.mm,
         volume: (1200 * units.mm * circle_area(exhaust_radius) * 2)
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.002, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
     
     label pipe_length_1(2.0 * units.inch)
     label pipe_length_2(1.0 * units.inch)
@@ -316,10 +297,10 @@ public node ferrari_dino_v6_24_engine {
     
     label exhaust_stagger(2 * units.inch) // actually like almost a foot; set here for sound reasons
 
-    cylinder_bank b0(bank_params, angle: 32.5 * units.deg) // L (second, rear)
-    b0
+    cylinder_bank bL(bank_params, angle: 32.5 * units.deg) // L (second, rear)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -329,7 +310,7 @@ public node ferrari_dino_v6_24_engine {
             sound_attenuation: 1.0 * 0.8
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire2,
@@ -349,10 +330,10 @@ public node ferrari_dino_v6_24_engine {
             sound_attenuation: 1.0 * 1.0
         )
 
-    cylinder_bank b1(bank_params, angle: -32.5 * units.deg) // R (first, front)
-    b1
+    cylinder_bank bR(bank_params, angle: -32.5 * units.deg) // R (first, front)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire4,
@@ -362,7 +343,7 @@ public node ferrari_dino_v6_24_engine {
             sound_attenuation: 0.3 * 0.9
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire5,
@@ -383,8 +364,8 @@ public node ferrari_dino_v6_24_engine {
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bL)
+        .add_cylinder_bank(bR)
 
     engine.add_crankshaft(c0)
 
@@ -393,17 +374,17 @@ public node ferrari_dino_v6_24_engine {
         ex_lobe_profile: ferrari_dino_v6_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         ferrari_dino_v6_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         ferrari_dino_v6_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )

@@ -68,21 +68,21 @@ public node ferrari_f154_cb_camshaft_builder {
     input advance_ex: 15.0 * units.deg;
     input base_radius: 15 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
 
     camshaft_parameters params(
         advance: advance_in,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: in_lobe_profile, advance: advance_in)
-    camshaft _exhaust_cam_0(params, lobe_profile: ex_lobe_profile, advance: advance_ex)
+    camshaft _intake_cam_L(params, lobe_profile: in_lobe_profile, advance: advance_in)
+    camshaft _exhaust_cam_L(params, lobe_profile: ex_lobe_profile, advance: advance_ex)
 
-    camshaft _intake_cam_1(params, lobe_profile: in_lobe_profile, advance: advance_in)
-    camshaft _exhaust_cam_1(params, lobe_profile: ex_lobe_profile, advance: advance_ex)
+    camshaft _intake_cam_R(params, lobe_profile: in_lobe_profile, advance: advance_in)
+    camshaft _exhaust_cam_R(params, lobe_profile: ex_lobe_profile, advance: advance_ex)
 
 
     label rot30(30 * units.deg)
@@ -92,38 +92,29 @@ public node ferrari_f154_cb_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_0
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
 
-    _intake_cam_1
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
 
-    _exhaust_cam_0
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
 
-    _exhaust_cam_1
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
-}
-
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node ferrari_f154_cb_head {
@@ -132,46 +123,31 @@ public node ferrari_f154_cb_head {
     input chamber_volume: 50.0 * units.cc; // guess
     input flip_display: false;
     
-    input flow_attenuation_in: 1.1;
-    input flow_attenuation_ex: 1.1;
-    input lift_scale: 1.1;
+    // guesses
+    input flow_intake: 365.0;
+    input flow_exhaust: 310.0;
+    input lift_max: 10.8 * units.mm;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    function intake_flow(lift_max / 5.0)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(lift_max / 5.0)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
 
         
     cylinder_head head(
@@ -250,7 +226,7 @@ public node ferrari_f154_cb_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -319,10 +295,10 @@ public node ferrari_f154_cb_engine {
     label exh_vol_L(1.0)
     label exh_vol_R(0.8)
 
-    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
-    b0
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -332,7 +308,7 @@ public node ferrari_f154_cb_engine {
             sound_attenuation: exh_vol_L
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
@@ -342,7 +318,7 @@ public node ferrari_f154_cb_engine {
             sound_attenuation: exh_vol_L
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
@@ -352,7 +328,7 @@ public node ferrari_f154_cb_engine {
             sound_attenuation: exh_vol_L
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,
@@ -362,10 +338,10 @@ public node ferrari_f154_cb_engine {
             sound_attenuation: exh_vol_L
         )
 
-    cylinder_bank b1(bank_params, angle: -45 * units.deg) // R (second)
-    b1
+    cylinder_bank bR(bank_params, angle: -45 * units.deg) // R (second)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire8,
@@ -375,7 +351,7 @@ public node ferrari_f154_cb_engine {
             sound_attenuation: exh_vol_R
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire7,
@@ -385,7 +361,7 @@ public node ferrari_f154_cb_engine {
             sound_attenuation: exh_vol_R
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire6,
@@ -395,7 +371,7 @@ public node ferrari_f154_cb_engine {
             sound_attenuation: exh_vol_R
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire5,
@@ -406,24 +382,24 @@ public node ferrari_f154_cb_engine {
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bL)
+        .add_cylinder_bank(bR)
 
     engine.add_crankshaft(c0)
 
     ferrari_f154_cb_camshaft_builder camshaft()
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         ferrari_f154_cb_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         ferrari_f154_cb_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
