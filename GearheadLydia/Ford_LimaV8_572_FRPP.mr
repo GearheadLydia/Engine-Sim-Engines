@@ -68,21 +68,21 @@ public node ford_lima385_v8_camshaft_builder {
     input advance: 6.5 * units.deg; // guess - CJ
     input base_radius: 1.5 / 2 * units.inch; // guess
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
 
     label rot30(30 * units.deg)
@@ -92,38 +92,29 @@ public node ford_lima385_v8_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_0
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
 
-    _intake_cam_1
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
 
-    _exhaust_cam_0
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
 
-    _exhaust_cam_1
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
-}
-
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 // https://performanceparts.ford.com/part/M-6049-SCJA
@@ -133,42 +124,33 @@ public node ford_lima385_v8_572_frpp_head {
     input chamber_volume: 72.0 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation_in: 1.0;
-    input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.375; // max flow achieved at 650 thou
     alias output __out: head;
-
-    function intake_flow(1 * units.mm)
+    
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#Ford_Big_Block
+    // "New SCJ" casting from listing
+    function intake_flow(100 * units.thou)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  45 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale, 120 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale, 140 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 176 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 212 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 230 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 255 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 275 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 294 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 300 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 314 * flow_attenuation_in)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  73)
+        .add_flow_sample(200, 155)
+        .add_flow_sample(300, 222)
+        .add_flow_sample(400, 275)
+        .add_flow_sample(500, 314)
+        .add_flow_sample(600, 320) // adjusted
+        .add_flow_sample(700, 325) // adjusted
+        .add_flow_sample(800, 329) // adjusted
 
-    function exhaust_flow(1 * units.mm)
+    function exhaust_flow(100 * units.thou)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  25 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  90 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale, 110 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 132 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 156 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 170 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 181 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 191 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 207 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 214 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 228 * flow_attenuation_ex)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  60)
+        .add_flow_sample(200, 106)
+        .add_flow_sample(300, 141)
+        .add_flow_sample(400, 177)
+        .add_flow_sample(500, 191)
+        .add_flow_sample(600, 208) // adjusted
+        .add_flow_sample(700, 218) // adjusted
+        .add_flow_sample(800, 228) // adjusted
         
     cylinder_head head(
         chamber_volume: chamber_volume,
@@ -193,7 +175,7 @@ public node ford_lima385_v8_572_frpp_crate_engine {
     engine engine(
         name: "Ford Racing Big Block",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 800 * units.rpm,
+        starter_speed: 1000 * units.rpm,
         redline: 6000 * units.rpm,
         throttle_gamma: 1.0
     )
@@ -272,21 +254,21 @@ public node ford_lima385_v8_572_frpp_crate_engine {
     intake intake(
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(870.0),
+        intake_flow_rate: k_carb(1000.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.996,
+        idle_throttle_plate_position: 0.997,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(350.0),
-        runner_length: 10.0 * units.inch,
+        runner_flow_rate: k_carb(300.0),
+        runner_length: 8.0 * units.inch,
         velocity_decay: 0.1
     )
     
     label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(850.0),
-        primary_tube_length: 8.0 * units.inch,
-        primary_flow_rate: k_carb(350.0),
+        outlet_flow_rate: k_carb(950.0),
+        primary_tube_length: 16.0 * units.inch,
+        primary_flow_rate: k_carb(400.0),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius) * 2,
         length: 2400 * units.mm,
@@ -302,8 +284,8 @@ public node ford_lima385_v8_572_frpp_crate_engine {
     
     label exhaust_stagger(0.4 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
-    b0
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
+    bL
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
@@ -341,8 +323,8 @@ public node ford_lima385_v8_572_frpp_crate_engine {
             primary_length: pipe_length_4 + exhaust_stagger
         )
 
-    cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
-    b1
+    cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (second)
+    bR
         .add_cylinder(
             piston: piston(piston_params, blowby: k_28inH2O(0.1)),
             connecting_rod: connecting_rod(cr_params),
@@ -381,8 +363,8 @@ public node ford_lima385_v8_572_frpp_crate_engine {
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bL)
+        .add_cylinder_bank(bR)
 
     engine.add_crankshaft(c0)
 
@@ -391,17 +373,17 @@ public node ford_lima385_v8_572_frpp_crate_engine {
         ex_lobe_profile: ford_lima385_v8_572_frpp_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         ford_lima385_v8_572_frpp_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         ford_lima385_v8_572_frpp_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
