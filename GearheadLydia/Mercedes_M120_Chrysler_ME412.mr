@@ -320,14 +320,14 @@ public node chrysler_m120_me412_engine {
     
     label exh_vol_warble(-0.05)
     
-    label pipe_length_1(25 * units.mm)
-    label pipe_length_2(20 * units.mm)
-    label pipe_length_3(27 * units.mm)
-    label pipe_length_4(5 * units.mm)
-    label pipe_length_5(0 * units.mm)
-    label pipe_length_6(7 * units.mm)
+    label pipe_length_1(40 * units.mm)
+    label pipe_length_2(30 * units.mm)
+    label pipe_length_3(35 * units.mm)
+    label pipe_length_4(10 * units.mm)
+    label pipe_length_5(00 * units.mm)
+    label pipe_length_6(05 * units.mm)
     
-    label exhaust_stagger(5 * units.mm)
+    label exhaust_stagger(10 * units.mm)
     
     label exh_vol_L0(1.0)
     label exh_vol_R0(1.0)
@@ -523,7 +523,7 @@ public node chrysler_me412_concept_vehicle {
 public node chrysler_me412_concept_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 1000 * units.lb_ft
+            max_clutch_torque: 900 * units.lb_ft
         )
         .add_gear(3.98)
         .add_gear(2.61)
