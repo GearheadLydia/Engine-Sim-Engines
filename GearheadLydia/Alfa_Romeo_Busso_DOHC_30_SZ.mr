@@ -210,7 +210,7 @@ public node alfa_romeo_busso_dohc_30_engine {
     label deck_height((203.0 * units.mm) + (0.3 * units.mm)) // calculated, approximate
     label piston_dome(26 * units.cc) // calculated, approximate
     label crank_mass(45 * units.lb)
-    label flywheel_mass(30 * 2 * units.lb)
+    label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label crank_moment(
