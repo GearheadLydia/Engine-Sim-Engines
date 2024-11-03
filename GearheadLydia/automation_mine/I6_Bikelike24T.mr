@@ -58,7 +58,7 @@ public node i6_bikelike24t_camshaft_builder {
     input lobe_separation: 115.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-    input advance: 0.0 * units.deg;
+    input advance: -2.5 * units.deg;
     input base_radius: 15.0 * units.mm;
 
     output intake_cam_0: _intake_cam_0;
@@ -80,7 +80,7 @@ public node i6_bikelike24t_camshaft_builder {
     label rot360(360 * units.deg)
 
     _intake_cam_0
-        .add_lobe(rot360 + intake_lobe_center)
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot120)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot120)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot120)
         .add_lobe(rot360 + intake_lobe_center + 5 * rot120)
@@ -88,7 +88,7 @@ public node i6_bikelike24t_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center + 3 * rot120)
 
     _exhaust_cam_0
-        .add_lobe(rot360 - exhaust_lobe_center)
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot120)
@@ -163,11 +163,11 @@ public node i6_bikelike24t_engine {
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1500 * units.rpm,
         redline: 10000 * units.rpm,
-        fuel: fuel(max_burning_efficiency: 1.1), // free power to supplant unavailable turbo
+        fuel: fuel(max_burning_efficiency: 1.04), // free power to supplant unavailable turbo
         throttle_gamma: 1.0
     )
     
-    label lean_angle(0.0 * units.deg)
+    label lean_angle(5.0 * units.deg)
 
     label bore(78.0 * units.mm)
     label stroke(83.5 * units.mm)
@@ -272,7 +272,7 @@ public node i6_bikelike24t_engine {
         impulse_response: ir_lib.default_0
     )
  
-    cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
+    cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle, position_x: 8.0 * units.mm, position_y: -0.5 * units.mm)
     b0
         .add_cylinder(
             piston: piston(piston_params),
@@ -379,7 +379,7 @@ public node flechette_vehicle {
             mass: 1400 * units.kg,
             drag_coefficient: 0.35,
             cross_sectional_area: 2.0 * (units.m * units.m),
-            diff_ratio: 3.600,
+            diff_ratio: 4.000,
             tire_radius: 328.93 * units.mm, // 285/35R18
             rolling_resistance: 1400 * units.kg * 9.81 * (285.0/275.0) * 0.01
         );
@@ -390,12 +390,12 @@ public node flechette_transmission {
         transmission(
             max_clutch_torque: 500 * units.lb_ft
         )
-        .add_gear(3.500)
-        .add_gear(2.360)
-        .add_gear(1.685)
-        .add_gear(1.312)
-        .add_gear(1.000)
-        .add_gear(0.793);
+        .add_gear(3.00)
+        .add_gear(2.10)
+        .add_gear(1.60)
+        .add_gear(1.25)
+        .add_gear(1.00)
+        .add_gear(0.85);
 }
 
 public node main {

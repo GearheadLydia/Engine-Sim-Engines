@@ -136,8 +136,8 @@ public node tantalo_v12_50_head {
     input chamber_volume: 40.0 * units.cc;
     input flip_display: false;
     
-    input flow_intake: 380.0;
-    input flow_exhaust: 280.0;
+    input flow_intake: 330.0;
+    input flow_exhaust: 270.0;
     input lift_max: 12.0 * units.mm;
     alias output __out: head;
 
@@ -176,10 +176,10 @@ public node tantalo_v12_50_head {
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        intake_runner_volume: circle_area(1.1 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
+        exhaust_runner_volume: circle_area(0.75 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -308,7 +308,7 @@ public node tantalo_v12_50_engine {
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1000.0),
         primary_tube_length: 16.0 * units.inch,
-        primary_flow_rate: k_carb(280.0),
+        primary_flow_rate: k_carb(400.0),
         velocity_decay: 0.4, //0.5
         volume: 3.0 * units.L,
         length: 500 * units.mm
@@ -477,15 +477,15 @@ public node tantalo_v12_50_engine {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 45 * units.deg)
-        .add_sample(3000 * units.rpm, 45 * units.deg)
-        .add_sample(4000 * units.rpm, 45 * units.deg)
-        .add_sample(5000 * units.rpm, 45 * units.deg)
-        .add_sample(6000 * units.rpm, 45 * units.deg)
-        .add_sample(7000 * units.rpm, 45 * units.deg)
-        .add_sample(8000 * units.rpm, 45 * units.deg)
-        .add_sample(9000 * units.rpm, 45 * units.deg)
+        .add_sample(1000 * units.rpm, 45 * units.deg)
+        .add_sample(2000 * units.rpm, 50 * units.deg)
+        .add_sample(3000 * units.rpm, 50 * units.deg)
+        .add_sample(4000 * units.rpm, 50 * units.deg)
+        .add_sample(5000 * units.rpm, 50 * units.deg)
+        .add_sample(6000 * units.rpm, 50 * units.deg)
+        .add_sample(7000 * units.rpm, 50 * units.deg)
+        .add_sample(8000 * units.rpm, 50 * units.deg)
+        .add_sample(9000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         tantalo_v12_50_distributor(

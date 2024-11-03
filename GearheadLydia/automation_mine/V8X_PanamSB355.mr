@@ -8,21 +8,21 @@ label cycle(2 * 360 * units.deg)
 
 // firing order: 18726543
 
-public node aegis_smallblock_305_distributor {
+public node panam_smallblock_355_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7100 * units.rpm;
-    input limiter_duration: 0.07;
+    input rev_limit: 5600 * units.rpm;
+    input limiter_duration: 0.09;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0 / 8.0) * cycle)
-            .connect_wire(wires.wire2, (1.0 / 8.0) * cycle)
-            .connect_wire(wires.wire7, (2.0 / 8.0) * cycle)
-            .connect_wire(wires.wire8, (3.0 / 8.0) * cycle)
-            .connect_wire(wires.wire4, (4.0 / 8.0) * cycle)
-            .connect_wire(wires.wire5, (5.0 / 8.0) * cycle)
-            .connect_wire(wires.wire6, (6.0 / 8.0) * cycle)
-            .connect_wire(wires.wire3, (7.0 / 8.0) * cycle);
+            .connect_wire(wires.wire5, (1.0 / 8.0) * cycle)
+            .connect_wire(wires.wire4, (2.0 / 8.0) * cycle)
+            .connect_wire(wires.wire3, (3.0 / 8.0) * cycle)
+            .connect_wire(wires.wire6, (4.0 / 8.0) * cycle)
+            .connect_wire(wires.wire8, (5.0 / 8.0) * cycle)
+            .connect_wire(wires.wire7, (6.0 / 8.0) * cycle)
+            .connect_wire(wires.wire2, (7.0 / 8.0) * cycle);
 }
 
 private node wires {
@@ -36,36 +36,36 @@ private node wires {
     output wire8: ignition_wire();
 }
 
-public node aegis_smallblock_305_lobe_profile_int {
+public node panam_smallblock_355_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 220 * units.deg,
+            duration_at_50_thou: 190 * units.deg,
             gamma: 1.0,
-            lift: 500 * units.thou,
+            lift: 475 * units.thou,
             steps: 100
         );
 }
 
-public node aegis_smallblock_305_lobe_profile_exh {
+public node panam_smallblock_355_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 220 * units.deg,
+            duration_at_50_thou: 190 * units.deg,
             gamma: 1.0,
-            lift: 500 * units.thou,
+            lift: 475 * units.thou,
             steps: 100
         );
 }
 
-public node aegis_smallblock_305_camshaft_builder {
-    input in_lobe_profile: aegis_smallblock_305_lobe_profile_int();
-    input ex_lobe_profile: aegis_smallblock_305_lobe_profile_exh();
+public node panam_smallblock_355_camshaft_builder {
+    input in_lobe_profile: panam_smallblock_355_lobe_profile_int();
+    input ex_lobe_profile: panam_smallblock_355_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 125.0 * units.deg;
+    input lobe_separation: 120.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: lobe_separation;
-    input advance: 2.0 * units.deg;
-    input base_radius: 30 / 2 * units.mm;
+    input advance: 5.0 * units.deg;
+    input base_radius: 1.462 / 2 * units.inch;
 
     output intake_cam_R: _intake_cam_R;
     output exhaust_cam_R: _exhaust_cam_R;
@@ -91,68 +91,80 @@ public node aegis_smallblock_305_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_L
-        .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
-
     _intake_cam_R
-        .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
-        .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
 
-    _exhaust_cam_L
-        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
+    _intake_cam_L
+        .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
+        .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
 
     _exhaust_cam_R
-        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
-        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
+
+    _exhaust_cam_L
+        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
+        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
 }
 
-public node aegis_smallblock_305_head {
+public node panam_smallblock_355_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 35.0 * units.cc;
+    input chamber_volume: 67.0 * units.cc;
     input flip_display: false;
     
-    input flow_intake: 270.0;
+    input flow_intake: 280.0;
     input flow_exhaust: 230.0;
     input lift_max: 600 * units.thou;
     alias output __out: head;
 
-    function intake_flow(lift_max / 5.0)
+    function intake_flow(lift_max / 10.0)
     intake_flow
         .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_intake))
         .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_intake))
         .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_intake))
         .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_intake))
         .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_intake))
         .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_intake))
         .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
 
-    function exhaust_flow(lift_max / 5.0)
+    function exhaust_flow(lift_max / 10.0)
     exhaust_flow
         .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.1 * lift_max, k_28inH2O(0.16 * flow_exhaust))
         .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.3 * lift_max, k_28inH2O(0.48 * flow_exhaust))
         .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.5 * lift_max, k_28inH2O(0.74 * flow_exhaust))
         .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.7 * lift_max, k_28inH2O(0.90 * flow_exhaust))
         .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(0.9 * lift_max, k_28inH2O(0.98 * flow_exhaust))
         .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.1 * lift_max, k_28inH2O(1.01 * flow_exhaust))
         .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.1 * units.inch) * 3 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
+        intake_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.55 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.65 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -163,34 +175,34 @@ public node aegis_smallblock_305_head {
 }
 
 
-public node aegis_smallblock_305_engine {
+public node panam_smallblock_355_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Aegis ''Modern'' 5.0",
+        name: "Panam 355",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1100 * units.rpm,
-        redline: 7000 * units.rpm,
+        redline: 5500 * units.rpm,
         throttle_gamma: 1.0
     )
 
-    label bore(93.0 * units.mm)
-    label bore_spacing(105.0 * units.mm)
-    label stroke(92.0 * units.mm)
-    label rod_length(150.0 * units.mm)
-    label compression_height(30 * units.mm)
+    label bore(3.900 * units.inch)
+    label bore_spacing(4.400 * units.inch)
+    label stroke(3.700 * units.inch)
+    label rod_length(6.100 * units.inch)
+    label compression_height(1.200 * units.inch)
     label piston_dome(0.0 * units.cc)
     label chamber_volume(45.0 * units.cc)
     
-    label crank_mass(40 * units.kg)
-    label rod_mass(600 * units.g)
-    label piston_mass(400 * units.g)
+    label crank_mass(35 * units.kg)
+    label rod_mass(550 * units.g)
+    label piston_mass(480 * units.g)
     label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
     
-    label compression_ratio(9.5)
+    label compression_ratio(10.0)
     label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
 
     label crank_moment(
@@ -212,7 +224,7 @@ public node aegis_smallblock_305_engine {
             crank_moment + flywheel_moment + other_moment,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: 135.0 * units.deg // 45 degrees CCW from vertical
+        tdc: 45.0 * units.deg // 45 degrees back from right side
     )
 
     rod_journal rj1(angle:   0.0 * units.deg)
@@ -253,94 +265,51 @@ public node aegis_smallblock_305_engine {
     intake intake(
         plenum_volume: 0.3 * units.L,
         plenum_cross_section_area: circle_area(45 * units.mm),
-        intake_flow_rate: k_carb(550.0),
+        intake_flow_rate: k_carb(650.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(300.0),
-        runner_length: 12.0 * units.inch,
+        runner_flow_rate: k_carb(200.0),
+        runner_length: 7.0 * units.inch,
         velocity_decay: 0.1
     )
     
     label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(300.0),
-        primary_tube_length: 13.0 * units.inch,
-        primary_flow_rate: k_carb(320.0),
+        outlet_flow_rate: k_carb(500.0),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
-        length: 2200 * units.mm,
-        volume: 2200 * units.mm * circle_area(exhaust_radius)
+        length: 2600 * units.mm,
+        volume: 2600 * units.mm * circle_area(exhaust_radius)
     )
 
-    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
-    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.05, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustL(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+    exhaust_system exhaustR(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
     
     // lower grade LS headers //
-    label pipe_length_1(bore_spacing * 2.4)
-    label pipe_length_2(bore_spacing * 1.6)
-    label pipe_length_3(bore_spacing * 0.8)
+    label pipe_length_1(bore_spacing * 2.7)
+    label pipe_length_2(bore_spacing * 1.3)
+    label pipe_length_3(bore_spacing * 1.1)
     label pipe_length_4(bore_spacing * 0.0)
     label pipe_volume_1(1.00)
     label pipe_volume_2(0.95)
     label pipe_volume_3(0.90)
-    label pipe_volume_4(0.85)
+    label pipe_volume_4(0.87)
     
-    label exhaust_stagger(bore_spacing * 0.4)
+    label exhaust_stagger(80 * units.mm)
 
-    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (second)
     bL
-        .add_cylinder(
-            piston: piston(piston_params),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire1,
-            intake: intake,
-            exhaust_system: exhaustL,
-            primary_length: pipe_length_1,
-            sound_attenuation: pipe_volume_1 + exhaust_stagger
-        )
-        .add_cylinder(
-            piston: piston(piston_params),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
-            ignition_wire: wires.wire3,
-            intake: intake,
-            exhaust_system: exhaustL,
-            primary_length: pipe_length_2,
-            sound_attenuation: pipe_volume_2 + exhaust_stagger
-        )
-        .add_cylinder(
-            piston: piston(piston_params),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
-            ignition_wire: wires.wire5,
-            intake: intake,
-            exhaust_system: exhaustL,
-            primary_length: pipe_length_3,
-            sound_attenuation: pipe_volume_3 + exhaust_stagger
-        )
-        .add_cylinder(
-            piston: piston(piston_params),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
-            ignition_wire: wires.wire7,
-            intake: intake,
-            exhaust_system: exhaustL,
-            primary_length: pipe_length_4,
-            sound_attenuation: pipe_volume_4 + exhaust_stagger
-        )
-
-    cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (second)
-    bR
         .add_cylinder(
             piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaustL,
             primary_length: pipe_length_1,
             sound_attenuation: pipe_volume_1
         )
@@ -350,7 +319,7 @@ public node aegis_smallblock_305_engine {
             rod_journal: rj2,
             ignition_wire: wires.wire4,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaustL,
             primary_length: pipe_length_2,
             sound_attenuation: pipe_volume_2
         )
@@ -360,7 +329,7 @@ public node aegis_smallblock_305_engine {
             rod_journal: rj3,
             ignition_wire: wires.wire6,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaustL,
             primary_length: pipe_length_3,
             sound_attenuation: pipe_volume_3
         )
@@ -370,24 +339,67 @@ public node aegis_smallblock_305_engine {
             rod_journal: rj4,
             ignition_wire: wires.wire8,
             intake: intake,
-            exhaust_system: exhaustR,
+            exhaust_system: exhaustL,
             primary_length: pipe_length_4,
             sound_attenuation: pipe_volume_4
         )
 
+    cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (first)
+    bR
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire1,
+            intake: intake,
+            exhaust_system: exhaustR,
+            primary_length: pipe_length_1 + exhaust_stagger,
+            sound_attenuation: pipe_volume_1
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaustR,
+            primary_length: pipe_length_2 + exhaust_stagger,
+            sound_attenuation: pipe_volume_2
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire5,
+            intake: intake,
+            exhaust_system: exhaustR,
+            primary_length: pipe_length_3 + exhaust_stagger,
+            sound_attenuation: pipe_volume_3
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire7,
+            intake: intake,
+            exhaust_system: exhaustR,
+            primary_length: pipe_length_4 + exhaust_stagger,
+            sound_attenuation: pipe_volume_4
+        )
+
     engine
-        .add_cylinder_bank(bL)
         .add_cylinder_bank(bR)
+        .add_cylinder_bank(bL)
 
     engine.add_crankshaft(c0)
 
-    aegis_smallblock_305_camshaft_builder camshaft(
-        in_lobe_profile: aegis_smallblock_305_lobe_profile_int(),
-        ex_lobe_profile: aegis_smallblock_305_lobe_profile_exh()
+    panam_smallblock_355_camshaft_builder camshaft(
+        in_lobe_profile: panam_smallblock_355_lobe_profile_int(),
+        ex_lobe_profile: panam_smallblock_355_lobe_profile_exh()
     )
 
     bL.set_cylinder_head (
-        aegis_smallblock_305_head(
+        panam_smallblock_355_head(
             intake_camshaft: camshaft.intake_cam_L,
             exhaust_camshaft: camshaft.exhaust_cam_L,
             chamber_volume: chamber_volume,
@@ -395,7 +407,7 @@ public node aegis_smallblock_305_engine {
         )
     )
     bR.set_cylinder_head (
-        aegis_smallblock_305_head(
+        panam_smallblock_355_head(
             intake_camshaft: camshaft.intake_cam_R,
             exhaust_camshaft: camshaft.exhaust_cam_R,
             chamber_volume: chamber_volume,
@@ -405,51 +417,92 @@ public node aegis_smallblock_305_engine {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 30 * units.deg)
-        .add_sample(1000 * units.rpm, 40 * units.deg)
-        .add_sample(2000 * units.rpm, 42 * units.deg)
-        .add_sample(3000 * units.rpm, 42 * units.deg)
-        .add_sample(4000 * units.rpm, 42 * units.deg)
-        .add_sample(5000 * units.rpm, 42 * units.deg)
-        .add_sample(6000 * units.rpm, 42 * units.deg)
-        .add_sample(7000 * units.rpm, 42 * units.deg)
+        .add_sample(0000 * units.rpm,  5 * units.deg)
+        .add_sample(1000 * units.rpm, 15 * units.deg)
+        .add_sample(2000 * units.rpm, 20 * units.deg)
+        .add_sample(3000 * units.rpm, 20 * units.deg)
+        .add_sample(4000 * units.rpm, 20 * units.deg)
+        .add_sample(5000 * units.rpm, 20 * units.deg)
+        .add_sample(6000 * units.rpm, 20 * units.deg)
+        .add_sample(7000 * units.rpm, 20 * units.deg)
 
     engine.add_ignition_module(
-        aegis_smallblock_305_distributor(
+        panam_smallblock_355_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
     )
 }
 
-public node aegis_musclecarthing_vehicle {
+// 2004 Chevrolet Corvette Coupe (C5)
+public node chevrolet_corvette_coupe_c5_vehicle {
     alias output __out:
         vehicle(
-            mass: 1450 * units.kg,
-            drag_coefficient: 0.34,
-            cross_sectional_area: 2.18 * (units.m) * (units.m),
-            diff_ratio: 3.1,
-            tire_radius: 325 * units.mm,
-            rolling_resistance: 1450 * units.kg * 9.81 * (275.0/275.0) * 0.01
+            mass: 3225 * units.lb,
+            drag_coefficient: 0.29,
+            cross_sectional_area: 1.88 * (units.m) * (units.m),
+            diff_ratio: 3.42,
+            tire_radius: 339.0 * units.mm, // 275/40ZR18
+            rolling_resistance: 580 * units.N
         );
 }
 
-public node aegis_musclecarthing_transmission {
+// 1999 Pontiac GTO 5.7 (V2)
+public node pontiac_gto_57_v2_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3726 * units.lb,
+            drag_coefficient: 0.32,
+            cross_sectional_area: 2.13 * (units.m) * (units.m),
+            diff_ratio: 3.46,
+            tire_radius: 329.0 * units.mm, // 225/50ZR17
+            rolling_resistance: 450 * units.N
+        );
+}
+
+// 2002 Chevrolet Camaro SS
+public node chevrolet_camaro_fbody_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 3410 * units.lb,
+            drag_coefficient: 0.34,
+            cross_sectional_area: 2.03 * (units.m) * (units.m),
+            diff_ratio: 3.42,
+            tire_radius: 326.5 * units.mm, // 275/40ZR17
+            rolling_resistance: 500 * units.N
+        );
+}
+
+public node tremec_t56_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 400 * units.lb_ft
+            max_clutch_torque: 1000 * units.lb_ft
+        )
+        .add_gear(2.97)
+        .add_gear(2.07)
+        .add_gear(1.43)
+        .add_gear(1.00)
+        .add_gear(0.84)
+        .add_gear(0.56);
+}
+
+public node tremec_t56_camaro_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 1000 * units.lb_ft
         )
         .add_gear(2.66)
-        .add_gear(1.96)
-        .add_gear(1.37)
+        .add_gear(1.78)
+        .add_gear(1.30)
         .add_gear(1.00)
-        .add_gear(0.77);
+        .add_gear(0.74)
+        .add_gear(0.50);
 }
 
 public node main {
-    set_engine(aegis_smallblock_305_engine())
-    set_vehicle(aegis_musclecarthing_vehicle())
-    set_transmission(aegis_musclecarthing_transmission())
+    set_engine(panam_smallblock_355_engine())
+    set_vehicle(chevrolet_camaro_fbody_vehicle())
+    set_transmission(tremec_t56_camaro_transmission())
 }
 
 main()
