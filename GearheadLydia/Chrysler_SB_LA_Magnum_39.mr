@@ -40,7 +40,7 @@ public node dodge_magnum_v6_lobe_profile_int {
         harmonic_cam_lobe(
             duration_at_50_thou: 251 * units.deg, // 251 adv
             gamma: 1.0,
-            lift: 0.432 * units.inch,
+            lift: 432 * units.thou,
             steps: 100
         );
 }
@@ -50,7 +50,7 @@ public node dodge_magnum_v6_lobe_profile_exh {
         harmonic_cam_lobe(
             duration_at_50_thou: 264 * units.deg, // 264 adv
             gamma: 1.0,
-            lift: 0.432 * units.inch,
+            lift: 432 * units.thou,
             steps: 100
         );
 }
@@ -66,20 +66,20 @@ public node dodge_magnum_v6_camshaft_builder {
     input advance: -2.25 * units.deg;
     input base_radius: 0.75 * units.inch;
 
-    output intake_cam_0: _intake_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_R: _intake_cam_R;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_R: _exhaust_cam_R;
+    output exhaust_cam_L: _exhaust_cam_L;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
     label rot30(30 * units.deg)
     label rot54(54 * units.deg)
@@ -89,22 +89,22 @@ public node dodge_magnum_v6_camshaft_builder {
     label rot120(120 * units.deg)
     label rot360(360 * units.deg)
     
-    _intake_cam_0
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 0 * rot120)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot120)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot120)
 
-    _intake_cam_1
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 5 * rot120 + fire_offset)
         .add_lobe(rot360 + intake_lobe_center + 3 * rot120 + fire_offset)
         .add_lobe(rot360 + intake_lobe_center + 1 * rot120 + fire_offset)
 
-    _exhaust_cam_0
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
 
-    _exhaust_cam_1
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot120 + fire_offset)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot120 + fire_offset)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot120 + fire_offset)
@@ -239,7 +239,7 @@ public node dodge_magnum_v6_39_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -292,10 +292,10 @@ public node dodge_magnum_v6_39_engine {
     
     label exhaust_stagger(0.3 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: -45 * units.deg) // R (first)
-    b0
+    cylinder_bank bR(bank_params, angle: -45 * units.deg) // R (first)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -304,7 +304,7 @@ public node dodge_magnum_v6_39_engine {
             primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
@@ -313,7 +313,7 @@ public node dodge_magnum_v6_39_engine {
             primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire5,
@@ -322,10 +322,10 @@ public node dodge_magnum_v6_39_engine {
             primary_length: pipe_length_3 + exhaust_stagger
         )
 
-    cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
-    b1
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (second)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
@@ -334,7 +334,7 @@ public node dodge_magnum_v6_39_engine {
             primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,
@@ -343,7 +343,7 @@ public node dodge_magnum_v6_39_engine {
             primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire6,
@@ -353,8 +353,8 @@ public node dodge_magnum_v6_39_engine {
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bR)
+        .add_cylinder_bank(bL)
 
     engine.add_crankshaft(c0)
 
@@ -363,17 +363,17 @@ public node dodge_magnum_v6_39_engine {
         ex_lobe_profile: dodge_magnum_v6_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bR.set_cylinder_head (
         dodge_magnum_v6_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
-    b1.set_cylinder_head (
+    bL.set_cylinder_head (
         dodge_magnum_v6_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
