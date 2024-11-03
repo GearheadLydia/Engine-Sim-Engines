@@ -86,21 +86,21 @@ public node cadillac_ls_v16_camshaft_builder {
     input advance: -4.0 * units.deg;
     input base_radius: 1.462 / 2 * units.inch;
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
 
     label rot30(30 * units.deg)
@@ -113,7 +113,7 @@ public node cadillac_ls_v16_camshaft_builder {
 
     // firing order: 1-14-8-13-7-12-3-10-6-9-5-16-4-15-2-11
 
-    _intake_cam_0
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center +  0 * rot45) //  #1
         .add_lobe(rot360 + intake_lobe_center +  6 * rot45) //  #3
         .add_lobe(rot360 + intake_lobe_center +  2 * rot45) //  #5
@@ -123,7 +123,7 @@ public node cadillac_ls_v16_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center + 11 * rot45) // #13
         .add_lobe(rot360 + intake_lobe_center + 13 * rot45) // #15
 
-    _intake_cam_1
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 14 * rot45) //  #2
         .add_lobe(rot360 + intake_lobe_center + 12 * rot45) //  #4
         .add_lobe(rot360 + intake_lobe_center +  8 * rot45) //  #6
@@ -133,7 +133,7 @@ public node cadillac_ls_v16_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center +  1 * rot45) // #14
         .add_lobe(rot360 + intake_lobe_center +  3 * rot45) // #16
 
-    _exhaust_cam_0
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center +  0 * rot45) //  #1
         .add_lobe(rot360 - exhaust_lobe_center +  6 * rot45) //  #3
         .add_lobe(rot360 - exhaust_lobe_center +  2 * rot45) //  #5
@@ -143,7 +143,7 @@ public node cadillac_ls_v16_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 11 * rot45) // #13
         .add_lobe(rot360 - exhaust_lobe_center + 13 * rot45) // #15
 
-    _exhaust_cam_1
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 14 * rot45) //  #2
         .add_lobe(rot360 - exhaust_lobe_center + 12 * rot45) //  #4
         .add_lobe(rot360 - exhaust_lobe_center +  8 * rot45) //  #6
@@ -226,7 +226,7 @@ public node cadillac_ls_v16_head {
 }
 
 
-public node cadillac_ls_v16 {
+public node cadillac_ls_v16_engine {
     alias output __out: engine;
 
     wires wires()
@@ -302,7 +302,7 @@ public node cadillac_ls_v16 {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -352,10 +352,10 @@ public node cadillac_ls_v16 {
 
     label exhaust_stagger(0.2 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
-    b0
+    cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (first)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire01,
@@ -364,7 +364,7 @@ public node cadillac_ls_v16 {
             primary_length: (bore_spacing * 7.5) + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire03,
@@ -373,7 +373,7 @@ public node cadillac_ls_v16 {
             primary_length: (bore_spacing * 6.5) + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire05,
@@ -382,7 +382,7 @@ public node cadillac_ls_v16 {
             primary_length: (bore_spacing * 5.5) + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire07,
@@ -391,7 +391,7 @@ public node cadillac_ls_v16 {
             primary_length: (bore_spacing * 4.5) + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire09,
@@ -400,7 +400,7 @@ public node cadillac_ls_v16 {
             primary_length: (bore_spacing * 3.5) + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire11,
@@ -409,7 +409,7 @@ public node cadillac_ls_v16 {
             primary_length: (bore_spacing * 2.5) + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj7,
             ignition_wire: wires.wire13,
@@ -418,7 +418,7 @@ public node cadillac_ls_v16 {
             primary_length: (bore_spacing * 2.0) + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj8,
             ignition_wire: wires.wire15,
@@ -427,10 +427,10 @@ public node cadillac_ls_v16 {
             primary_length: (bore_spacing * 1.5) + exhaust_stagger
         )
 
-    cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
-    b1
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (second)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire02,
@@ -439,7 +439,7 @@ public node cadillac_ls_v16 {
             primary_length: bore_spacing * 7.5
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire04,
@@ -448,7 +448,7 @@ public node cadillac_ls_v16 {
             primary_length: bore_spacing * 6.5
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire06,
@@ -457,7 +457,7 @@ public node cadillac_ls_v16 {
             primary_length: bore_spacing * 5.5
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire08,
@@ -466,7 +466,7 @@ public node cadillac_ls_v16 {
             primary_length: bore_spacing * 4.5
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire10,
@@ -475,7 +475,7 @@ public node cadillac_ls_v16 {
             primary_length: bore_spacing * 3.5
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire12,
@@ -484,7 +484,7 @@ public node cadillac_ls_v16 {
             primary_length: bore_spacing * 2.5
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj7,
             ignition_wire: wires.wire14,
@@ -493,7 +493,7 @@ public node cadillac_ls_v16 {
             primary_length: bore_spacing * 2.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj8,
             ignition_wire: wires.wire16,
@@ -503,8 +503,8 @@ public node cadillac_ls_v16 {
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bR)
+        .add_cylinder_bank(bL)
 
     engine.add_crankshaft(c0)
 
@@ -513,17 +513,17 @@ public node cadillac_ls_v16 {
         ex_lobe_profile: cadillac_ls_v16_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bR.set_cylinder_head (
         cadillac_ls_v16_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
-    b1.set_cylinder_head (
+    bL.set_cylinder_head (
         cadillac_ls_v16_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
@@ -542,8 +542,7 @@ public node cadillac_ls_v16 {
     engine.add_ignition_module(
         cadillac_ls_v16_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6500 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -587,7 +586,7 @@ public node gm_6l90_transmission {
 }
 
 public node main {
-    set_engine(cadillac_ls_v16())
+    set_engine(cadillac_ls_v16_engine())
     set_vehicle(cadillac_sixteen_concept_vehicle())
     set_transmission(gm_4l85e_transmission())
 }

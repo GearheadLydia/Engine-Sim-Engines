@@ -70,21 +70,21 @@ public node chevrolet_ls6_camshaft_builder {
     input advance: -1.0 * units.deg;
     input base_radius: 1.462 / 2 * units.inch;
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
 
     label rot30(30 * units.deg)
@@ -94,25 +94,25 @@ public node chevrolet_ls6_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_0
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
 
-    _intake_cam_1
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
 
-    _exhaust_cam_0
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
 
-    _exhaust_cam_1
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
@@ -258,7 +258,7 @@ public node chevrolet_ls6 {
     intake intake(
         plenum_volume: 0.2 * units.L,
         plenum_cross_section_area: circle_area(45 * units.mm),
-        intake_flow_rate: k_carb(750),
+        intake_flow_rate: k_carb(750.0),
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
@@ -314,8 +314,8 @@ public node chevrolet_ls6 {
     
     label exhaust_stagger(80 * units.mm)
 
-    cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
-    b0
+    cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (first)
+    bR
         .add_cylinder(
             piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
@@ -357,8 +357,8 @@ public node chevrolet_ls6 {
             sound_attenuation: pipe_volume_4
         )
 
-    cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
-    b1
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (second)
+    bL
         .add_cylinder(
             piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
@@ -401,8 +401,8 @@ public node chevrolet_ls6 {
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bR)
+        .add_cylinder_bank(bL)
 
     engine.add_crankshaft(c0)
 
@@ -411,17 +411,17 @@ public node chevrolet_ls6 {
         ex_lobe_profile: chevrolet_ls6_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bR.set_cylinder_head (
         chevrolet_ls6_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
-    b1.set_cylinder_head (
+    bL.set_cylinder_head (
         chevrolet_ls6_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )

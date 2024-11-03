@@ -250,7 +250,7 @@ public node chevrolet_sbc_400_lf6_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -307,7 +307,7 @@ public node chevrolet_sbc_400_lf6_engine {
     cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
     b0
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -316,7 +316,7 @@ public node chevrolet_sbc_400_lf6_engine {
             primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
@@ -325,7 +325,7 @@ public node chevrolet_sbc_400_lf6_engine {
             primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire5,
@@ -334,7 +334,7 @@ public node chevrolet_sbc_400_lf6_engine {
             primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire7,
@@ -346,7 +346,7 @@ public node chevrolet_sbc_400_lf6_engine {
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
     b1
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
@@ -355,7 +355,7 @@ public node chevrolet_sbc_400_lf6_engine {
             primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire4,
@@ -364,7 +364,7 @@ public node chevrolet_sbc_400_lf6_engine {
             primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire6,
@@ -373,7 +373,7 @@ public node chevrolet_sbc_400_lf6_engine {
             primary_length: pipe_length_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire8,
