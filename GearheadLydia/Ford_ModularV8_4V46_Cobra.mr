@@ -68,21 +68,21 @@ public node ford_modular_cobra46_camshaft_builder {
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
 
     label rot30(30 * units.deg)
@@ -92,38 +92,29 @@ public node ford_modular_cobra46_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_0
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
 
-    _intake_cam_1
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
 
-    _exhaust_cam_0
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
 
-    _exhaust_cam_1
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
-}
-
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
 public node ford_modular_cobra46_head {
@@ -132,41 +123,30 @@ public node ford_modular_cobra46_head {
     input chamber_volume: 54.0 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation: 0.9;
-    input lift_scale: 1.0;
     alias output __out: head;
-
-    function intake_flow(1.0 * units.mm)
+    
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#Ford
+    function intake_flow(100 * units.thou)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  89)
+        .add_flow_sample(200, 168)
+        .add_flow_sample(300, 224)
+        .add_flow_sample(400, 253)
+        .add_flow_sample(500, 267)
+        .add_flow_sample(600, 275)
+        .add_flow_sample(700, 280)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(100 * units.thou)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
+        .add_flow_sample(  0,   0)
+        .add_flow_sample(100,  67)
+        .add_flow_sample(200, 121)
+        .add_flow_sample(300, 160)
+        .add_flow_sample(400, 179)
+        .add_flow_sample(500, 182)
+        .add_flow_sample(600, 185)
+        .add_flow_sample(700, 186)
 
         
     cylinder_head head(
@@ -250,7 +230,7 @@ public node ford_modular_v8_4v46_cobra_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0 * units.mm,
         displacement: piston_dome
@@ -304,10 +284,10 @@ public node ford_modular_v8_4v46_cobra_engine {
     
     label exhaust_stagger(0.4 * bore_spacing)
 
-    cylinder_bank b0(bank_params, angle: 45.0 * units.deg) // L (first)
-    b0
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -316,7 +296,7 @@ public node ford_modular_v8_4v46_cobra_engine {
             primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire2,
@@ -325,7 +305,7 @@ public node ford_modular_v8_4v46_cobra_engine {
             primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire3,
@@ -334,7 +314,7 @@ public node ford_modular_v8_4v46_cobra_engine {
             primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire4,
@@ -343,10 +323,10 @@ public node ford_modular_v8_4v46_cobra_engine {
             primary_length: pipe_length_4 + exhaust_stagger
         )
 
-    cylinder_bank b1(bank_params, angle: -45.0 * units.deg) // R (second)
-    b1
+    cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (second)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire5,
@@ -355,7 +335,7 @@ public node ford_modular_v8_4v46_cobra_engine {
             primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire6,
@@ -364,7 +344,7 @@ public node ford_modular_v8_4v46_cobra_engine {
             primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire7,
@@ -373,7 +353,7 @@ public node ford_modular_v8_4v46_cobra_engine {
             primary_length: pipe_length_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire8,
@@ -383,8 +363,8 @@ public node ford_modular_v8_4v46_cobra_engine {
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bL)
+        .add_cylinder_bank(bR)
 
     engine.add_crankshaft(c0)
 
@@ -393,17 +373,17 @@ public node ford_modular_v8_4v46_cobra_engine {
         ex_lobe_profile: ford_modular_cobra46_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         ford_modular_cobra46_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         ford_modular_cobra46_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
