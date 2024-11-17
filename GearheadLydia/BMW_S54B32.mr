@@ -99,61 +99,46 @@ public node bmw_s54b32_camshaft_builder {
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot120)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
 public node bmw_s54b32_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 38.0 * units.cc;
     input flip_display: false;
     
-    input flow_attenuation_in: 1.0;
-    input flow_attenuation_ex: 1.0;
-    input lift_scale: 1.0;
     alias output __out: head;
-
-    function intake_flow(1.0 * units.mm)
+    
+    // https://dsportmag.com/the-tech/education/engine-tech-supertechs-s54-cylinder-head-spit-shim-solution/
+    function intake_flow(50 * units.thou)
     intake_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_in)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_in)
-        .add_flow_sample( 2 * lift_scale,  60 * flow_attenuation_in)
-        .add_flow_sample( 3 * lift_scale,  90 * flow_attenuation_in)
-        .add_flow_sample( 4 * lift_scale, 125 * flow_attenuation_in)
-        .add_flow_sample( 5 * lift_scale, 160 * flow_attenuation_in)
-        .add_flow_sample( 6 * lift_scale, 195 * flow_attenuation_in)
-        .add_flow_sample( 7 * lift_scale, 210 * flow_attenuation_in)
-        .add_flow_sample( 8 * lift_scale, 235 * flow_attenuation_in)
-        .add_flow_sample( 9 * lift_scale, 270 * flow_attenuation_in)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation_in)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation_in)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(13 * lift_scale, 335 * flow_attenuation_in)
-        .add_flow_sample(14 * lift_scale, 335 * flow_attenuation_in)
+        .add_flow_sample(  0,   0.0)
+        .add_flow_sample( 50,  44.3)
+        .add_flow_sample(100,  82.0)
+        .add_flow_sample(150, 120.2)
+        .add_flow_sample(200, 158.0)
+        .add_flow_sample(250, 188.1)
+        .add_flow_sample(300, 210.4)
+        .add_flow_sample(350, 224.5)
+        .add_flow_sample(400, 235.0)
+        .add_flow_sample(450, 243.3)
+        .add_flow_sample(500, 247.0)
+        .add_flow_sample(550, 250.0)
+        .add_flow_sample(600, 251.8)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(50 * units.thou)
     exhaust_flow
-        .add_flow_sample( 0 * lift_scale,   0 * flow_attenuation_ex)
-        .add_flow_sample( 1 * lift_scale,  30 * flow_attenuation_ex)
-        .add_flow_sample( 2 * lift_scale,  55 * flow_attenuation_ex)
-        .add_flow_sample( 3 * lift_scale,  85 * flow_attenuation_ex)
-        .add_flow_sample( 4 * lift_scale, 115 * flow_attenuation_ex)
-        .add_flow_sample( 5 * lift_scale, 140 * flow_attenuation_ex)
-        .add_flow_sample( 6 * lift_scale, 160 * flow_attenuation_ex)
-        .add_flow_sample( 7 * lift_scale, 180 * flow_attenuation_ex)
-        .add_flow_sample( 8 * lift_scale, 205 * flow_attenuation_ex)
-        .add_flow_sample( 9 * lift_scale, 220 * flow_attenuation_ex)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation_ex)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation_ex)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(13 * lift_scale, 280 * flow_attenuation_ex)
-        .add_flow_sample(14 * lift_scale, 280 * flow_attenuation_ex)
+        .add_flow_sample(  0,   0.0)
+        .add_flow_sample( 50,  34.9)
+        .add_flow_sample(100,  81.4)
+        .add_flow_sample(150, 118.5)
+        .add_flow_sample(200, 148.3)
+        .add_flow_sample(250, 164.2)
+        .add_flow_sample(300, 175.9)
+        .add_flow_sample(350, 182.3)
+        .add_flow_sample(400, 186.0)
+        .add_flow_sample(450, 188.4)
+        .add_flow_sample(500, 190.2)
+        .add_flow_sample(550, 191.7)
+        .add_flow_sample(600, 193.1)
 
         
     cylinder_head head(
@@ -389,16 +374,16 @@ public node S54B32 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 45 * units.deg)
-        .add_sample(1000 * units.rpm, 56 * units.deg)
-        .add_sample(2000 * units.rpm, 61 * units.deg)
+        .add_sample(0000 * units.rpm, 55 * units.deg)
+        .add_sample(1000 * units.rpm, 60 * units.deg)
+        .add_sample(2000 * units.rpm, 60 * units.deg)
         .add_sample(3000 * units.rpm, 60 * units.deg)
-        .add_sample(4000 * units.rpm, 58 * units.deg)
-        .add_sample(5000 * units.rpm, 55 * units.deg)
-        .add_sample(6000 * units.rpm, 52 * units.deg)
-        .add_sample(7000 * units.rpm, 48 * units.deg)
-        .add_sample(8000 * units.rpm, 44 * units.deg)
-        .add_sample(9000 * units.rpm, 44 * units.deg)
+        .add_sample(4000 * units.rpm, 60 * units.deg)
+        .add_sample(5000 * units.rpm, 60 * units.deg)
+        .add_sample(6000 * units.rpm, 58 * units.deg)
+        .add_sample(7000 * units.rpm, 55 * units.deg)
+        .add_sample(8000 * units.rpm, 52 * units.deg)
+        .add_sample(9000 * units.rpm, 50 * units.deg)
 
     engine.add_ignition_module(
         bmw_s54b32_distributor(
