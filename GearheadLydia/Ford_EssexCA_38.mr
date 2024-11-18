@@ -145,10 +145,10 @@ public node ford_essexca_38_head {
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.0 * units.inch) * 4 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.7 * units.inch) * 4 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
+        intake_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.65 * units.inch) * 4 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.65 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -161,7 +161,7 @@ public node ford_essexca_38_head {
 
 // https://www.v6mustang.com/threads/3-8l-ford-v6-factory-engine-specifications.270305/
 
-public node EssexCanada38 {
+public node ford_essexca_38_engine {
     alias output __out: engine;
 
     wires wires()
@@ -181,12 +181,12 @@ public node EssexCanada38 {
     label bore_spacing(4.193 * units.inch)
     label stroke(3.390 * units.inch)
     label rod_length(6.091 * units.inch)
-    label rod_mass(618 * units.g) // carried over, incorrect
+    label rod_mass(618 * units.g) // guess
     label compression_height(1.450 * units.inch)
-    label piston_mass(361 * units.g) // carried over, incorrect
+    label piston_mass(450 * units.g) // guess
     label piston_dome(5 * units.cc)
     label deck_height((9.232 * units.inch) + (0.0 * units.mm))
-    label crank_mass(55 * units.lb)
+    label crank_mass(65 * units.lb) // guess
     label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
@@ -254,19 +254,19 @@ public node EssexCanada38 {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(400.0),
+        intake_flow_rate: k_carb(500.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.995,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(200.0),
-        runner_length: 7 * units.inch,
+        runner_length: 7.0 * units.inch,
         velocity_decay: 0.1
     )
     
     label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(400.0),
+        outlet_flow_rate: k_carb(500.0),
         primary_tube_length: 16.0 * units.inch,
         primary_flow_rate: k_carb(200.0),
         velocity_decay: 1.0, //0.5
@@ -281,12 +281,12 @@ public node EssexCanada38 {
     label pipe_length_2(2 * units.inch)
     label pipe_length_3(0 * units.inch)
     
-    label exhaust_stagger(2 * units.inch)
+    label exhaust_stagger(3 * units.inch)
 
     cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
     bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -295,7 +295,7 @@ public node EssexCanada38 {
             primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire2,
@@ -304,7 +304,7 @@ public node EssexCanada38 {
             primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire3,
@@ -316,7 +316,7 @@ public node EssexCanada38 {
     cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (second)
     bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire4,
@@ -325,7 +325,7 @@ public node EssexCanada38 {
             primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire5,
@@ -334,7 +334,7 @@ public node EssexCanada38 {
             primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire6,
@@ -371,22 +371,18 @@ public node EssexCanada38 {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 15 * units.deg)
-        .add_sample(1000 * units.rpm, 25 * units.deg)
+        .add_sample(0000 * units.rpm, 20 * units.deg)
+        .add_sample(1000 * units.rpm, 26 * units.deg)
         .add_sample(2000 * units.rpm, 30 * units.deg)
-        .add_sample(3000 * units.rpm, 35 * units.deg)
-        .add_sample(4000 * units.rpm, 40 * units.deg)
-        .add_sample(5000 * units.rpm, 40 * units.deg)
-        .add_sample(6000 * units.rpm, 40 * units.deg)
-        .add_sample(7000 * units.rpm, 40 * units.deg)
-        .add_sample(8000 * units.rpm, 40 * units.deg)
-        .add_sample(9000 * units.rpm, 40 * units.deg)
+        .add_sample(3000 * units.rpm, 33 * units.deg)
+        .add_sample(4000 * units.rpm, 36 * units.deg)
+        .add_sample(5000 * units.rpm, 38 * units.deg)
+        .add_sample(6000 * units.rpm, 38 * units.deg)
 
     engine.add_ignition_module(
         ford_essexca_38_distributor(
             wires: wires,
-            timing_curve: timing_curve,
-            rev_limit: 6250 * units.rpm
+            timing_curve: timing_curve
         )
     )
 }
@@ -417,7 +413,7 @@ public node borgwarner_t5_transmission {
 }
 
 public node main {
-    set_engine(EssexCanada38())
+    set_engine(ford_essexca_38_engine())
     set_vehicle(ford_mustang_v6_sn95_vehicle())
     set_transmission(borgwarner_t5_transmission())
 }
