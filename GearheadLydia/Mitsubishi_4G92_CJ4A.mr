@@ -1,0 +1,407 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+// https://www.zerotohundred.com/forums/threads/4g9x-engine-rev-cut.143555/
+public node mitsubishi_4g92_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 8200 * units.rpm;
+    input limiter_duration: 0.09;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire1, (0.0/4.0) * cycle)
+            .connect_wire(wires.wire3, (1.0/4.0) * cycle)
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
+            .connect_wire(wires.wire2, (3.0/4.0) * cycle);
+}
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+    output wire3: ignition_wire();
+    output wire4: ignition_wire();
+}
+
+public node mitsubishi_4g92_lobe_profile_int_lo {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 181 * units.deg, // adv. 228
+            gamma: 1.0,
+            lift: 7.58 * units.mm,
+            steps: 100
+        );
+}
+
+public node mitsubishi_4g92_lobe_profile_exh_lo {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 185 * units.deg, // adv. 232
+            gamma: 1.0,
+            lift: 8.2 * units.mm,
+            steps: 100
+        );
+}
+
+public node mitsubishi_4g92_lobe_profile_int_hi {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 225 * units.deg, // adv. 283
+            gamma: 1.0,
+            lift: 10.41 * units.mm,
+            steps: 100
+        );
+}
+
+public node mitsubishi_4g92_lobe_profile_exh_hi {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 239 * units.deg, // adv. 300
+            gamma: 1.0,
+            lift: 9.83 * units.mm,
+            steps: 100
+        );
+}
+
+public node mitsubishi_4g92_camshaft_builder {
+    input in_lobe_profile_lo: mitsubishi_4g92_lobe_profile_int_lo();
+    input ex_lobe_profile_lo: mitsubishi_4g92_lobe_profile_exh_lo();
+    input in_lobe_profile_hi: mitsubishi_4g92_lobe_profile_int_hi();
+    input ex_lobe_profile_hi: mitsubishi_4g92_lobe_profile_exh_hi();
+    input intake_lobe_center_lo: 125.0 * units.deg;  // guess
+    input exhaust_lobe_center_lo: 125.0 * units.deg; // guess
+    input intake_lobe_center_hi: 100.0 * units.deg;
+    input exhaust_lobe_center_hi: 100.0 * units.deg;
+    input advance_in_lo: 0.0 * units.deg;
+    input advance_ex_lo: 0.0 * units.deg;
+    input advance_in_hi: 0.0 * units.deg;
+    input advance_ex_hi: 0.0 * units.deg;
+    input base_radius: 16.0 * units.mm; // guess
+
+    output intake_cam_0_lo: _intake_cam_0_lo;
+    output exhaust_cam_0_lo: _exhaust_cam_0_lo;
+
+    output intake_cam_0_hi: _intake_cam_0_hi;
+    output exhaust_cam_0_hi: _exhaust_cam_0_hi;
+
+    camshaft_parameters params(
+        advance: advance_in_lo,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0_lo(params, lobe_profile: in_lobe_profile_lo, advance: advance_in_lo)
+    camshaft _exhaust_cam_0_lo(params, lobe_profile: ex_lobe_profile_lo, advance: advance_ex_lo)
+
+    camshaft _intake_cam_0_hi(params, lobe_profile: in_lobe_profile_hi, advance: advance_in_hi)
+    camshaft _exhaust_cam_0_hi(params, lobe_profile: ex_lobe_profile_hi, advance: advance_ex_hi)
+
+
+    label rot60(60 * units.deg)
+    label rot90(90 * units.deg)
+    label rot120(120 * units.deg)
+    label rot180(180 * units.deg)
+    label rot360(360 * units.deg)
+
+    _intake_cam_0_lo
+        .add_lobe(rot360 + intake_lobe_center_lo + 0 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_lo + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_lo + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_lo + 2 * rot180)
+
+    _exhaust_cam_0_lo
+        .add_lobe(rot360 - exhaust_lobe_center_lo + 0 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center_lo + 3 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center_lo + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center_lo + 2 * rot180)
+
+    _intake_cam_0_hi
+        .add_lobe(rot360 + intake_lobe_center_hi + 0 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_hi + 3 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_hi + 1 * rot180)
+        .add_lobe(rot360 + intake_lobe_center_hi + 2 * rot180)
+
+    _exhaust_cam_0_hi
+        .add_lobe(rot360 - exhaust_lobe_center_hi + 0 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center_hi + 3 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center_hi + 1 * rot180)
+        .add_lobe(rot360 - exhaust_lobe_center_hi + 2 * rot180)
+}
+
+public node mitsubishi_4g92_head {
+    input cam_in_lo;
+    input cam_ex_lo;
+    input cam_in_hi;
+    input cam_ex_hi;
+    input chamber_volume: 49.0 * units.cc; // guess (SOHC engine)
+    input flip_display: false;
+    
+    // guesses
+    input flow_intake: 250;
+    input flow_exhaust: 200;
+    input lift_max: 11.0 * units.mm;
+    alias output __out: head;
+
+    function intake_flow(lift_max / 5.0)
+    intake_flow
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_intake))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_intake))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_intake))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_intake))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_intake))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_intake))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_intake))
+
+    function exhaust_flow(lift_max / 5.0)
+    exhaust_flow
+        .add_sample(0.0 * lift_max, k_28inH2O(0.00 * flow_exhaust))
+        .add_sample(0.2 * lift_max, k_28inH2O(0.32 * flow_exhaust))
+        .add_sample(0.4 * lift_max, k_28inH2O(0.63 * flow_exhaust))
+        .add_sample(0.6 * lift_max, k_28inH2O(0.83 * flow_exhaust))
+        .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
+        .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
+        .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
+
+        
+    generic_cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: circle_area(0.9 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(0.9 * units.inch),
+        exhaust_runner_volume: circle_area(0.6 * units.inch) * 3 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.6 * units.inch),
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        valvetrain: vtec_valvetrain(
+            vtec_intake_camshaft: cam_in_hi,
+            vtec_exhaust_camshaft: cam_ex_hi,
+            intake_camshaft: cam_in_lo,
+            exhaust_camshaft: cam_ex_lo,
+            min_rpm: 5500 * units.rpm // guess
+        ),
+        flip_display: flip_display
+    )
+}
+
+// http://mywikimotors.com/mitsubishi-4g92/
+public node mitsubishi_4g92_cj4a_engine {
+    alias output __out: engine;
+
+    engine engine(
+        name: "Mitsubishi 4G92 MIVEC",
+        starter_torque: 150 * units.lb_ft,
+        starter_speed: 1000 * units.rpm,
+        redline: 8000 * units.rpm,
+        throttle_gamma: 1.0
+    )
+    
+    label lean_angle(0 * units.deg)
+
+    label bore(81.0 * units.mm)
+    label stroke(77.5 * units.mm)
+    label rod_length(120.0 * units.mm)
+    label rod_mass(450 * units.g)
+    label piston_mass(400 * units.g)
+    label compression_height(30.0 * units.mm)
+    label deck_height((188.75 + 1.0) * units.mm)
+    label piston_dome(14.2 * units.cc) // for 11.0:1 CR
+    label crank_mass(50 * units.lb)
+    label flywheel_mass(5.0 * units.kg)
+    label flywheel_radius(4.0 * units.inch)
+
+    label crank_moment(
+        disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
+    )
+    label flywheel_moment(
+        disk_moment_of_inertia(mass: flywheel_mass, radius: flywheel_radius)
+    )
+    label other_moment( // Moment from cams, pulleys, etc [estimated]
+        disk_moment_of_inertia(mass: 15 * units.kg, radius: 8.0 * units.cm)
+    )
+
+    wires wires()
+
+    crankshaft c0(
+        throw: stroke / 2,
+        flywheel_mass: flywheel_mass,
+        mass: crank_mass,
+        friction_torque: 5.0 * units.lb_ft,
+        moment_of_inertia: crank_moment + flywheel_moment + other_moment,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 90.0 * units.deg + lean_angle
+    )
+
+    rod_journal rj1(angle:  0  * units.deg)
+    rod_journal rj2(angle: 180 * units.deg)
+    rod_journal rj3(angle: 180 * units.deg)
+    rod_journal rj4(angle:  0  * units.deg)
+    
+    c0
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
+
+    piston_parameters piston_params(
+        mass: piston_mass,
+        blowby: k_28inH2O(0.1),
+        compression_height: compression_height,
+        wrist_pin_position: 0.0,
+        displacement: piston_dome
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: rod_mass,
+        moment_of_inertia: rod_moment_of_inertia(
+            mass: rod_mass,
+            length: rod_length
+        ),
+        center_of_mass: 0.0,
+        length: rod_length
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: bore,
+        deck_height: deck_height
+    )
+
+    intake intake(
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 50.0 * units.cm2,
+        intake_flow_rate: k_carb(400.0),
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.9965,
+        throttle_gamma: 1.0,
+        runner_flow_rate: k_carb(200.0),
+        runner_length: 6.0 * units.inch,
+        velocity_decay: 0.1
+    )
+    
+    label exhaust_radius((3.0 * units.inch)/2)
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(400.0),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(200.0),
+        velocity_decay: 1.0, //0.5
+        collector_cross_section_area: circle_area(exhaust_radius),
+        length: 2200 * units.mm,
+        volume: 2200 * units.mm * circle_area(exhaust_radius)
+    )
+    
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.01, impulse_response: ir_lib.default_0)
+ 
+    cylinder_bank b0(bank_params, angle: 0 * units.deg + lean_angle)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire1,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: 5.5 * units.inch,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire2,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: 2.5 * units.inch,
+            sound_attenuation: 0.97
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire3,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: 0.0 * units.inch,
+            sound_attenuation: 0.92
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire4,
+            intake: intake,
+            exhaust_system: exhaust,
+            primary_length: 2.0 * units.inch,
+            sound_attenuation: 0.95
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+
+    engine.add_crankshaft(c0)
+
+    mitsubishi_4g92_camshaft_builder camshaft()
+
+    b0.set_cylinder_head (
+        mitsubishi_4g92_head(
+            cam_in_lo: camshaft.intake_cam_0_lo,
+            cam_in_hi: camshaft.intake_cam_0_hi,
+            cam_ex_lo: camshaft.exhaust_cam_0_lo,
+            cam_ex_hi: camshaft.exhaust_cam_0_hi,
+            flip_display: false
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 46 * units.deg)
+        .add_sample(1000 * units.rpm, 51 * units.deg)
+        .add_sample(2000 * units.rpm, 51 * units.deg)
+        .add_sample(3000 * units.rpm, 51 * units.deg)
+        .add_sample(4000 * units.rpm, 51 * units.deg)
+        .add_sample(5000 * units.rpm, 51 * units.deg)
+        .add_sample(6000 * units.rpm, 51 * units.deg)
+        .add_sample(7000 * units.rpm, 51 * units.deg)
+
+    engine.add_ignition_module(
+        mitsubishi_4g92_distributor(
+            wires: wires,
+            timing_curve: timing_curve
+        ))
+}
+
+// 1998 Mitsubishi Mirage Cyborg ZR (CJ4A)
+public node mitsubishi_mirage_cyborg_zr_cj4a_vehicle {
+    alias output __out:
+        vehicle(
+            mass: 1060 * units.kg,
+            drag_coefficient: 0.3,
+            cross_sectional_area: 1.93 * (units.m * units.m),
+            diff_ratio: 4.625,
+            tire_radius: 297 * units.mm, // 195/55R15
+            rolling_resistance: 1060 * units.kg * 9.81 * (185.0/275.0) * 0.01
+        );
+}
+
+public node mitsubishi_mirage_cyborg_zr_cj4a_transmission {
+    alias output __out:
+        transmission(
+            max_clutch_torque: 300 * units.lb_ft
+        )
+        .add_gear(3.071)
+        .add_gear(1.947)
+        .add_gear(1.379)
+        .add_gear(1.030)
+        .add_gear(0.767);
+}
+
+public node main {
+    set_engine(mitsubishi_4g92_cj4a_engine())
+    set_vehicle(mitsubishi_mirage_cyborg_zr_cj4a_vehicle())
+    set_transmission(mitsubishi_mirage_cyborg_zr_cj4a_transmission())
+}
+
+main()
