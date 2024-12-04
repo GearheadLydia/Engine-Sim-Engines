@@ -76,20 +76,20 @@ public node bmw_m70_camshaft_builder {
     input advance: 10.0 * units.deg;
     input base_radius: 16.0 * units.mm;
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
 
     label rot30(30 * units.deg)
@@ -99,15 +99,7 @@ public node bmw_m70_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_0
-        .add_lobe(rot360 + intake_lobe_center + 1 * rot60) // #7
-        .add_lobe(rot360 + intake_lobe_center + 9 * rot60) // #8
-        .add_lobe(rot360 + intake_lobe_center + 5 * rot60) // #9
-        .add_lobe(rot360 + intake_lobe_center + 11 * rot60) // #10
-        .add_lobe(rot360 + intake_lobe_center + 3 * rot60) // #11
-        .add_lobe(rot360 + intake_lobe_center + 7 * rot60) // #12
-
-    _intake_cam_1
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 0 * rot60) // #1
         .add_lobe(rot360 + intake_lobe_center + 8 * rot60) // #2
         .add_lobe(rot360 + intake_lobe_center + 4 * rot60) // #3
@@ -115,21 +107,29 @@ public node bmw_m70_camshaft_builder {
         .add_lobe(rot360 + intake_lobe_center + 2 * rot60) // #5
         .add_lobe(rot360 + intake_lobe_center + 6 * rot60) // #6
 
-    _exhaust_cam_0
-        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot60) // #7
-        .add_lobe(rot360 - exhaust_lobe_center + 9 * rot60) // #8
-        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot60) // #9
-        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot60) // #10
-        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot60) // #11
-        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot60) // #12
+    _intake_cam_R
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot60) // #7
+        .add_lobe(rot360 + intake_lobe_center + 9 * rot60) // #8
+        .add_lobe(rot360 + intake_lobe_center + 5 * rot60) // #9
+        .add_lobe(rot360 + intake_lobe_center + 11 * rot60) // #10
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot60) // #11
+        .add_lobe(rot360 + intake_lobe_center + 7 * rot60) // #12
 
-    _exhaust_cam_1
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot60) // #1
         .add_lobe(rot360 - exhaust_lobe_center + 8 * rot60) // #2
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot60) // #3
         .add_lobe(rot360 - exhaust_lobe_center + 10 * rot60) // $4
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot60) // #5
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot60) // #6
+
+    _exhaust_cam_R
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot60) // #7
+        .add_lobe(rot360 - exhaust_lobe_center + 9 * rot60) // #8
+        .add_lobe(rot360 - exhaust_lobe_center + 5 * rot60) // #9
+        .add_lobe(rot360 - exhaust_lobe_center + 11 * rot60) // #10
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot60) // #11
+        .add_lobe(rot360 - exhaust_lobe_center + 7 * rot60) // #12
 }
 
 private node add_flow_sample {
@@ -269,7 +269,7 @@ public node bmw_m70b50_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -340,74 +340,11 @@ public node bmw_m70b50_engine {
     label pipe_length_6(bore_spacing * 1.3)
     
     label pipe_length_stagger(30 * units.mm)
- 
-    cylinder_bank b0(bank_params, angle: -30 * units.deg) // R (first)
-    b0
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj1,
-            ignition_wire: wires.wire07,
-            intake: intakeL,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_1 + pipe_length_stagger,
-            sound_attenuation: 1.0
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj2,
-            ignition_wire: wires.wire08,
-            intake: intakeL,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_2 + pipe_length_stagger,
-            sound_attenuation: 0.4
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj3,
-            ignition_wire: wires.wire09,
-            intake: intakeL,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_3 + pipe_length_stagger,
-            sound_attenuation: 1.0
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj4,
-            ignition_wire: wires.wire10,
-            intake: intakeL,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_4 + pipe_length_stagger,
-            sound_attenuation: 1.0
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj5,
-            ignition_wire: wires.wire11,
-            intake: intakeL,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_5 + pipe_length_stagger,
-            sound_attenuation: 0.4
-        )
-        .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
-            connecting_rod: connecting_rod(cr_params),
-            rod_journal: rj6,
-            ignition_wire: wires.wire12,
-            intake: intakeL,
-            exhaust_system: exhaust,
-            primary_length: pipe_length_6 + pipe_length_stagger,
-            sound_attenuation: 1.0
-        )
         
-    cylinder_bank b1(bank_params, angle: 30 * units.deg) // L (second)
-    b1
+    cylinder_bank bL(bank_params, angle: 30 * units.deg) // L (second)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire01,
@@ -417,7 +354,7 @@ public node bmw_m70b50_engine {
             sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire02,
@@ -427,7 +364,7 @@ public node bmw_m70b50_engine {
             sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire03,
@@ -437,7 +374,7 @@ public node bmw_m70b50_engine {
             sound_attenuation: 0.4
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire04,
@@ -447,7 +384,7 @@ public node bmw_m70b50_engine {
             sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire05,
@@ -457,7 +394,7 @@ public node bmw_m70b50_engine {
             sound_attenuation: 1.0
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire06,
@@ -466,10 +403,73 @@ public node bmw_m70b50_engine {
             primary_length: pipe_length_6,
             sound_attenuation: 0.4
         )
+ 
+    cylinder_bank bR(bank_params, angle: -30 * units.deg) // R (first)
+    bR
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            ignition_wire: wires.wire07,
+            intake: intakeL,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_1 + pipe_length_stagger,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            ignition_wire: wires.wire08,
+            intake: intakeL,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_2 + pipe_length_stagger,
+            sound_attenuation: 0.4
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            ignition_wire: wires.wire09,
+            intake: intakeL,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_3 + pipe_length_stagger,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            ignition_wire: wires.wire10,
+            intake: intakeL,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_4 + pipe_length_stagger,
+            sound_attenuation: 1.0
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            ignition_wire: wires.wire11,
+            intake: intakeL,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_5 + pipe_length_stagger,
+            sound_attenuation: 0.4
+        )
+        .add_cylinder(
+            piston: piston(piston_params),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj6,
+            ignition_wire: wires.wire12,
+            intake: intakeL,
+            exhaust_system: exhaust,
+            primary_length: pipe_length_6 + pipe_length_stagger,
+            sound_attenuation: 1.0
+        )
 
     engine
-        .add_cylinder_bank(b1)
-        .add_cylinder_bank(b0)
+        .add_cylinder_bank(bL)
+        .add_cylinder_bank(bR)
 
     engine.add_crankshaft(c0)
 
@@ -478,18 +478,19 @@ public node bmw_m70b50_engine {
         ex_lobe_profile: bmw_m70_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bL.set_cylinder_head (
         bmw_m70_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
+            flip_display: true
         )
     )
 
-    b1.set_cylinder_head (
+    bR.set_cylinder_head (
         bmw_m70_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
-            flip_display: true
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
+            flip_display: false
         )
     )
 
