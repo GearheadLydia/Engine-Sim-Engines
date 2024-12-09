@@ -6,10 +6,10 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-public node mitsubishi_6a12_distributor {
+public node mitsubishi_6a10_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 8050 * units.rpm;
+    input rev_limit: 7650 * units.rpm; // guess
     input limiter_duration: 0.1;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -31,96 +31,51 @@ private node wires {
 }
 
 
-// https://www.lilevo.com/mirage/Manuals/6A12%20Series%20Engine%20Workshop%20Manual%20PWEE9202-AB.pdf
-// https://www.andysautosport.com/images/vehicle_specs/fto_6A12-MIVEC_V6_engine_manual.pdf
-// https://ftoworx.files.wordpress.com/2012/09/adjusting_tappets.pdf
+// cam profiles are totally made up
 
-// additional source not used: (low: 236 adv dur / 103 center; hi: 300/285 adv dur / 112.5 center)
-// https://jdmfsm.info/Auto/Japan/Mitsubishi/FTO/Manuals/1998%20FTO%20Technical%20Manual/Mitsubishi%20FTO%20workshop%20manual%201998%20-%20eng.pdf
-
-// low profiles are totally made up to meet nicely at switchover point
-
-public node mitsubishi_6a12_lobe_profile_int_lo {
+public node mitsubishi_6a10_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 180 * units.deg,
+            duration_at_50_thou: 210 * units.deg,
             gamma: 1.0,
-            lift: 6.0 * units.mm,
+            lift: 8.5 * units.mm,
             steps: 100
         );
 }
 
-public node mitsubishi_6a12_lobe_profile_exh_lo {
+public node mitsubishi_6a10_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 180 * units.deg,
+            duration_at_50_thou: 205 * units.deg,
             gamma: 1.0,
-            lift: 6.0 * units.mm,
+            lift: 8.5 * units.mm,
             steps: 100
         );
 }
 
-public node mitsubishi_6a12_lobe_profile_int_hi {
-    alias output __out:
-        harmonic_cam_lobe(
-            duration_at_50_thou: 244 * units.deg,
-            gamma: 1.0,
-            lift: 9.2 * units.mm,
-            steps: 100
-        );
-}
-
-public node mitsubishi_6a12_lobe_profile_exh_hi {
-    alias output __out:
-        harmonic_cam_lobe(
-            duration_at_50_thou: 248 * units.deg,
-            gamma: 1.0,
-            lift: 9.2 * units.mm,
-            steps: 100
-        );
-}
-
-public node mitsubishi_6a12_camshaft_builder {
-    input in_lobe_profile_lo: mitsubishi_6a12_lobe_profile_int_lo();
-    input ex_lobe_profile_lo: mitsubishi_6a12_lobe_profile_exh_lo();
-    input in_lobe_profile_hi: mitsubishi_6a12_lobe_profile_int_hi();
-    input ex_lobe_profile_hi: mitsubishi_6a12_lobe_profile_exh_hi();
-    input intake_lobe_center_lo: 127.0 * units.deg;  // guess
-    input exhaust_lobe_center_lo: 127.0 * units.deg; // guess
-    input intake_lobe_center_hi: 106.0 * units.deg;  // guess
-    input exhaust_lobe_center_hi: 106.0 * units.deg; // guess
-    input advance_in_lo: 0.0 * units.deg;
-    input advance_ex_lo: 0.0 * units.deg;
-    input advance_in_hi: 0.0 * units.deg;
-    input advance_ex_hi: 0.0 * units.deg;
+public node mitsubishi_6a10_camshaft_builder {
+    input in_lobe_profile: mitsubishi_6a10_lobe_profile_int();
+    input ex_lobe_profile: mitsubishi_6a10_lobe_profile_exh();
+    input intake_lobe_center: 110.0 * units.deg;
+    input exhaust_lobe_center: 110.0 * units.deg;
+    input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm;
 
-    output intake_cam_L_lo: _intake_cam_L_lo;
-    output exhaust_cam_L_lo: _exhaust_cam_L_lo;
-    output intake_cam_R_lo: _intake_cam_R_lo;
-    output exhaust_cam_R_lo: _exhaust_cam_R_lo;
-
-    output intake_cam_L_hi: _intake_cam_L_hi;
-    output exhaust_cam_L_hi: _exhaust_cam_L_hi;
-    output intake_cam_R_hi: _intake_cam_R_hi;
-    output exhaust_cam_R_hi: _exhaust_cam_R_hi;
+    output intake_cam_L: _intake_cam_L;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_L: _exhaust_cam_L;
+    output exhaust_cam_R: _exhaust_cam_R;
 
     camshaft_parameters params(
-        advance: advance_in_lo,
+        advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_L_lo(params, lobe_profile: in_lobe_profile_lo, advance: advance_in_lo)
-    camshaft _exhaust_cam_L_lo(params, lobe_profile: ex_lobe_profile_lo, advance: advance_ex_lo)
+    camshaft _intake_cam_L(params, lobe_profile: in_lobe_profile, advance: advance)
+    camshaft _exhaust_cam_L(params, lobe_profile: ex_lobe_profile, advance: advance)
 
-    camshaft _intake_cam_R_lo(params, lobe_profile: in_lobe_profile_lo, advance: advance_in_lo)
-    camshaft _exhaust_cam_R_lo(params, lobe_profile: ex_lobe_profile_lo, advance: advance_ex_lo)
-
-    camshaft _intake_cam_L_hi(params, lobe_profile: in_lobe_profile_hi, advance: advance_in_hi)
-    camshaft _exhaust_cam_L_hi(params, lobe_profile: ex_lobe_profile_hi, advance: advance_ex_hi)
-
-    camshaft _intake_cam_R_hi(params, lobe_profile: in_lobe_profile_hi, advance: advance_in_hi)
-    camshaft _exhaust_cam_R_hi(params, lobe_profile: ex_lobe_profile_hi, advance: advance_ex_hi)
+    camshaft _intake_cam_R(params, lobe_profile: in_lobe_profile, advance: advance)
+    camshaft _exhaust_cam_R(params, lobe_profile: ex_lobe_profile, advance: advance)
 
 
     label rot30(30 * units.deg)
@@ -130,53 +85,31 @@ public node mitsubishi_6a12_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_L_lo
-        .add_lobe(rot360 + intake_lobe_center_lo + (0 * rot120))
-        .add_lobe(rot360 + intake_lobe_center_lo + (2 * rot120))
-        .add_lobe(rot360 + intake_lobe_center_lo + (4 * rot120))
+    _intake_cam_L
+        .add_lobe(rot360 + intake_lobe_center + (0 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (2 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (4 * rot120))
 
-    _exhaust_cam_L_lo
-        .add_lobe(rot360 - exhaust_lobe_center_lo + (0 * rot120))
-        .add_lobe(rot360 - exhaust_lobe_center_lo + (2 * rot120))
-        .add_lobe(rot360 - exhaust_lobe_center_lo + (4 * rot120))
+    _exhaust_cam_L
+        .add_lobe(rot360 - exhaust_lobe_center + (0 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (2 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (4 * rot120))
 
-    _intake_cam_R_lo
-        .add_lobe(rot360 + intake_lobe_center_lo + (1 * rot120))
-        .add_lobe(rot360 + intake_lobe_center_lo + (3 * rot120))
-        .add_lobe(rot360 + intake_lobe_center_lo + (5 * rot120))
+    _intake_cam_R
+        .add_lobe(rot360 + intake_lobe_center + (1 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (3 * rot120))
+        .add_lobe(rot360 + intake_lobe_center + (5 * rot120))
 
-    _exhaust_cam_R_lo
-        .add_lobe(rot360 - exhaust_lobe_center_lo + (1 * rot120))
-        .add_lobe(rot360 - exhaust_lobe_center_lo + (3 * rot120))
-        .add_lobe(rot360 - exhaust_lobe_center_lo + (5 * rot120))
-
-    _intake_cam_L_hi
-        .add_lobe(rot360 + intake_lobe_center_hi + (0 * rot120))
-        .add_lobe(rot360 + intake_lobe_center_hi + (2 * rot120))
-        .add_lobe(rot360 + intake_lobe_center_hi + (4 * rot120))
-
-    _exhaust_cam_L_hi
-        .add_lobe(rot360 - exhaust_lobe_center_hi + (0 * rot120))
-        .add_lobe(rot360 - exhaust_lobe_center_hi + (2 * rot120))
-        .add_lobe(rot360 - exhaust_lobe_center_hi + (4 * rot120))
-
-    _intake_cam_R_hi
-        .add_lobe(rot360 + intake_lobe_center_hi + (1 * rot120))
-        .add_lobe(rot360 + intake_lobe_center_hi + (3 * rot120))
-        .add_lobe(rot360 + intake_lobe_center_hi + (5 * rot120))
-
-    _exhaust_cam_R_hi
-        .add_lobe(rot360 - exhaust_lobe_center_hi + (1 * rot120))
-        .add_lobe(rot360 - exhaust_lobe_center_hi + (3 * rot120))
-        .add_lobe(rot360 - exhaust_lobe_center_hi + (5 * rot120))
+    _exhaust_cam_R
+        .add_lobe(rot360 - exhaust_lobe_center + (1 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (3 * rot120))
+        .add_lobe(rot360 - exhaust_lobe_center + (5 * rot120))
 }
 
 // https://www.ozvr4.com/threads/high-compression-ratio-turbo.14514/page-2
-public node mitsubishi_6a12_head {
-    input cam_in_lo;
-    input cam_ex_lo;
-    input cam_in_hi;
-    input cam_ex_hi;
+public node mitsubishi_6a10_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
     input chamber_volume: 33.0 * units.cc;
     input flip_display: false;
     
@@ -205,8 +138,9 @@ public node mitsubishi_6a12_head {
         .add_sample(0.8 * lift_max, k_28inH2O(0.95 * flow_exhaust))
         .add_sample(1.0 * lift_max, k_28inH2O(1.00 * flow_exhaust))
         .add_sample(1.2 * lift_max, k_28inH2O(1.02 * flow_exhaust))
+
         
-    generic_cylinder_head head(
+    cylinder_head head(
         chamber_volume: chamber_volume,
         intake_runner_volume: circle_area(0.9 * units.inch) * 4 * units.inch,
         intake_runner_cross_section_area: circle_area(0.9 * units.inch),
@@ -215,39 +149,34 @@ public node mitsubishi_6a12_head {
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
-        valvetrain: vtec_valvetrain(
-            vtec_intake_camshaft: cam_in_hi,
-            vtec_exhaust_camshaft: cam_ex_hi,
-            intake_camshaft: cam_in_lo,
-            exhaust_camshaft: cam_ex_lo,
-            min_rpm: 5800 * units.rpm // guess based on sound
-        ),
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
         flip_display: flip_display
     )
 }
 
 
-public node mitsubishi_6a12_mivec_engine {
+public node mitsubishi_6a10_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Mitsubishi 6A12 MIVEC",
+        name: "Mitsubishi 6A10",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
-        redline: 7800 * units.rpm,
+        redline: 7500 * units.rpm, // guess
         throttle_gamma: 1.0
     )
 
-    label bore(78.4 * units.mm)
-    label stroke(69.0 * units.mm)
+    label bore(73.0 * units.mm)
+    label stroke(63.6 * units.mm)
     label rod_length(125.5 * units.mm) // real
     label rod_mass(500.0 * units.g) // guess
     label piston_mass(400 * units.g) // guess
-    label compression_height(30.0 * units.mm) // 4G92
+    label compression_height(32.7 * units.mm) // guess
     label deck_clearance(1.1 * units.mm) // head gasket only
-    label piston_dome(1.3 * units.cc) // for 10.0:1 CR
+    label piston_dome(8 * units.cc) // for 10.0:1 CR
     label crank_mass(50 * units.lb)
     label flywheel_mass(30 * units.lb)
     label flywheel_radius(5 * units.inch)
@@ -315,9 +244,9 @@ public node mitsubishi_6a12_mivec_engine {
     intake intake (
         plenum_volume: 1.0 * units.L,
         plenum_cross_section_area: 50.0 * units.cm2,
-        intake_flow_rate: k_carb(410.0),
+        intake_flow_rate: k_carb(300.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9958,
+        idle_throttle_plate_position: 0.996,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(300.0),
         runner_length: 12.0 * units.inch,
@@ -327,9 +256,9 @@ public node mitsubishi_6a12_mivec_engine {
     label exhaust_radius((3.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(410.0),
+        outlet_flow_rate: k_carb(300.0),
         primary_tube_length: 10.0 * units.inch,
-        primary_flow_rate: k_carb(250.0),
+        primary_flow_rate: k_carb(200.0),
         velocity_decay: 0.77, //0.5
         collector_cross_section_area: circle_area(exhaust_radius),
         length: 1800 * units.mm,
@@ -338,11 +267,11 @@ public node mitsubishi_6a12_mivec_engine {
 
     exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.02, impulse_response: ir_lib.default_0)
     
-    label pipe_length_1(1.5 * units.inch)
+    label pipe_length_1(1.7 * units.inch)
     label pipe_length_2(0.0 * units.inch)
-    label pipe_length_3(1.0 * units.inch)
+    label pipe_length_3(1.3 * units.inch)
     
-    label exhaust_stagger(1.0 * units.inch)
+    label exhaust_stagger(2.0 * units.inch)
 
     cylinder_bank bL(bank_params, angle: 30.0 * units.deg)
     bL
@@ -416,77 +345,73 @@ public node mitsubishi_6a12_mivec_engine {
 
     engine.add_crankshaft(c0)
 
-    mitsubishi_6a12_camshaft_builder camshaft()
+    mitsubishi_6a10_camshaft_builder camshaft()
 
     bL.set_cylinder_head (
-        mitsubishi_6a12_head(
-            cam_in_lo: camshaft.intake_cam_L_lo,
-            cam_in_hi: camshaft.intake_cam_L_hi,
-            cam_ex_lo: camshaft.exhaust_cam_L_lo,
-            cam_ex_hi: camshaft.exhaust_cam_L_hi,
+        mitsubishi_6a10_head(
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
     bR.set_cylinder_head (
-        mitsubishi_6a12_head(
-            cam_in_lo: camshaft.intake_cam_R_lo,
-            cam_in_hi: camshaft.intake_cam_R_hi,
-            cam_ex_lo: camshaft.exhaust_cam_R_lo,
-            cam_ex_hi: camshaft.exhaust_cam_R_hi,
+        mitsubishi_6a10_head(
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 55 * units.deg)
-        .add_sample(1000 * units.rpm, 65 * units.deg)
-        .add_sample(2000 * units.rpm, 65 * units.deg)
-        .add_sample(3000 * units.rpm, 65 * units.deg)
-        .add_sample(4000 * units.rpm, 65 * units.deg)
-        .add_sample(5000 * units.rpm, 65 * units.deg)
-        .add_sample(6000 * units.rpm, 65 * units.deg)
-        .add_sample(7000 * units.rpm, 65 * units.deg)
-        .add_sample(8000 * units.rpm, 65 * units.deg)
-        .add_sample(9000 * units.rpm, 65 * units.deg)
+        .add_sample(0000 * units.rpm, 50 * units.deg)
+        .add_sample(1000 * units.rpm, 60 * units.deg)
+        .add_sample(2000 * units.rpm, 60 * units.deg)
+        .add_sample(3000 * units.rpm, 60 * units.deg)
+        .add_sample(4000 * units.rpm, 60 * units.deg)
+        .add_sample(5000 * units.rpm, 60 * units.deg)
+        .add_sample(6000 * units.rpm, 60 * units.deg)
+        .add_sample(7000 * units.rpm, 60 * units.deg)
+        .add_sample(8000 * units.rpm, 60 * units.deg)
+        .add_sample(9000 * units.rpm, 60 * units.deg)
 
     engine.add_ignition_module(
-        mitsubishi_6a12_distributor(
+        mitsubishi_6a10_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
     )
 }
 
-// 1999 Mitsubishi FTO GP Version R (DE3A)
-public node mitsubishi_fto_de3a_vehicle {
+// 1993 Mitsubishi Mirage Royal (CB6A)
+// thanks as always to Automobile Catalog
+public node mitsubishi_mirage_royal_cb6a_vehicle {
     alias output __out:
         vehicle(
-            mass: 1150 * units.kg,
-            drag_coefficient: 0.32,
-            cross_sectional_area: 1.87 * (units.m * units.m),
-            diff_ratio: 4.312,
-            tire_radius: 306 * units.mm, // 205/50R16
-            rolling_resistance: 1150 * units.kg * 9.81 * (205.0/275.0) * 0.01
+            mass: 1080 * units.kg,
+            drag_coefficient: 0.3,
+            cross_sectional_area: 1.9 * (units.m * units.m),
+            diff_ratio: 4.35,
+            tire_radius: 298.5 * units.mm, // 185/65R14H
+            rolling_resistance: 1080 * units.kg * 9.81 * (185.0/275.0) * 0.01
         );
 }
 
-public node mitsubishi_fto_de3a_transmission {
+public node mitsubishi_mirage_royal_cb6a_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 500 * units.lb_ft
+            max_clutch_torque: 200 * units.lb_ft
         )
-        .add_gear(3.583)
-        .add_gear(1.947)
-        .add_gear(1.379)
-        .add_gear(1.030)
-        .add_gear(0.820);
+        .add_gear(2.846)
+        .add_gear(1.581)
+        .add_gear(1.000)
+        .add_gear(0.685);
 }
 
 public node main {
-    set_engine(mitsubishi_6a12_mivec_engine())
-    set_vehicle(mitsubishi_fto_de3a_vehicle())
-    set_transmission(mitsubishi_fto_de3a_transmission())
+    set_engine(mitsubishi_6a10_engine())
+    set_vehicle(mitsubishi_mirage_royal_cb6a_vehicle())
+    set_transmission(mitsubishi_mirage_royal_cb6a_transmission())
 }
 
 main()
