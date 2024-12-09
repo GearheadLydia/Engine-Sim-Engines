@@ -127,8 +127,7 @@ public node ferrari_f129_head {
     
     alias output __out: head;
 
-// http://www.users.interport.net/s/r/srweiss/tablehdc.htm#FERRARI
-
+    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#Ferrari
     function intake_flow(50 * units.thou)
     intake_flow
         .add_flow_sample(  0,   0)
