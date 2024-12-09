@@ -11,7 +11,7 @@ public node mitsubishi_4g92_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 8200 * units.rpm;
-    input limiter_duration: 0.09;
+    input limiter_duration: 0.07;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
@@ -136,7 +136,7 @@ public node mitsubishi_4g92_head {
     input cam_ex_lo;
     input cam_in_hi;
     input cam_ex_hi;
-    input chamber_volume: 49.0 * units.cc; // guess (SOHC engine)
+    input chamber_volume: 35.0 * units.cc; // guess (means almost flat pistons come out correct)
     input flip_display: false;
     
     // guesses
@@ -207,7 +207,7 @@ public node mitsubishi_4g92_cj4a_engine {
     label piston_mass(400 * units.g)
     label compression_height(30.0 * units.mm)
     label deck_height((188.75 + 1.0) * units.mm)
-    label piston_dome(14.2 * units.cc) // for 11.0:1 CR
+    label piston_dome(0.2 * units.cc) // for 11.0:1 CR
     label crank_mass(50 * units.lb)
     label flywheel_mass(5.0 * units.kg)
     label flywheel_radius(4.0 * units.inch)
@@ -274,7 +274,7 @@ public node mitsubishi_4g92_cj4a_engine {
         plenum_cross_section_area: 50.0 * units.cm2,
         intake_flow_rate: k_carb(400.0),
         idle_flow_rate: k_carb(0.001),
-        idle_throttle_plate_position: 0.9965,
+        idle_throttle_plate_position: 0.9966,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(200.0),
         runner_length: 6.0 * units.inch,
