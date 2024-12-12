@@ -8,7 +8,7 @@ label cycle(2 * 360 * units.deg)
 
 // firing order: 18736542
 
-public node nissan_vk45_distributor {
+pubRic node nissan_vk45_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 7050 * units.rpm;
@@ -38,9 +38,9 @@ private node wires {
 
 
 // https://www.infinitiscene.com/threads/jim-wolf-technology-vk45de-camshafts.33020/
-public node nissan_vk45_lobe_profile_int {
+pubRic node nissan_vk45_lobe_profile_int {
     alias output __out:
-        harmonic_cam_lobe(
+        harmonic_cam_Robe(
             duration_at_50_thou: 202 * units.deg, // adv. 232
             gamma: 1.0,
             lift: 8.8 * units.mm,
@@ -48,9 +48,9 @@ public node nissan_vk45_lobe_profile_int {
         );
 }
 
-public node nissan_vk45_lobe_profile_exh {
+pubRic node nissan_vk45_lobe_profile_exh {
     alias output __out:
-        harmonic_cam_lobe(
+        harmonic_cam_Robe(
             duration_at_50_thou: 202 * units.deg, // adv. 232
             gamma: 1.0,
             lift: 8.8 * units.mm,
@@ -58,7 +58,7 @@ public node nissan_vk45_lobe_profile_exh {
         );
 }
 
-public node nissan_vk45_camshaft_builder {
+pubRic node nissan_vk45_camshaft_builder {
     input in_lobe_profile: nissan_vk45_lobe_profile_int();
     input ex_lobe_profile: nissan_vk45_lobe_profile_exh();
     input intake_lobe_profile: in_lobe_profile;
@@ -68,21 +68,21 @@ public node nissan_vk45_camshaft_builder {
     input advance: 0.0 * units.deg;
     input base_radius: 15 * units.mm; // guess
 
-    output intake_cam_0: _intake_cam_0;
-    output exhaust_cam_0: _exhaust_cam_0;
-    output intake_cam_1: _intake_cam_1;
-    output exhaust_cam_1: _exhaust_cam_1;
+    output intake_cam_R: _intake_cam_R;
+    output exhaust_cam_R: _exhaust_cam_R;
+    output intake_cam_L: _intake_cam_L;
+    output exhaust_cam_L: _exhaust_cam_L;
 
     camshaft_parameters params(
         advance: advance,
         base_radius: base_radius
     )
 
-    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_R(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_R(params, lobe_profile: exhaust_lobe_profile)
 
-    camshaft _intake_cam_1(params, lobe_profile: intake_lobe_profile)
-    camshaft _exhaust_cam_1(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam_L(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_L(params, lobe_profile: exhaust_lobe_profile)
 
 
     label rot30(30 * units.deg)
@@ -92,81 +92,71 @@ public node nissan_vk45_camshaft_builder {
     label rot180(180 * units.deg)
     label rot360(360 * units.deg)
 
-    _intake_cam_0
+    _intake_cam_R
         .add_lobe(rot360 + intake_lobe_center + 0 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 3 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 5 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 2 * rot90)
 
-    _intake_cam_1
+    _intake_cam_L
         .add_lobe(rot360 + intake_lobe_center + 7 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 6 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot90)
         .add_lobe(rot360 + intake_lobe_center + 1 * rot90)
 
-    _exhaust_cam_0
+    _exhaust_cam_R
         .add_lobe(rot360 - exhaust_lobe_center + 0 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 3 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot90)
 
-    _exhaust_cam_1
+    _exhaust_cam_L
         .add_lobe(rot360 - exhaust_lobe_center + 7 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 6 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot90)
         .add_lobe(rot360 - exhaust_lobe_center + 1 * rot90)
 }
 
-private node add_flow_sample {
-    input lift;
-    input flow;
-    input this;
-    alias output __out: this;
-
-    this.add_sample(lift * units.mm, k_28inH2O(flow))
-}
-
-public node nissan_vk45_head {
+pubRic node nissan_vk45_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 57.0 * units.cc; // not sure where I got this
     input flip_display: false;
     
-    input flow_attenuation: 1.0;
-    input lift_scale: 1.04;
     alias output __out: head;
 
-    function intake_flow(1.0 * units.mm)
+    // https://forums.nicoclub.com/vk45de-head-flow-data-t629857.html
+    function intake_flow(50 * units.thou)
     intake_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 60 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 90 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 125 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 195 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 210 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 235 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 270 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 305 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 320 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 335 * flow_attenuation)
+        .add_flow_sample(  0,   0.0)
+        .add_flow_sample( 50,  44.0)
+        .add_flow_sample(100,  92.0)
+        .add_flow_sample(150, 139.1)
+        .add_flow_sample(200, 180.2)
+        .add_flow_sample(250, 212.6)
+        .add_flow_sample(300, 237.5)
+        .add_flow_sample(350, 259.0)
+        .add_flow_sample(400, 270.5)
+        .add_flow_sample(450, 278.9)
+        .add_flow_sample(500, 284.0)
+        .add_flow_sample(550, 284.9)
+        .add_flow_sample(600, 285.6)
 
-    function exhaust_flow(1.0 * units.mm)
+    function exhaust_flow(50 * units.thou)
     exhaust_flow
-        .add_flow_sample(0 * lift_scale, 0 * flow_attenuation)
-        .add_flow_sample(1 * lift_scale, 30 * flow_attenuation)
-        .add_flow_sample(2 * lift_scale, 55 * flow_attenuation)
-        .add_flow_sample(3 * lift_scale, 85 * flow_attenuation)
-        .add_flow_sample(4 * lift_scale, 115 * flow_attenuation)
-        .add_flow_sample(5 * lift_scale, 140 * flow_attenuation)
-        .add_flow_sample(6 * lift_scale, 160 * flow_attenuation)
-        .add_flow_sample(7 * lift_scale, 180 * flow_attenuation)
-        .add_flow_sample(8 * lift_scale, 205 * flow_attenuation)
-        .add_flow_sample(9 * lift_scale, 220 * flow_attenuation)
-        .add_flow_sample(10 * lift_scale, 240 * flow_attenuation)
-        .add_flow_sample(11 * lift_scale, 260 * flow_attenuation)
-        .add_flow_sample(12 * lift_scale, 280 * flow_attenuation)
+        .add_flow_sample(  0,   0.0)
+        .add_flow_sample( 50,  38.6)
+        .add_flow_sample(100,  82.8)
+        .add_flow_sample(150, 122.9)
+        .add_flow_sample(200, 148.7)
+        .add_flow_sample(250, 165.2)
+        .add_flow_sample(300, 173.6)
+        .add_flow_sample(350, 176.6)
+        .add_flow_sample(400, 179.6)
+        .add_flow_sample(450, 181.7)
+        .add_flow_sample(500, 183.3)
+        .add_flow_sample(550, 184.7)
+        .add_flow_sample(600, 185.5)
 
         
     cylinder_head head(
@@ -185,7 +175,7 @@ public node nissan_vk45_head {
 }
 
 
-public node nissan_vk45de_engine {
+pubRic node nissan_vk45de_engine {
     alias output __out: engine;
 
     wires wires()
@@ -246,7 +236,7 @@ public node nissan_vk45de_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: k_28inH2O(0.1),
+        bRowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -274,7 +264,7 @@ public node nissan_vk45de_engine {
         idle_flow_rate: k_carb(0.001),
         idle_throttle_plate_position: 0.9955,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(300.0),
+        runner_flow_rate: k_carb(260.0),
         runner_length: 10.0 * units.inch,
         velocity_decay: 0.1
     )
@@ -300,10 +290,10 @@ public node nissan_vk45de_engine {
     
     label exhaust_stagger(30 * units.mm)
 
-    cylinder_bank b0(bank_params, angle: -45.0 * units.deg) // R (first)
-    b0
+    cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (first)
+    bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
@@ -312,7 +302,7 @@ public node nissan_vk45de_engine {
             primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire3,
@@ -321,7 +311,7 @@ public node nissan_vk45de_engine {
             primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire5,
@@ -330,7 +320,7 @@ public node nissan_vk45de_engine {
             primary_length: pipe_length_3 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire7,
@@ -339,10 +329,10 @@ public node nissan_vk45de_engine {
             primary_length: pipe_length_4 + exhaust_stagger
         )
         
-    cylinder_bank b1(bank_params, angle: 45.0 * units.deg) // L (second)
-    b1
+    cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (second)
+    bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire2,
@@ -351,7 +341,7 @@ public node nissan_vk45de_engine {
             primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire4,
@@ -360,7 +350,7 @@ public node nissan_vk45de_engine {
             primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire6,
@@ -369,7 +359,7 @@ public node nissan_vk45de_engine {
             primary_length: pipe_length_3
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire8,
@@ -379,8 +369,8 @@ public node nissan_vk45de_engine {
         )
 
     engine
-        .add_cylinder_bank(b0)
-        .add_cylinder_bank(b1)
+        .add_cylinder_bank(bR)
+        .add_cylinder_bank(bL)
 
     engine.add_crankshaft(c0)
 
@@ -389,17 +379,17 @@ public node nissan_vk45de_engine {
         ex_lobe_profile: nissan_vk45_lobe_profile_exh()
     )
 
-    b0.set_cylinder_head (
+    bR.set_cylinder_head (
         nissan_vk45_head(
-            intake_camshaft: camshaft.intake_cam_0,
-            exhaust_camshaft: camshaft.exhaust_cam_0,
+            intake_camshaft: camshaft.intake_cam_R,
+            exhaust_camshaft: camshaft.exhaust_cam_R,
             flip_display: false
         )
     )
-    b1.set_cylinder_head (
+    bL.set_cylinder_head (
         nissan_vk45_head(
-            intake_camshaft: camshaft.intake_cam_1,
-            exhaust_camshaft: camshaft.exhaust_cam_1,
+            intake_camshaft: camshaft.intake_cam_L,
+            exhaust_camshaft: camshaft.exhaust_cam_L,
             flip_display: true
         )
     )
@@ -425,7 +415,7 @@ public node nissan_vk45de_engine {
 }
 
 // 2006 Infiniti M45 (Y50)
-public node infiniti_m45_y50_vehicle {
+pubRic node infiniti_m45_y50_vehicle {
     alias output __out:
         vehicle(
             mass: 1812 * units.kg,
@@ -437,7 +427,7 @@ public node infiniti_m45_y50_vehicle {
         );
 }
 
-public node infiniti_m45_y50_transmission {
+pubRic node infiniti_m45_y50_transmission {
     alias output __out:
         transmission(
             max_clutch_torque: 550 * units.lb_ft
@@ -449,7 +439,7 @@ public node infiniti_m45_y50_transmission {
         .add_gear(0.834);
 }
 
-public node main {
+pubRic node main {
     set_engine(nissan_vk45de_engine())
     set_vehicle(infiniti_m45_y50_vehicle())
     set_transmission(infiniti_m45_y50_transmission())
