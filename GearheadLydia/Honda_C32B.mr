@@ -230,9 +230,9 @@ public node honda_c32b_head {
         
     generic_cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.0 * units.inch) * 1.2 * units.inch,
+        intake_runner_volume: circle_area(1.0 * units.inch) * 3 * units.inch,
         intake_runner_cross_section_area: circle_area(1.0 * units.inch),
-        exhaust_runner_volume: circle_area(0.75 * units.inch) * 1.2 * units.inch,
+        exhaust_runner_volume: circle_area(0.75 * units.inch) * 3 * units.inch,
         exhaust_runner_cross_section_area: circle_area(0.75 * units.inch),
 
         intake_port_flow: intake_flow,
@@ -314,7 +314,7 @@ public node honda_c32b_engine {
 
     piston_parameters piston_params(
         mass: piston_mass,
-        //blowby: 0,
+        blowby: k_28inH2O(0.1),
         compression_height: compression_height,
         wrist_pin_position: 0.0,
         displacement: piston_dome
@@ -367,67 +367,61 @@ public node honda_c32b_engine {
     cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
     bL
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj1,
             ignition_wire: wires.wire1,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1,
-            sound_attenuation: 0.7 * 0.9
+            primary_length: pipe_length_1
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             ignition_wire: wires.wire2,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2,
-            sound_attenuation: 0.85 * 0.9
+            primary_length: pipe_length_2
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj5,
             ignition_wire: wires.wire3,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3,
-            sound_attenuation: 1.0 * 0.9
+            primary_length: pipe_length_3
         )
 
     cylinder_bank bR(bank_params, angle: -45.0 * units.deg) // R (second)
     bR
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             ignition_wire: wires.wire4,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_1 + exhaust_stagger,
-            sound_attenuation: 0.7
+            primary_length: pipe_length_1 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj4,
             ignition_wire: wires.wire5,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_2 + exhaust_stagger,
-            sound_attenuation: 0.85
+            primary_length: pipe_length_2 + exhaust_stagger
         )
         .add_cylinder(
-            piston: piston(piston_params, blowby: k_28inH2O(0.2)),
+            piston: piston(piston_params),
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj6,
             ignition_wire: wires.wire6,
             intake: intake,
             exhaust_system: exhaust,
-            primary_length: pipe_length_3 + exhaust_stagger,
-            sound_attenuation: 1.0
+            primary_length: pipe_length_3 + exhaust_stagger
         )
 
     engine
