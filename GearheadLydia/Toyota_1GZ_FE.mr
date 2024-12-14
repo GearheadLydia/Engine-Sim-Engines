@@ -142,8 +142,8 @@ public node toyota_1gzfe_head {
     
     // assumed similar to 1JZ head
     // https://www.supraforums.com/threads/the-truth-about-the-1jz-vs-2jz-cylinder-head.339560/
-    input flow_intake: 238.0;  // 1JZ  intake valve size: 30.0mm
-    input flow_exhaust: 154.0; // 1JZ exhaust valve size: 29.0mm
+    input flow_intake: 238.0;  //  intake valve size: 30.0mm
+    input flow_exhaust: 154.0; // exhaust valve size: 24.5mm
     input lift_max: 10 * units.mm;
     alias output __out: head;
 
