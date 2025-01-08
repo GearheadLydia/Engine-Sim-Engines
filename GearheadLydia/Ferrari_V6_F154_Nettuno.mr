@@ -6,10 +6,10 @@ impulse_response_library ir_lib()
 
 label cycle(2 * 360 * units.deg)
 
-public node alfa_romeo_690t_distributor {
+public node maserati_nettuno_distributor {
     input wires;
     input timing_curve;
-    input rev_limit: 7000 * units.rpm;
+    input rev_limit: 8100 * units.rpm;
     input limiter_duration: 0.04;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
@@ -30,7 +30,7 @@ private node wires {
     output wire6: ignition_wire();
 }
 
-public node alfa_romeo_690t_lobe_profile_int {
+public node maserati_nettuno_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 210 * units.deg,
@@ -40,7 +40,7 @@ public node alfa_romeo_690t_lobe_profile_int {
         );
 }
 
-public node alfa_romeo_690t_lobe_profile_exh {
+public node maserati_nettuno_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
             duration_at_50_thou: 210 * units.deg,
@@ -50,9 +50,9 @@ public node alfa_romeo_690t_lobe_profile_exh {
         );
 }
 
-public node alfa_romeo_690t_camshaft_builder {
-    input in_lobe_profile: alfa_romeo_690t_lobe_profile_int();
-    input ex_lobe_profile: alfa_romeo_690t_lobe_profile_exh();
+public node maserati_nettuno_camshaft_builder {
+    input in_lobe_profile: maserati_nettuno_lobe_profile_int();
+    input ex_lobe_profile: maserati_nettuno_lobe_profile_exh();
     input lobe_separation: 100.0 * units.deg;
     input intake_lobe_center: 100.0 * units.deg;
     input exhaust_lobe_center: 100.0 * units.deg;
@@ -114,7 +114,7 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node alfa_romeo_690t_head {
+public node maserati_nettuno_head {
     input intake_camshaft;
     input exhaust_camshaft;
     input chamber_volume: 50.0 * units.cc; // guess
@@ -149,10 +149,10 @@ public node alfa_romeo_690t_head {
         
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: circle_area(1.1 * units.inch) * 2 * units.inch,
-        intake_runner_cross_section_area: circle_area(1.1 * units.inch),
-        exhaust_runner_volume: circle_area(0.77 * units.inch) * 2 * units.inch,
-        exhaust_runner_cross_section_area: circle_area(0.77 * units.inch),
+        intake_runner_volume: circle_area(1.0 * units.inch) * 3 * units.inch,
+        intake_runner_cross_section_area: circle_area(1.0 * units.inch),
+        exhaust_runner_volume: circle_area(0.7 * units.inch) * 2 * units.inch,
+        exhaust_runner_cross_section_area: circle_area(0.7 * units.inch),
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -162,13 +162,13 @@ public node alfa_romeo_690t_head {
     )
 }
 
-
-public node alfa_romeo_690t_engine {
+// https://www.roadandtrack.com/new-cars/car-technology/a33078911/maserati-nettuno-v6-part-sharing/
+public node maserati_nettuno_engine {
     alias output __out: engine;
 
     wires wires()
 
-    label bore(86.5 * units.mm)
+    label bore(88.0 * units.mm)
     label stroke(82.0 * units.mm)
     label rod_length(145 * units.mm) // guess
     label compression_height(25 * units.mm) // guess
@@ -185,10 +185,10 @@ public node alfa_romeo_690t_engine {
     label deck_clearance((((bore * bore / 4.0 * constants.pi * stroke)/(compression_ratio-1.0)) - chamber_volume + piston_dome) / (bore * bore / 4.0 * constants.pi))
 
     engine engine(
-        name: "Alfa Romeo 690T",
+        name: "Maserati Nettuno",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
-        redline: 6500 * units.rpm,
+        redline: 8000 * units.rpm,
         fuel: fuel(max_burning_efficiency: 1.12), // free power to compensate for not having turbos
         throttle_gamma: 1.0
     )
@@ -250,11 +250,11 @@ public node alfa_romeo_690t_engine {
     intake intake(
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
-        intake_flow_rate: k_carb(800.0),
-        idle_flow_rate: k_carb(0.001),
+        intake_flow_rate: k_carb(800),
+        idle_flow_rate: k_carb(0.0001),
         idle_throttle_plate_position: 0.998,
         throttle_gamma: 1.0,
-        runner_flow_rate: k_carb(400.0),
+        runner_flow_rate: k_carb(250),
         runner_length: 8.5 * units.inch,
         velocity_decay: 0.1
     )
@@ -262,22 +262,22 @@ public node alfa_romeo_690t_engine {
     label exhaust_radius((4.0 * units.inch)/2)
 
     exhaust_system_parameters es_params(
-        outlet_flow_rate: k_carb(800.0),
-        primary_tube_length: 6.0 * units.inch,
-        primary_flow_rate: k_carb(550.0),
+        outlet_flow_rate: k_carb(800),
+        primary_tube_length: 10.0 * units.inch,
+        primary_flow_rate: k_carb(250),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area(exhaust_radius) * 2,
-        length: 2800 * units.mm,
-        volume: 2800 * units.mm * circle_area(exhaust_radius) * 2
+        length: 500 * units.mm,
+        volume: 500 * units.mm * circle_area(exhaust_radius) * 2
     )
 
-    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.08, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust(es_params, audio_volume: 1.0 * 0.0005, impulse_response: ir_lib.default_0)
     
-    label pipe_length_1(6 * units.inch)
-    label pipe_length_2(2 * units.inch)
-    label pipe_length_3(0 * units.inch)
+    label pipe_length_1(4 * units.inch)
+    label pipe_length_2(0 * units.inch)
+    label pipe_length_3(2 * units.inch)
     
-    label exhaust_stagger(7 * units.inch)
+    label exhaust_stagger(2 * units.inch)
 
     cylinder_bank bL(bank_params, angle: 45.0 * units.deg) // L (first)
     bL
@@ -351,10 +351,10 @@ public node alfa_romeo_690t_engine {
 
     engine.add_crankshaft(c0)
 
-    alfa_romeo_690t_camshaft_builder camshaft()
+    maserati_nettuno_camshaft_builder camshaft()
 
     bL.set_cylinder_head (
-        alfa_romeo_690t_head(
+        maserati_nettuno_head(
             intake_camshaft: camshaft.intake_cam_L,
             exhaust_camshaft: camshaft.exhaust_cam_L,
             chamber_volume: chamber_volume,
@@ -362,7 +362,7 @@ public node alfa_romeo_690t_engine {
         )
     )
     bR.set_cylinder_head (
-        alfa_romeo_690t_head(
+        maserati_nettuno_head(
             intake_camshaft: camshaft.intake_cam_R,
             exhaust_camshaft: camshaft.exhaust_cam_R,
             chamber_volume: chamber_volume,
@@ -382,7 +382,7 @@ public node alfa_romeo_690t_engine {
         .add_sample(7000 * units.rpm, 77 * units.deg)
 
     engine.add_ignition_module(
-        alfa_romeo_690t_distributor(
+        maserati_nettuno_distributor(
             wires: wires,
             timing_curve: timing_curve
         )
@@ -431,7 +431,7 @@ public node zf_gs6_53bz_transmission {
 }
 
 public node main {
-    set_engine(alfa_romeo_690t_engine())
+    set_engine(maserati_nettuno_engine())
     set_vehicle(alfa_giulia_qv_952_vehicle())
     set_transmission(zf_gs6_53bz_transmission())
 }
