@@ -129,29 +129,38 @@ public node ford_modular_koenigsegg_head {
     
     alias output __out: head;
     
-    // heads supposed similar to Ford 4.6 Cobra DOHC heads
-    // http://www.users.interport.net/s/r/srweiss/tablehdc.htm#Ford
-    function intake_flow(100 * units.thou)
+    // heads known to be same castings as GT500 / Ford GT heads
+    // https://www.svtperformance.com/threads/gt-500-head-flow.540708/
+    // converted from 25" to 28"
+    function intake_flow(50 * units.thou)
     intake_flow
-        .add_flow_sample(  0,   0)
-        .add_flow_sample(100,  89)
-        .add_flow_sample(200, 168)
-        .add_flow_sample(300, 224)
-        .add_flow_sample(400, 253)
-        .add_flow_sample(500, 267)
-        .add_flow_sample(600, 275)
-        .add_flow_sample(700, 280)
+        .add_flow_sample(  0,   0.0)
+        .add_flow_sample( 50,  45.5) // 43
+        .add_flow_sample(100,  96.1) // 90.8
+        .add_flow_sample(150, 139.0) // 131.3
+        .add_flow_sample(200, 179.0) // 169.1
+        .add_flow_sample(250, 215.3) // 203.5
+        .add_flow_sample(300, 248.0) // 234.3
+        .add_flow_sample(350, 272.7) // 257.7
+        .add_flow_sample(400, 290.3) // 274.3
+        .add_flow_sample(450, 301.0) // 284.4
+        .add_flow_sample(500, 307.5) // 290.6
+        .add_flow_sample(550, 311.8) // 294.6
 
-    function exhaust_flow(100 * units.thou)
+    function exhaust_flow(50 * units.thou)
     exhaust_flow
-        .add_flow_sample(  0,   0)
-        .add_flow_sample(100,  67)
-        .add_flow_sample(200, 121)
-        .add_flow_sample(300, 160)
-        .add_flow_sample(400, 179)
-        .add_flow_sample(500, 182)
-        .add_flow_sample(600, 185)
-        .add_flow_sample(700, 186)
+        .add_flow_sample(  0,   0.0)
+        .add_flow_sample( 50,  42.3) // 40
+        .add_flow_sample(100,  94.8) // 89.6
+        .add_flow_sample(150, 140.2) // 132.5
+        .add_flow_sample(200, 178.3) // 168.5
+        .add_flow_sample(250, 204.3) // 193.0
+        .add_flow_sample(300, 224.9) // 212.5
+        .add_flow_sample(350, 236.5) // 223.5
+        .add_flow_sample(400, 244.5) // 231.0
+        .add_flow_sample(450, 259.5) // 245.2
+        .add_flow_sample(500, 259.3) // 245; listed as 240.5, assumed typo
+        .add_flow_sample(550, 259.3) // 245
 
         
     cylinder_head head(
@@ -170,41 +179,41 @@ public node ford_modular_koenigsegg_head {
 }
 
 
-public node koenigsegg_cc8s_engine {
+public node koenigsegg_ccx_edition_engine {
     alias output __out: engine;
 
     wires wires()
 
     engine engine(
-        name: "Koenigsegg CC8S V8",
+        name: "Koenigsegg CCX Edition V8",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 1200 * units.rpm,
         redline: 7000 * units.rpm,
-        fuel: fuel(max_burning_efficiency: 1.115), // free power to replace supercharger that can't be added
+        fuel: fuel(max_burning_efficiency: 1.4), // free power to replace supercharger that can't be added
         throttle_gamma: 1.0,
         hf_gain: 0.2,
         jitter: 0.7
     )
 
     // https://fordauthority.com/fmc/ford-motor-company-engines/ford-modular-family/ford-4-6l-engine/
-    label bore(90.22 * units.mm)
+    label bore(91.22 * units.mm)
     label bore_spacing(100.0 * units.mm)
     label stroke(92.0 * units.mm)
     label rod_length(150.7 * units.mm)         // unknown; guessed to be same as Mod 4.6 4V
     label compression_height(29.70 * units.mm) // unknown; calculated to give correct CR with flat top
     label deck_height((227.0 + 0.9) * units.mm)
-    label chamber_volume(52.0 * units.cc) // Modular Cobra 4.6
+    label chamber_volume(52.0 * units.cc) // GT500
 
     label crank_mass(54.3 * units.lb)
     label rod_mass(618 * units.g)
-    label piston_mass(361 * units.g)
+    label piston_mass((287+100) * units.g)
     label flywheel_mass(15 * units.lb)
     label flywheel_radius(6 * units.inch)
 
     label compression_ratio(8.6)
     label deck_clearance(deck_height-((stroke/2.0)+rod_length+compression_height))
     label clearance_volume(deck_clearance*bore*bore*(constants.pi/4.0))
-    label piston_dome(-((bore * bore * stroke * (constants.pi/4.0))/(compression_ratio-1.0)) + (chamber_volume + clearance_volume))
+    label piston_dome(-((bore*bore*stroke*(constants.pi/4.0))/(compression_ratio-1.0)) + (chamber_volume + clearance_volume))
 
     label crank_moment(
         disk_moment_of_inertia(mass: crank_mass, radius: stroke / 2)
@@ -267,18 +276,18 @@ public node koenigsegg_cc8s_engine {
         plenum_volume: 2.0 * units.L,
         plenum_cross_section_area: 100.0 * units.cm2,
         intake_flow_rate: k_carb(800),
-        idle_flow_rate: k_carb(0.0001),
-        idle_throttle_plate_position: 0.9977,
+        idle_flow_rate: k_carb(0.001),
+        idle_throttle_plate_position: 0.9975,
         throttle_gamma: 1.0,
         runner_flow_rate: k_carb(210),
-        runner_length: 4.5 * units.inch,
+        runner_length: 3.5 * units.inch,
         velocity_decay: 0.1
     )
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1000),
         primary_tube_length: 12.0 * units.inch,
-        primary_flow_rate: k_carb(280),
+        primary_flow_rate: k_carb(250),
         velocity_decay: 1.0, //0.5
         collector_cross_section_area: circle_area((4.0 * units.inch)/2) * 2,
         length: 600 * units.mm,
@@ -453,7 +462,7 @@ public node cima_t906s_transmission {
 }
 
 public node main {
-    set_engine(koenigsegg_cc8s_engine())
+    set_engine(koenigsegg_ccx_edition_engine())
     set_vehicle(koenigsegg_cc8s_vehicle())
     set_transmission(cima_t906s_transmission())
 }
